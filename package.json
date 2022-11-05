@@ -1,0 +1,33 @@
+{
+  "name": "sermant-website",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "test",
+    "dev": "vuepress dev docs",
+    "build": "vuepress build docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/luanwenfei-venus/sermant-website.git"
+  },
+  "keywords": [
+    "document"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/luanwenfei-venus/sermant-website/issues"
+  },
+  "homepage": "https://github.com/luanwenfei-venus/sermant-website#readme",
+  "devDependencies": {
+    "@vuepress/plugin-back-to-top": "^1.9.7",
+    "babel-plugin-component": "^1.1.1",
+    "vuepress": "^1.9.7"
+  },
+  "dependencies": {
+    "core-js": "^2.6.12",
+    "element-ui": "^2.15.9"
+  }
+}
