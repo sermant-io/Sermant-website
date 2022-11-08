@@ -9,13 +9,14 @@ module.exports = {
     "/en/": {
       lang: "en-US",
       title: "Sermant",
-      description: "A proxyless service mesh solution based on Java Agent",
+      description: "A Proxyless Service Mesh Solution Based on Java Agent",
     },
   },
   themeConfig: {
     logo: "/img/sermant-logo.png",
-    displayAllHeaders: true,
+    displayAllHeaders: false,
     smoothScroll: true,
+    sidebarDepth: 1,
     plugins: ["@vuepress/back-to-top"],
     locales: {
       "/zh/": {
@@ -30,7 +31,7 @@ module.exports = {
           {
             text: "关于",
             items: [
-              { text: "常见问题", link: "/zh/about/question/" },
+              { text: "常见问题", link: "/zh/about/question/framework" },
               { text: "版本发布", link: "/zh/about/version/" },
               { text: "社区指南", link: "/zh/about/community/" },
               { text: "开发团队", link: "/zh/about/team/" },
@@ -39,11 +40,63 @@ module.exports = {
           { text: "Github", link: "https://github.com/huaweicloud/Sermant" },
         ],
         sidebar: {
-          "/zh/document/": ["", "one", "two"],
-          "/zh/plugin/": [""],
+          "/zh/document/": [
+            {
+              title: "开始",
+              path: "",
+              collapsable: false,
+              sidebarDepth: 1,
+              children: ["", "QuickStart"],
+            },
+            {
+              title: "用户指南",
+              path: "",
+              collapsable: false,
+              sidebarDepth: 1,
+              children: [
+                "UserGuide/",
+                "UserGuide/agentcore",
+                "UserGuide/entrance",
+                "UserGuide/backend",
+              ],
+            },
+            {
+              title: "贡献者指南",
+              path: "",
+              collapsable: false,
+              sidebarDepth: 1,
+              children: ["CONTRIBUTING"],
+            },
+            {
+              title: "FAQ",
+              path: "",
+              collapsable: false,
+              sidebarDepth: 1,
+              children: ["FAQ/framework", "FAQ/plugin"],
+            },
+          ],
+          "/zh/plugin/": [
+            "flowcontrol",
+            "loadbalancer",
+            "dynamic-config",
+            {
+              title: "服务注册",
+              path: "",
+              collapsable: true,
+              sidebarDepth: 1,
+              children: [
+                "registry/",
+                "registry/dubbo-registry-migiration",
+                "registry/spring-cloud-registry-migiration",
+              ],
+            },
+            "graceful",
+            "router",
+            "server-monitor",
+          ],
           "/zh/story/": [""],
           "/zh/blog/": [""],
-          "/zh/about/question/": [""],
+          "/zh/about/question/": ["framework", "flowcontrol", "registry"],
           "/zh/about/version/": [""],
           "/zh/about/community/": [""],
           "/zh/about/team/": [""],
@@ -62,7 +115,7 @@ module.exports = {
           {
             text: "About",
             items: [
-              { text: "Common Problem", link: "/en/about/question/" },
+              { text: "Common Problem", link: "/en/about/question/framework" },
               { text: "Release Version", link: "/en/about/version/" },
               { text: "Community Guide", link: "/en/about/community/" },
               { text: "Development Team", link: "/en/about/team/" },
@@ -71,11 +124,63 @@ module.exports = {
           { text: "Github", link: "https://github.com/huaweicloud/Sermant" },
         ],
         sidebar: {
-          "/en/document/": ["", "one", "two"],
-          "/en/plugin/": [""],
+          "/en/document/": [
+            {
+              title: "Start",
+              path: "",
+              collapsable: false,
+              sidebarDepth: 1,
+              children: ["", "QuickStart"],
+            },
+            {
+              title: "User Guide",
+              path: "",
+              collapsable: false,
+              sidebarDepth: 1,
+              children: [
+                "UserGuide/",
+                "UserGuide/agentcore",
+                "UserGuide/entrance",
+                "UserGuide/backend",
+              ],
+            },
+            {
+              title: "Contributor Guide",
+              path: "",
+              collapsable: false,
+              sidebarDepth: 1,
+              children: ["CONTRIBUTING"],
+            },
+            {
+              title: "FAQ",
+              path: "",
+              collapsable: false,
+              sidebarDepth: 1,
+              children: ["FAQ/framework", "FAQ/plugin"],
+            },
+          ],
+          "/en/plugin/": [
+            "flowcontrol",
+            "loadbalancer",
+            "dynamic-config",
+            {
+              title: "Service Registry",
+              path: "",
+              collapsable: true,
+              sidebarDepth: 1,
+              children: [
+                "registry/",
+                "registry/dubbo-registry-migiration",
+                "registry/spring-cloud-registry-migiration",
+              ],
+            },
+            "graceful",
+            "router",
+            "server-monitor",
+          ],
           "/en/story/": [""],
           "/en/blog/": [""],
-          "/en/about/question/": [""],
+          "/en/about/question/": ["framework", "flowcontrol", "registry"],
           "/en/about/version/": [""],
           "/en/about/community/": [""],
           "/en/about/team/": [""],
@@ -83,4 +188,10 @@ module.exports = {
       },
     },
   },
+  configureWebpack:{
+    node:{
+      global:true,
+      process:true
+    }
+  }
 };

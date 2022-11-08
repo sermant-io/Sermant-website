@@ -1,5 +1,6 @@
-import { Button, Card, Avatar, Tag, Pagination,Tooltip } from "element-ui";
+import { Button, Card, Avatar, Tag, Pagination,Tooltip,Image } from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
+import axios from "axios";
 export default ({
   Vue, // VuePress 正在使用的 Vue 构造函数
   options, // 附加到根实例的一些选项
@@ -13,6 +14,8 @@ export default ({
   Vue.use(Tag);
   Vue.use(Pagination);
   Vue.use(Tooltip);
+  Vue.use(Image);
+  Vue.prototype.$axios = axios;
   router.beforeEach((to, from, next) => {
     if (to.path.indexOf("/en") === -1 && to.path.indexOf("/zh") === -1) {
       next("/zh/");

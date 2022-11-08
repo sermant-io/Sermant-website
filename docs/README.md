@@ -49,6 +49,17 @@ sermant-website
         │  └─README.md(主页内容及配置)   
         └─zh （中文文档目录，结构与英文文档一样）
 ```
+## markdown用法
+文章中的url链接需要改成需要跳转位置的相对路径,可在路径后面添加标题来设置跳转到相应文档的相应标题处。其中标题中的特殊符号改写为"-"，标题末尾的特殊符号省略（如“？”需要去除），英文标题中的大写字母需要全部改写为小写字母。
+```
+../../about/question/flowcontrol.md#possible-causes-for-the-retry-rule-does-not-take-effect
+```
+
+文章中的图片需要使用MyImage标签。如下所示。
+```
+<MyImage src="/docs-img/sermant-rt-arch.png" />
+```
+src中的路径为图片路径，图片统一存放在.vuepress/public目录下，可在目录下新建图片目录，目前文档网站各个模块的md文件中的图片存放在.vuepress/public/docs-img中，路径只需要像示例一样书写即可。
 ## 主页（home）
 
 可在zh及en文档目录下的第一个README.md文件中编辑主页内容，内容放置在slot-footer以及头部之间，使用markdown语法，内容会被填充到主页的footer上方位置。
@@ -103,6 +114,33 @@ sidebar: {
 ```
 如自己新创建的一个文档叫one，则将文件名（不需要后缀）以数组的形式添加到"/zh/document/"属性后面，同时注意中英文的sidebar中都要进行这一步，否则可能造成中英文侧边栏不一致。
 
+进阶用法：当层级较多时，可使用分组。
+```
+{
+    title: "开始",
+    path: "",
+    collapsable: false,
+    sidebarDepth: 1,
+    children: ["", "QuickStart"],
+},
+```
+使用对象来进行分组，title属性为分组组名，path为点击时跳转的路径，为空则不可以通过点击分组组名跳转，collapsable为分组是否可以收缩，设为false时不收缩，会显示分组组名下的所有组名.
+![img](readme-img/sidebar-no-collapsable.jpg)
+为true时可收缩
+![img](readme-img/sidebar-collapsable.jpg)
+sidebarDepth属性为侧边栏标题深度，默认为1即可。
+
+children属性为该分组下要显示的所有md文件，空字符串代表README.md文件，其中可继续进行嵌套，将字符串改为以上对象形式，可继续分级（但层数过多会导致侧边栏混乱，不推荐）。
+
+侧边栏最终会显示md文件中的一级标题，若想要修改侧边栏显示的标题，直接修改md文件中的一级标题即可。由于侧边栏提取比较严格，md文件中的标题等级请严格从一级标题开始、每级递增不要跳级。当前设置会在点击某一篇侧边栏的md文件标题时，展开显示二级标题。若想提取更深层次标题，请修改配置.vuepress/config.js中的sidebarDepth属性。如下所示，1则会提取二级标题，2则会提取二级标题和三级标题，最大为2.
+```
+themeConfig: {
+    logo: "/img/sermant-logo.png",
+    displayAllHeaders: false,
+    smoothScroll: true,
+    sidebarDepth: 1,
+    }
+```
 ## 插件生态 （plugin）
 使用方法与文档相同，只不过配置时需要将对应信息放置在"/zh/plugin/"后面，同时也要注意中英文都需要进行配置。
 

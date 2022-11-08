@@ -1,7 +1,7 @@
 <template>
   <Base>
     <template v-slot:content>
-      <div class="home">
+      <div class="home-page">
         <div class="content-box">
           <div :class="{ 'logo-box': true, move }">
             <img :src="$withBase('/img/sermant-logo.png')" alt="Sermant" />
@@ -36,10 +36,15 @@
                   ></path>
                 </svg>
               </div>
+              <div class="star-label">Stars</div>
               <div class="star">{{ githubStars }}</div>
             </div>
           </div>
-          <Content></Content>
+          <div class="feature-box">
+            <Content slot-key="feature1"></Content>
+            <Content slot-key="feature2"></Content>
+            <Content slot-key="feature3"></Content>
+          </div>
           <Content class="content-footer" slot-key="footer"></Content>
         </div>
       </div>
@@ -47,11 +52,11 @@
   </Base>
 </template>
 <style scoped>
-.home .el-button--danger {
+.home-page .el-button--danger {
   border-color: #cc2229;
   background-color: #cc2229;
 }
-.home .el-button--danger:hover {
+.home-page .el-button--danger:hover {
   border-color: #ff0a14;
   background-color: #ff0a14;
 }
@@ -61,28 +66,30 @@
 
 .content {
   margin: 0 auto;
-  width: 600px;
+  width: 37rem;
   font-size: 24px;
   display: flex;
   justify-content: center;
-  margin-top: 100px;
+  margin-top: 7rem;
 }
 
 .content-footer {
   margin: 0 auto;
-  width: 600px;
   font-size: 16px;
   text-align: center;
   border-top: 1px solid #d2d6e1;
-  margin-top: 50px;
+  margin-top: 110px;
 }
 
 .logo-box {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   opacity: 0;
   transition: all 1s;
+  width: 496px;
+  height: 107px;
+  margin: 0 auto;
+}
+.logo-box > img {
+  object-fit: scale-down;
 }
 .move {
   transform: translate(0, 100px);
@@ -92,8 +99,8 @@
   display: flex;
   align-items: center;
   justify-content: space-around;
-  width: 600px;
-  margin: 0 auto;
+  width: 24rem;
+  margin: 0.8rem auto;
 }
 
 .github-box {
@@ -128,6 +135,35 @@ svg {
   width: 30px;
   height: 30px;
 }
+.feature-box {
+  display: flex;
+  justify-content: space-between;
+  width: 64rem;
+  margin: 2rem auto 0.8rem;
+}
+.feature-box > div {
+  margin: 0 45px 20px;
+}
+
+@media (max-width: 1100px) {
+  .feature-box {
+    flex-direction: column;
+    width: auto;
+  }
+}
+@media (max-width: 496px) {
+  .logo-box {
+    width: 19.84rem;
+    height: 4.28rem;
+  }
+  .logo-box > img {
+    width: 19.84rem;
+    height: 4.28rem;
+  }
+  .content {
+    width: 20rem;
+  }
+}
 </style>
 <script>
 import Base from "./Base.vue";
@@ -139,7 +175,7 @@ export default {
   },
   data() {
     return {
-      githubStars: "Start:0",
+      githubStars: 0,
       move: false,
     };
   },
@@ -166,19 +202,14 @@ export default {
       window.open("https://github.com/huaweicloud/Sermant");
     },
     getGithubStars() {
-      const xhr = new XMLHttpRequest();
-      xhr.open("get", "https://api.github.com/repos/huaweicloud/sermant", true);
-      xhr.onreadystatechange = () => {
-        if (xhr.readyState === 4) {
-          if (xhr.status === 200) {
-            const res = JSON.parse(xhr.responseText);
-            this.githubStars = "Stars:" + res.stargazers_count || 0;
-          } else {
-            console.log("error");
-          }
-        }
-      };
-      xhr.send(null);
+      this.$axios
+        .get("https://api.github.com/repos/huaweicloud/sermant")
+        .then((res) => {
+          this.githubStars = res.data.stargazers_count || 0;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
   },
 };
