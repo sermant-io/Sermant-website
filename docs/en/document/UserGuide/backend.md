@@ -48,10 +48,3 @@ This document focuses on the [**Sermant-backend**](https://github.com/huaweiclou
   ```properties
   heartbeat.cache=true
   ```
-
-## Related Documents
-
-|Documents|
-|:-|
-|[Introduction to Sermant-agentcore-core](agentcore.md)|
-|[Introduction to Entrance Module](entrance.md)|

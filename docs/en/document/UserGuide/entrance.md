@@ -57,7 +57,7 @@ The **Entrance of Sermant** serves as the entry point to the **Sermant**, which 
 **Startup Parameters** refer to the configuration `Map` encapsulated by the input parameter `agentArgs` and the bootstrap configuration `bootstrap.properties`, taking precedence to fetch the value from the former. The fixed contents of **startup parameters** are as follows:
 
 |Key in Input Parameters|Key in Bootstrap Configuration|Key in Startup Parameters|Explanation|Default Value|NotNull|Notes|
-|:-|:-|:-|:-|:-:|:-|:-|
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |appName|app.name|appName|The name of host application|/|True|Must present in startup parameters|
 |instanceName|instance.name|instanceName|The name of the specific instance|default|True|/|
 |appType|app.type|appType|The type of host application|0|True|/|
@@ -78,10 +78,3 @@ The **Entrance of Sermant** serves as the entry point to the **Sermant**, which 
 |/|/|sermant.log.setting.file|The directory of log configuration file|The directory of log configuration file|True|No need to configure|
 
 The `agentArgs` parameter allows you to configure more values for **startup parameters**, which may be used in the [Unified Configuration System](agentcore.md#Unified-Configuration-System).
-
-## Related Documents
-
-|Document|
-|:-|
-|[Introduction to Sermant-agentcore-core](agentcore.md)|
-|[Introduction to Backend Module](backend.md)|

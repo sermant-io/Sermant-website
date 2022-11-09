@@ -16,6 +16,6 @@ Class isolation technology is widely used, so there is no class conflict between
 :::
 
 ::: slot footer
-Apache-2.0 Licensed | Copyright © 2021-present Huawei
+Apache-2.0 Licensed | Copyright © 2021-present A Huawei Cloud Project
 :::
 

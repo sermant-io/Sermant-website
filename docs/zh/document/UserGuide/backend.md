@@ -46,10 +46,3 @@
   ```properties
   heartbeat.cache=true
   ```
-
-## 相关文档
-
-|文档名称|
-|:-|
-|[核心模块介绍](agentcore.md)|
-|[入口模块介绍](entrance.md)|

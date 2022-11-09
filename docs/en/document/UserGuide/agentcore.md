@@ -471,10 +471,4 @@ For more information on the **Plugin Configuration System**, refer to the [Plugi
 
 For more information on the **Plugin Service System**, refer to the [Plugin Code Development Guide](https://github.com/huaweicloud/Sermant/tree/develop/docs/dev-guide/dev_plugin_code.md#Plugin-Service).
 
-## Related Documents
-
-|Documents|
-|:-|
-|[Introduction to Entrance Module](entrance.md)|
-|[Introduction to Backend Module](backend.md)|
 

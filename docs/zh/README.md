@@ -16,5 +16,5 @@ quickStart: '快速开始'
 :::
 
 ::: slot footer
-Apache-2.0 Licensed | Copyright © 2021-present Huawei
+Apache-2.0 Licensed | Copyright © 2021-present A Huawei Cloud Project
 :::

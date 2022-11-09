@@ -4,7 +4,7 @@ module.exports = {
     "/zh/": {
       lang: "zh-CN",
       title: "Sermant",
-      description: "一种基于Java Agent的无代理服务网络解决方案",
+      description: "一种基于Java Agent的无代理服务网格解决方案",
     },
     "/en/": {
       lang: "en-US",

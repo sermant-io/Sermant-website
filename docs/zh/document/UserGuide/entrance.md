@@ -57,7 +57,7 @@ public static void premain(String agentArgs, Instrumentation inst);
 **启动参数**指的是入参`agentArgs`和启动配置`bootstrap.properties`封装起来的配置`Map`，优先取前者的值。**启动参数**中固定内容如下：
 
 |入参键|启动配置键|启动参数键|含义|默认值|不为空|备注|
-|:-|:-|:-|:-|:-:|:-|:-|
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |appName|app.name|appName|应用名称|/|是|入参中必须存在|
 |instanceName|instance.name|instanceName|实例名称|default|是|/|
 |appType|app.type|appType|应用类型|0|是|/|
@@ -78,11 +78,4 @@ public static void premain(String agentArgs, Instrumentation inst);
 |/|/|sermant.log.setting.file|日志配置文件|日志配置文件|是|无需配置|
 
 入参`agentArgs`中可以为**启动参数**配置更多地值，他们可能会在[统一配置系统](agentcore.md#统一配置系统)中使用到。
-
-## 相关文档
-
-|文档名称|
-|:-|
-|[核心模块介绍](agentcore.md)|
-|[后端模块介绍](backend.md)|
 

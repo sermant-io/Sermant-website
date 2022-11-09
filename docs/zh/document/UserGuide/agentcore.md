@@ -464,10 +464,3 @@ public class ServiceExampleImpl implements ServiceExample {
 
 更多**插件服务系统**相关内容，可以参见[插件代码开发手册的插件服务一节](https://github.com/huaweicloud/Sermant/tree/develop/docs/dev-guide/dev_plugin_code-zh.md#插件服务)。
 
-## 相关文档
-
-|文档名称|
-|:-|
-|[入口模块介绍](entrance.md)|
-|[后端模块介绍](backend.md)|
-
