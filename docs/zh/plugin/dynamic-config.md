@@ -1,4 +1,4 @@
-## 动态配置插件介绍
+## 动态配置
 
 本文档主要介绍[动态配置插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-dynamic-config)以及该插件的使用方法
 
