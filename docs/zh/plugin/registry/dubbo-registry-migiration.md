@@ -1,4 +1,4 @@
-# Registry Migration - Dubbo
+# Dubbo的注册迁移
 
 本文主要介绍[服务注册插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-registry)基于Dubbo框架注册中心的迁移能力。
 

@@ -1,4 +1,9 @@
 module.exports = {
+  head: [
+      [
+        'link', { rel: 'icon', href: '/img/logo.svg'}
+      ]
+  ],
   extend: "@vuepress/theme-default",
   locales: {
     "/zh/": {
@@ -26,7 +31,6 @@ module.exports = {
         nav: [
           { text: "文档", link: "/zh/document/" },
           { text: "插件生态", link: "/zh/plugin/" },
-          { text: "用户案例", link: "/zh/story/" },
           { text: "博客", link: "/zh/blog/" },
           {
             text: "关于",
@@ -80,7 +84,7 @@ module.exports = {
             "loadbalancer",
             "dynamic-config",
             {
-              title: "服务注册",
+              title: "注册",
               path: "",
               collapsable: true,
               sidebarDepth: 1,
@@ -94,7 +98,6 @@ module.exports = {
             "router",
             "server-monitor",
           ],
-          "/zh/story/": [""],
           "/zh/blog/": [""],
           "/zh/about/question/": ["framework", "flowcontrol", "registry"],
           "/zh/about/version/": [""],
@@ -110,7 +113,6 @@ module.exports = {
         nav: [
           { text: "Document", link: "/en/document/" },
           { text: "Plugin", link: "/en/plugin/" },
-          { text: "User Story", link: "/en/story/" },
           { text: "Blog", link: "/en/blog/" },
           {
             text: "About",
@@ -164,7 +166,7 @@ module.exports = {
             "loadbalancer",
             "dynamic-config",
             {
-              title: "Service Registry",
+              title: "Registry",
               path: "",
               collapsable: true,
               sidebarDepth: 1,
@@ -178,7 +180,6 @@ module.exports = {
             "router",
             "server-monitor",
           ],
-          "/en/story/": [""],
           "/en/blog/": [""],
           "/en/about/question/": ["framework", "flowcontrol", "registry"],
           "/en/about/version/": [""],

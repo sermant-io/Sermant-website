@@ -1,4 +1,4 @@
-# Graceful Online/Offline
+# 优雅上下线
 
 该文档主要介绍优雅上下线能力以及其使用方法，该功能当前集成在[注册插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-registry) 中, 但功能可独立使用。
 

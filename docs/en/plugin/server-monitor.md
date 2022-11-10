@@ -1,4 +1,4 @@
-# Resource Monitor
+# Monitor
 
 This document introduces [resource-monitor](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-server-monitor)
 
@@ -144,7 +144,7 @@ IBM JDK JVM memory monitoring and collection, and OpenJDK JVM memory monitoring 
   int64 max; // the maximum amount of memory in bytes that can be used
   int64 used; // the amount of used memory in bytes
   int64 committed; // the amount of committed memory in bytes
-
+  
   Types include:
   tenured-SOA
   tenured-LOA
@@ -187,7 +187,7 @@ IBM JDK JVM memory monitoring and collection, and OpenJDK JVM memory monitoring 
   int64 max;
   int64 used;
   int64 committed; 
-
+  
   Types include:
   CODE_CACHE_USAGE;
   NEWGEN_USAGE;

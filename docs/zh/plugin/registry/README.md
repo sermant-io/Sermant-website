@@ -1,4 +1,4 @@
-# Service-Registry
+# 服务注册
 
 本文主要介绍[服务注册插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-registry)以及该插件的使用方法。
 
@@ -110,13 +110,3 @@ service.meta.application=default
 ```
 
 以上配置代表优选读取环境变量或-D参数中service.meta.application的值作为应用名，如果环境变量或-D参数中找不到这个值，则把default作为应用名。
-
-## 更多文档
-
-- [SpringCloud注册中心迁移](spring-cloud-registry-migiration.md)
-
-- [Dubbo注册中心迁移](dubbo-registry-migiration.md)
-
-- [服务注册常见问题](../../about/question/registry.md)
-
-[返回**Sermant**说明文档](../../document/UserGuide/README.md)

@@ -1,4 +1,4 @@
-# Registry Migration - Spring Cloud
+# SpringCloud的注册迁移
 
 本文主要介绍[服务注册插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-registry)基于Spring Cloud框架注册中心的迁移能力。
 
@@ -94,7 +94,3 @@ POST /publishConfig
 > ***注意 :***
 >
 > *该操作为一次性操作，关闭注册中心心跳后，将无法开启，仅当应用实例重启才可恢复。*
-
-[返回**服务注册插件**说明文档](./README.md)
-
-[返回**Sermant**说明文档](../../document/UserGuide/README.md)

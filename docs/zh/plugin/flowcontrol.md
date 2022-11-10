@@ -1,4 +1,4 @@
-# FlowControl
+# 流控
 
 本文档主要介绍[流控插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-flowcontrol)以及该插件的使用方法
 
@@ -20,7 +20,7 @@
 
 **（2）打包编译Sermant Agent**
 
-​ 参考[Sermant源码编译](../../QuickStart-zh.md#源码编译)
+ 参考[Sermant源码编译](../../QuickStart-zh.md#源码编译)
 
 ### 配置agent
 
