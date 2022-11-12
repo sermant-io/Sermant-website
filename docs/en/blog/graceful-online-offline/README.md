@@ -1,3 +1,6 @@
+---
+sidebar: auto
+---
 
 # Graceful Online/Offline
 ## What is graceful on and off line

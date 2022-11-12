@@ -1,3 +1,7 @@
+---
+sidebar: auto
+---
+
 # The problem and analysis of class enhancement conflict when multiple JavaAgents are used at the same time
 
 ## Problem Background

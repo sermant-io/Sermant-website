@@ -1,3 +1,7 @@
+---
+sidebar: auto
+---
+
 # Zero code modification, teach you easy access to CSE for Spring Cloud applications
 ## 1. Description of Sergeant Agent
 Servant Agent is an agentless service mesh technology based on JavaAgent. It utilizes JavaAgent to detect host applications and has enhanced service governance capabilities to address service governance issues in massive microservice architectures.

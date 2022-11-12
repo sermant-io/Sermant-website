@@ -1,3 +1,6 @@
+---
+sidebar: auto
+---
 
 # Sermant Agent 优雅上下线
 ## 什么是优雅上下线

@@ -1,3 +1,7 @@
+---
+sidebar: auto
+---
+
 # 零代码修改，教你Spring Cloud应用轻松接入CSE
 ## 一、 Sermant Agent介绍
 Sermant Agent是一种基于JavaAgent的无代理服务网格技术。它利用JavaAgent来检测主机应用程序，并具有增强的服务治理功能，以解决海量微服务架构中的服务治理问题。
