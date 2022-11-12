@@ -1,49 +1,49 @@
 
-# Sermant Agent 优雅上下线
-## 什么是优雅上下线
-试想一个A场景，系统中运行着一个消费者（客户端）和两个服务提供者（服务端），消费者可负载均衡调用服务提供者。假设某个服务提供者因业务更新或其他场景需要滚动升级，若此时存在大量并发流量，便会出现以下问题：
+# Graceful Online/Offline
+## What is graceful on and off line
+Imagine a scenario A. There is a consumer (client) and two service providers (servers) running in the system, and consumers can call the service providers in load balancing. Suppose a service provider needs rolling upgrades due to business updates or other scenarios. If there is a large amount of concurrent traffic at this time, the following problems will occur:
 
-- 大量TCP连接因服务提供者升级下线操作，导致大量请求错误。
-- 由于消费者（客户端）存在注册表延迟刷新的问题，后续流量依旧会分配到已经下线的提供者，导致大量请求错误。
+- A large number of TCP connections are upgraded and offline due to the service provider, resulting in a large number of request errors.
+- Due to the problem of delayed registry refresh of consumers (clients), subsequent traffic will still be allocated to providers that have been offline, resulting in a large number of request errors.
 
-以上便是一个典型的“不优雅”场景。
+The above is a typical "inelegant" scene.
 
-于是，为了规避诸如此类的问题，服务优雅上下线应运而生，主要针对服务的重启、上线、下线等操作提供保护。
+Therefore, in order to avoid such problems, graceful online and offline services came into being, mainly to provide protection for services such as restarting, going online, and going offline.
 
-## 服务运维常见问题
-（1） 服务自身存在大量懒加载机制（例如负载均衡初始化），在服务刚上线时，因并发流量请求涌入，导致大量请求同时进行懒加载，以至于请求响应慢，线程阻塞，甚至最终导致服务崩溃。
+## Service operation and maintenance FAQ
+(1) The service itself has a large number of lazy loading mechanisms (such as load balancing initialization). When the service is just online, due to the influx of concurrent traffic requests, a large number of requests are lazy loaded at the same time, so that the request response is slow, the thread is blocked, and even eventually causes the service to crash.
 
-（2） 服务无法做到优雅下线，就如前面提到的A场景，服务端下线而客户端服务无法及时感知，导致流量流入已下线的实例，从而丢失大量流量。
+(2) The service cannot be offline gracefully. Just like the scenario A mentioned above, the server is offline and the client service cannot sense it in time, which causes traffic to flow into the offline instance and loses a lot of traffic.
 
-## 优雅上下线提供了什么样的能力
-（1） 服务端预热能力
+## What kind of capabilities does graceful online and offline provide?
+(1) Server warm-up capability
 
-服务端预热是基于客户端实现的，当流量进入时，Sermant Agent会动态调整流量，根据服务的预热配置，对流量进行动态分配。对于开启服务预热的实例，在刚启动时，相对于其他已启动的实例，分配的流量会更少，流量将以曲线方式随时间推移增加直至与其他实例近乎持平。目的是采用少流量对服务实例进行初始化，防止服务崩溃。
+The server-side warm-up is implemented based on the client. When the traffic enters, the Sermant Agent will dynamically adjust the traffic and dynamically allocate the traffic according to the warm-up configuration of the service. Instances with service warm-up turned on will be allocated less traffic at first launch relative to other launched instances, and the traffic will increase over time in a curvilinear fashion until it is nearly equal to the other instances. The purpose is to initialize the service instance with less traffic to prevent the service from crashing.
 
-（2） 优雅下线能力
+(2) Graceful offline ability
 
-优雅下线结合服务端与客户端实现，主要实现点如下：
+Elegant offline combined with server and client implementation, the main implementation points are as follows：
 
-**反注册**
+**Anti-registration**
 
 <MyImage src="/docs-img/anti-registration.png"></MyImage>
 
-当服务端被要求下线时，Sermant Agent会动态根据当前注册中心进行反注册操作，及时刷新注册表，然而即使注册表已刷新，但是上游消费端因缓存问题却无法及时感知，从而引入下线通知。
+When the server is required to go offline, the Sermant Agent will dynamically perform the anti-registration operation according to the current registry and refresh the registry in time. However, even if the registry has been refreshed, the upstream consumer cannot sense it in time due to the cache problem, thus introducing offline Notice.
 
-**下线通知**
+**Offline notification**
 
 <MyImage src="/docs-img/offline-notification.png"></MyImage>
 
-进行反注册后，Sermant Agent会采用接口通知与响应通知的方式告知所有上游，并主动同步刷新provider实例缓存。
+After de-registration, the Sermant Agent will notify all upstreams by means of interface notification and response notification, and actively refresh the provider instance cache synchronously.
 
-**黑名单**
+**Blacklist**
 
 <MyImage src="/docs-img/blacklist.png"></MyImage>
 
-为保证流量不再调用已下线实例，引入黑名单机制。在客户端接收到下线通知后，自动将下线实例拉入黑名单，在执行流量分配时，自动过滤黑名单（已下线）实例，不再调用已下线实例。
+A blacklist mechanism is introduced to ensure that traffic will no longer call offline instances. After the client receives the offline notification, it automatically pulls the offline instance into the blacklist. When performing traffic distribution, it automatically filters the blacklisted (disconnected) instances, and no longer calls the offline instance.
 
-说明：黑名单采用定时刷新机制，默认为2分钟，即针对同一个IP实例，标记下线后，等待2分钟即可重新发现。
+Note: The blacklist adopts a timing refresh mechanism, the default is 2 minutes, that is, for the same IP instance, after marking it offline, it can be rediscovered after waiting for 2 minutes.
 
-**流量统计**
+**Traffic Statistics**
 
-为确保当前请求已全部处理完成，在服务下线时，Sermant Agent会尝试等待30s（可配置），定时统计和判断当前实例请求是否均处理完成，处理完成后最终下线。
+In order to ensure that the current request has been fully processed, when the service goes offline, the Sermant Agent will try to wait for 30s (configurable), regularly count and judge whether the current instance request has been processed, and finally go offline after the processing is completed.

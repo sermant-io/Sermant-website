@@ -3,24 +3,24 @@ layout: Blog
 name: 'Blog'
 goTo: 'goTo'
 blogArr: 
-    - name: Sermant Agent 优雅上下线
-      description: '为服务重启、上线、下线等操作提供保护，优雅，我是认真的。'
-      path: '/zh/blog/graceful-online-offline'
+    - name: The problem and analysis of class enhancement conflict when multiple JavaAgents are used at the same time
+      description: 'A customer of Sermant has integrated two sets of JavaAgent before integrating Sermant, but encountered the problem of class enhancement conflict during use.'
+      path: 'multiple-javaagent-class-enhancement'
       tags:
-      - 优雅上线
-      - 优雅下线
-    - name: Blog1
-      description: 'here is description'
-      path: '/zh/blog/blogtest1'
+      - JavaAgent
+      - Class Enhancement
+    - name: Zero code modification, teach you easy access to CSE for Spring Cloud applications
+      description: 'The access principle of Sermant Agent and how to use the Sermant Agent to access CSE without modification.'
+      path: 'springcloud-to-cse'
       tags:
-      - html
-      - javascript
-    - name: Blog1
-      description: 'here is description'
-      path: '/zh/blog/blogtest1'
+      - SpringCloud
+      - CSE
+    - name: Graceful Online/Offline
+      description: 'Provide protection for service restart, online, offline and other operations.'
+      path: 'graceful-online-offline'
       tags:
-      - html
-      - javascript
+      - Graceful Online
+      - Graceful Offline
 ---
-# 博客
+# Blog
 
