@@ -1,5 +1,16 @@
-import { Button, Card, Avatar, Tag, Pagination,Tooltip,Image } from "element-ui";
+import {
+  Button,
+  Card,
+  Avatar,
+  Tag,
+  Pagination,
+  Tooltip,
+  Image,
+} from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
+import en from "element-ui/lib/locale/lang/en";
+import zh from "element-ui/lib/locale/lang/zh-CN";
+import locale from "element-ui/lib/locale";
 import axios from "axios";
 export default ({
   Vue, // VuePress 正在使用的 Vue 构造函数
@@ -17,6 +28,11 @@ export default ({
   Vue.use(Image);
   Vue.prototype.$axios = axios;
   router.beforeEach((to, from, next) => {
+    if (to.path.indexOf("/en") !== -1) {
+      locale.use(en);
+    } else {
+      locale.use(zh);
+    }
     if (to.path.indexOf("/en") === -1 && to.path.indexOf("/zh") === -1) {
       next("/zh/");
     } else {

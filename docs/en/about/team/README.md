@@ -28,5 +28,17 @@ members:
       location: 'province'
       blog: ''
       github: ''
+    - name: Zhou ShengSheng
+      shortDesc: 'short description'
+      avatar: '/user-story-logo/huawei.gif'
+      location: 'province'
+      blog: ''
+      github: ''
+    - name: Peng YuYi
+      shortDesc: 'short description'
+      avatar: '/user-story-logo/huawei.gif'
+      location: 'province'
+      blog: ''
+      github: ''    
 ---
 # Hello Sermant 
