@@ -80,6 +80,7 @@ String version = BootArgsIndexer.getCoreVersion();
 ### 统一配置管理类
 
 **统一配置管理类**`ConfigManager`中，使用者可以通过`getConfig`方法获取**统一配置类**实例：
+
 ```java
 ConfigExample config = ConfigManager.getConfig(ConfigExample.class);
 ```
@@ -335,9 +336,8 @@ config.example:
 
 **插件设定配置**即`plugins.yaml`文件，在[**Sermant核心模块**](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core)中存在三个这样的文件：
 
-- [agent/plugins.yaml](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-config/config/plugins.yaml): 默认编译场景下的**插件设定配置**，不含示例工程。
-- [all/plugins.yaml](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-config/config/all/plugins.yaml): 执行-Pall参数打包时的**插件设定配置**，较`agent`多了示例工程
-- [example/plugins.yaml](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-config/config/example/plugins.yaml): 执行-Pexample参数打包时的**插件设定配置**，仅含示例工程
+- [config/plugins.yaml](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-config/config/plugins.yaml): 默认编译场景下的**插件设定配置**。
+- [config/test/plugins.yaml](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-config/config/test/plugins.yaml): 执行-Ptest参数打包时的**插件设定配置**，包含所有项目模块。
 
 `plugins.yaml`中，配置了**Sermant**启动后需要加载的插件目录，形如：
 

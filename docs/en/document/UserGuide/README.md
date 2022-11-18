@@ -14,8 +14,9 @@ This document describes how to develop and use Sermant in detail.
 **Sermant** contains the following modules:
 
 - [sermant-agentcore](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore): *Java Agent* related content
-  - [sermant-agentcore-core](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core): Core functional module of the framework
+  - [sermant-agentcore-core](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core): Core framework of **Sermant**
   - [sermant-agentcore-premain](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-premain): *Java Agent* entry module
+  - [sermant-agentcore-implement](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-implement): Implemention of core function of **Sermant**
   - [sermant-agentcore-config](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-config): Configuration module of the framework
 - [sermant-backend](https://github.com/huaweicloud/Sermant/tree/develop/sermant-backend): Server side of message sending module 
 - [sermant-package](https://github.com/huaweicloud/Sermant/tree/develop/sermant-package): Packaging module
@@ -26,15 +27,12 @@ This document describes how to develop and use Sermant in detail.
 
 The packaging process of **Sermant** is roughly divided into the following steps:
 
-- *agent*: Compile or package core function and plugins
-- *example*: Compile or package core function and demo modules(disabled by default)
-- *backend*: Compile or package **Sermant** backend module
-- *ext*: Compile and package the backend, frontend, and other add-ons that come with plugins
-- *package*: Archive the above packaging results as a product package
+- *agent*: Compile or package core function and stable plugins
+- *package*: Archive packaging results as a product package
 - *release*: Publish built artifacts to Maven Central Repository
-- *all*: Perform all the preceding steps (disabled by default)
+- *test*: Compile or package all the modules in Sermant
 
-Execute the following *maven* command  package the **Sermant** project by default：
+Execute the following *maven* command which packages the **Sermant** project by default with *agent*：
 
 ```shell
 mvn clean package -Dmaven.test.skip
@@ -49,7 +47,8 @@ After the command is executed, a folder such as `sermant-agent-x.x.x` and a comp
     - *bootstrap.properties*: Startup configuration
     - *config.properties*: Core function configuration
     - *plugins.yaml*: Plugin configuration, which config the plugin functionality that needs to be loaded
-  - *core/sermant-agentcore-core-x.x.x.jar*: Core package of **Sermant** framework
+  - *core/sermant-agentcore-core-x.x.x.jar*: Core framework of **Sermant**
+  - implement/sermant-agentcore-implement-x.x.x.jar: Implemention of core function of **Sermant**
   - *pluginPackage*: Plugin package directory, where plugins are classified by feature name
     - *xxx*: Any plugin functionality
       - *config/config.yaml*: Plugin configuration file

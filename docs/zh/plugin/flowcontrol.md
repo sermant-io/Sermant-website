@@ -388,7 +388,7 @@ servicecomb:
 
 ### 1、编译打包
 
-通过[此处](https://github.com/huaweicloud/Sermant/releases)下载sermant软件包, 并下载[Demo源码](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-flowcontrol/flowcontrol-demos/flowcontrol-demo)
+通过[此处](https://github.com/huaweicloud/Sermant/releases)下载sermant软件包, 并下载[Demo源码](https://github.com/huaweicloud/Sermant-examples/tree/main/flowcontrol-demo/spring-cloud-demo/spring-provider)
 
 执行以下maven命令对Demo应用执行打包
 
@@ -399,7 +399,7 @@ mvn clean package
 ### 2、启动应用
 
 ```shell
-java -javaagent:${agent路径}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=FlowControlDemo -Dservice.meta.application=region-A -Dservice.meta.environment=testing -Dspring.application.name=FlowControlDemo -jar FlowControlDemo.jar
+java -javaagent:${agent路径}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=spring-flow-provider -Dservice.meta.application=region-A -Dservice.meta.environment=testing -Dspring.application.name=spring-flow-provider -jar spring-provider.jar
 ```
 
 ### 3、配置规则
@@ -411,7 +411,7 @@ java -javaagent:${agent路径}\sermant-agent-x.x.x\agent\sermant-agent.jar=appNa
 ```json
 {
   "key": "servicecomb.matchGroup.sceneFlow",
-  "group": "app=sc&service=flowControlDemo&environment=testing",
+  "group": "app=sc&service=spring-flow-provider&environment=testing",
   "content": "alias: scene\nmatches:\n- apiPath:\n    exact: /flow\n  headers: {}\n  method:\n  - POST\n  name: flow\n"
 }
 ```
@@ -421,14 +421,14 @@ java -javaagent:${agent路径}\sermant-agent-x.x.x\agent\sermant-agent.jar=appNa
 ```json
 {
   "key": "servicecomb.rateLimiting.scene",
-  "group": "app=region-A&service=flowControlDemo&environment=testing",
+  "group": "app=region-A&service=spring-flow-provider&environment=testing",
   "content": "limitRefreshPeriod: \"2S\"\nname: flow\nrate: \"4\"\n"
 }
 ```
 
 ### 4、验证结果
 
-多次请求`localhost:12000/flow`, 若在2秒内请求数超过4个时返回`rate limited`，则触发流控成功
+多次请求`localhost:8003/flow`, 若在2秒内请求数超过4个时返回`rate limited`，则触发流控成功
 
 ## 其他
 

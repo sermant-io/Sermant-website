@@ -4,10 +4,10 @@
 
 Click [here](https://github.com/huaweicloud/Sermant/releases) to download **Sermant** binary package. If you will to compile the project yourself, please follow the following steps.
 
-Execute *maven* command to package the **Sermant** project's [demo module](https://github.com/huaweicloud/Sermant/tree/develop/sermant-example).
+Execute *maven* command to package the **Sermant** project's [demo module](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template).
 
 ```shell
-mvn clean package -Dmaven.test.skip -Pexample
+mvn clean package -Dmaven.test.skip
 ```
 
 ## Start Sermant
@@ -28,15 +28,15 @@ Start **Sermant** demo project:
 
 ```shell
 # Run under Linux
-java -cp sermant-example/demo-application/target/demo-application.jar \
-  -javaagent:sermant-agent-x.x.x/agent/sermant-agent.jar=appName=test \
+java -cp sermant-template/demo-application/target/demo-application.jar \
+  -javaagent:sermant-template/agent/sermant-agent.jar=appName=test \
   com.huawei.example.demo.DemoApplication
 ```
 
 ```shell
 # Run under Windows
-java -cp sermant-example\demo-application\target\demo-application.jar ^
-  -javaagent:sermant-agent-x.x.x\agent\sermant-agent.jar=appName=test ^
+java -cp sermant-template\demo-application\target\demo-application.jar ^
+  -javaagent:sermant-template\agent\sermant-agent.jar=appName=test ^
   com.huawei.example.demo.DemoApplication
 ```
 Check running status of Sermant. In this example, open the browser and navigate to the URL "http://localhost:8900".

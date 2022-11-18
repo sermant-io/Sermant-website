@@ -340,9 +340,8 @@ The contents contained in the startup parameters can be found in [Introduction t
 
 **Plugin Setup Configuration** is `plugins.yaml`. There are three such files in [**sermant-agentcore-core**](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core)：
 
-- [plugins.yaml](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-config/config/plugins.yaml): **Plugin Setup Configuration** for the default build scenario, without the example project.
-- [all/plugins.yaml](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-config/config/all/plugins.yaml): **Plugin Setup Configuration ** when executing the -Pall to package, with extra example project than `agent`.
-- [example/plugins.yaml](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-config/config/example/plugins.yaml): **Plugin Setup Configuration** when executing the -Pexample to package, including only the example project.
+- [config/plugins.yaml](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-config/config/plugins.yaml): **Plugin Setup Configuration** for the default build scenario.
+- [config/test/plugins.yaml](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-config/config/test/plugins.yaml): **Plugin Setup Configuration ** when executing the -Ptest to package all modules.
 
 In `plugins.yaml`, the plugins is configured to be loaded when **Sermant** starts, like this:
 
@@ -470,5 +469,4 @@ For more information on the **Plugin Configuration System**, refer to the [Plugi
 **Plugin Service System** is a special case of [**Core Service System**](#Core-Service-System), which is mainly used to load the PluginService `PluginService`. So it follows the rules of **Core Service System**.
 
 For more information on the **Plugin Service System**, refer to the [Plugin Code Development Guide](https://github.com/huaweicloud/Sermant/tree/develop/docs/dev-guide/dev_plugin_code.md#Plugin-Service).
-
 

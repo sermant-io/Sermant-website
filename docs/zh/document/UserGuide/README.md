@@ -14,27 +14,25 @@ Sermant 是基于Java Agent的字节码增强技术，通过 Java Agent 对宿�
 **Sermant**包含以下模块：
 
 - [sermant-agentcore](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore): *Java Agent*相关内容
-    - [sermant-agentcore-core](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core): 核心功能模块
+    - [sermant-agentcore-core](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core): 核心框架模块
     - [sermant-agentcore-premain](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-premain): *Java Agent*入口模块
+    - [sermant-agentcore-implement](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-implement): 核心功能实现模块
     - [sermant-agentcore-config](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-config): 配置模块
 - [sermant-backend](https://github.com/huaweicloud/Sermant/tree/develop/sermant-backend): 消息发送模块服务端
 - [sermant-package](https://github.com/huaweicloud/Sermant/tree/develop/sermant-package): 打包模块
 - [sermant-plugins](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins): 插件根模块，内含各种功能的插件及相关附加件
 - [sermant-injector](https://github.com/huaweicloud/Sermant/tree/develop/sermant-injector): sermant-agent容器化部署Admission Webhook组件
 
-## 打包流程
+## 打包
 
-**Sermant**的打包流程大致分为以下步骤：
+**Sermant**项目中包含以下几种profile，对应不同使用场景：
 
-- *agent*: 编译、打包核心功能和插件
-- *example*: 编译、打包核心功能和示例模块(默认不开启)
-- *backend*: 编译、打包**Sermant**后端模块
-- *ext*: 编译、打包插件附带的后端、前端和其他附加件
-- *package*: 将以上的打包结果归档为产品包
+- *agent*: 编译、打包核心功能和发布的稳定版本插件。
+- *package*: 将打包结果归档为产品包
 - *release*: 发布构建产物到中央仓库
-- *all*: 执行以上全部步骤(默认不开启)
+- *test*: 编译打包所有项目模块
 
-执行以下*maven*命令，对**Sermant**工程进行默认打包：
+执行以下*maven*命令，对**Sermant**工程使用*agent*进行默认打包：
 
 ```shell
 mvn clean package -Dmaven.test.skip
@@ -49,7 +47,8 @@ mvn clean package -Dmaven.test.skip
         - *bootstrap.properties*: 启动配置
         - *config.properties*: 核心功能配置
         - *plugins.yaml*: 插件配置，配置着需要被加载的插件功能
-    - *core/sermant-agentcore-core-x.x.x.jar*: **Sermant**的核心功能包
+    - *core/sermant-agentcore-core-x.x.x.jar*: **Sermant**的核心框架包
+    - implement/sermant-agentcore-implement-x.x.x.jar: **Sermant**核心功能实现包
     - *pluginPackage*: 插件包目录，插件按功能名称分类
         - *xxx*: 任意插件功能
             - *config/config.yaml*: 插件配置文件

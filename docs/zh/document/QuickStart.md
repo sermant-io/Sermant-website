@@ -4,10 +4,10 @@
 
 点击[此处](https://github.com/huaweicloud/Sermant/releases)下载**Sermant**二进制包。如果您想自己编译项目，请遵循以下步骤。
 
-执行*maven*命令来打包**Sermant**项目的 [demo module](https://github.com/huaweicloud/Sermant/tree/develop/sermant-example)。
+执行*maven*命令来打包**Sermant**项目的 [demo module](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template)。
 
 ```shell
-mvn clean package -Dmaven.test.skip -Pexample
+mvn clean package -Dmaven.test.skip
 ```
 
 ## 启动Sermant
@@ -28,15 +28,15 @@ java -jar sermant-agent-x.x.x\server\sermant\sermant-backend-x.x.x.jar
 
 ```shell
 # Run under Linux
-java -cp sermant-example/demo-application/target/demo-application.jar \
-  -javaagent:sermant-agent-x.x.x/agent/sermant-agent.jar=appName=test \
+java -cp sermant-template/demo-application/target/demo-application.jar \
+  -javaagent:sermant-template/agent/sermant-agent.jar=appName=test \
   com.huawei.example.demo.DemoApplication
 ```
 
 ```shell
 # Run under Windows
-java -cp sermant-example\demo-application\target\demo-application.jar ^
-  -javaagent:sermant-agent-x.x.x\agent\sermant-agent.jar=appName=test ^
+java -cp sermant-template\demo-application\target\demo-application.jar ^
+  -javaagent:sermant-template\agent\sermant-agent.jar=appName=test ^
   com.huawei.example.demo.DemoApplication
 ```
 
