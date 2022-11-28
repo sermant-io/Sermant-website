@@ -4,13 +4,14 @@ This document is used to introduce the usage of [Flow Control Plugin](https://gi
 
 ## Functions
 
-The flow control plugin is based on the [resilience4j]((https://github.com/resilience4j)) framework and implements non-intrusive flow control based on the "traffic" entry point. Currently, **Traffic Limiting, Circuit Breaker, Bulkhead, Error Injection, and Retry** are supported. In addition, rules can be dynamically configured in the configuration center and take effect in real time.
+The flow control plugin is based on the [resilience4j]((https://github.com/resilience4j)) framework and implements non-intrusive flow control based on the "traffic" entry point. Currently, **Traffic Limiting, Circuit Breaker, Bulkhead, Error Injection, Retry and Fusing index collection** are supported. In addition, rules can be dynamically configured in the configuration center and take effect in real time.
 
 - **Traffic Limiting**：The number of QPS that pass through a specified interface within 1s is limited. When the traffic within 1s exceeds the specified threshold, flow control is triggered to limit the requested traffic.
 - **Circuit Breaker**：Configure a circuit breaker policy for a specified interface to collect statistics on the error rate or slow request rate in a specified time window. When the error rate or slow request rate reaches a specified threshold, the circuit breaker is triggered. Before the time window is reset, all requests are isolated.
 - **Bulkhead**：Controls concurrent traffic for a large number of concurrent traffic to prevent service breakdown caused by excessive instantaneous concurrent traffic.
 - **Retry**：If a service encounters a non-fatal error, you can retry the service to prevent the service failure.
 - **Error Injection:**  An error injection policy is configured for a specified service when the service is running. Before the client accesses the target service, the error injection policy is used. This policy is mainly used to reduce the access load of the target service and can be used as a measure of downgrading the target service.
+- **Fusing index collection:** During the service operation, collect the information related to the fuse, and report the indicators with the help of the [monitoring plugin](./monitor.md)
 
 ## Usage
 
@@ -388,6 +389,21 @@ The backend service provides the function of publishing configurations through t
   >
   > The key must be preceded by servicecomb.faultInjection. and scene indicates the service name. Ensure that the value is the same as the service scenario name of the traffic tag.
 
+- #### Description of Fusing Index
+  - Fusing indicator collection: collect the fusing indicator information under the fusing rules of the host service, and report it through [monitoring plugin](./monitor.md).
+  - The main indicators collected are:
+
+```shell
+  double fused_request;             // Number of requests passing the fusing rule
+  double failure_fuse_request;      // Number of failed requests in the fusing rule
+  double failure_rate_fuse_request; // Pass the failure rate in the fusing rule
+  double avg_response_ time;        // Average response time of requests through fusing rules
+  double slow_call_number;          // Number of slow requests
+  double permitted_fuse_request;    // Number of fused requests
+  double qps;                       // Number of requests per second passing the fusing rule
+  double tps;                       // Number of processes per second passed the fusing rule
+```
+
 ## Quick Start
 
 ### 1、Compile And Package
@@ -434,6 +450,7 @@ Configure traffic marking and traffic limiting rules by referring to [Configurin
 
 Request `localhost:8003/flow` for multiple times. If `rate limited` is returned when the number of requests exceeds 4 within 2 seconds, flow control is triggered successfully.
 
+See [monitoring plugin](./monitor.md) for the successful verification of monitoring collection.
 ## Others
 
 If you encounter any problems, refer to the [FAQ document](../about/question/flowcontrol.md).
