@@ -1,6 +1,6 @@
 ---
 layout: Blog
-name: '博客'
+name: 'CN中文博客'
 goTo: '直接前往'
 blogArr:
     - name: 记一次多个JavaAgent同时使用的类增强冲突问题及分析
@@ -23,4 +23,4 @@ blogArr:
       - 优雅下线
 ---
 
-# 博客
+# CN中文博客
