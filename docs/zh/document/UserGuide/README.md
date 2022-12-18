@@ -1,4 +1,4 @@
-# Sermant 开发和使用介绍
+# Sermant 使用介绍
 
 Sermant 是基于Java Agent的字节码增强技术，通过 Java Agent 对宿主应用进行非侵入式增强，以解决Java应用的微服务治理问题。Sermant的初衷是建立一个面向微服务治理的对开发态无侵入的解决方案生态，降低服务治理开发和使用的难度，通过抽象接口、功能整合、插件隔离等手段，达到简化开发、功能即插即用的效果。
 
@@ -56,9 +56,6 @@ mvn clean package -Dmaven.test.skip
             - *service*: 插件服务包目录
     - *sermant-agent.jar*: JavaAgent入口包
 - *server*: 服务器目录，含**Sermant**的服务端，插件的服务端和客户端
-
-## 容器化部署说明
-k8s环境下，Sermant支持通过sermant-injector组件实现宿主应用自动挂载sermant-agent包的快速部署方式。如何部署sermant-injector与宿主应用可以参考[容器化部署指导手册](https://github.com/huaweicloud/Sermant/tree/develop/docs/user-guide/injector-zh.md)
 
 ## 插件开发
 

@@ -36,7 +36,6 @@ module.exports = {
             items: [
               { text: "常见问题", link: "/zh/about/question/framework" },
               { text: "版本发布", link: "/zh/about/version/" },
-              { text: "社区指南", link: "/zh/about/community/" },
             ],
           },
           { text: "Github", link: "https://github.com/huaweicloud/Sermant" },
@@ -60,6 +59,30 @@ module.exports = {
                 "UserGuide/agentcore",
                 "UserGuide/entrance",
                 "UserGuide/backend",
+                "UserGuide/plugin",
+                "UserGuide/service-dynamic-config",
+                "UserGuide/service-heartbeat",
+              ],
+            },
+            {
+              title: "开发者指南",
+              path: "",
+              collapsable: true,
+              sidebarDepth: 1,
+              children: [
+                "DeveloperGuide/dev-plugin",
+                "DeveloperGuide/dev-plugin-idea",
+                "DeveloperGuide/third-party-copyright",
+                "DeveloperGuide/version-manage",
+              ],
+            },
+            {
+              title: "运维指南",
+              path: "",
+              collapsable: true,
+              sidebarDepth: 1,
+              children: [
+                "OperationGuide/injector",
               ],
             },
             {
@@ -91,7 +114,6 @@ module.exports = {
           "/zh/blog/": [""],
           "/zh/about/question/": ["framework", "flowcontrol", "registry"],
           "/zh/about/version/": [""],
-          "/zh/about/community/": [""],
         },
       },
       "/en/": {
@@ -107,7 +129,6 @@ module.exports = {
             items: [
               { text: "Common Problem", link: "/en/about/question/framework" },
               { text: "Release Version", link: "/en/about/version/" },
-              { text: "Community Guide", link: "/en/about/community/" },
             ],
           },
           { text: "Github", link: "https://github.com/huaweicloud/Sermant" },
@@ -131,6 +152,30 @@ module.exports = {
                 "UserGuide/agentcore",
                 "UserGuide/entrance",
                 "UserGuide/backend",
+                "UserGuide/plugin",
+                "UserGuide/service-dynamic-config",
+                "UserGuide/service-heartbeat",
+              ],
+            },
+            {
+              title: "Developer Guide",
+              path: "",
+              collapsable: true,
+              sidebarDepth: 1,
+              children: [
+                "DeveloperGuide/dev-plugin",
+                "DeveloperGuide/dev-plugin-idea",
+                "DeveloperGuide/third-party-copyright",
+                "DeveloperGuide/version-manage",
+              ],
+            },
+            {
+              title: "Operation Guide",
+              path: "",
+              collapsable: true,
+              sidebarDepth: 1,
+              children: [
+                "OperationGuide/injector",
               ],
             },
             {
@@ -162,7 +207,6 @@ module.exports = {
           "/zh/blog/": [""],
           "/en/about/question/": ["framework", "flowcontrol", "registry"],
           "/en/about/version/": [""],
-          "/en/about/community/": [""],
         },
       },
     },

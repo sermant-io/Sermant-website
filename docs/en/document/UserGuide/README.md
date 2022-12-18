@@ -1,4 +1,4 @@
-# Introduction to Sermant Development and Usage
+# Introduction to the use of Sermant
 
 Sermant is a bytecode enhancement technology based on Java Agent. It uses Java Agent to enhance the host application in a non-intrusive way to solve the microservice governance problem of Java applications. The original intention of Sermant is to establish a solution ecosystem for micro-service governance that is non-intrusive to the development state, reduce the difficulty of service governance development and use, and achieve the effect of simplified development and plug-and-play by means of abstract interface, function integration and plugin isolation.
 
@@ -56,9 +56,6 @@ After the command is executed, a folder such as `sermant-agent-x.x.x` and a comp
       - *service*: plugin service's package directory
   - *sermant-agent.jar*: Java Agent entry package
 - *server*: Server directory, which contains server with **Sermant**, plugin server and client
-
-## Containerized Deployment
-In K8S environment, Sermant supports quickly deployment by using Sermant-Injector module to automatically mount Sermant-Agent package for host application. To know more about deploying Sermant-Injector and host applications, you can refer to [Containerized Deployment Guide](https://github.com/huaweicloud/Sermant/tree/develop/docs/user-guide/injector.md).
 
 ## Plugin Development
 
