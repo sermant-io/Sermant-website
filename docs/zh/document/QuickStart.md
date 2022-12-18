@@ -12,19 +12,7 @@ mvn clean package -Dmaven.test.skip
 
 ## 启动Sermant
 
-启动 **Sermant** backend, **准备zookeeper**。
-
-```shell
-# Run under Linux
-java -jar sermant-agent-x.x.x/server/sermant/sermant-backend-x.x.x.jar
-```
-
-```shell
-# Run under Windows
-java -jar sermant-agent-x.x.x\server\sermant\sermant-backend-x.x.x.jar
-```
-
-启动 **Sermant** demo 应用：
+**准备和启动zookeeper**，启动 **Sermant** demo 应用：
 
 ```shell
 # Run under Linux

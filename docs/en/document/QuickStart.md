@@ -12,19 +12,7 @@ mvn clean package -Dmaven.test.skip
 
 ## Start Sermant
 
-Start **Sermant** backend, **Prepare zookeeper**.
-
-```shell
-# Run under Linux
-java -jar sermant-agent-x.x.x/server/sermant/sermant-backend-x.x.x.jar
-```
-
-```shell
-# Run under Windows
-java -jar sermant-agent-x.x.x\server\sermant\sermant-backend-x.x.x.jar
-```
-
-Start **Sermant** demo project: 
+**Prepare and start zookeeper**, start **Sermant** demo project: 
 
 ```shell
 # Run under Linux
