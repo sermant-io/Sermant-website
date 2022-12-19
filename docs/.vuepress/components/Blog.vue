@@ -122,10 +122,14 @@ export default {
   },
   methods: {
     goToDetail(name) {
-      if (this.$router.currentRoute.path.indexOf("/zh/") !== -1) {
-        this.$router.push(`/zh/blog/${name}/`);
-      } else {
-        this.$router.push(`/en/blog/${name}/`);
+      if(name.indexOf("http")===0){
+        window.open(name);
+      }else{
+        if (this.$router.currentRoute.path.indexOf("/zh/") !== -1) {
+          this.$router.push(`/zh/blog/${name}/`);
+        } else {
+          this.$router.push(`/en/blog/${name}/`);
+        }
       }
     },
     handleSizeChange() {
