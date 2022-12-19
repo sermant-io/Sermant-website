@@ -1,4 +1,4 @@
-# FAQ About Sermant Framework
+# Sermant Framework FAQs
 
 ## **What does the input parameter “appName” mean**
 

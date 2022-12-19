@@ -1,4 +1,4 @@
-# Sermant 框架功能
+# Sermant 框架常见问题
 
 ## 启动参数appName是什么参数?
 

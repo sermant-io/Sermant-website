@@ -1,4 +1,4 @@
-# Service Registration FAQ
+# Service Registration FAQs
 
 This document describes frequently asked questions (FAQs) about using the [service registration plugin](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-registry).
 

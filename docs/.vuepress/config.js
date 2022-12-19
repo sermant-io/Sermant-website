@@ -31,13 +31,7 @@ module.exports = {
         nav: [
           { text: "文档", link: "/zh/document/" },
           { text: "CN中文博客", link: "/zh/blog/" },
-          {
-            text: "关于",
-            items: [
-              { text: "常见问题", link: "/zh/about/question/framework" },
-              { text: "版本发布", link: "/zh/about/version/" },
-            ],
-          },
+          { text: "FAQ", link: "/zh/faq/"},
           { text: "Github", link: "https://github.com/huaweicloud/Sermant" },
         ],
         sidebar: {
@@ -113,8 +107,7 @@ module.exports = {
             },
           ],
           "/zh/blog/": [""],
-          "/zh/about/question/": ["framework", "flowcontrol", "registry"],
-          "/zh/about/version/": [""],
+          "/zh/faq/": ["framework","registry","flowcontrol"],
         },
       },
       "/en/": {
@@ -125,13 +118,7 @@ module.exports = {
         nav: [
           { text: "Document", link: "/en/document/" },
           { text: "CN中文博客", link: "/zh/blog/" },
-          {
-            text: "About",
-            items: [
-              { text: "Common Problem", link: "/en/about/question/framework" },
-              { text: "Release Version", link: "/en/about/version/" },
-            ],
-          },
+          { text: "FAQ", link: "/en/faq/"},
           { text: "Github", link: "https://github.com/huaweicloud/Sermant" },
         ],
         sidebar: {
@@ -207,8 +194,7 @@ module.exports = {
             },
           ],
           "/zh/blog/": [""],
-          "/en/about/question/": ["framework", "flowcontrol", "registry"],
-          "/en/about/version/": [""],
+          "/en/faq/": ["framework","registry","flowcontrol"],
         },
       },
     },
