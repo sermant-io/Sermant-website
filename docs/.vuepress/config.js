@@ -30,8 +30,7 @@ module.exports = {
         lastUpdated: "上次更新",
         nav: [
           { text: "文档", link: "/zh/document/" },
-          { text: "CN中文博客", link: "/zh/blog/" },
-          { text: "FAQ", link: "/zh/faq/"},
+          { text: "博客", link: "/zh/blog/" },
           { text: "Github", link: "https://github.com/huaweicloud/Sermant" },
         ],
         sidebar: {
@@ -99,15 +98,25 @@ module.exports = {
               ],
             },
             {
-              title: "贡献者指南",
+              title: "社区指南",
               path: "",
               collapsable: true,
               sidebarDepth: 1,
-              children: ["CONTRIBUTING"],
+              children: ["VERSION","CONTRIBUTING"],
+            },
+            {
+              title: "FAQ",
+              path: "",
+              collapsable: true,
+              sidebarDepth: 1,
+              children: [
+                "FAQ/framework",
+                "FAQ/registry",
+                "FAQ/flowcontrol",
+              ],
             },
           ],
           "/zh/blog/": [""],
-          "/zh/faq/": ["framework","registry","flowcontrol"],
         },
       },
       "/en/": {
@@ -117,8 +126,7 @@ module.exports = {
         lastUpdated: "Last Updated",
         nav: [
           { text: "Document", link: "/en/document/" },
-          { text: "CN中文博客", link: "/zh/blog/" },
-          { text: "FAQ", link: "/en/faq/"},
+          { text: "Blog", link: "/en/blog/" },
           { text: "Github", link: "https://github.com/huaweicloud/Sermant" },
         ],
         sidebar: {
@@ -186,15 +194,25 @@ module.exports = {
               ],
             },
             {
-              title: "Contributor Guide",
+              title: "Community Guide",
               path: "",
               collapsable: true,
               sidebarDepth: 1,
-              children: ["CONTRIBUTING"],
+              children: ["VERSION","CONTRIBUTING"],
+            },
+            {
+              title: "FAQ",
+              path: "",
+              collapsable: true,
+              sidebarDepth: 1,
+              children: [
+                "FAQ/framework",
+                "FAQ/registry",
+                "FAQ/flowcontrol",
+              ],
             },
           ],
-          "/zh/blog/": [""],
-          "/en/faq/": ["framework","registry","flowcontrol"],
+          "/en/blog/": [""],
         },
       },
     },
