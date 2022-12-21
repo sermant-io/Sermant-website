@@ -1,6 +1,6 @@
 ---
 layout: Blog
-name: 'CN中文博客'
+name: '博客'
 goTo: '直接前往'
 blogArr:
     - name: 云原生微服务治理技术朝无代理架构的演进之路
@@ -30,4 +30,4 @@ blogArr:
       - 优雅下线
 ---
 
-# CN中文博客
+# 博客
