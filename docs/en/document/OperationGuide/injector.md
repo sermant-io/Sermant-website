@@ -103,6 +103,26 @@ Modify the template variable in `values.yaml` according to the actual environmen
 >    kubectl config view --raw --minify --flatten -o jsonpath='{.clusters[].cluster.certificate-authority-data}'
 >    ```
 
+**Configuration of common environment variables：**
+
+sermant-injector allows you to configure custom environment variables for the host pods by modifying the env content in `values.yaml` as follows (kv form) :
+
+```yaml
+env:
+  TEST_ENV1: abc
+  TEST_ENV2: 123456
+```
+
+For example, during the use of Sermant, some configurations are common to the pods in the current K8s cluster, such as the ip and port of the **Backend**. You can configure them like this:
+
+```yaml
+env:
+  backend.httpIp: 127.0.0.1
+  backend.httpPort: 8900
+```
+
+Then all pod-mounted sermants are connected to the **Backend**.
+
 Once this is done, execute `helm install` to deploy the sermant-injector workload in K8s:
 
 ```shell
