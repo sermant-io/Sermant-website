@@ -102,7 +102,29 @@ sh build-injector-image.sh
 >    kubectl config view --raw --minify --flatten -o jsonpath='{.clusters[].cluster.certificate-authority-data}'
 >    ```
 
-完成后，执行`helm install`命令在k8s中部署sermant-injector实例:
+**公共环境变量配置：**
+
+sermant-injector支持为宿主应用所在pod配置自定义的环境变量，方法为在`values.yaml`中修改env的内容，修改方式如下(kv形式)：
+
+```yaml
+env:
+  TEST_ENV1: abc
+  TEST_ENV2: 123456
+```
+
+例如，在Sermant使用过程中，某些配置为当前k8s集群下各pod共享的公共配置，例如**Backend**后端的ip和端口等。则可在此处配置：
+
+```yaml
+env:
+  backend.httpIp: 127.0.0.1
+  backend.httpPort: 8900
+```
+
+即可使所有pod挂载的Sermant都与该**Backend**后端连接。
+
+
+
+上述配置修改完成后，执行`helm install`命令在k8s中部署sermant-injector实例:
 
 ```shell
 helm install sermant-injector ../injector
