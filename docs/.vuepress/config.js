@@ -48,13 +48,11 @@ module.exports = {
               collapsable: true,
               sidebarDepth: 1,
               children: [
-                "UserGuide/",
-                "UserGuide/agentcore",
-                "UserGuide/entrance",
-                "UserGuide/backend",
-                "UserGuide/plugin",
-                "UserGuide/service-dynamic-config",
-                "UserGuide/service-heartbeat",
+                "user-guide/",
+                "user-guide/javaagent",
+                "user-guide/backend",
+                "user-guide/configuration-center",
+                "user-guide/injector",
               ],
             },
             {
@@ -67,15 +65,6 @@ module.exports = {
                 "DeveloperGuide/dev-plugin-idea",
                 "DeveloperGuide/third-party-copyright",
                 "DeveloperGuide/version-manage",
-              ],
-            },
-            {
-              title: "运维指南",
-              path: "",
-              collapsable: true,
-              sidebarDepth: 1,
-              children: [
-                "OperationGuide/injector",
               ],
             },
             {
@@ -144,13 +133,11 @@ module.exports = {
               collapsable: true,
               sidebarDepth: 1,
               children: [
-                "UserGuide/",
-                "UserGuide/agentcore",
-                "UserGuide/entrance",
-                "UserGuide/backend",
-                "UserGuide/plugin",
-                "UserGuide/service-dynamic-config",
-                "UserGuide/service-heartbeat",
+                "user-guide/",
+                "user-guide/javaagent",
+                "user-guide/backend",
+                "user-guide/configuration-center",
+                "user-guide/injector",
               ],
             },
             {
@@ -163,15 +150,6 @@ module.exports = {
                 "DeveloperGuide/dev-plugin-idea",
                 "DeveloperGuide/third-party-copyright",
                 "DeveloperGuide/version-manage",
-              ],
-            },
-            {
-              title: "Operation Guide",
-              path: "",
-              collapsable: true,
-              sidebarDepth: 1,
-              children: [
-                "OperationGuide/injector",
               ],
             },
             {
