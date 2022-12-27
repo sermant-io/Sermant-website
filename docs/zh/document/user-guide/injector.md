@@ -5,13 +5,6 @@
 
 [Helm v3](https://helm.sh/)
 
-## 生成证书
-Kubernetes webhook只能通过HTTPS(SSL/TLS)调用，因此需要为sermant-injector生成ssl key和证书。
-
-在k8s任一节点上任一目录下执行`scripts`下的`certificate.sh`脚本。
-
-> 注意：脚本中`NAMESPACE`参数必须和`deployment/release`下的`values.yaml`中的`namespace.name`保持一致。其他参数无需修改
-
 ## 构建镜像
 
 在部署sermant-injector前需要先构建sermant-agent镜像以及sermant-injector镜像。
@@ -71,15 +64,7 @@ sh build-injector-image.sh
 
 按实际环境修改`values.yaml`中的模版变量：
 
-> 1. `namespace.name`变量与`certificate.sh`中的`NAMESPACE`参数必须保持一致
->
-> 2. `agent.image.addr`和`injector.image.addr`变量与构建镜像时的镜像地址保持一致
->
-> 3. `injector.webhook.caBundle`变量为k8s证书，可在k8s节点执行以下命令获取：
->
->    ```shell
->    kubectl config view --raw --minify --flatten -o jsonpath='{.clusters[].cluster.certificate-authority-data}'
->    ```
+> `agent.image.addr`和`injector.image.addr`变量与构建镜像时的镜像地址保持一致
 
 **公共环境变量配置：**
 
