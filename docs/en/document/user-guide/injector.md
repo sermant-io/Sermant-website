@@ -5,14 +5,6 @@
 
 [Helm v3](https://helm.sh/)
 
-## Generate a Certificate for Sermant-injector
-
-The Kubernetes webhook can only be invoked over HTTPS(SSL/TLS), so the SSL key and certificate need to be generated for the sermant-injector.
-
-Execute the `certificate.sh` script under `scripts` in any directory of any K8s node.
-
-> NOTE：The parameter `NAMESPACE` must be set as the same value as `namespace.name` in `values.yaml` under `deployment/release`. No need to modify other parameters.
-
 ## Build Images
 
 Before deploying **sermant-injector**, you need to build the **sermant-agent** image and the **sermant-injector** image.
@@ -72,15 +64,7 @@ Use Chart template in`injector` under `deploment/release`.
 
 Modify the template variable in `values.yaml` according to the actual environment:
 
-> 1. The value of `namespace.name` must be identical to the `NAMESPACE` in `certificate.sh`
->
-> 2. The values of `agent.image.addr` and `injector.image.addr` are the same as the image address when the images are built
->
-> 3. `injector.webhook.caBundle` is the K8s certificate, which can be obtained from the K8s node by executing the following command：
->
->    ```shell
->    kubectl config view --raw --minify --flatten -o jsonpath='{.clusters[].cluster.certificate-authority-data}'
->    ```
+> The values of `agent.image.addr` and `injector.image.addr` are the same as the image address when the images are built
 
 **Configuration of common environment variables：**
 
