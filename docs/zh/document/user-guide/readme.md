@@ -4,37 +4,67 @@ Sermant 是基于Java Agent的字节码增强技术，通过 Java Agent 对宿�
 
 ## 架构简介
 
-**Sermant**包含两层功能。
-- 框架核心层：提供Sermant的基本框架功能，以简化插件开发。
-- 插件服务层：插件为宿主应用提供实际的治理服务。
+Sermant整体架构包括sermant-agent、Backend、配置中心、sermant-injector等组件。其中sermant-agent为核心字节码增强的实现组件，其余为Sermant架构的配套组件。
 
-**Sermant**包含以下模块：
+### sermant-agent
 
-- [sermant-agentcore](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore): *Java Agent*相关内容
-    - [sermant-agentcore-core](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core): 核心框架模块
-    - [sermant-agentcore-premain](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-premain): *Java Agent*入口模块
-    - [sermant-agentcore-implement](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-implement): 核心功能实现模块
-    - [sermant-agentcore-config](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-config): 配置模块
-- [sermant-backend](https://github.com/huaweicloud/Sermant/tree/develop/sermant-backend): 消息发送模块服务端
-- [sermant-package](https://github.com/huaweicloud/Sermant/tree/develop/sermant-package): 打包模块
-- [sermant-plugins](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins): 插件根模块，内含各种功能的插件及相关附加件
-- [sermant-injector](https://github.com/huaweicloud/Sermant/tree/develop/sermant-injector): sermant-agent容器化部署Admission Webhook组件
+sermant-agent为Sermant必要核心组件，包含[sermant-agentcore](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore)、[sermant-plugins](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins)、[sermant-common](https://github.com/huaweicloud/Sermant/tree/develop/sermant-common)等字节码增强的实现，在宿主应用启动时通过`-javaagent`参数指定`sermant-agent.jar`包来挂载生效。
 
-## 版本支持介绍
+sermant-agent基于Java Agent技术，支持JDK 1.6及以上版本。
 
-### JavaAgent 支持的版本
+更多sermant-agent使用指南请参考[sermant-agent使用手册](sermant-agent.md)。
 
-JavaAgent支持Linux、Windows、Aix操作系统,支持JDK 1.6及以上版本，建议使用JDK 1.8版本。
+### Backend
 
-- [HuaweiJDK 1.8](https://gitee.com/openeuler/bishengjdk-8) / [OpenJDK 1.8](https://github.com/openjdk/jdk) / [OracleJDK 1.8](https://www.oracle.com/java/technologies/downloads/)
+Backend为Sermant数据处理后端模块和前端信息展示模块，当前主要包括Sermant心跳信息的接收和展示等功能。
 
-### 配置中心支持的版本
+Backend为Sermant的非必要组件，但是非常推荐用户部署Backend以获得Sermant的可观测性。
 
-目前Sermant支持的配置中心:
-- [ZooKeeper](https://zookeeper.apache.org/releases.html)，使用版本为3.6.3。
-- [ServiceComb Kie](https://servicecomb.apache.org/cn/release/kie-downloads/)，使用的版本为0.2.0.
+更多Backend使用指南请参考[Backend使用手册](backend.md)。
 
-### injector支持的版本
+### 配置中心
 
-injector是sermant-agent容器化部署Admission Webhook组件，支持在k8s **1.15**版本及以上环境部署。
+配置中心为Sermant动态配置功能启用后必要配套组件，该功能允许Sermant动态从配置中心拉取配置以实现丰富多样的服务治理能力，例如标签路由、流控等。如不开启Sermant动态配置能力，配置中心可无需部署。
 
+Sermant配置中心目前支持两种类型：Zookeeper和[ServiceComb Kie](https://github.com/apache/servicecomb-kie)。
+
+更多配置中心使用指南请参考[配置中心使用手册](configuration-center.md)。
+
+### **sermant-injector**
+
+Sermant支持在容器环境下通过sermant-injector组件实现宿主应用自动挂载Sermant的快速部署方式，只需在应用部署的`yaml`中的`labels`添加`sermant-injection: enabled`即可实现该功能。
+
+sermant-injector为Sermant非必要组件，但是非常推荐用户在容器环境中部署该组件以获得快速部署能力。当前sermant-injector支持在k8s **1.15**版本及以上环境部署。
+
+更多sermant-injector使用指南请参考[sermant-injector使用手册](injector.md)。
+
+## 编译打包
+
+### 打包方式
+
+**Sermant**项目中包含以下几种profile，对应不同使用场景：
+
+- *agent*: 编译打包核心功能和发布的稳定版本插件。
+- *release*: 发布构建产物到中央仓库
+- *test*: 编译打包所有项目模块
+
+执行以下*maven*命令，对**Sermant**工程使用*agent*进行打包：
+
+```shell
+mvn clean package -DskipTests -Pagent
+```
+
+命令执行完毕后，工程目录下将生成一个形如`sermant-agent-x.x.x`的文件夹和形如`sermant-agent-x.x.x.tar.gz`的压缩文件，后者为**Sermant**的产品包，前者则为产品包解压后的内容。
+
+### 产品目录说明
+
+`sermant-agent-x.x.x`目录下包含以下内容
+
+- *agent*: 包含sermant-agent相关内容
+    - *config*: 包含**Sermant**配置文件
+    - *core*: 包含**Sermant**的核心框架包
+    - implement: 包含**Sermant**核心功能实现包
+    - *common*: 包含**Sermant**公共依赖包
+    - *pluginPackage*: 包含各扩展功能插件包以及配置文件等
+    - *sermant-agent.jar*: **Sermant**入口包，`-javaagent`参数的指定入口
+- *server*: 包含**Sermant**的服务端，例如Backend等。

@@ -4,37 +4,68 @@ Sermant is a bytecode enhancement technology based on Java Agent. It uses Java A
 
 ## Architecture Introduction
 
-**Sermant** contains two layers of functions.
-- Framework core layer: Provides basic framework functions of Sermant to simplify plug-in development.
-- Plugin service layer: The plug-in provides the actual governance service for the host application.
+The overall architecture of Sermant includes sermant-agent, Backend, configuration center, sermant-injector and other components. Among them, sermant-agent is the implementation component of the core bytecode enhancement, and the rest are the supporting components of the Sermant architecture.
 
-**Sermant** contains the following modules:
+### sermant-agent
 
-- [sermant-agentcore](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore): *Java Agent* related content
-  - [sermant-agentcore-core](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core): Core framework of **Sermant**
-  - [sermant-agentcore-premain](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-premain): *Java Agent* entry module
-  - [sermant-agentcore-implement](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-implement): Implemention of core function of **Sermant**
-  - [sermant-agentcore-config](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-config): Configuration module of the framework
-- [sermant-backend](https://github.com/huaweicloud/Sermant/tree/develop/sermant-backend): Server side of message sending module 
-- [sermant-package](https://github.com/huaweicloud/Sermant/tree/develop/sermant-package): Packaging module
-- [sermant-plugins](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins):  Root module of plugins, contains a variety of functional plugins and related add-ons
-- [sermant-injector](https://github.com/huaweicloud/Sermant/tree/develop/sermant-injector): Admission webhook module for deployment of sermant-agent via containers 
+Sermant-agent is the essential core component of Sermant, which contains bytecode enhancements of [sermant-agentcore](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore), [sermant-plugins](https://gIthub.com/huaweicloud/Sermant/tree/develop/sermant-plugins), [sermant-common](https://github.com/huaweicloud/Sermant/tree/develop/sermant-common). Sermant-agent takes effect when the host application is launched by specifying the `sermant-agent.jar'` package via the `-javaagent` argument. 
 
-## Version Support Introduction
+Sermant-agent is based on Java Agent technology and supports JDK 1.6 and above.  
 
-### Versions supported by JavaAgent
+Please refer to the [Sermant-agent User Manual](sermant-agent.md) for more instructions on how to use sermant-agent.
 
-JavaAgent supports Linux, Windows, and Aix operating systems, supports JDK 1.6 and above, and recommends using JDK 1.8.
+### Backend
 
-- [HuaweiJDK 1.8](https://gitee.com/openeuler/bishengjdk-8) / [OpenJDK 1.8](https://github.com/openjdk/jdk) / [OracleJDK 1.8](https://www.oracle.com/java/technologies/downloads/)
+The Backend is the Sermant data processing back-end module and the front-end information display module, which mainly includes the reception and display of Sermant heartbeat information. 
 
-### Versions supported by the configuration center
+The Backend is not a required component of the Sermant, but it is highly recommended deploying the Backend for the observability of the Sermant. 
 
-Configuration centers currently supported by Sermant:
-- [ZooKeeper](https://zookeeper.apache.org/releases.html)，使用版本为3.6.3。
-- [ServiceComb Kie](https://servicecomb.apache.org/cn/release/kie-downloads/)，使用的版本为0.2.0.
+Please refer to the [Backend User Manual](backend.md) for more instructions on how to use the Backend.
 
-### Versions supported by injector
+### Configuration Center
 
-injector is a sermant-agent containerized deployment Admission Webhook component, which supports deployment in k8s **1.15** version and above.
+Configuration center is a necessary component for Sermant when dynamic config function is enabled. This function allows Sermant to dynamically pull config from config center to achieve a variety of service governance capabilities, such as label routing, flow control, etc. If the Sermant dynamic configuration capability is not enabled, the configuration center does not need to be deployed.
+
+Sermant configuration center currently supports two types: the Zookeeper and [ServiceComb Kie](https://github.com/apache/servicecomb-kie).
+
+Please refer to the [Configuration Center User Manual](configuration-center.md) for more instructions on how to use the Configuration Center.
+
+### **sermant-injector**
+
+Sermant provides a quick way to automatically mount Sermant from the host application in a container environment via the sermant-injector component. Simply add `sermant-injection:enabled ` to the labels in the yaml of the application deployment to enable this functionality.
+
+The sermant-injector component is not required for Sermant, but it is highly recommended deploying it in a container environment for quick deployment. Currently sermant-injector supports k8s **1.15** and above.
+
+Please refer to [Sermant-injector User Manual](injector.md) for more instructions on how to use sermant-injector.
+
+## Package
+
+### How to package
+
+The packaging process of **Sermant** is roughly divided into the following steps:
+
+- *agent*: Compile or package core function and stable plugins
+- *release*: Publish built artifacts to Maven Central Repository
+- *test*: Compile or package all the modules in Sermant
+
+Execute the following *maven* command which packages the **Sermant** project with *agent*：
+
+```shell
+mvn clean package -DskipTests -Pagent
+```
+
+After the command is executed, a folder such as `sermant-agent-x.x.x` and a compressed file such as `sermant-agent-x.x.x.tar.gz` will be generated in the project directory. The latter is the product package of **sermant** and the former is the decompressed content of the product package.
+
+### Product Directory
+
+`sermant-agent-x.x.x` directory contains the following content:
+
+- *agent*: sermant-agent related product
+  - *config*: contains **Sermant** configuration files
+  - *core*: contains **Sermant** core framework jars
+  - implement: contains **Sermant** core implementation jars
+  - *common*: contains **Sermant** common dependencies
+  - *pluginPackage*: contains the extension function plugin package and configuration files
+  - *sermant-agent.jar*:  the entrance of **Sermant** via `-javaagent`
+- *server*: contains servers of **Sermant**, such as Backend.
 
