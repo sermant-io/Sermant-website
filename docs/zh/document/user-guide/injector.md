@@ -1,10 +1,6 @@
 # Sermant-injector使用手册
 
-## 功能介绍
-
-k8s环境下，Sermant支持通过sermant-injector组件实现宿主应用自动挂载sermant-agent包的快速部署方式。
-
-sermant-injector是基于Kubernetes准入控制器（Admission Controllers）特性开发而来。准入控制器位于k8s API Server中，能够拦截对API Server的请求，完成身份验证、授权、变更等操作。
+sermant-injector是基于Kubernetes准入控制器（Admission Controllers）特性开发而来。准入控制器位于k8s API Server中，能够拦截对API Server的请求，完成身份验证、授权、变更等操作。本文介绍在k8s环境下，如何通过sermant-injector组件来实现宿主应用自动挂载sermant-agent包的快速部署。
 
 sermant-injector属于变更准入控制器(MutatingAdmissionWebhook), 能够在创建容器资源前对请求进行拦截和修改。sermant-injector部署在k8s后，只需在宿主应用部署的YAML文件中`spec > template > metadata> labels`层级加入`sermant-injection: enabled`即可实现自动挂载sermant-agent。
 

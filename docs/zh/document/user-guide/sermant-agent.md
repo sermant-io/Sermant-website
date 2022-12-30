@@ -1,8 +1,6 @@
 # Sermant-agent使用手册
 
-## 功能介绍
-
-sermant-agent为Sermant必要核心组件，包含[sermant-agentcore](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore)、[sermant-plugins](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins)、[sermant-common](https://github.com/huaweicloud/Sermant/tree/develop/sermant-common)等字节码增强逻辑的实现主体。[Sermant使用介绍](readme.md)中描述的产品目录`sermant-agent-x.x.x/agent`目录下内容即为sermant-agent组件的各模块。
+sermant-agent为Sermant必要核心组件，包含[sermant-agentcore](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore)、[sermant-plugins](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins)、[sermant-common](https://github.com/huaweicloud/Sermant/tree/develop/sermant-common)等字节码增强逻辑的实现主体。[Sermant使用介绍](readme.md)中描述的产品目录`sermant-agent-x.x.x/agent`目录下内容即为sermant-agent组件的各模块。本文介绍如何使用sermant-agent。
 
 sermant-agent的框架主体为Sermant提供了字节码增强的实现逻辑，同时支持心跳功能、动态配置功能、日志功能等公共核心能力。sermant-agent插件包中则由各扩展插件提供了标签路由、限流降级、双注册等服务治理能力。
 

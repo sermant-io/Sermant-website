@@ -2,17 +2,15 @@
 
 This document is mainly used for the instructions of [monitor module](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-monitor)
 
+## Functions
+
 The resource monitoring module is used to monitor the use of CPU, memory, disk IO, network IO and other hardware resources of the server where the host application is located. The host application Java virtual machine has microservice use, and microservice public indicators are collected.
 
 The monitoring module relies on prometheus to collect indicators. prometheus periodically calls the httpServer service of the java agent to obtain the indicator information registered by the plug-in and store it for display.
 
-## Catalog Description
 
-- `config`: configuration file directory
-- `monitor-plugin`: an indicator collection plug-in that intercepts host service requests and saves request information.
-- `monitor-service`: Server hardware resources and JVM monitoring collection service
 
-## Configuration file content description
+## Parameter configuration
 
 ```yaml
 monitor.Config:                 # Monitoring service configuration
@@ -25,7 +23,7 @@ monitor.Config:                 # Monitoring service configuration
   Key:                          # KEY used for authorized user password encryption
 ```
 
-## Description of the monitor module
+### Description of the monitor module
 
 *Use Background*
 
@@ -168,7 +166,7 @@ This service includes three collection sub services, namely Linux resource monit
     double avg_response_Time    // Average response time
 ```
 
-## Instructions
+## Operation and result validation
 1. Modify the current monitoring configuration of plug-in config -- config yaml。 Modify the IP ports and switches for external services
 
 ```yaml

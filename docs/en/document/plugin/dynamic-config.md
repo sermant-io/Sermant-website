@@ -1,4 +1,4 @@
-## Dynamic Configuration
+# Dynamic Configuration
 
 This document is used to introduce the usage of [dynamic configuration plugin](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-dynamic-config)
 
@@ -8,19 +8,16 @@ This plugin implements dynamic configuration based on the Sermant configuration 
 
 The current plugin supports SpringCloud applications and needs to be used together with the `@Value, @ConfigurationProperties, and @RefreshScope` annotations.
 
-## Usage
+## Supported Versions and Limitations
 
 ### Version Required
 
 **SpringCloud:**  `Edgware.SR2 `and later versions
 
-### Environment Preparation
 
-（1）Preparing the Configuration Center Environment (Zookeeper/Kie)
+## Parameter configuration
 
-（2）Compile the Sermant. For details, can referring [complie source code](../../QuickStart.md#Compile-Source-Code)
-
-### Configure Plugin
+### Modify the configuration of the configuration center/dynamic configuration plugin
 
 **（1）Modify the config center(Optional)**
 
@@ -156,6 +153,7 @@ create /service=DynamicConfigDemo/test "sermant: sermant"
 ```
 
 
+## Operation and result validation
 
 ### Deploy Application
 

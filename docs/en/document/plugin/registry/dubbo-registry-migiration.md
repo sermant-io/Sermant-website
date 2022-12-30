@@ -13,7 +13,7 @@ Provides the capability of quickly migrating the registration center to the [Ser
 | Nacos     | ✅        |
 | Zookeeper | ✅        |
 
-## Support Versions
+## Supported Versions and Limitations
 
 Dubbo 2.6.x, 2.7.x
 
@@ -21,7 +21,7 @@ Dubbo 2.6.x, 2.7.x
 
 <MyImage src="/docs-img/sermant-register-migration-en.png"/>
 
-## Usage
+## Parameter configuration
 
 ### Modify [Plugin Configuration File](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-registry/config/config.yaml)
 
@@ -39,14 +39,15 @@ For details, see the [service registration plugin document](./README.md#modify-t
 
 **Notices**: If the migration function is enabled, you do not need to change the address of the original registration center. Otherwise, the registration will not be performed at the same time with two registration centers (original registration center + SC).
 
+## Operation and Result Verification
+
 ### Startup Service Center
 
 For details about the Service Center startup process, see the [official website](https://github.com/apache/servicecomb-service-center).
 
-## Verification
+### Verification
 
 - Notice：In this example, the original registration center is Nacos.
-- Prerequisites: [The Sermant is packaged correctly](../../document/UserGuide/README.md#packaging-steps).
 - Start Service Center. For details about how to download, use, and start Service Center, see the [official website](https://github.com/apache/servicecomb-service-center).
 - Start the Nacos. For details about how to download, use, and start the Nacos, see the [official website](https://nacos.io/zh-cn/docs/quick-start.html).
 - Compile [demo application](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-registry/demo-registry/demo-registry-dubbo)
@@ -90,8 +91,6 @@ java -Dservicecomb.service.enableDubboRegister=true -Dserver.port=48021 -Ddubbo.
 Notice: To facilitate the test, the Dubbo registration function is enabled in -Dservicecomb.service.enableDubboRegister=true mode. If the Dubbo registration function is enabled in other modes, you do not need to add this parameter. In addition, to solve the port conflict problem when two providers are started on the same server, you need to add the -Dserver.port=48021 -Ddubbo.protocol.port=48821 parameter. If the two providers are on different servers, you do not need to add this parameter.
 
 Please replace `${path}` with the Sermant project path, replace x.x.x with the actual Sermant version number, and appName with the application name in the agent startup parameter, which is irrelevant to the registration parameter. The directory for running the command must be the directory where the JAR package of the demo application is located.
-
-Startup parameters can referring to the [entry module](../../document/UserGuide/entrance.md#startup-parameters).
 
 - Test
 

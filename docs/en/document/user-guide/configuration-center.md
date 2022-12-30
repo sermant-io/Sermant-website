@@ -1,8 +1,7 @@
 # Configuration Center User Manual
 
-## Function Introduction
-
 The configuration center is a supporting component for the dynamic configuration function of Sermant, which allows Sermant to dynamically pull configuration from the configuration center to achieve a variety of service governance capabilities. Users can enable dynamic configuration capabilities and deploy configuration centers on demand.
+This article describes how to use the configuration center.
 
 Configuration center plays an important role in the service governance capability of Sermant. For example, in the flowcontrol plugin, the configuration and delivery of traffic marking and flow control rules are realized by Sermant dynamic configuration and configuration center as the medium to achieve dynamic flow control. In the routing plugin, the configuration of label routing rules is also effective through this configuration center capability.
 

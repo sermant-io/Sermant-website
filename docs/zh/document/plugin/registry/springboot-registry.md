@@ -2,7 +2,7 @@
 
 本篇文章主要介绍[SpringBoot注册插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-springboot-registry)以及使用方法。
 
-## 功能
+## 功能介绍
 
 该插件为纯SpringBoot应用提供服务注册发现能力，方便用户在不修改代码的前提下快速接入注册中心，同时提供服务超时重试的能力，实现服务调用的高可用。
 
@@ -13,8 +13,7 @@
 其中`www.domain.com`为实际调用的域名，`serviceName`为下游的服务名，`apiPath`则为下游请求接口路径。
 
 
-
-## 版本支持
+## 支持版本和限制
 
 注册中心支持： Zookeeper 3.4.x及以上
 
@@ -28,7 +27,7 @@
 
 框架支持：SpringBoot 1.5.10.Release及以上
 
-## 使用说明
+## 参数配置
 
 ### 配置动态配置中心（可选）
 
@@ -162,7 +161,7 @@ create /app=default&environment=/sermant.plugin.registry "strategy: all"
 
 
 
-## 快速使用
+## 操作和结果验证
 
 下面以demo为例，演示如何使用该插件能力
 
@@ -199,7 +198,7 @@ java --javaagent:${agent path}\sermant-agent-1.0.0\agent\sermant-agent.jar=appNa
 
 ### 下发灰度策略
 
-参考使用[配置灰度策略](#配置灰度策略（必须）)的灰度策略进行下发， 下发如下配置
+参考使用[配置灰度策略](#配置灰度策略-必须)的灰度策略进行下发， 下发如下配置
 
 ```json
 {

@@ -1,8 +1,6 @@
 # Sermant-agent User Manual
 
-## Function Introduction
-
-Sermant-agent is the essential core component of Sermant, which contains bytecode enhancements of [sermant-agentcore](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore), [sermant-plugins](https://gIthub.com/huaweicloud/Sermant/tree/develop/sermant-plugins), [sermant-common](https://github.com/huaweicloud/Sermant/tree/develop/sermant-common). The modules of the sermant-agent component are found in the `sermant-agent-x.x.x/agent` directory described in the [Sermant Introduction](readme.md).
+Sermant-agent is the essential core component of Sermant, which contains bytecode enhancements of [sermant-agentcore](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore), [sermant-plugins](https://gIthub.com/huaweicloud/Sermant/tree/develop/sermant-plugins), [sermant-common](https://github.com/huaweicloud/Sermant/tree/develop/sermant-common). The modules of the sermant-agent component are found in the `sermant-agent-x.x.x/agent` directory described in the [Sermant Introduction](readme.md). This article describes how to use sermant-agent.
 
 The framework body of sermant-agent provides bytecode enhanced implementation logic for Sermant, and supports common core capabilities such as heartbeat function, dynamic configuration function and log function. In the sermant-agent plugin package, the extension plugins provide the service governance capabilities such as label routing, flow control and double registration.
 

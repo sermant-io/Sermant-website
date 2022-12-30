@@ -13,17 +13,13 @@ The flow control plugin is based on the [resilience4j]((https://github.com/resil
 - **Error Injection:**  An error injection policy is configured for a specified service when the service is running. Before the client accesses the target service, the error injection policy is used. This policy is mainly used to reduce the access load of the target service and can be used as a measure of downgrading the target service.
 - **Fusing index collection:** During the service operation, collect the information related to the fuse, and report the indicators with the help of the [monitoring plugin](./monitor.md)
 
-## Usage
+## Supported Versions and Limitations
 
 ### Environment Preparation
 
-**（1）Deploying the ServiceCenter and Kie environments**
+**Deploying the ServiceCenter and Kie environments**
 
-**（2）Package and compile Sermant Agent**
-
-The way that compile Sermant Agent referring [this article](../../QuickStart.md#Get-Compiled-Products)
-
-Compile by referring to the Sermant source code.
+## Parameter configuration
 
 ### Configure Agent
 
@@ -47,7 +43,7 @@ service.meta.customLabelValue=default
 
 **Notice**：The preceding configurations can be specified using environment variables. The corresponding key value is the environment variable key. For example, the service app name can be specified by `-Dservice.meta.application=application`. All keys in other configuration files can be configured using this method.
 
-##### **（2）Modify the Configuration Center**
+**（2）Modify the Configuration Center**
 
 Modify the configuration file ${javaagent path}/config/config.properties and modify the configuration center type and address as follows:
 
@@ -70,23 +66,6 @@ flow.control.plugin:
 If adaptation is enabled, the plugin subscribes to the configuration center based on the application configuration, service configuration, and customized tag configuration.
 
 > If useCseRule is set to false, the flow control plugin configures subscription based on the service name of the current instance. For example, if spring.application.name is set to flowControlDemo, the flow control plugin receives configuration based on the service=flowControlDemo tag during actual subscription.
-
-### Deploying Applications
-
-Run the following command to start the application:
-
-```shell
-# agent path indicates the package path.
-# serviceName indicates the name of your service
-# applicationName indicates the app name
-# environment indicates the environment of your service, support testing/producation/developing
-# xxx.jar indicates the application packages of your service
-java -javaagent:${agent path}/sermant-agent.jar=appName=${serviceName} -Dservice.meta.application=${applicationName} -Dservice.meta.environment=${environment}  -jar xxx.jar
-```
-
-### Verify Application Deployment
-
-Login to the [Service Center](localhost:30103) background and check whether the application is correctly registered.
 
 ### Flow Control Rules Specification
 
@@ -404,11 +383,11 @@ The backend service provides the function of publishing configurations through t
   double tps;                       // Number of processes per second passed the fusing rule
 ```
 
-## Quick Start
+## Operation and result validation
 
 ### 1、Compile And Package
 
-Download the [sermant release package](https://github.com/huaweicloud/Sermant/releases) and [demo source code](https://github.com/huaweicloud/Sermant-examples/tree/main/flowcontrol-demo/spring-cloud-demo/spring-provider).
+[demo source code](https://github.com/huaweicloud/Sermant-examples/tree/main/flowcontrol-demo/spring-cloud-demo/spring-provider).
 
 Run the following maven command to package the demo application:
 
@@ -451,6 +430,3 @@ Configure traffic marking and traffic limiting rules by referring to [Configurin
 Request `localhost:8003/flow` for multiple times. If `rate limited` is returned when the number of requests exceeds 4 within 2 seconds, flow control is triggered successfully.
 
 See [monitoring plugin](./monitor.md) for the successful verification of monitoring collection.
-## Others
-
-If you encounter any problems, refer to the [FAQ document](../about/question/flowcontrol.md).

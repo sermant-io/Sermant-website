@@ -1,6 +1,6 @@
 # Sermant使用介绍
 
-Sermant 是基于Java Agent的字节码增强技术，通过 Java Agent 对宿主应用进行非侵入式增强，以解决Java应用的微服务治理问题。Sermant的初衷是建立一个面向微服务治理的对开发态无侵入的解决方案生态，降低服务治理开发和使用的难度，通过抽象接口、功能整合、插件隔离等手段，达到简化开发、功能即插即用的效果。
+Sermant 是基于Java Agent的字节码增强技术，通过 Java Agent 对宿主应用进行非侵入式增强，以解决Java应用的微服务治理问题。Sermant的初衷是建立一个面向微服务治理的对开发态无侵入的解决方案生态，降低服务治理开发和使用的难度，通过抽象接口、功能整合、插件隔离等手段，达到简化开发、功能即插即用的效果。本文介绍Sermant目前包含的组件以及Sermant的编译打包。
 
 ## 架构简介
 
@@ -26,7 +26,7 @@ Backend为Sermant的非必要组件，但是非常推荐用户部署Backend以�
 
 配置中心为Sermant动态配置功能启用后必要配套组件，该功能允许Sermant动态从配置中心拉取配置以实现丰富多样的服务治理能力，例如标签路由、流控等。如不开启Sermant动态配置能力，配置中心可无需部署。
 
-Sermant配置中心目前支持两种类型：Zookeeper和[ServiceComb Kie](https://github.com/apache/servicecomb-kie)。
+Sermant配置中心目前支持两种类型：[Zookeeper](https://github.com/apache/zookeeper)和[ServiceComb Kie](https://github.com/apache/servicecomb-kie)。
 
 更多配置中心使用指南请参考[配置中心使用手册](configuration-center.md)。
 

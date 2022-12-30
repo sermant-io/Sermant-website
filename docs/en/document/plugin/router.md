@@ -6,7 +6,7 @@ This document is used to introduce the usage of [tag router](https://github.com/
 
 In the case of multiple versions and instances of microservices, the routing between services is managed by configuring routing rules to achieve business purposes such as lossless upgrade and application dial test.
 
-## Usage
+## Parameter configuration
 
 - Configure Routing Rules
 
@@ -101,9 +101,7 @@ The parameters are described as follows:
 - ${PARAMETERS} needs to be replaced with the custom tag from the service registration (Such as tag1:value1, tag2:value2). That is, tag keys and tag values are separated by colons, and multiple tags are separated by commas.
 - In general, only service_meta_version needs to be configured if routing by version number, or service_meta_parameters if routing by custom tag.
 
-## Result Verification
-
-- Prerequisites [correctly packed Sermant](../document/UserGuide/README.md#packaging-steps)
+## Operation and Result Verification
 
 - Registration center using Huawei CSE, download [Local-CSE](https://support.huaweicloud.com/devg-cse/cse_devg_0036.html) ，解压后按照文档说明进行启动
 

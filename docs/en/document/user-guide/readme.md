@@ -1,6 +1,6 @@
 # Introduction to the use of Sermant
 
-Sermant is a bytecode enhancement technology based on Java Agent. It uses Java Agent to enhance the host application in a non-intrusive way to solve the microservice governance problem of Java applications. The original intention of Sermant is to establish a solution ecosystem for micro-service governance that is non-intrusive to the development state, reduce the difficulty of service governance development and use, and achieve the effect of simplified development and plug-and-play by means of abstract interface, function integration and plugin isolation.
+Sermant is a bytecode enhancement technology based on Java Agent. It uses Java Agent to enhance the host application in a non-intrusive way to solve the microservice governance problem of Java applications. The original intention of Sermant is to establish a solution ecosystem for micro-service governance that is non-intrusive to the development state, reduce the difficulty of service governance development and use, and achieve the effect of simplified development and plug-and-play by means of abstract interface, function integration and plugin isolation. This article introduces the components currently included in Sermant and the compilation and packaging of Sermant.
 
 ## Architecture Introduction
 
@@ -26,7 +26,7 @@ Please refer to the [Backend User Manual](backend.md) for more instructions on h
 
 Configuration center is a necessary component for Sermant when dynamic config function is enabled. This function allows Sermant to dynamically pull config from config center to achieve a variety of service governance capabilities, such as label routing, flow control, etc. If the Sermant dynamic configuration capability is not enabled, the configuration center does not need to be deployed.
 
-Sermant configuration center currently supports two types: the Zookeeper and [ServiceComb Kie](https://github.com/apache/servicecomb-kie).
+Sermant configuration center currently supports two types: the [Zookeeper](https://github.com/apache/zookeeper) and [ServiceComb Kie](https://github.com/apache/servicecomb-kie).
 
 Please refer to the [Configuration Center User Manual](configuration-center.md) for more instructions on how to use the Configuration Center.
 

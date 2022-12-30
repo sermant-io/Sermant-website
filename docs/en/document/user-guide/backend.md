@@ -2,11 +2,11 @@
 
 ## Function Introduction
 
-Backend is the data processing back-end module and the front-end information display module of Sermant, which aims to provide observability for Sermant at runtime. At present, it mainly includes functions such as receiving and displaying Sermant heartbeat information.
+Backend is the data processing back-end module and the front-end information display module of Sermant, which aims to provide observability for Sermant at runtime. At present, it mainly includes functions such as receiving and displaying Sermant heartbeat information. This article describes how to use Backend.
 
 Backend is used in conjunction with sermant-agent. The sermant-agent is mounted as a data sender after the host application is started. It can periodically send the heartbeat data of the current Sermant, including application name, instance ID, version number, IP, timestamp, plugin information, etc. As the data receiver, the Backend can receive and process the heartbeat data sent by the sermant-agent, and display it visually in the front-end, providing the ability to observe the running state.
 
-The Backend is a non-essential component that can be deployed on demand.
+The Backend is a **non-essential component** that can be deployed on demand.
 
 ## Parameter Configuration
 

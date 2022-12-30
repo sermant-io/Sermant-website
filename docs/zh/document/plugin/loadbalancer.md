@@ -1,12 +1,12 @@
 # 负载均衡
 
-该文档主要介绍[负载均衡插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-loadbalancer)的使用方法
+本文档主要介绍[负载均衡插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-loadbalancer)的使用方法。
 
-## 功能
+## 功能介绍
 
 根据配置中心的配置，无侵入地动态修改宿主应用的负载均衡策略。
 
-## 负载均衡策略支持一览
+## 支持版本和限制
 
 | 框架类型                    | 策略名                       | 配置值 / 负载均衡策略                          | 版本支持                                                     |
 | --------------------------- | ---------------------------- | ---------------------------------------------- | ------------------------------------------------------------ |
@@ -26,7 +26,7 @@
 | spring-cloud-loadbalancer   | 轮询（loadbalancer默认）     | RoundRobin / ROUND_ROBIN                       | spring cloud Hoxton.SR10+, spring cloud 2020.0.x, spring cloud 2021.0.x |
 | spring-cloud-loadbalancer   | 随机                         | Random / RANDOM                                | spring cloud Hoxton.SR10+, spring cloud 2020.0.x, spring cloud 2021.0.x |
 
-## 配置说明
+## 参数配置
 
 负载均衡基于配置中心进行动态配置，因此使用该能力需在配置中心配置对应负载均衡策略。负载均衡插件采用**流量标记+负载均衡规则**的方式规则，即配置一条规则需**同时配置两者**，下面分别介绍两项配置：
 
@@ -56,7 +56,7 @@ matches:
 
 ### 负载均衡规则
 
-负载均衡规则需为应用配置具体的负载均衡策略，负载均衡策略目前完全依赖与宿主本身存在的负载均衡策略，即宿主本身支持才可配置，支持列表见[负载均衡策略支持一览](#负载均衡策略支持一览)。
+负载均衡规则需为应用配置具体的负载均衡策略，负载均衡策略目前完全依赖与宿主本身存在的负载均衡策略，即宿主本身支持才可配置，支持列表见[支持版本和限制](#支持版本和限制)。
 
 **配置key：**`servicecomb.loadbalance.testLb`
 
@@ -72,7 +72,7 @@ matches:
 rule: Random
 ```
 
-示例配置项说明: 即配置**随机负载均衡规则**， 配置值见表[负载均衡策略支持一览](#负载均衡策略支持一览)的**配置值**
+示例配置项说明: 即配置**随机负载均衡规则**， 配置值见表[支持版本和限制](#支持版本和限制)的**配置值**
 
 > 以上需确认宿主自身应用的框架版本，确定当前支持的负载均衡策略。
 
@@ -106,21 +106,19 @@ POST /publishConfig
 
 - 在spring cloud Hoxton.SR10之前，spring-cloud-loadbalancer的负载均衡策略只有轮询（ROUND_ROBIN），所以插件并不支持修改Hoxton. SR10之前的spring-cloud-loadbalancer组件的负载均衡策略，spring cloud Hoxton.SR10之前版本建议使用spring-cloud-netflix-ribbon组件进行负载均衡。
 
-## 结果验证
+## 操作和结果验证
 
 1. 前提条件[已下载Sermant RELEASE包](https://github.com/huaweicloud/Sermant/releases), [已下载demo源码](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/demo-register)，[已下载zookeeper](https://zookeeper.apache.org/releases.html#download)
 
 2. 启动zookeeper
 
-3. 启动backend, 参考[后端模块介绍](../document/UserGuide/backend.md)
+3. 启动backend, 参考[后端模块介绍](../user-guide/backend.md)
 
 4. 编译demo应用
 
    ```
    mvn clean package
-   ```
-
-   
+   ```   
 
 5. 发布流量标记
 
@@ -175,5 +173,3 @@ POST /publishConfig
 9. 测试
 
    上面步骤全部完成后，访问接口`localhost:8005/hello`, 通过返回的端口判断随机负载均衡规则（默认为轮询）是否生效。
-
-[返回**Sermant**说明文档](../document/UserGuide/README.md)

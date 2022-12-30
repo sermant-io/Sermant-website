@@ -1,12 +1,10 @@
 # Backend使用手册
 
-## 功能介绍
-
-Backend为Sermant数据处理后端模块和前端信息展示模块，旨在为Sermant提供运行时的可观测能力，当前主要包括Sermant心跳信息的接收和展示等功能。
+Backend为Sermant数据处理后端模块和前端信息展示模块，旨在为Sermant提供运行时的可观测能力，当前主要包括Sermant心跳信息的接收和展示等功能。本文介绍如何使用Backend。
 
 Backend与sermant-agent配合使用。sermant-agent挂载在宿主应用启动后作为数据发送端，可定时发送当前Sermant的心跳数据，包含应用名、实例ID、版本号、IP、时间戳、挂载插件信息等。Backend作为数据接收端，可接收处理sermant-agent发送的心跳数据，并在前端可视化展示，提供观测运行状态的能力。
 
-Backend为非必要组件，用户可按需部署。
+Backend为**非必要组件**，用户可按需部署。
 
 ## 参数配置
 

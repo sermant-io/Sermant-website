@@ -1,8 +1,8 @@
 # 流控
 
-本文档主要介绍[流控插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-flowcontrol)以及该插件的使用方法
+本文档主要介绍[流控插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-flowcontrol)以及该插件的使用方法。
 
-## 功能
+## 功能介绍
 
 流控插件基于[resilience4j](https://github.com/resilience4j)框架，以"流量"切入点，实现"无侵入式"流量控制；当前支持**限流**、**熔断**、**隔离仓**、**错误注入**与**重试**、**熔断指标采集**能力，并且支持配置中心动态配置规则，实时生效。
 
@@ -13,15 +13,13 @@
 - **错误注入:**  指在服务运行时，给指定服务配置错误注入策略，在客户端访问目标服务前，以指定策略模式返回。该策略多用于减少目标服务的访问负载，可作为降级的一种措施。
 - **熔断指标采集：** 在服务运行过程中，采集熔断的相关信息，并借助[监控插件](./monitor.md)进行指标上报。
 
-## 使用说明
+## 支持版本和限制
 
 ### 环境准备
 
-**（1）部署ServiceCenter环境与Kie环境**
+需部署ServiceCenter环境与Kie环境。
 
-**（2）打包编译Sermant Agent**
-
- 参考[Sermant源码编译](../../QuickStart-zh.md#源码编译)
+## 参数配置
 
 ### 配置agent
 
@@ -45,7 +43,7 @@ service.meta.customLabelValue=default
 
 **提示**：以上配置均可通过环境变量指定，对应的键值即为环境变量键，例如服务app名称可由`-Dservice.meta.application=application`指定, 其他配置文件的所有键均可采用该方式配置。
 
-##### **（2）修改配置中心**
+**（2）修改配置中心**
 
 修改配置文件`${javaagent路径}/config/config.properties`, 修改配置中心类型与地址，如下位置：
 
@@ -68,23 +66,6 @@ flow.control.plugin:
 开启适配后，插件将根据应用配置，服务配置以及自定义标签订阅配置中心配置
 
 > 此处若设置useCseRule为false，流控插件将基于当前实例的服务名进行配置订阅，例如：用户配置的spring.application.name=flowControlDemo, 则在实际订阅时会根据标签service=flowControlDemo接收配置。
-
-### 部署应用
-
-执行以下命令启动应用
-
-```shell
-# 其中agent路径指打包后的路径
-# serviceName值应用名
-# applicationName即对应app名称
-# environment即对应环境名称
-# xxx.jar值打包后应用jar包
-java -javaagent:${agent路径}/sermant-agent.jar=appName=${serviceName} -Dservice.meta.application=${applicationName} -Dservice.meta.environment=${environment}  -jar xxx.jar
-```
-
-### 验证应用部署
-
-登录[Service Center](localhost:30103)后台, 查看应用是否正确注册
 
 ### 流控规则介绍
 
@@ -399,11 +380,11 @@ servicecomb:
     double tps;                             // 通过熔断规则的每秒处理数量
 ```
 
-## 快速开始
+## 操作和结果验证
 
 ### 1、编译打包
 
-通过[此处](https://github.com/huaweicloud/Sermant/releases)下载sermant软件包, 并下载[Demo源码](https://github.com/huaweicloud/Sermant-examples/tree/main/flowcontrol-demo/spring-cloud-demo/spring-provider)
+下载[Demo源码](https://github.com/huaweicloud/Sermant-examples/tree/main/flowcontrol-demo/spring-cloud-demo/spring-provider)
 
 执行以下maven命令对Demo应用执行打包
 
@@ -446,7 +427,3 @@ java -javaagent:${agent路径}\sermant-agent-x.x.x\agent\sermant-agent.jar=appNa
 多次请求`localhost:8003/flow`, 若在2秒内请求数超过4个时返回`rate limited`，则触发流控成功
 
 监控采集成功验证情况参见[监控插件](./monitor.md)。
-
-## 其他
-
-若使用过程中遇到问题请先参考[FAQ文档](../about/question/flowcontrol.md)
