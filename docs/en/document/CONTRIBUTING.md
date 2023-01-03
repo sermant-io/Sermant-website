@@ -14,8 +14,6 @@ Please make sure to read and observe our [Code of Conduct](https://github.com/hu
 
 Sermant welcome new participants of any role, including user, contributor, committer and PMC.
 
-<MyImage src="/docs-img/contributor_definition.png"/>
-
 We encourage new comers actively join in Sermant projects and involving from user role to committer role, and even PMC role. In order to accomplish this, new comers needs to actively contribute in Sermant project. The following paragraph introduce how to contribute in Sermant way.
 
 #### Open / Pickup An Issue for Preparation
