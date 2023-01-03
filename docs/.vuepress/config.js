@@ -43,7 +43,7 @@ module.exports = {
               children: ["", "QuickStart"],
             },
             {
-              title: "用户指南",
+              title: "用户使用手册",
               path: "",
               collapsable: true,
               sidebarDepth: 1,
@@ -56,7 +56,7 @@ module.exports = {
               ],
             },
             {
-              title: "插件指南",
+              title: "插件使用手册",
               path: "",
               collapsable: true,
               sidebarDepth: 1,
@@ -85,7 +85,7 @@ module.exports = {
               ],
             },
             {
-              title: "社区指南",
+              title: "加入社区",
               path: "",
               collapsable: true,
               sidebarDepth: 1,
