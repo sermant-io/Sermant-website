@@ -15,7 +15,7 @@ Provides the capability of quickly migrating the registration center to the [Ser
 | Nacos               | ✅                |
 | Zookeeper           | ✅                |
 
-**Support Versions**
+## Supported Versions and Limitations
 
 | Spring Cloud Version | Spring Boot Version | Zookeeper Discovery Version | Nacos Discovery Version     | Consul Discovery Version     | Eureka Client Version                                 |
 | -------------------- | ------------------- | --------------------------- | --------------------------- | ---------------------------- | ----------------------------------------------------- |
@@ -29,7 +29,7 @@ Provides the capability of quickly migrating the registration center to the [Ser
 
 <MyImage src="/docs-img/sermant-register-migration-en.png"/>
 
-## Usage
+## Parameter configuration
 
 #### Modify [Configuration File](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-registry/config/config.yaml)
 
@@ -42,6 +42,33 @@ servicecomb.service:
   openMigration: true #Specifies whether to enable the migration function. To migrate the registration center, set this parameter to true.
   enableSpringRegister: true #Enabling the spring registration plugin
 ```
+
+### Delivering Heartbeat Configurations
+
+The registration center migration plugin provides the method of disabling the heartbeat mechanism of the original registration center based on the dynamic configuration center to prevent continuous error log output.
+
+**The [backend service](../../user-guide/backend.md) provides the configuration delivery interface for dynamic configuration delivery:**
+
+URL
+
+POST /publishConfig
+
+**Request Body**
+
+| Params  | Mandatory Or Not | Param Type | Description           | Configuration Value                     |
+| ------- | ---------------- | ---------- | --------------------- | --------------------------------------- |
+| key     | Y                | String     | configuration key     | sermant.agent.registry                  |
+| group   | Y                | String     | configuration group   | service=YourServiceName                 |
+| content | Y                | String     | configuration.content | origin.\_\_registry\_\_.needClose: true |
+
+If you need to disable this function, deliver the configuration by referring to the Configuration Value column in the table.
+
+> ***Notices :***
+>
+> This operation is a one-off operation. After the registration center heartbeat function is disabled, the heartbeat function cannot be enabled. It can be restored only after the application instance is restarted.
+
+
+## Operation and Result Verification
 
 ### Startup Service Center
 
@@ -71,30 +98,3 @@ java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=appN
 >
 > To stop such error logs, see [**Delivering Heartbeat Configurations**](#delivering-heartbeat-configurations).
 
-## Delivering Heartbeat Configurations
-
-The registration center migration plugin provides the method of disabling the heartbeat mechanism of the original registration center based on the dynamic configuration center to prevent continuous error log output.
-
-**The [backend service](../../document/UserGuide/backend.md) provides the configuration delivery interface for dynamic configuration delivery:**
-
-URL
-
-POST /publishConfig
-
-**Request Body**
-
-| Params  | Mandatory Or Not | Param Type | Description           | Configuration Value                     |
-| ------- | ---------------- | ---------- | --------------------- | --------------------------------------- |
-| key     | Y                | String     | configuration key     | sermant.agent.registry                  |
-| group   | Y                | String     | configuration group   | service=YourServiceName                 |
-| content | Y                | String     | configuration.content | origin.\_\_registry\_\_.needClose: true |
-
-If you need to disable this function, deliver the configuration by referring to the Configuration Value column in the table.
-
-> ***Notices :***
->
-> This operation is a one-off operation. After the registration center heartbeat function is disabled, the heartbeat function cannot be enabled. It can be restored only after the application instance is restarted.
-
-[Back to **Service Registration**](./README.md)
-
-[Back to README of **Sermant** ](../../document/UserGuide/README.md)

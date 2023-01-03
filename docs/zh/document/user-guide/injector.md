@@ -1,29 +1,54 @@
-# Injector使用手册
+# Sermant-injector使用手册
 
-## 环境要求
-[Kubernetes 1.15+](https://kubernetes.io/)
+sermant-injector是基于Kubernetes准入控制器（Admission Controllers）特性开发而来。准入控制器位于k8s API Server中，能够拦截对API Server的请求，完成身份验证、授权、变更等操作。本文介绍在k8s环境下，如何通过sermant-injector组件来实现宿主应用自动挂载sermant-agent包的快速部署。
 
-[Helm v3](https://helm.sh/)
+sermant-injector属于变更准入控制器(MutatingAdmissionWebhook), 能够在创建容器资源前对请求进行拦截和修改。sermant-injector部署在k8s后，只需在宿主应用部署的YAML文件中`spec > template > metadata> labels`层级加入`sermant-injection: enabled`即可实现自动挂载sermant-agent。
 
-## 构建镜像
+## 参数配置
+
+**公共环境变量配置：**
+
+sermant-injector支持为宿主应用所在pod配置自定义的环境变量，方法为在`sermant-injector/deployment/release/injector/values.yaml`中修改env的内容，修改方式如下(kv形式)：
+
+```yaml
+env:
+  TEST_ENV1: abc
+  TEST_ENV2: 123456
+```
+
+例如，在Sermant使用过程中，某些配置为当前k8s集群下各pod共享的公共配置，例如**Backend**后端的ip和端口等。则可在此处配置：
+
+```yaml
+env:
+  backend.nettyIp: 127.0.0.1
+  backend.nettyPort: 8900
+```
+
+即可使所有pod挂载的Sermant都与该**Backend**后端连接。
+
+sermant-injector部署时的相关参数修改请参考启动和结果验证一节内容。
+
+## 支持版本
+
+sermant-injector当前支持在Kubernetes 1.15及以上版本进行部署，通过Helm v3版本来进行Kubernetes包管理。
+
+- [Kubernetes 1.15+](https://kubernetes.io/)
+
+- [Helm v3](https://helm.sh/)
+
+## 启动和结果验证
 
 在部署sermant-injector前需要先构建sermant-agent镜像以及sermant-injector镜像。
 
-### sermant-agent镜像
+### 构建sermant-agent镜像
 
-#### 下载release包
+#### 准备sermant-agent包
 
-点击 [here](https://github.com/huaweicloud/Sermant/releases)下载release包。
-
-你也可以在项目中执行以下命令来打包：
-
-```shell
-mvn clean package -Dmaven.test.skip
-```
+点击 [here](https://github.com/huaweicloud/Sermant/releases)下载release包，也可以在项目中自行打包。
 
 #### 制作镜像
 
-修改文件夹 `images/sermant-agent`下`build-sermant-image.sh` 脚本中`sermantVersion`,`imageName`和`imageVerison`的值：
+修改文件夹 `sermant-injector/images/sermant-agent`下`build-sermant-image.sh` 脚本中`sermantVersion`,`imageName`和`imageVerison`的值：
 
 > 1. `sermantVersion`为release包的版本
 >
@@ -37,15 +62,15 @@ mvn clean package -Dmaven.test.skip
 sh build-sermant-image.sh
 ```
 
-### sermant-injector镜像
+### 构建sermant-injector镜像
 
-#### sermant-injector打包
+#### 准备sermant-injector包
 
 在sermant-injector项目下执行`mvn clean package`命令，在项目目录下生成`sermant-injector.jar`文件
 
 #### 制作镜像
 
-修改文件夹 `images/injector`下`build-injector-image.sh` 脚本中`imageName`和`imageVerison`的值：
+修改文件夹 `sermant-injector/images/injector`下`build-injector-image.sh` 脚本中`imageName`和`imageVerison`的值：
 
 > 1. `imageName`为构建的sermant-injector镜像名称
 > 2. `imageVerison`为构建的sermant-injector镜像版本
@@ -56,37 +81,15 @@ sh build-sermant-image.sh
 sh build-injector-image.sh
 ```
 
-## 部署sermant-injector实例
+### 部署sermant-injector实例
 
 在宿主应用容器化部署前，需要先部署sermant-injector实例。本项目采用Helm进行Kubernetes包管理。
 
-使用`deploment/release`下的`injector`Chart模版。
+使用`sermant-injector/deployment/release`下的`injector`Chart模版。
 
 按实际环境修改`values.yaml`中的模版变量：
 
 > `agent.image.addr`和`injector.image.addr`变量与构建镜像时的镜像地址保持一致
-
-**公共环境变量配置：**
-
-sermant-injector支持为宿主应用所在pod配置自定义的环境变量，方法为在`values.yaml`中修改env的内容，修改方式如下(kv形式)：
-
-```yaml
-env:
-  TEST_ENV1: abc
-  TEST_ENV2: 123456
-```
-
-例如，在Sermant使用过程中，某些配置为当前k8s集群下各pod共享的公共配置，例如**Backend**后端的ip和端口等。则可在此处配置：
-
-```yaml
-env:
-  backend.httpIp: 127.0.0.1
-  backend.httpPort: 8900
-```
-
-即可使所有pod挂载的Sermant都与该**Backend**后端连接。
-
-
 
 上述配置修改完成后，执行`helm install`命令在k8s中部署sermant-injector实例:
 
@@ -98,11 +101,9 @@ helm install sermant-injector ../injector
 
 至此，宿主应用部署前的环境配置工作完成。
 
-## 部署宿主应用
+### 部署宿主应用
 
-### 部署
-
-在完成上述sermant-injector部署后，用户根据实际应用编写YAML部署K8s Deployment资源，只需在`spec > template > metadata> labels`层级加入`sermant-injection: enabled`即可实现自动挂载sermant-agent。(如后续不希望挂载，删除后重新启动应用即可)
+在完成上述sermant-injector部署后，用户根据实际应用编写yaml部署K8s Deployment资源，只需在`spec > template > metadata> labels`层级加入`sermant-injection: enabled`即可实现自动挂载sermant-agent。(如后续不希望挂载，删除后重新启动应用即可)
 
 ```yaml
 apiVersion: v1

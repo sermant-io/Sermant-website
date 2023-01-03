@@ -2,17 +2,15 @@
 
 本文档主要用于[monitor模块](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-monitor)的使用说明
 
+## 功能介绍
+
 资源监控模块用于监控宿主应用所在服务器的CPU、内存、磁盘IO和网络IO等硬件资源的使用情况，宿主应用Java虚拟机已经微服务的使用情况、微服务公共指标采集。
 
 监控模块依赖于prometheus进行指标收集,prometheus定期调用java agent的httpServer服务，获取插件注册的指标信息，并进行存储展示。
 
-## 目录说明
 
-- `config`: 配置文件目录
-- `monitor-plugin`:  指标采集插件，拦截宿主服务请求并进行请求信息保存。
-- `monitor-service`: 服务器硬件资源和JVM监控采集服务
+## 参数配置
 
-## 配置文件内容说明
 ```yaml
 monitor.config:                       # 监控服务配置
   enable-start-service: false         # 监控服务启动开关
@@ -24,7 +22,7 @@ monitor.config:                       # 监控服务配置
   key:                                # 授权用户密码加密使用的KEY
 ```
 
-## monitor模块说明
+### monitor模块说明
 
 *使用背景*
 
@@ -166,7 +164,7 @@ monitor.config:                       # 监控服务配置
     double avg_response_time    // 平均响应时间
 ```
 
-## 使用说明
+## 操作和结果验证
 
 1. 修改插件config目前下的监控配置--config.yaml。修改对外提供服务的IP 端口 以及开关
 ```yaml

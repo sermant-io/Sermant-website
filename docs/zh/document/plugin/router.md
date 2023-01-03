@@ -2,11 +2,11 @@
 
 本文档主要介绍[标签路由插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-router)的使用方法
 
-## 功能
+## 功能介绍
 
 在微服务存在多个版本、多个实例的情况下，通过配置路由规则管理服务之间的路由，达到无损升级、应用拨测等业务目的。
 
-## 使用说明
+## 参数配置
 
 - 配置路由规则
 
@@ -101,9 +101,7 @@ content为具体的路由规则。
 - ${PARAMETERS}需替换为服务注册时的自定义标签（形如tag1:value1,tag2:value2），即标签名与标签值以英文冒号分隔，多个标签之间以英文逗号分隔。
 - 一般地，如果用版本号进行路由，则只需配置service_meta_version，如果用自定义标签进行路由，则只需配置service_meta_parameters。
 
-## 结果验证
-
-- 前提条件[正确打包Sermant](../document/UserGuide/README.md#打包流程)
+## 操作和结果验证
 
 - 注册中心使用华为CSE，下载[Local-CSE](https://support.huaweicloud.com/devg-cse/cse_devg_0036.html) ，解压后按照文档说明进行启动
 
@@ -154,5 +152,3 @@ java -Dservicecomb_service_enableSpringRegister=true -Dservice_meta_version=1.0.
 - 测试
 
 当启动以上4个应用并正确配置路由规则后，通过http客户端工具访问<http://127.0.0.1:8170/consumer/hello/rest>，可以发现，当请求头为id: 1或者id: 2时，会路由到版本为1.0.1的provider，当不满足以上条件时，会访问到版本为1.0.0的provider
-
-[返回**Sermant**说明文档](../document/UserGuide/README.md)

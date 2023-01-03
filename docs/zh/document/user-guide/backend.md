@@ -1,37 +1,58 @@
 # Backend使用手册
 
-- backend运行环境依赖kafka, 默认kafka的配置如下，若kafka环境配置不同，需要修改[kafka环境配置](https://github.com/huaweicloud/Sermant/tree/develop/sermant-backend/src/main/resources/application.properties)
-  ```properties
-  spring.kafka.bootstrap-servers=127.0.0.1:9092
-  ```
-- 框架运行依赖backend，backend的默认配置如下，若宿主应用和backend未运行在统一机器，需要修改[backend配置](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-premain/src/main/resources/config/bootstrap.properties)
-    ```properties
-    backendIp=127.0.0.1
-    backendPort=6888
-    ```
-- 运行backend模块之后，访问 `http://127.0.0.1:8900`查看框架和插件启动信息
-  <MyImage src="/docs-img/backend_sermant_info.png"></MyImage>
-- backend默认后端监听端口为8900，若出现端口被占用或需要设置为其他端口，请修改[backend端口](https://github.com/huaweicloud/Sermant/tree/develop/sermant-backend/src/main/resources/application.properties)
-  ```properties
-  server.port=8900
-  ```
-- backend前端采用vue框架开发，目前前端仅提供简单的展示框架运行状态信息，若前端不满足要求，请修改[backend前端](https://github.com/huaweicloud/Sermant/tree/develop/sermant-backend/src/main/webapp)
-- backend要求框架和插件产生的数据存入不同的topic，若以下现有的topic配置不满足要求，则需要按照同样的格式添加topic配置，添加topic请修改[topic配置](https://github.com/huaweicloud/Sermant/tree/develop/sermant-backend/src/main/resources/application.properties)
-  ```properties
-  datatype.topic.mapping.0=topic-heartbeat
-  datatype.topic.mapping.1=topic-log
-  datatype.topic.mapping.2=topic-flowcontrol
-  datatype.topic.mapping.3=topic-flowrecord
-  datatype.topic.mapping.4=topic-server-monitor
-  datatype.topic.mapping.5=topic-open-jdk-jvm-monitor
-  datatype.topic.mapping.6=topic-ibm-jvm-monitor
-  datatype.topic.mapping.7=topic-agent-registration
-  datatype.topic.mapping.8=topic-agent-monitor
-  datatype.topic.mapping.9=topic-agent-span-event
-  datatype.topic.mapping.10=topic-druid-monitor
-  datatype.topic.mapping.11=topic-flowcontrol-metric
-  ```
-- backend不强依赖kafka服务，配置中默认心跳数据写入缓存中，如需要将数据写入kafka，则更改[backend配置文件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-backend/src/main/resources/application.properties)中以下配置为`false`即可。
-  ```properties
-  heartbeat.cache=true
-  ```
+Backend为Sermant数据处理后端模块和前端信息展示模块，旨在为Sermant提供运行时的可观测能力，当前主要包括Sermant心跳信息的接收和展示等功能。本文介绍如何使用Backend。
+
+Backend与sermant-agent配合使用。sermant-agent挂载在宿主应用启动后作为数据发送端，可定时发送当前Sermant的心跳数据，包含应用名、实例ID、版本号、IP、时间戳、挂载插件信息等。Backend作为数据接收端，可接收处理sermant-agent发送的心跳数据，并在前端可视化展示，提供观测运行状态的能力。
+
+Backend为**非必要组件**，用户可按需部署。
+
+## 参数配置
+
+sermant-agent端参数配置：
+
+修改sermant-agent产品包agent/config/config.properties配置文件的相关配置
+
+```properties
+agent.config.serviceBlackList=com.huaweicloud.sermant.implement.service.tracing.TracingServiceImpl
+
+heartbeat.interval=30000
+
+backend.nettyIp=127.0.0.1
+backend.nettyPort=6888
+```
+
+其中，`agent.config.serviceBlackList ` 配置禁止启动的核心服务，需去除`com.huaweicloud.sermant.implement.service.heartbeat.HeartbeatServiceImpl`以**启用心跳服务**。
+
+`heartbeat.interval` 配置心跳发送的间隔时间(ms)
+
+`backend.nettyIp` 配置对应的Backend的netty服务端地址
+
+`backend.nettyPort` 配置对应的Backend的netty服务端端口，默认为6888
+
+Backend端参数无需额外配置，默认以6888为netty消息接收端口，8900为服务进程端口。
+
+## 支持版本
+
+Backend使用JDK 1.8版本开发，因此运行环境需JDK 1.8及以上版本。
+
+- [HuaweiJDK 1.8](https://gitee.com/openeuler/bishengjdk-8) / [OpenJDK 1.8](https://github.com/openjdk/jdk) / [OracleJDK 1.8](https://www.oracle.com/java/technologies/downloads/)
+
+## 启动和结果验证
+
+### 启动Backend
+
+Backend的Jar包位于sermant-agent产品包agent/server目录下，通过执行以下命令来运行Backend：
+
+```shell
+java -jar sermant-backend-lite.jar
+```
+
+### 宿主应用挂载sermant-agent启动
+
+首先按照上文参数配置一节描述，正确修改相关配置。然后参考[sermant-agent使用手册](sermant-agent.md)中启动和结果验证一节描述的方式启动宿主应用。
+
+### 结果验证
+
+通过浏览器访问地址http://127.0.0.1:8900/ 可查看前端展示页面，若页面中如下展示sermant-agent实例的心跳信息，则说明部署验证成功。
+
+<MyImage src="/docs-img/backend.png"></MyImage>

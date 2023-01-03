@@ -1,8 +1,8 @@
 # 优雅上下线
 
-该文档主要介绍优雅上下线能力以及其使用方法，该功能当前集成在[注册插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-registry) 中, 但功能可独立使用。
+本文档主要介绍优雅上下线能力以及其使用方法，该功能当前集成在[注册插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-registry) 中, 但功能可独立使用。
 
-## 功能
+## 功能介绍
 
 应用的重启、升级、扩容等操作无法避免，而该过程中时常会遇到以下问题：
 
@@ -15,7 +15,7 @@
 
 **优雅下线**，即对下线的实例提供保护，插件基于**实时通知**+**刷新缓存的机制**快速更新上游缓存，同时基于流量统计的方式，确保即将下线的实例尽可能的将流量处理完成，最大程度避免流量丢失。
 
-## 版本支持
+## 支持版本和限制
 
 当前优雅上下线能力**仅支持SpringCloud应用**，需确保SpringCloud版本在`Edgware.SR2`及以上。
 
@@ -23,7 +23,7 @@
 
 **特别说明**：优雅上下线能力基于SpringCloud的默认负载均衡能力开发，若您实现了自定义负载均衡能力，该能力将不再适用。
 
-## 使用说明
+## 参数配置
 
 ### 开启优雅上下线
 
@@ -67,9 +67,9 @@ java -Dgrace.rule.enableSpring=true -Dgrace.rule.enableWarmUp=true -Dgrace.rule.
 
 #### 容器场景
 
-容器场景可基于`Sermant-Injector`快速启动， 参考[容器化部署](../injector-zh.md)。
+容器场景可基于`Sermant-Injector`快速启动， 参考[容器化部署](../user-guide/injector.md)。
 
-同时需修改[Deployment编排文件](../injector-zh.md#部署)，添加优雅上下线环境变量，修改后的编排文件如下：
+同时需修改Deployment编排文件，添加优雅上下线环境变量，修改后的编排文件如下：
 
 ```yaml
 apiVersion: v1
@@ -112,7 +112,8 @@ spec:
 
 随后按照容器化流程启动即可。
 
-## 快速入门
+
+## 操作和结果验证
 
 下面以一个简单demo演示如何在虚机场景验证优雅上下线
 
@@ -185,5 +186,3 @@ spec:
 4. 验证优雅下线
 
    持续访问接口`localhost:8800/graceDownOpen`, 此时下线其中一个provider实例，观察请求是否出现错误，若未出现错误，则优雅下线能力验证成功。
-
-   [返回**Sermant**说明文档](../document/UserGuide/README.md)

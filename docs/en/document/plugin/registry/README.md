@@ -6,7 +6,7 @@ This document describes the [service registration plugin](https://github.com/hua
 
 The service registration plug-in allows microservices that have been registered with popular registration centers, such as Eureka, Nacos, ZooKeeper, and Consul, to be registered with [Service Center](https://github.com/apache/servicecomb-service-center) in a non-intrusive manner. It also supports Dubbo and SpringCloud frameworks.
 
-## Usage
+## Parameter configuration
 
 ### Modify [Core Configuration File](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-config/config/config.properties) On Demand
 
@@ -60,9 +60,8 @@ Note that the address information of **this configuration item is not used**. On
 
 - **Note**: For **existing dubbo applications**, (Applications which hava already set up it's own registry address) **This step is not required**.
 
-## Verification
+## Operation and Result Verification
 
-- Prerequisites: [Sermant is packaged correctly](../../document/UserGuide/README.md#packaging-steps).
 - Start the Service Center. For details about how to download, use, and start the Service Center, see the [official website](https://github.com/apache/servicecomb-service-center).
 - Compile [demo application](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-registry/demo-registry/demo-registry-dubbo)
 
@@ -94,28 +93,6 @@ Note: To facilitate the test, the DUBBO registration function is enabled in -Dse
 
 Replace `${path}` with the Sermant project path, replace x.x.x with the actual Sermant version number, and appName with the application name in the agent startup parameter, which is irrelevant to registration parameters. The directory for running commands must be the JAR package directory of the demo application.
 
-Refer to the [entry module](../../document/UserGuide/entrance.md#startup-parameters) for the specific meaning of the startup parameters.
-
 - Test
 
 After the preceding two applications are started, log in to the [Service Center](http://127.0.0.1:30103/) background and check whether related service instances have been registered. Access the application interface http://localhost:28020/test to check whether the interface returns a normal response. If the interface returns a successful response, the registration is successful.
-
-## Configuration 
-
-Both the **core configuration file and plugin configuration file** support the configuration of environment variables and java -D parameters, as shown in the following figure.
-
-```properties
-service.meta.application=default
-```
-
-The preceding configuration indicates that the value of service.meta.application in the environment variable or -D parameter is preferred as the application name. If the value cannot be found in the environment variable or -D parameter, default is used as the application name.
-
-## More Documents
-
-- [SpringCloud Registry Migration](spring-cloud-registry-migiration.md)
-
-- [Dubbo Registry Migration](dubbo-registry-migiration.md)
-
-- [Registry Migration FAQ](../../about/question/registry.md)
-
-[Back to README of **Sermant**](../../document/UserGuide/README.md)

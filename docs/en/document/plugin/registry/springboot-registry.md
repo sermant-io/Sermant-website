@@ -2,7 +2,7 @@
 
 This article describes how to [SpringBoot registry plugin](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-springboot-registry) and how to use it.
 
-## Ability
+## Function
 
 This plugin provides service registration and discovery abilities for pure SpringBoot applications. Users can quickly access the registration center without modifying code. In addition, the plugin also provides the service timeout retry ability, achieving high availability of service invocation.
 
@@ -12,7 +12,7 @@ Currently, URL formats are supported.：http://www.domain.com/serviceName/apiPat
 
 Just like the URL above, ` www.domain.com` indicates the domain name, `serviceName` indicates the downstream service name, and `apiPath` indicates the downstream request interface path.
 
-## Version Supports
+## Supported Versions and Limitations
 
 Reistry Center Support： Zookeeper 3.4.x and above
 
@@ -26,7 +26,7 @@ Client Supports：
 
 Application Framework Supports：SpringBoot 1.5.10.Release and above
 
-## Usage
+## Parameter configuration
 
 ### (Optional) Configuring the Dynamic Configuration Center
 
@@ -154,7 +154,7 @@ create /app=default&environment= ""
 create /app=default&environment=/sermant.plugin.registry "strategy: all"
 ```
 
-## Quick Use
+## Operation and Result Verification
 
 The following uses the demo as an example to describe how to use the plugin ability.
 

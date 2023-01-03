@@ -15,7 +15,7 @@ To solve the preceding problems, graceful online/offline is developed. To solve 
 
 **Graceful offline**,  The plugin quickly updates the upstream cache based on the **real-time notification** + **cache update mechanism**. In addition, traffic statistics are collected to ensure that the instances that are about to go offline can process traffic as much as possible, preventing traffic loss to the greatest extent.
 
-## Support Versions
+## Supported Versions and Limitations
 
 Currently, the graceful online/offline capability **supports only SpringCloud applications**. Ensure that the SpringCloud version is `Edgware.SR2` or later.
 
@@ -23,7 +23,7 @@ Regitry Center Support：Zookeeper、Consul、Naocs、Eureka、Service Center
 
 **Notice**：The graceful online/offline capability is developed based on the default load balancing capability of SpringCloud. If you have implemented the custom load balancing capability, this capability is no longer applicable.
 
-## Usage
+## Parameter configuration
 
 ### Enabling Graceful Online and Offline
 
@@ -112,7 +112,7 @@ spec:
 
 Then start application according to the containerization process .
 
-## Quick Start
+## Operation and result validation
 
 The following uses a simple demo to demonstrate how to verify graceful online/offline in a VM scenario.
 

@@ -1,12 +1,14 @@
 # 配置中心使用手册
 
-- [Api解析](#Api解析)
-- [ZooKeeper](#zookeeper)
-- [Kie](#kie)
-- [实现包装](#实现包装)
-- [使用方式](#使用方式)
+配置中心为Sermant动态配置功能配套组件，该功能允许Sermant动态从配置中心拉取配置以实现丰富多样的服务治理能力。用户可按需开启动态配置能力并部署配置中心。本文介绍如何使用配置中心。
 
-## Api解析
+配置中心在Sermant服务治理能力中扮演重要的角色。例如，在流控插件中，流量标记和流控规则的配置和下发都是通过Sermant动态配置和配置中心作为媒介来实现的动态流量控制；在路由插件中，标签路由规则的配置下发也是通过这套配置中心能力得以生效。
+
+配置中心使得Sermant在静态配置的基础上，具备了动态配置的关键能力，解决了前者提供的配置不可改变的问题，这是Sermant的服务治理多样化的实现基础。
+
+## 动态配置的统一模型
+
+### 动态配置API
 
 **动态配置服务**的服务功能`API`由[DynamicConfigService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java)抽象类提供，其实现三个接口，见于[api](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api)目录中，具体接口如下所示：
 
@@ -37,18 +39,20 @@
 
 通过观察可以发现，以上的`API`主要分为数据的增删查改操作，以及监听器的[DynamicConfigListener](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java)增删操作，其中后者的事件回调是**动态配置服务**得以实现功能中至关重要的一环，也是插件中使用**动态配置服务**的主要功能。
 
-另外，在[KeyService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyService.java)接口中定义的所有`API`都是不带`Group`的`API`，它们在[DynamicConfigService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java)中其实都会使用默认`Group`修正为[KeyGroupService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyGroupService.java)的`API`，这点需要注意。默认`Group`可以通过**统一配置文件**`config.properties`的`dynamic.config.default_group`修改。
+另外，在[KeyService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyService.java)接口中定义的所有`API`都是不带`Group`的`API`，它们在[DynamicConfigService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java)中其实都会使用默认`Group`修正为[KeyGroupService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyGroupService.java)的`API`，这点需要注意。默认`Group`可以通过**统一配置文件**`config.properties`的`dynamic.config.defaultGroup`修改。
 
 最后，除了以上的服务接口以外，使用者还需要关注一些其他接口、配置或实体：
 
-DynamicConfig.java)，其中涉及以下配置：
-  |类型|属性|统一配置值|解析|
-  |:-|:-|:-|:-|
-  |int|timeoutValue|dynamic.config.timeout_value|服务器连接超时时间，单位：ms|
-  |String|defaultGroup|dynamic.config.default_group|默认分组|
-  |String|serverAddress|dynamic.config.server_address|服务器地址，必须形如：{@code host:port[(,host:port)...]}|
-  |[DynamicConfigServiceType](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigServiceType.java)|serviceType|dynamic.config.dynamic_config_type|服务实现类型，取NOP、ZOOKEEPER、KIE|
-- **动态配置服务**实现类型[DynamicConfigServiceType](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigServiceType.java)，含一下几种类型：
+**动态配置服务**的静态配置[DynamicConfig](https://github.com/huaweicloud/Sermant/blob/0.9.x/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/config/DynamicConfig.java)，对应在sermant-agent的产品包agent/config/config.properties中涉及以下配置：
+
+|类型|属性|统一配置值|解析|
+|:-|:-|:-|:-|
+|int|timeoutValue|dynamic.config.timeoutValue|服务器连接超时时间，单位：ms|
+|String|defaultGroup|dynamic.config.defaultGroup|默认分组|
+|String|serverAddress|dynamic.config.serverAddress|服务器地址，必须形如：{@code host:port[(,host:port)...]}|
+|[DynamicConfigServiceType](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigServiceType.java)|serviceType|dynamic.config.dynamicConfigType|服务实现类型，取NOP、ZOOKEEPER、KIE|
+- **动态配置服务**实现类型[DynamicConfigServiceType](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigServiceType.java)，含以下几种类型：
+  
   |枚举值|解析|
   |:-|:-|
   |ZOOKEEPER|ZooKeeper实现|
@@ -64,7 +68,7 @@ DynamicConfig.java)，其中涉及以下配置：
   |String|key|配置键|
   |String|group|配置分组|
   |String|content|配置信息|
-  |[DynamicConfigEventType](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigEventType.java)|changeType|事件类型|
+  |[DynamicConfigEventType](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigEventType.java)|eventType|事件类型|
 - 动态配置改变事件类型[DynamicConfigEventType](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigEventType.java)，含以下四种：
   |枚举值|解析|
   |:-|:-|
@@ -73,7 +77,7 @@ DynamicConfig.java)，其中涉及以下配置：
   |MODIFY|配置信息修改事件|
   |DELETE|配置删除事件|
 
-## ZooKeeper
+### ZooKeeper的实现
 
 对于`ZooKeeper`服务器来说，所谓的动态配置就是`ZooKeeper`节点的值，至于`Key`和`Group`应当作为构建**节点路径**的元素。考虑到`Group`包含区别使用者的信息，应当作为**节点路径**的前缀，这样`Key`值则作为后半部分存在：
 ```txt
@@ -106,7 +110,7 @@ DynamicConfig.java)，其中涉及以下配置：
   |boolean removeAllWatches(String)|移除节点下所有的监听器，含子孙节点|
   |void close()|关闭`ZooKeeper`客户端|
 
-## Kie
+### Kie的实现
 
 对于`Kie`服务来说，所谓动态配置就是`Kie`配置的键值，`Kie`是基于标签去查询关联配置， 至于`Key`与`Group`则是关联配置的元素。`Key`即配置的键的名称，而`Group`则是关联`Key`的标签， 每一个`Key`都可配置一个或者多个标签，其格式往往如下:
 
@@ -131,7 +135,7 @@ groupKey1=groupValue1[&groupKey2=groupVaue2...]
 >
 > **特别说明：**
 >
-> ​ 若传入的`Group`非以上格式，则会默认添加标签`GROUP=传入Group`
+>  若传入的`Group`非以上格式，则会默认添加标签`GROUP=传入Group`
 
 `Kie`的实现见于包kie, 主要包含KieDynamicConfigService、LabelGroupUtils与SubscriberManager三个类：
 
@@ -153,12 +157,87 @@ groupKey1=groupValue1[&groupKey2=groupVaue2...]
   | boolean removeGroupListener(String, DynamicConfigListener)   | 移除标签监听                                                 |
   | boolean publishConfig(String, String, String)                | 发布Kie配置                                                  |
 
-## 实现包装
+## 配置中心支持的组件及版本
 
-从[核心模块介绍](./agentcore.md#插件服务系统)可知，**插件服务系统**是基于`SPI`实现的，而[DynamicConfigService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java)对应的`SPI`实现配置为BufferedDynamicConfigService，后者为前者所有具体实现类的包装。它在初始化的过程中读取[DynamicConfig](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/config/DynamicConfig.java)配置，通过`dynamic.config.dynamic_config_type`配置选择具体的服务实现，并将所有`API`委派给这些具体的服务实现完成。
+目前Sermant支持的配置中心组件为:
 
-## 使用方式
+- [ZooKeeper](https://zookeeper.apache.org/releases.html)，使用版本为3.6.3。
+- [ServiceComb Kie](https://servicecomb.apache.org/cn/release/kie-downloads/)，使用的版本为0.2.0.
 
-**动态配置服务**主要应用于插件的拦截器或插件服务中，具体使用方式可以参见[插件开发手册的动态配置功能一节](../DeveloperGuide/dev-plugin.md#动态配置功能)，使用过程中较为关键的当属`Key`和`Group`的构建，具体内容可参见前文中几种实现中对这两个值的要求，这里不做赘述。
+## 操作和结果验证
 
+本教程使用[Sermant-examples](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template)仓库中的demo插件来进行动态配置能力的演示，该插件中实现添加监听器以监听动态配置变化。
+
+### Zookeeper
+
+#### 启动
+
+首先启动配置中心Zookeeper，Zookeepr部署可自行查找相关资料。
+
+然后参考[sermant-agent使用手册](sermant-agent.md)启动和结果验证一节，挂载sermant-agent启动宿主应用。
+
+#### 发布配置
+
+使用Zookeeper命令行工具或可视化工具发布配置。此处以命令行工具为例，执行以下命令：
+
+```shell
+create /app=default/demo "test"
+```
+
+其中`app=default`即为group的值，`demo`即为key值，`test`为value值。
+
+创建节点数据成功后，即成功在配置中心发布了动态配置。
+
+#### 验证
+
+查看Sermant日志文件sermant-0.log，默认日志文件路径为`./logs/sermant/core`。
+
+观察日志文件中是否包含以下日志输出：
+
+```
+2022-12-29 15:48:01.963 [ERROR] [com.huawei.example.demo.common.DemoLogger] [println:42] [main-EventThread] [DemoDynaConfService]-DynamicConfigEvent{key='demo', group='app=default', content='test', eventType=CREATE} com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent[source=demo,app=default]
+```
+
+如果日志输出无误，则说明动态配置发布成功，sermant-agent已监听到动态配置。
+
+### Kie
+
+Kie与Zoopeepr使用方式类似，唯一不同的是发布配置按照Kie的方式执行。
+
+#### 启动
+
+首先启动配置中心Kie，Kie部署可自行查找相关资料。
+
+然后参考[sermant-agent使用手册](sermant-agent.md)启动和结果验证一节，挂载sermant-agent启动宿主应用。
+
+#### 发布配置
+
+通过Kie发布以下动态配置：
+
+```properties
+{
+  "key": "demo",          
+  "value": "test",              
+  "labels": {
+    "app": "default"     
+  },
+  "status": "enabled"
+}
+```
+
+其中`app=default`即为group的值，`demo`即为key值，`test`为value值。
+
+创建节点数据成功后，即成功在配置中心发布了动态配置。
+
+#### 验证
+
+查看Sermant日志文件sermant-0.log，默认日志文件路径为`./logs/sermant/core`。
+
+观察日志文件中是否包含以下日志输出：
+
+```
+2022-12-29 16:45:14.456 [ERROR] [com.huawei.example.demo.common.DemoLogger] [println:42] [main-EventThread] [DemoDynaConfService]-DynamicConfigEvent{key='demo', group='app=default', content='test', eventType=CREATE} com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent[source=demo,app=default]
+```
+
+如果日志输出无误，则说明动态配置发布成功，sermant-agent已监听到动态配置。
 

@@ -2,11 +2,11 @@
 
 本文主要介绍[服务注册插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-registry)以及该插件的使用方法。
 
-## 功能
+## 功能介绍
 
 服务注册插件提供代码无侵入方式，可让原本注册于Eureka，Nacos，Zookeeper、Consul等主流注册中心的微服务，无侵入地注册到[Service Center](https://github.com/apache/servicecomb-service-center)上, 同时支持Dubbo与SpringCloud框架。
 
-## 使用说明
+## 参数配置
 
 ### 按需修改[核心配置文件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-config/config/config.properties)
 
@@ -59,9 +59,7 @@ dubbo:
 
 - **注意**：对于**存量**dubbo应用（即原本已经设置过dubbo本身注册中心地址的应用）**无需**进行这一步。
 
-## 结果验证
-
-- 前提条件[正确打包Sermant](../../document/UserGuide/README.md#打包流程)
+## 操作和结果验证
 
 - 启动Service Center，下载、使用说明和启动流程详见[官网](https://github.com/apache/servicecomb-service-center)
 
@@ -95,18 +93,7 @@ java -Dservicecomb.service.enableDubboRegister=true -javaagent:${path}/sermant-a
 
 其中${path}需要替换为Sermant工程路径，x.x.x需要替换为Sermant实际版本号，appName为agent启动参数中的应用名，与注册参数无关，执行命令的目录需要为demo应用的jar包目录。
 
-启动参数的具体意义见[入口模块](../../document/UserGuide/entrance.md#启动参数)。
 
 - 测试
 
 当启动以上2个应用后，登录[Service Center](http://127.0.0.1:30103/)后台，查看相关服务实例是否已注册，并且访问应用接口<http://localhost:28020/test>，确认接口是否正常返回，若接口成功返回，则说明注册成功。
-
-## 配置说明
-
-**核心配置文件**与**插件配置文件**均支持环境变量、java -D参数配置），如下所示：
-
-```properties
-service.meta.application=default
-```
-
-以上配置代表优选读取环境变量或-D参数中service.meta.application的值作为应用名，如果环境变量或-D参数中找不到这个值，则把default作为应用名。

@@ -4,7 +4,7 @@
 
 SpringCloud迁移见[SpringCloud注册中心迁移](spring-cloud-registry-migiration.md)
 
-## 功能
+## 功能介绍
 
 提供代码无侵入方式，基于双注册的模式让线上应用在线上业务不停机的前提下将注册中心快速迁移到[Service Center](https://github.com/apache/servicecomb-service-center)的能力。支持注册中心如下：
 
@@ -13,7 +13,8 @@ SpringCloud迁移见[SpringCloud注册中心迁移](spring-cloud-registry-migira
 | Nacos     | ✅        |
 | Zookeeper | ✅        |
 
-**支持版本**
+## 支持版本和限制
+
 
 Dubbo 2.6.x, 2.7.x
 
@@ -21,7 +22,7 @@ Dubbo 2.6.x, 2.7.x
 
 <MyImage src="/docs-img/sermant-register-migration.png"/>
 
-## 使用说明
+## 参数配置
 
 ### 修改[插件配置文件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-registry/config/config.yaml)
 
@@ -39,15 +40,15 @@ servicecomb.service:
 
 **注意：如果开启了迁移功能，则无需修改原有的注册中心地址，否则将不会同时向2个注册中心（原注册中心+sc）进行注册。**
 
+## 操作和结果验证
+
 ### 启动Service Center
 
 Service Center启动流程详见[官网](https://github.com/apache/servicecomb-service-center)
 
-## 结果验证
+### 结果验证
 
 - 说明：此处以原注册中心为Nacos进行举例。
-
-- 前提条件[正确打包Sermant](../../document/UserGuide/README.md#打包流程)。
 
 - 启动Service Center，下载、使用说明和启动流程详见[官网](https://github.com/apache/servicecomb-service-center)。
 
@@ -94,8 +95,6 @@ java -Dservicecomb.service.enableDubboRegister=true -Dserver.port=48021 -Ddubbo.
 注：为了便于测试，这里使用了-Dservicecomb.service.enableDubboRegister=true的方式打开了dubbo注册开关，如果使用了其它的方式打开了dubbo注册开关，则无需添加该参数；另外为了解决同一台服务器启动2个provider遇到的端口冲突问题，需要增加-Dserver.port=48021 -Ddubbo.protocol.port=48821参数，如果测试时2个provider在不同的服务器，则无需添加该参数。
 
 其中${path}需要替换为Sermant工程路径，x.x.x需要替换为Sermant实际版本号，appName为agent启动参数中的应用名，与注册参数无关，执行命令的目录需要为demo应用的jar包所在的目录。
-
-启动参数的具体意义见[入口模块](../../document/UserGuide/entrance.md#启动参数)。
 
 - 测试
 

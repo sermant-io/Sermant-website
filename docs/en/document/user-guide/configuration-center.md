@@ -1,16 +1,15 @@
-# Configuration Center Manual
+# Configuration Center User Manual
 
-- [API](#API)
-- [ZooKeeper](#zookeeper)
-- [Kie](#kie)
-- [Wrapper](#Wrapper)
-- [How to Use](#How-to-Use)
+The configuration center is a supporting component for the dynamic configuration function of Sermant, which allows Sermant to dynamically pull configuration from the configuration center to achieve a variety of service governance capabilities. Users can enable dynamic configuration capabilities and deploy configuration centers on demand.
+This article describes how to use the configuration center.
 
-## Function Orientation
+Configuration center plays an important role in the service governance capability of Sermant. For example, in the flowcontrol plugin, the configuration and delivery of traffic marking and flow control rules are realized by Sermant dynamic configuration and configuration center as the medium to achieve dynamic flow control. In the routing plugin, the configuration of label routing rules is also effective through this configuration center capability.
 
-**Dynamic Configuration Service** is a service that allows developers to dynamically pull configuration from servers, acting as a [Unified Configuration System](./agentcore.md#Unified-Configuration-System). Its core purpose is to solve the problem that the configuration provided by the latter can not be changed.
+Configuration center makes Sermant have the key ability of dynamic configuration on the basis of static configuration, and solves the problem of immutable configuration provided by the former, which is the implementation basis of service management diversification in Sermant.
 
-## API
+## Unified Model for Dynamic Configuration
+
+### Dynamic Configuration API
 
 The functionality `API` of **Dynamic Configuration Service** is provided by the abstract class [DynamicConfigService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java) , which implements three interfaces, as seen in [api](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api) directory, The concrete interface is as follows:：
 
@@ -48,10 +47,10 @@ Finally, besides the above service interfaces, there are a few other interfaces,
 - Static configuration [DynamicConfig](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/config/DynamicConfig.java) for **Dynamic Configuration Service**, which involves the following configuration:
   |Type|Property|Key in Unified Configuration File|Explanation|
   |:-|:-|:-|:-|
-  |int|timeoutValue|dynamic.config.timeout_value|Timeout for server connection, unit: ms|
-  |String|defaultGroup|dynamic.config.default_group|Default group|
-  |String|serverAddress|dynamic.config.server_address|Server address, must be of the form: {@code host:port[(,host:port)...]}|
-  |[DynamicConfigServiceType](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigServiceType.java)|serviceType|dynamic.config.dynamic_config_type|Service implementation type, take NOP, ZOOKEEPER, KIE|
+  |int|timeoutValue|dynamic.config.timeoutValue|Timeout for server connection, unit: ms|
+  |String|defaultGroup|dynamic.config.defaultGroup|Default group|
+  |String|serverAddress|dynamic.config.serverAddress|Server address, must be of the form: {@code host:port[(,host:port)...]}|
+  |[DynamicConfigServiceType](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigServiceType.java)|serviceType|dynamic.config.dynamicConfigType|Service implementation type, take NOP, ZOOKEEPER, KIE|
   
 - **Dynamic configuration service implementation type**[DynamicConfigServiceType](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigServiceType.java), contains:
   
@@ -85,7 +84,7 @@ Finally, besides the above service interfaces, there are a few other interfaces,
   |MODIFY|Event of modifying configuration|
   |DELETE|Event of deleting configuration|
 
-## ZooKeeper
+#### ZooKeeper
 
 For `ZooKeeper` servers, the dynamic configuration is the value of the ZooKeeper node. The `Key` and `Group` should be used as elements to build the **node path**. Since `Group` contains user-specific information, it should be the prefix string for the **node path** so that the `Key` value exists as the second half:
 ```txt
@@ -118,7 +117,7 @@ The implementation of `Zookeeper` could be found in zookeeper. It mainly contain
   |boolean removeAllWatches(String)|Remove all watchers under a node, including descendant nodes|
   |void close()|Close `ZooKeeper` client|
 
-## Kie
+#### Kie
 
 For the `Kie` service, the so-called dynamic configuration is the value of the `Kie'` configuration. `Kie` queries the associated configuration based on the label. `Key` and `Group` are the elements of the associated configuration. `Key` is the name of the configured Key, and `Group` is the label of the associated Key. Each `Key` can be configured with one or more labels. The format is usually as follows:
 
@@ -165,12 +164,87 @@ The implementation of `Kie` could be found in kie, which contains KieDynamicConf
   | boolean removeGroupListener(String, DynamicConfigListener)   | Remove a label group listener.                               |
   | boolean publishConfig(String, String, String)                | Publish configuration of Kie                                 |
 
-## Wrapper
+## Configuration Center and Version Supported
 
-You can learn from [Sermant-agentcore-core](./agentcore.md#Plugin-Service-System) that **Plugin Service System** is based on `SPI`.
+The configuration center components currently supported by Sermant are:
 
-The corresponding ` SPI ` implementation of [DynamicConfigService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java) is BufferedDynamicConfigService. The latter is the wrapper of all the methods of the former. It reads [DynamicConfig](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/config/DynamicConfig.java) configuration at startup, selects concrete service implementation and delegates all `API` to these concrete service implementations via `dynamic.config. dynamic_config_type`.
+- [ZooKeeper](https://zookeeper.apache.org/releases.html), version 3.6.3.
+- [ServiceComb Kie](https://servicecomb.apache.org/cn/release/kie-downloads/), version 0.2.0.
 
-## How to Use
+## Operation and Result Validation
 
-**Dynamic Configuration Service** is mainly used in plugin interceptors or plugin services. The specific way can be found [Plugin Development Guide](../DeveloperGuide/dev-plugin.md#Dynamic-Configuration). The important thing is the construction of `Key` and `Group`. For details, see the requirements for these two values in the previous implementations.
+This document uses the demo plugin in [Sermant-examples](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template)  to demonstrate dynamic configuration capability, whose implementation adds a listener to listen for dynamic configuration changes.
+
+### Zookeeper
+
+#### Startup
+
+First, start the configuration center Zookeeper. You can learn how to deployment it by official information.
+
+Then refer to the [Sermant-agent User Manual](sermant-agent.md) startup and result verification section to start the host application mounting sermant-agent.
+
+#### Publish Configuration
+
+Use the Zookeeper command-line tool or visualization tool to publish configuration. Using a command-line tool as an example, enter the following command:
+
+```shell
+create /app=default/demo "test"
+```
+
+Where `app=default` is the group, `demo` is the key, and `test` is the value.
+
+When the node data is successfully created, the dynamic configuration is successfully published in the configuration center.
+
+#### Validation
+
+Check out the sermant log file sermant-0.log. The default log file path is `./logs/sermant/core`.
+
+Observe if the log file contains the following log output:
+
+```
+2022-12-29 15:48:01.963 [ERROR] [com.huawei.example.demo.common.DemoLogger] [println:42] [main-EventThread] [DemoDynaConfService]-DynamicConfigEvent{key='demo', group='app=default', content='test', eventType=CREATE} com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent[source=demo,app=default]
+```
+
+If the log output is correct, it means that the dynamic configuration is published successfully and the sermant-agent has listened to the dynamic configuration.
+
+### Kie
+
+Kie is used in a similar way to Zoopeepr, with the only difference that publishing configuration is performed in the way of Kie.
+
+#### Startup
+
+First, start the configuration center Kie. You can learn how to deployment it by official information.
+
+Then refer to the [Sermant-agent User Manual](sermant-agent.md) startup and result verification section to start the host application mounting sermant-agent.
+
+#### Publish Configuration
+
+Publish the following dynamic configuration via Kie:
+
+```properties
+{
+  "key": "demo",          
+  "value": "test",              
+  "labels": {
+    "app": "default"     
+  },
+  "status": "enabled"
+}
+```
+
+Where `app=default` is the group, `demo` is the key, and `test` is the value.
+
+When the node data is successfully created, the dynamic configuration is successfully published in the configuration center.
+
+#### Validation
+
+Check out the sermant log file sermant-0.log. The default log file path is `./logs/sermant/core`.
+
+Observe if the log file contains the following log output:
+
+```
+2022-12-29 16:45:14.456 [ERROR] [com.huawei.example.demo.common.DemoLogger] [println:42] [main-EventThread] [DemoDynaConfService]-DynamicConfigEvent{key='demo', group='app=default', content='test', eventType=CREATE} com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent[source=demo,app=default]
+```
+
+If the log output is correct, it means that the dynamic configuration is published successfully and the sermant-agent has listened to the dynamic configuration.
+

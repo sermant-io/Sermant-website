@@ -4,7 +4,7 @@
 
 Dubbo迁移见[Dubbo注册中心迁移](dubbo-registry-migiration.md)
 
-## 功能
+## 功能介绍
 
 提供代码无侵入方式，基于双注册的模式让线上应用在线上业务不停机的前提下将注册中心快速迁移到[Service Center](https://github.com/apache/servicecomb-service-center)的能力。支持注册中心如下：
 
@@ -15,7 +15,7 @@ Dubbo迁移见[Dubbo注册中心迁移](dubbo-registry-migiration.md)
 | Nacos     | ✅        |
 | Zookeeper | ✅        |
 
-**支持版本**
+## 支持版本和限制
 
 | Spring Cloud Version | Spring Boot Version | Zookeeper Discovery Version | Nacos Discovery Version     | Consul Discovery Version     | Eureka Client Version                                 |
 | -------------------- | ------------------- | --------------------------- | --------------------------- | ---------------------------- | ----------------------------------------------------- |
@@ -29,7 +29,7 @@ Dubbo迁移见[Dubbo注册中心迁移](dubbo-registry-migiration.md)
 
 <MyImage src="/docs-img/sermant-register-migration.png"/>
 
-## 使用说明
+## 参数配置
 
 ### 修改[配置文件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-registry/config/config.yaml)
 
@@ -42,6 +42,33 @@ servicecomb.service:
   openMigration: true #是否开启迁移功能 若进行注册中心迁移，则需将该值设置为true
   enableSpringRegister: true #开启spring注册插件
 ```
+
+### 注册中心心跳配置下发
+
+注册中心迁移插件提供基于动态配置中心下发关闭原注册中心心跳机制的方法，以避免源源不断的错误日志输出
+
+**后台提供配置下发接口进行动态配置下发：**
+
+URL
+
+POST /publishConfig
+
+**请求Body**
+
+| 参数    | 是否必填 | 参数类型 | 描述      | 配置值                                  |
+| ------- | -------- | -------- | --------- | --------------------------------------- |
+| key     | 是       | String   | 配置的key | sermant.agent.registry                  |
+| group   | 是       | String   | 配置的组  | service=YourServiceName                 |
+| content | 是       | String   | 配置文本  | origin.\_\_registry\_\_.needClose: true |
+
+若需要关闭请参考表格**配置值**列进行配置下发
+
+> ***注意 :***
+>
+> *该操作为一次性操作，关闭注册中心心跳后，将无法开启，仅当应用实例重启才可恢复。*
+
+
+## 操作和结果验证
 
 ### 启动Service Center
 
@@ -70,27 +97,3 @@ java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=appN
 > *关闭原注册中心，由于大部分注册中心存在心跳检查机制，实例可能会不断刷错误日志，但不影响应用的正常调用。*
 >
 > *若需要停止此类错误日志，参考节[**注册中心心跳配置下发**](#注册中心心跳配置下发)*
-
-## **注册中心心跳配置下发**
-
-注册中心迁移插件提供基于动态配置中心下发关闭原注册中心心跳机制的方法，以避免源源不断的错误日志输出
-
-**后台提供配置下发接口进行动态配置下发：**
-
-URL
-
-POST /publishConfig
-
-**请求Body**
-
-| 参数    | 是否必填 | 参数类型 | 描述      | 配置值                                  |
-| ------- | -------- | -------- | --------- | --------------------------------------- |
-| key     | 是       | String   | 配置的key | sermant.agent.registry                  |
-| group   | 是       | String   | 配置的组  | service=YourServiceName                 |
-| content | 是       | String   | 配置文本  | origin.\_\_registry\_\_.needClose: true |
-
-若需要关闭请参考表格**配置值**列进行配置下发
-
-> ***注意 :***
->
-> *该操作为一次性操作，关闭注册中心心跳后，将无法开启，仅当应用实例重启才可恢复。*

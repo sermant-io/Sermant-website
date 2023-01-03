@@ -6,7 +6,7 @@ This document is used to introduce the usage of [loadbalancer](https://github.co
 
 Based on the configuration in the configuration center, the loadbalance rules of the host application can be dynamically modified without intrusion.
 
-## The Strategy Loadbalacne Support
+## Supported Versions and Limitations
 
 | Framework                   | Strategy                             | Configuration value/Loadbalance Strategy       | version support                                              |
 | --------------------------- | ------------------------------------ | ---------------------------------------------- | ------------------------------------------------------------ |
@@ -26,7 +26,7 @@ Based on the configuration in the configuration center, the loadbalance rules of
 | spring-cloud-loadbalancer   | RoundRobin(default)                  | RoundRobin / ROUND_ROBIN                       | spring cloud Hoxton.SR10+, spring cloud 2020.0.x, spring cloud 2021.0.x |
 | spring-cloud-loadbalancer   | Random                               | Random / RANDOM                                | spring cloud Hoxton.SR10+, spring cloud 2020.0.x, spring cloud 2021.0.x |
 
-## How to Configure
+## Parameter configuration
 
 Load balancing is dynamically configured based on the configuration center. To use this capability, you need to configure the corresponding load balancing policy in the configuration center. The loadbalance plugin uses **traffic marking + loadbalance rules**. To configure a rule, you **need to configure both of them**. The following describes the two configurations:
 
@@ -56,7 +56,7 @@ Example rule description: serviceName indicates the name of the downstream servi
 
 ### Loadbalance Rule
 
-Load balancing rules must be configured for applications. Load balancing policies depend on the existing load balancing policies of the host. That is, load balancing policies can be configured only when the host supports the load balancing policies. For details about the supported load balancing policies, see the [The Strategy Loadbalacne Support](#the-strategy-loadbalacne-support).
+Load balancing rules must be configured for applications. Load balancing policies depend on the existing load balancing policies of the host. That is, load balancing policies can be configured only when the host supports the load balancing policies. For details about the supported load balancing policies, see the [Supported Versions and Limitations](#supported-versions-and-limitations).
 
 **configure key：**`servicecomb.loadbalance.testLb`
 
@@ -72,7 +72,7 @@ Load balancing rules must be configured for applications. Load balancing policie
 rule: Random
 ```
 
-Example configuration item description: Configure a random load balancing rule. For details about the configuration values, see the [The Strategy Loadbalacne Support](#the-strategy-loadbalacne-support).
+Example configuration item description: Configure a random load balancing rule. For details about the configuration values, see the [Supported Versions and Limitations](#supported-versions-and-limitations).
 
 > Check the framework version of the host application and determine the supported load balancing strategy.
 
@@ -106,13 +106,13 @@ The loadbalance plugin has three subscription tags by default.：
 
 - In versions earlier than spring cloud Hoxton.SR10, the load balancing policy of spring-cloud-loadbalancer can only be round robin (ROUND_ROBIN). Therefore, the plugin does not support modifying the load balancing policy of spring-cloud-loadbalancer components earlier than Hoxton.SR10. For versions earlier than spring cloud Hoxton.SR10, you are advised to use the spring-cloud-netflix-ribbon component for load balancing.
 
-## Verify Result
+## Operation and result validation
 
 1. Prerequisites: [sermant has been downloaded](https://github.com/huaweicloud/Sermant/releases), [the demo source code is downloaded](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/demo-register), and [the ZooKeeper is downloaded](https://zookeeper.apache.org/releases.html#download).
 
 2. start zookeeper
 
-3. start backend, referring to the [backend module introduction](../document/UserGuide/backend.md)
+3. start backend, referring to the [backend module introduction](../user-guide/backend.md)
 
 4. compile and package demo application
 
@@ -175,5 +175,3 @@ The loadbalance plugin has three subscription tags by default.：
 9. testing
 
    After the preceding steps are complete, access the localhost:8005/hello interface and check whether the random load balancing rule (by default, RoundRobin) takes effect based on the returned port.
-
-[return **Sermant** Documentation](../document/UserGuide/README.md)

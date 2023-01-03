@@ -1,26 +1,24 @@
-## 动态配置
+# 动态配置
 
-本文档主要介绍[动态配置插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-dynamic-config)以及该插件的使用方法
+本文档主要介绍[动态配置插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-dynamic-config)以及该插件的使用方法。
 
-## 功能
+## 功能介绍
 
 该插件基于Sermant配置中心能力实现动态配置，可在运行时将配置刷新到宿主应用，其优先级将高于环境变量配置。
 
 当前插件插件支持[SpringCloud](https://github.com/spring-cloud)应用，需配合注解`@Value, @ConfigurationProperties以及@RefreshScope`使用
 
-## 使用说明
+
+## 支持版本和限制
 
 ### 版本要求
 
 **SpringCloud:**  `Edgware.SR2`及以上的版本
 
-### 环境准备
 
-（1）准备配置中心环境（Zookeeper/Kie）
+## 参数配置
 
-（2）打包编译Sermant，可参考[Sermant源码编译](../../QuickStart-zh.md#源码编译)
-
-### 配置插件
+### 修改配置中心/动态配置插件的配置
 
 **（1）修改配置中心（可选）**
 
@@ -153,7 +151,7 @@ Zookeeper配置发布则需基于命令行配置，即`zkServer`, 其路径由[�
 create /service=DynamicConfigDemo/test "sermant: sermant"
 ```
 
-
+## 操作和结果验证
 
 ### 部署应用
 
@@ -208,7 +206,6 @@ public class ValueConfig {
 }
 
 ```
-
 
 
 ### 验证
