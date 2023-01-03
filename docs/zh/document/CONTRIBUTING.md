@@ -14,8 +14,6 @@
 
 Sermant 欢迎任何角色的新参与者，包括用户、贡献者、提交者和 PMC。
 
-<MyImage src="/docs-img/contributor_definition.png"/>
-
 我们鼓励新人积极加入 Sermant 项目，从用户角色到提交者角色，甚至 PMC 角色。为了做到这一点，新人需要积极参与 Sermant 项目。以下段落介绍如何以 Sermant 方式进行贡献。
 
 #### 打开/提取Issue以进行准备
