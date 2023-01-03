@@ -80,10 +80,8 @@ module.exports = {
               collapsable: true,
               sidebarDepth: 1,
               children: [
-                "DeveloperGuide/dev-plugin",
-                "DeveloperGuide/dev-plugin-idea",
-                "DeveloperGuide/third-party-copyright",
-                "DeveloperGuide/version-manage",
+                "DeveloperGuide/dev-first-plugin",
+                "DeveloperGuide/dev-complex-plugin"
               ],
             },
             {
@@ -165,10 +163,8 @@ module.exports = {
               collapsable: true,
               sidebarDepth: 1,
               children: [
-                "DeveloperGuide/dev-plugin",
-                "DeveloperGuide/dev-plugin-idea",
-                "DeveloperGuide/third-party-copyright",
-                "DeveloperGuide/version-manage",
+                "DeveloperGuide/dev-first-plugin",
+                "DeveloperGuide/dev-complex-plugin",
               ],
             },
             {
