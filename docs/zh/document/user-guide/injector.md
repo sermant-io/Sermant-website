@@ -6,27 +6,71 @@ sermant-injector属于变更准入控制器(MutatingAdmissionWebhook), 能够在
 
 ## 参数配置
 
-**公共环境变量配置：**
+### sermant-injector的参数配置
 
-sermant-injector支持为宿主应用所在pod配置自定义的环境变量，方法为在`sermant-injector/deployment/release/injector/values.yaml`中修改env的内容，修改方式如下(kv形式)：
+本项目采用Helm进行Kubernetes包管理, 部署sermant-injector相关参数需在`sermant-injector/deployment/release/values.yaml`中做修改配置。
+
+| <span style="display:inline-block;width:80px">一级缩进</span>  | <span style="display:inline-block;width:80px">二级缩进</span>   | <span style="display:inline-block;width:90px">三级缩进</span>    | 说明                                                         | <span style="display:inline-block;width:40px">是否必须</span> |
+| --------- | ---------- | ----------- | ------------------------------------------------------------ | -------- |
+| namespace | name       | -           | 部署sermant-injector所在的namespace                          | 是       |
+| injector  | replicas   | -           | 部署sermant-injector的实例个数                               | 是       |
+|           | image      | addr        | sermant-injector的镜像地址                                   | 是       |
+|           |            | pullPolicy  | sermant-injector的镜像拉取策略：Always(总是拉取)，IfNotPresent(默认值,本地有则使用本地镜像,不拉取)，Never(只使用本地镜像，从不拉取) | 是       |
+|           |            | pullSecrets | 拉取镜像的密钥，默认为default-secret，无需修改               | 是       |
+| agent     | image      | addr        | sermant-agent的镜像地址                                      | 是       |
+|           |            | pullPolicy  | sermant-agent的镜像拉取策略：Always(总是拉取)，IfNotPresent(默认值,本地有则使用本地镜像,不拉取)，Never(只使用本地镜像，从不拉取) | 是       |
+| config    | type       | -           | sermant-agent配置中心类型: 当前支持两种类型，ZOOKEEPER和KIE  | 是       |
+|           | endpoints  | -           | sermant-agent配置中心地址                                    | 是       |
+| registry  | endpoints  | -           | sermant-agent注册插件的注册中心地址                          | 是       |
+| configMap | enabled    | -           | 通用环境变量配置开关，默认为false，如需开始请配置为true      | 是       |
+|           | namespaces | -           | 注入configMap的namespace，需与业务应用的namespace保持一致    | 是       |
+|           | env        | 自定义key1  | 自定义value1                                                 | 否       |
+|           |            | 自定义key2  | 自定义value2                                                 | 否       |
+
+**通用环境变量配置：**
+
+sermant-injector支持为宿主应用所在pod配置自定义的环境变量，方法为在`sermant-injector/deployment/release/injector/values.yaml`中修改`configMap.env`的内容，前提是`configMap.enabled`配置为`true`，并正确配置`configMap.namespace`。通用环境变量的配置方式如下(kv形式)：
 
 ```yaml
-env:
-  TEST_ENV1: abc
-  TEST_ENV2: 123456
+configMap:
+  enabled: true
+  namespaces: [default, test]
+	env:
+  	TEST_ENV1: abc
+  	TEST_ENV2: 123456
 ```
 
 例如，在Sermant使用过程中，某些配置为当前k8s集群下各pod共享的公共配置，例如**Backend**后端的ip和端口等。则可在此处配置：
 
 ```yaml
-env:
-  backend.nettyIp: 127.0.0.1
-  backend.nettyPort: 8900
+configMap:
+  enabled: true
+  namespaces: [default]	
+	env:
+  	backend.nettyIp: 127.0.0.1
+  	backend.nettyPort: 8900
 ```
 
-即可使所有pod挂载的Sermant都与该**Backend**后端连接。
+即可使default命名空间下的所有pod挂载的Sermant都与该**Backend**后端连接。
 
-sermant-injector部署时的相关参数修改请参考启动和结果验证一节内容。
+**注意**：此处配置的环境变量优先级低于yaml中`env`的优先级。由于`config.type`,`config.endpoints`和`registry.endpoints`本质上是通过`env`的方式加载环境变量，因此优先级也高于configMap配置的相应的sermant的环境变量。
+
+### 镜像制作脚本的参数配置
+
+**build-sermant-image.sh**
+
+| 参数名         | 说明                               | 是否必须 |
+| -------------- | ---------------------------------- | -------- |
+| sermantVersion | sermant-agent-x.x.x.tar.gz包的版本 | 是       |
+| imageName      | 构建的sermant-agent镜像名称        | 是       |
+| imageVersion   | 构建的sermant-agent镜像版本        | 是       |
+
+**build-injector-image.sh**
+
+| 参数名       | 说明                           | 是否必须 |
+| ------------ | ------------------------------ | -------- |
+| imageName    | 构建的sermant-injector镜像名称 | 是       |
+| imageVersion | 构建的sermant-injector镜像版本 | 是       |
 
 ## 支持版本
 
@@ -48,13 +92,7 @@ sermant-injector当前支持在Kubernetes 1.15及以上版本进行部署，通�
 
 #### 制作镜像
 
-修改文件夹 `sermant-injector/images/sermant-agent`下`build-sermant-image.sh` 脚本中`sermantVersion`,`imageName`和`imageVerison`的值：
-
-> 1. `sermantVersion`为release包的版本
->
-> 2. `imageName`为构建的sermant-agent镜像名称
->
-> 3. `imageVerison`为构建的sermant-agent镜像版本
+修改文件夹 `sermant-injector/images/sermant-agent`下`build-sermant-image.sh` 脚本中`sermantVersion`,`imageName`和`imageVerison`的值。
 
 在k8s节点下，将`build-sermant-image.sh`和`Sermant.Dockerfile`置于release包`sermant-agent-xxx.tar.gz`同一目录下，执行`build-sermant-image.sh`脚本，完成sermant-agent镜像制作。
 
@@ -72,9 +110,6 @@ sh build-sermant-image.sh
 
 修改文件夹 `sermant-injector/images/injector`下`build-injector-image.sh` 脚本中`imageName`和`imageVerison`的值：
 
-> 1. `imageName`为构建的sermant-injector镜像名称
-> 2. `imageVerison`为构建的sermant-injector镜像版本
-
 在k8s节点下，将`build-injector-image.sh`、`start.sh`和`Injector.Dockerfile`置于sermant-injector包`sermant-injector.jar`同一目录下，执行`build-injector-image.sh`脚本，完成sermant-injector镜像制作。
 
 ```shell
@@ -83,18 +118,12 @@ sh build-injector-image.sh
 
 ### 部署sermant-injector实例
 
-在宿主应用容器化部署前，需要先部署sermant-injector实例。本项目采用Helm进行Kubernetes包管理。
+在宿主应用容器化部署前，需要先部署sermant-injector实例。本项目采用Helm进行Kubernetes包管理，使用`sermant-injector/deployment/release`下的`injector`Chart模版。
 
-使用`sermant-injector/deployment/release`下的`injector`Chart模版。
-
-按实际环境修改`values.yaml`中的模版变量：
-
-> `agent.image.addr`和`injector.image.addr`变量与构建镜像时的镜像地址保持一致
-
-上述配置修改完成后，执行`helm install`命令在k8s中部署sermant-injector实例:
+按实际环境修改`values.yaml`中的模版变量，修改完成后，执行`helm install`命令在k8s中部署sermant-injector实例:
 
 ```shell
-helm install sermant-injector ../injector
+helm install sermant-injector sermant-injector/deployment/release/injector
 ```
 
 检查sermant-injector部署pod状态为running。
