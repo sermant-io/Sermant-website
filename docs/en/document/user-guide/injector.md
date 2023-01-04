@@ -36,7 +36,7 @@ Sermant-injector supports configuring custom environment variables for the host 
 configMap:
   enabled: true
   namespaces: [default, test]
-	env:
+  env:
   	TEST_ENV1: abc
   	TEST_ENV2: 123456
 ```
@@ -47,7 +47,7 @@ For example, during the use of Sermant, certain configurations are common to all
 configMap:
   enabled: true
   namespaces: [default]	
-	env:
+  env:
   	backend.nettyIp: 127.0.0.1
   	backend.nettyPort: 8900
 ```
