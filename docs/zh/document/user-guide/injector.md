@@ -10,7 +10,7 @@ sermant-injector属于变更准入控制器(MutatingAdmissionWebhook), 能够在
 
 本项目采用Helm进行Kubernetes包管理, 部署sermant-injector相关参数需在`sermant-injector/deployment/release/values.yaml`中做修改配置。
 
-| <span style="display:inline-block;width:80px">一级缩进</span>  | <span style="display:inline-block;width:80px">二级缩进</span>   | <span style="display:inline-block;width:90px">三级缩进</span>    | 说明                                                         | <span style="display:inline-block;width:40px">是否必须</span> |
+| <span style="display:inline-block;width:100px">一级缩进</span>  | <span style="display:inline-block;width:100px">二级缩进</span>   | <span style="display:inline-block;width:100px">三级缩进</span>    | 说明                                                         | <span style="display:inline-block;width:40px">是否必须</span> |
 | --------- | ---------- | ----------- | ------------------------------------------------------------ | -------- |
 | namespace | name       | -           | 部署sermant-injector所在的namespace                          | 是       |
 | injector  | replicas   | -           | 部署sermant-injector的实例个数                               | 是       |
@@ -35,7 +35,7 @@ sermant-injector支持为宿主应用所在pod配置自定义的环境变量，�
 configMap:
   enabled: true
   namespaces: [default, test]
-	env:
+  env:
   	TEST_ENV1: abc
   	TEST_ENV2: 123456
 ```
@@ -46,7 +46,7 @@ configMap:
 configMap:
   enabled: true
   namespaces: [default]	
-	env:
+  env:
   	backend.nettyIp: 127.0.0.1
   	backend.nettyPort: 8900
 ```
