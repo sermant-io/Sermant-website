@@ -80,7 +80,7 @@ module.exports = {
               collapsable: true,
               sidebarDepth: 1,
               children: [
-                "developer-guide/dev-first-plugin",
+                "developer-guide/",
                 "developer-guide/dev-complex-plugin",
               ],
             },
@@ -90,7 +90,7 @@ module.exports = {
               collapsable: true,
               sidebarDepth: 1,
               children: [
-                "community/version",
+                "community/",
                 "community/contributing",
               ],
             },
@@ -167,7 +167,7 @@ module.exports = {
               collapsable: true,
               sidebarDepth: 1,
               children: [
-                "developer-guide/dev-first-plugin",
+                "developer-guide/",
                 "developer-guide/dev-complex-plugin",
               ],
             },
@@ -177,7 +177,7 @@ module.exports = {
               collapsable: true,
               sidebarDepth: 1,
               children: [
-                "community/version",
+                "community/",
                 "community/contributing",
               ],
             },
