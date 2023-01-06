@@ -89,7 +89,10 @@ module.exports = {
               path: "",
               collapsable: true,
               sidebarDepth: 1,
-              children: ["VERSION","CONTRIBUTING"],
+              children: [
+                "community/version",
+                "community/contributing",
+              ],
             },
             {
               title: "FAQ",
@@ -173,7 +176,10 @@ module.exports = {
               path: "",
               collapsable: true,
               sidebarDepth: 1,
-              children: ["VERSION","CONTRIBUTING"],
+              children: [
+                "community/version",
+                "community/contributing",
+              ],
             },
             {
               title: "FAQ",
