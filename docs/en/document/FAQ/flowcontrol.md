@@ -1,6 +1,6 @@
 # Flow Control FAQs
 
-This document describes the common problems encountered when the flow control plug-in is used.
+This document describes the common problems encountered when the flow control plugin is used.
 
 ## How Is The APIPath Defined In The Service Scenario?
 

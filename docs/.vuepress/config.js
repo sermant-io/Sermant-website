@@ -80,8 +80,8 @@ module.exports = {
               collapsable: true,
               sidebarDepth: 1,
               children: [
-                "DeveloperGuide/dev-first-plugin",
-                "DeveloperGuide/dev-complex-plugin"
+                "developer-guide/dev-first-plugin",
+                "developer-guide/dev-complex-plugin",
               ],
             },
             {
@@ -97,6 +97,7 @@ module.exports = {
               collapsable: true,
               sidebarDepth: 1,
               children: [
+                "FAQ/",
                 "FAQ/framework",
                 "FAQ/registry",
                 "FAQ/flowcontrol",
@@ -163,27 +164,8 @@ module.exports = {
               collapsable: true,
               sidebarDepth: 1,
               children: [
-                "DeveloperGuide/dev-first-plugin",
-                "DeveloperGuide/dev-complex-plugin",
-              ],
-            },
-            {
-              title: "Plugin",
-              path: "",
-              collapsable: true,
-              sidebarDepth: 1,
-              children: [
-                "plugin/",
-                "plugin/dynamic-config",
-                "plugin/flowcontrol",
-                "plugin/graceful",
-                "plugin/loadbalancer",
-                "plugin/monitor",
-                "plugin/router",
-                "plugin/registry/",
-                "plugin/registry/springboot-registry",
-                "plugin/registry/spring-cloud-registry-migiration",
-                "plugin/registry/dubbo-registry-migiration",
+                "developer-guide/dev-first-plugin",
+                "developer-guide/dev-complex-plugin",
               ],
             },
             {
@@ -199,6 +181,7 @@ module.exports = {
               collapsable: true,
               sidebarDepth: 1,
               children: [
+                "FAQ/",
                 "FAQ/framework",
                 "FAQ/registry",
                 "FAQ/flowcontrol",
