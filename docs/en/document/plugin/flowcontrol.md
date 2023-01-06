@@ -10,9 +10,10 @@ The flow control plugin is based on the [resilience4j]((https://github.com/resil
 - **Circuit Breaker**：Configure a circuit breaker policy for a specified interface to collect statistics on the error rate or slow request rate in a specified time window. When the error rate or slow request rate reaches a specified threshold, the circuit breaker is triggered. Before the time window is reset, all requests are isolated.
 - **Bulkhead**：Controls concurrent traffic for a large number of concurrent traffic to prevent service breakdown caused by excessive instantaneous concurrent traffic.
 - **Retry**：If a service encounters a non-fatal error, you can retry the service to prevent the service failure.
-- **Error Injection:**  An error injection policy is configured for a specified service when the service is running. Before the client accesses the target service, the error injection policy is used. This policy is mainly used to reduce the access load of the target service and can be used as a measure of downgrading the target service.
-- **Fusing index collection:** During the service operation, collect the information related to the fuse, and report the indicators with the help of the [monitoring plugin](./monitor.md)
-
+- **Error Injection**：An error injection policy is configured for a specified service when the service is running. Before the client accesses the target service, the error injection policy is used. This policy is mainly used to reduce the access load of the target service and can be used as a measure of downgrading the target service.
+- **Fusing index collection**： During the service operation, collect the information related to the fuse, and report the indicators with the help of the [monitoring plugin](./monitor.md)
+- **System Rule**：When the instance is running, if the system load, CPU, number of threads, average response time, and any index of qps exceed the preset value, flow control will be triggered to limit the request flow.
+- **System Adaptive**：When the instance is running, the request is adaptively flow controlled according to the current load status of the system and the system data in the past period.
 ## Supported Versions and Limitations
 
 ### Environment Preparation
@@ -162,6 +163,22 @@ The following describes the related configurations:
   | errorCode     | Specifies the returned error code. The default value is 500. This parameter is valid only `when type is abort and fallbackType is ThrowException`. |
   | forceClosed   | Indicates whether to forcibly disable the error injection capability. If this parameter is set to true, error injection does not take effect. The default value is false. |
 
+- **System Rule**
+
+  | Configuration | Configuration                                                          |
+  | ----------    | ------------------------------------------------------------ |
+  | systemLoad    | System load threshold, only supports linux |
+  | cpuUsage      | System cpu usage threshold |
+  | qps           | Qps threshold of inlet flow |
+  | aveRt         | Average response time threshold of inlet flow, Unit: ms |
+  | threadNum     | Number of concurrent threads for the inlet traffic |
+
+- **System Adaptive**
+
+  | Configuration | Configuration                                                         |
+  | ----------    | ------------------------------------------------------------ |
+  | systemLoad    | System load threshold, only supports linux |
+
 ### Configuring Flow Control Rule
 
 #### Configuring Flow Control Rules Based On The Configuration File
@@ -196,6 +213,10 @@ servicecomb:
       matches:
         - apiPath:
             exact: "/flowcontrol/bulkhead"
+    demo-system: |
+      matched:
+        - apiPath:
+            prefix: /
   rateLimiting:
     demo-rateLimiting: |
       rate: 1
@@ -222,6 +243,13 @@ servicecomb:
       percentage: 100
       fallbackType: ReturnNull
       forceClosed: false
+  system:
+    demo-system: |
+      systemLoad: 0.6
+      cpuUsage: 0.6
+      qps: 100
+      aveRt: 20
+      threadNum: 100
 ```
 
 The preceding configurations are used to configure the supported flow control rules. Change the configuration items based on the site requirements.。
