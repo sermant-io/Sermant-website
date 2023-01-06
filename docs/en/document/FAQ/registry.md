@@ -30,7 +30,7 @@ As shown in the following figure:
 
 <MyImage src="/docs-img/registry-faq-4.png"/>
 
-The cause is that the backend is not started or the configured address is incorrect. Start the backend or configure the address correctly. For details about the backend, see the [backend document](../../document/UserGuide/backend.md).
+The cause is that the backend is not started or the configured address is incorrect. Start the backend or configure the address correctly. For details about the backend, see the [backend document](..//user-guide/backend.md).
 
 Note: This error does not affect the plugin registration process, but related errors may be reported.
 
@@ -80,7 +80,7 @@ As shown in the following figure:
 
 <MyImage src="/docs-img/registry-faq-8.png"/>
 
-For details about how to set the address of the DUBBO registration center, see the description of newly developed DUBBO applications in the [service registration plugin](../../plugin/registry/README.md#modify-the-plugin-configuration-file-on-demand) document.
+For details about how to set the address of the DUBBO registration center, see the description of newly developed DUBBO applications in the [service registration plugin](../plugin/registry/README.md#modify-the-plugin-configuration-file-on-demand) document.
 
 ## What Is The Relationship Between Plugin Configuration, enableSpringRegister/enableDubboRegister, And openMigration?
 
