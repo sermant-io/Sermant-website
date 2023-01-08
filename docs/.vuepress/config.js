@@ -82,6 +82,8 @@ module.exports = {
               children: [
                 "developer-guide/",
                 "developer-guide/dev-complex-plugin",
+                "developer-guide/third-party-copyright",
+                "developer-guide/version-manage",
               ],
             },
             {
@@ -169,6 +171,8 @@ module.exports = {
               children: [
                 "developer-guide/",
                 "developer-guide/dev-complex-plugin",
+                "developer-guide/third-party-copyright",
+                "developer-guide/version-manage",
               ],
             },
             {
