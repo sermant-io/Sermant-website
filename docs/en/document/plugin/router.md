@@ -8,21 +8,9 @@ In the case of multiple versions and instances of microservices, the routing bet
 
 ## Parameter configuration
 
-- Configure Routing Rules
+### Configure Routing Rules
 
-Sermant backend provides api way to publish the configuration, you need to start the backend application before use, the configuration publishing interface is as follows: 
-
-**URL**
-
-POST /publishConfig
-
-**Request Body**
-
-|Params|Mandatory or not|Param type|Description
-|---|---|---|---|
-|key|√|String|configuration key|
-|group|√|String|Configuration group, which is used to configure subscriptions|
-|content|√|String|Configuration text, that is, specific routing rules|
+Please refer to [Configuration Center User's Manual](../user-guide/configuration-center.md#Sermant-Dynamic-Configuration-Center-Model).
 
 The key value needs to be servicecomb.routeRule.${yourServiceName}, ${yourServiceName} is the microservice name of the target application.
 
@@ -30,7 +18,7 @@ The group needs to be configured to application level, i.e. app=${yourApp}&&envi
 
 The content is the specific routing rule.
 
-### Examples of tag routing rules and descriptions are as follows
+#### Examples of tag routing rules and descriptions are as follows
 
 ```yaml
 ---
@@ -40,11 +28,6 @@ The content is the specific routing rule.
       id: # If multiple keys are configured, then all key rules must match the request.
         exact: '1' # Configuration policy, equal to 1, detailed configuration policy refer to the configuration policy table.
         caseInsensitive: false # false: case-insensitive (default), true: case-sensitive. When configured to false, it will be converted to uppercase uniformly for comparison.
-    args: # dubbo parameter matches
-      args0: # The 0th parameter of the dubbo interface
-        type: .id # Take the value type, dubbo application-specific field, the 0th parameter is an entity, get its id property value, if the parameter type is int, String and other common types, it is not necessary to fill in the value, all the value types see the table of value types.
-        exact: '2' # Configuration policy, equal to 2, detailed configuration policy refer to the configuration policy table.
-        caseInsensitive: false # Whether to be case-sensitive, default is false, case-sensitive.
   route: # Routing Rules
     - weight: 20 # Weight
       tags:
@@ -64,7 +47,7 @@ The content is the specific routing rule.
 
 **Note: When adding a new configuration, please remove the comment, otherwise it will cause the addition to fail.**
 
-### Configuration Policy Table
+#### Configuration Policy Table
 
 |Strategy Name|Strategy Value|Matching Rules|
 |---|---|---|
@@ -76,18 +59,7 @@ The content is the specific routing rule.
 |Greater Match|greater|The parameter value is greater than the configured value|
 |Less Match|less|The parameter value is less than the configured value|
 
-### Value Types Table
-
-|Type|Fetch Method|Parameter types|
-|---|---|---|
-|Empty/Null|Indicates that the value of the current parameter is obtained directly|Applicable to common parameter types, such as String, int, long, etc.|
-|.name|Denotes the name attribute of the fetch parameter, equivalent to ARG0.getName()|Applicable to object types|
-|.isEnabled()|Denotes the enabled attribute of the fetch parameter, equivalent to ARG0.isEnabled()|Applicable to object types|
-|[0]|Takes the first value of the array, equivalent to ARG0[0]|For arrays of common types, such as String[], int[]|
-|.get(0)|Takes the first value of the list, equivalent to ARG0.get(0)|For list of common types, such as List\<String>, List\<Integer>|
-|.get("key")|Get the value corresponding to the key, equivalent to ARG0.get("key")|For map of common types, such as Map<String, String>|
-
-- Start the tag application
+### Configuring tags for applications
 
 Add the following parameters as required at the start of the attached agent: 
 
@@ -101,47 +73,42 @@ The parameters are described as follows:
 - ${PARAMETERS} needs to be replaced with the custom tag from the service registration (Such as tag1:value1, tag2:value2). That is, tag keys and tag values are separated by colons, and multiple tags are separated by commas.
 - In general, only service_meta_version needs to be configured if routing by version number, or service_meta_parameters if routing by custom tag.
 
-## Operation and Result Verification
+## Supported Versions and Limitations
 
-- Registration center using Huawei CSE, download [Local-CSE](https://support.huaweicloud.com/devg-cse/cse_devg_0036.html) ，解压后按照文档说明进行启动
+|Microservice Framework Supported|Registration Center Supported|Notice|
+|:-----|:--|:--|
+|SpringCloud Edgware.SR2 - 2021.0.0|servicecomb-service-center<br/>Zookeeper<br/>Nacos|Asynchronous invocation is not supported.|
+|Dubbo 2.6.x-2.7.x|servicecomb-service-center<br/>Zookeeper<br/>Nacos|Asynchronous invocation is not supported.|
 
-- Configuring Routing Rules
+## Operation Steps and Result Verification
 
-Calling the interface `localhost:8900/publishConfig`, with the following request parameters:
+### Deploying Applications
 
-```json
-{
-   "content": "---\n- precedence: 1\n  match:\n    headers:\n        id:\n          exact: '1'\n          caseInsensitive: false\n  route:\n    - tags:\n        group: gray\n      weight: 100\n- precedence: 2\n  match:\n    headers:\n        id:\n          exact: '2'\n          caseInsensitive: false\n  route:\n    - tags:\n        version: 1.0.1\n      weight: 100", 
-   "group": "app=default&&environment=", 
-   "key": "servicecomb.routeRule.spring-cloud-router-provider"
-}
-```
-
-- Compile [demo application](https://github.com/huaweicloud/Sermant-examples/tree/main/router-demo/spring-cloud-router-demo)
+1.Compile [demo application](https://github.com/huaweicloud/Sermant-examples/tree/main/router-demo/spring-cloud-router-demo)
 
 ```shell
 mvn clean package
 ```
 
-- Start the zuul gateway
+2.Start the zuul gateway
 
 ```shell
 java -Dservicecomb_service_enableSpringRegister=true -javaagent:${path}\agent\sermant-agent.jar=appName=default -jar spring-cloud-router-zuul.jar
 ```
 
-- Start the consumer
+3.Start the consumer
 
 ```shell
 java -Dservicecomb_service_enableSpringRegister=true -javaagent:${path}\agent\sermant-agent.jar=appName=default -jar spring-cloud-router-consumer.jar
 ```
 
-- Start the provider
+4.Start the provider
 
 ```shell
 java -Dservicecomb_service_enableSpringRegister=true -javaagent:${path}\agent\sermant-agent.jar=appName=default -jar spring-cloud-router-provider.jar
 ```
 
-- Start the provider with tag (version is 1.0.1, tag is group:gray.)
+5.Start the provider with tag (version is 1.0.1, tag is group:gray.)
 
 ```shell
 java -Dservicecomb_service_enableSpringRegister=true -Dservice_meta_version=1.0.1 -Dservice_meta_parameters=group:gray -Dserver.port=8163 -javaagent:${path}\agent\sermant-agent.jar=appName=default -jar spring-cloud-router-provider.jar
@@ -149,7 +116,39 @@ java -Dservicecomb_service_enableSpringRegister=true -Dservice_meta_version=1.0.
 
 ${path} needs to be replaced with the actual Sermant installation path.
 
-- Testing
+### Publish Configuration
+
+Registration center using Huawei CSE, download [Local-CSE](https://support.huaweicloud.com/devg-cse/cse_devg_0036.html), unzip and follow the documentation to start.
+
+Configuring Routing Rules, please refer to [Configure Routing Rules](#Configure Routing Rules).
+
+The key value is **servicecomb.routeRule.spring-cloud-router-provider**, the group is **app=default&&environment=**, and the configuration value is the specific routing rule, as follows.
+
+```yaml
+---
+- precedence: 1
+  match:
+    headers:
+      id:
+        exact: '1'
+        caseInsensitive: false
+  route:
+    - tags:
+        group: gray
+      weight: 100
+- precedence: 2
+  match:
+    headers:
+      id:
+        exact: '2'
+        caseInsensitive: false
+  route:
+    - tags:
+        version: 1.0.1
+      weight: 100
+```
+
+### Result Verification
 
 After starting the above 4 applications and configuring the routing rules correctly, when accessing <http://127.0.0.1:8170/consumer/hello/rest> through the http client tool, we can find that when the request header is id: 1 or id: 2, it will be routed to the provider of version 1.0.1, and when the above conditions are not met When the above condition is not met, it will visit the provider with version 1.0.0.
 
