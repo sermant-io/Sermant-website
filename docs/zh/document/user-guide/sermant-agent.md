@@ -18,24 +18,122 @@ sermant-agent的框架主体为Sermant提供了字节码增强的实现逻辑，
 public static void premain(String agentArgs, Instrumentation inst);
 ```
 
-参数`agentArgs`的格式要求形如`key1=value1,key1=value1[(,keyN=valueN)...]`，以`','`分割键值对，以`'='`分割键值，形成`Map`结构。
+参数`agentArgs`的格式要求形如`key1=value1,key2=value2[(,keyN=valueN)...]`，以`','`分割键值对，以`'='`分割键值，形成`Map`结构。
 
-### 启动参数
+### Sermant-agent启动参数
 
 **启动参数**配置参考如下：
 
-|入参键|启动配置键|启动参数键|含义|默认值|不为空|备注|
-|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-|appName|app.name|appName|应用名称|default|是|/|
-|instanceName|instance.name|instanceName|实例名称|default|是|/|
-|appType|app.type|appType|应用类型|0|是|/|
-|/|/|agentPath|入口包目录|入口包目录|是|无需配置|
-|/|/|sermant.config.file|统一配置文件|统一配置文件|是|无需配置|
-|/|/|sermant.plugin.setting.file|插件设定文件|插件设定文件|是|无需配置|
-|/|/|sermant.plugin.package.dir|插件包目录|插件包目录|是|无需配置|
-|/|/|sermant.log.setting.file|日志配置文件|日志配置文件|是|无需配置|
+|参数键|说明|默认值|是否必须|
+|:-:|:-:|:-:|:-:|
+|appName|应用名称|default|否|
+|instanceName|实例名称|default|否|
+|appType|应用类型|0|否|
 
-入参`agentArgs`中也可以为**启动参数**配置更多地值。
+入参`agentArgs`中也可以为**启动参数**配置自定义的值。
+
+此外，启动参数也可在sermant-agent的产品包下`agent/config/bootstrap.properties`中配置，配置参考与上述一致，同时也支持增加自定义启动参数。
+
+### Sermant-agent使用参数配置
+
+Sermant除插件配置外的其他配置都在sermant-agent的产品包下`agent/config/config.properties`中配置。各插件的参数配置请参考[插件使用手册](https://sermant.io/zh/document/plugin/)中相关描述。
+
+```properties
+# agent config
+agent.config.isEnhanceBootStrapEnable=false
+agent.config.ignoredPrefixes=com.huawei.sermant,com.huaweicloud.sermant
+agent.config.ignoredInterfaces=org.springframework.cglib.proxy.Factory
+agent.config.combineStrategy=ALL
+agent.config.serviceBlackList=com.huaweicloud.sermant.implement.service.heartbeat.HeartbeatServiceImpl,com.huaweicloud.sermant.implement.service.send.NettyGatewayClient,com.huaweicloud.sermant.implement.service.tracing.TracingServiceImpl
+agent.config.serviceInjectList=com.huawei.discovery.service.lb.filter.NopInstanceFilter,com.huawei.discovery.service.lb.DiscoveryManager
+agent.config.isShowEnhanceLogEnable=false
+agent.config.enhancedClassOutputPath=
+
+# dynamic config
+dynamic.config.timeoutValue=30000
+dynamic.config.defaultGroup=sermant
+dynamic.config.serverAddress=127.0.0.1:2181
+dynamic.config.dynamicConfigType=ZOOKEEPER
+dynamic.config.connectRetryTimes=5
+dynamic.config.connectTimeout=1000
+dynamic.config.userName=
+dynamic.config.password=
+dynamic.config.privateKey=
+dynamic.config.enableAuth=false
+
+# heartbeat config
+heartbeat.interval=30000
+
+#backend config
+backend.nettyIp=127.0.0.1
+backend.nettyPort=6888
+
+# service meta config
+service.meta.application=default
+service.meta.version=1.0.0
+service.meta.project=default
+service.meta.environment=
+service.meta.zone=
+```
+
+其中涉及的参数与sermant-agent、Backend、动态配置中心等有关联，具体参数配置参考下表：
+
+| <span style="display:inline-block;width:100px">参数键</span> |<span style="display:inline-block;width:200px">说明</span>|                            默认值                            | 是否必须 |
+| :-----------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :------: |
+| agent.config.isEnhanceBootStrapEnable |                增强启动类加载器加载的类的开关                |                            false                             |    是    |
+|     agent.config.ignoredPrefixes      | 增强忽略集，该集合中定义的全限定名前缀用于排除增强过程中被忽略的类 |          com.huawei.sermant,com.huaweicloud.sermant          |    否    |
+|    agent.config.ignoredInterfaces     | 增强忽略接口集，该集合中定义的接口用于排除增强过程中被忽略的类 |           org.springframework.cglib.proxy.Factory            |    否    |
+|     agent.config.combineStrategy      | 插件声明器的合并策略：NONE，不合并；BY_NAME，通过匹配的类名合并；ALL，所有都合并 |                             ALL                              |    是    |
+|     agent.config.serviceBlackList     |       sermant-agent核心功能黑名单，添加后禁用相关服务        | com.huaweicloud.sermant.implement.service.heartbeat.HeartbeatServiceImpl<br>,com.huaweicloud.sermant.implement.service.send.NettyGatewayClient<br>,com.huaweicloud.sermant.implement.service.tracing.TracingServiceImpl |    否    |
+|    agent.config.serviceInjectList     |                       拦截插件服务名单                       | com.huawei.discovery.service.lb.filter.NopInstanceFilter<br>,com.huawei.discovery.service.lb.DiscoveryManager |    否    |
+|  agent.config.isShowEnhanceLogEnable  |                 是否在增强过程中输出检索日志                 |                            false                             |    是    |
+| agent.config.enhancedClassOutputPath  |            被增强类的输出路径，如果为空，则不输出            |                              -                               |    否    |
+| dynamic.config.timeoutValue | 配置中心服务器连接超时时间，单位：ms | 30000 | 是 |
+| dynamic.config.defaultGroup | 动态配置默认分组 | sermant | 是 |
+| dynamic.config.serverAddress | 配置中心服务器地址，必须形如：{@code host:port[(,host:port)...]} | 127.0.0.1:2181 | 是 |
+| dynamic.config.dynamicConfigType | 动态配置中心服务实现类型，取NOP、ZOOKEEPER、KIE | ZOOKEEPER | 是 |
+| dynamic.config.connectRetryTimes | 动态配置中心ZOOKEEPER：启动Sermant时的配置中心的重连次数 | 5 | 是 |
+| dynamic.config.connectTimeout | 动态配置中心ZOOKEEPER：启动Sermant时连接配置中心的时间时间 | 1000 | 是 |
+| dynamic.config.userName | 动态配置中心ZOOKEEPER：配置中心的用户名 | - | 否 |
+| dynamic.config.password | 动态配置中心ZOOKEEPER：配置中心的加密后的密码 | - | 否 |
+| dynamic.config.privateKey | 动态配置中心ZOOKEEPER：加密密钥 | - | 否 |
+| dynamic.config.enableAuth | 动态配置中心ZOOKEEPER：是否需要配置授权 | false | 否 |
+| heartbeat.interval | 心跳发送间隔 | 30000 | 否 |
+| backend.nettyIp | Backend消息接收地址 | 127.0.0.1 | 否 |
+| backend.nettyPort | Backend消息接收端口 | 6888 | 否 |
+| service.meta.application | 服务名称 | default | 否 |
+| service.meta.version | 服务版本 | 1.0.0 | 否 |
+| service.meta.project | 服务命名空间 | default | 否 |
+| service.meta.environment | 服务所在环境 | - | 否 |
+| service.meta.zone | 服务所在az | - | 否 |
+
+### Sermant-agent挂载插件配置
+
+Sermant自定义选择挂载哪些插件可在sermant-agent的产品包下`agent/config/plugins.yaml`中配置，配置方式如下：
+
+```yaml
+plugins:                 # 可自定义配置默认挂载的插件名称
+  - flowcontrol
+  - service-router
+  - service-registry
+  - loadbalancer
+  - dynamic-config
+  - monitor
+  - springboot-registry
+  - mq-consume-deny
+profiles:                # 各profile自定义配置挂载的插件列表
+  cse:
+    - flowcontrol
+    - service-router
+    - service-registry
+    - dynamic-config
+  apm:
+    - flowcontrol
+    - service-router
+profile: cse,apm         # profile用于按场景配置挂载的插件列表，此处配置生效的场景
+```
+
+启动时，`plugins` 下配置的插件都会挂载至宿主应用，`profile`下的插件列表也可按需配置生效。
 
 ## 支持版本
 

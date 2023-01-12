@@ -22,13 +22,13 @@ The Backend is not a required component of the Sermant, but it is highly recomme
 
 Please refer to the [Backend User Manual](backend.md) for more instructions on how to use the Backend.
 
-### Configuration Center
+### Dynamic Configuration Center
 
-Configuration center is a necessary component for Sermant when dynamic config function is enabled. This function allows Sermant to dynamically pull config from config center to achieve a variety of service governance capabilities, such as label routing, flow control, etc. If the Sermant dynamic configuration capability is not enabled, the configuration center does not need to be deployed.
+Dynamic configuration center is a necessary component for Sermant when dynamic config function is enabled. This function allows Sermant to dynamically pull config from config center to achieve a variety of service governance capabilities, such as label routing, flow control, etc. If the Sermant dynamic configuration capability is not enabled, the dynamic configuration center does not need to be deployed.
 
-Sermant configuration center currently supports two types: the [Zookeeper](https://github.com/apache/zookeeper) and [ServiceComb Kie](https://github.com/apache/servicecomb-kie).
+Sermant dynamic configuration center currently supports two types: the [Zookeeper](https://github.com/apache/zookeeper) and [ServiceComb Kie](https://github.com/apache/servicecomb-kie).
 
-Please refer to the [Configuration Center User Manual](configuration-center.md) for more instructions on how to use the Configuration Center.
+Please refer to the [Sermant Dynamic Configuration Center User Manual](configuration-center.md) for more instructions on how to use the dynamic configuration center.
 
 ### **sermant-injector**
 
