@@ -1,4 +1,4 @@
-# Sermant Dynamic Configuration Center User Manual
+# Dynamic Configuration Center User Manual
 
 This paper introduces the scenario model of Dynamic Configuration Center in Sermant and how to use it.
 

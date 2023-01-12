@@ -12,21 +12,29 @@ mvn clean package -Dmaven.test.skip
 
 ## Start Sermant
 
-**Prepare and start zookeeper**, start **Sermant** demo project: 
+**Prepare and start zookeeper in advance**, start **Sermant** demo project: 
 
 ```shell
 # Run under Linux
 java -cp sermant-template/demo-application/target/demo-application.jar \
-  -javaagent:sermant-template/agent/sermant-agent.jar=appName=test \
+  -javaagent:sermant-agent-x.x.x/agent/sermant-agent.jar=appName=test \
   com.huawei.example.demo.DemoApplication
 ```
 
 ```shell
 # Run under Windows
 java -cp sermant-template\demo-application\target\demo-application.jar ^
-  -javaagent:sermant-template\agent\sermant-agent.jar=appName=test ^
+  -javaagent:sermant-agent-x.x.x\agent\sermant-agent.jar=appName=test ^
   com.huawei.example.demo.DemoApplication
 ```
-Check running status of Sermant. In this example, open the browser and navigate to the URL "http://localhost:8900".
 
-<MyImage src="/docs-img/backend_sermant_info.png"></MyImage>
+Check whether the beginning of the demo-application log file contains the following content:
+
+```
+[INFO] Loading core library... 
+[INFO] Building argument map... 
+[INFO] Loading sermant agent... 
+[INFO] Load sermant done. 
+```
+
+If the log is normally output as above, it means that the sermant is mounted successfully.

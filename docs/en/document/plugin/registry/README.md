@@ -11,20 +11,8 @@ The service registration plug-in allows microservices that have been registered 
 ### Modify [Core Configuration File](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-config/config/config.properties) On Demand
 
 
-The file path is `${agent_package_path}/agent/config/config.properties`. Please replace `${agent_package_path}` with the actual package path.
+Modify service information (application name, version number, namespace, environment), refer to [Sermant-agent User Manual](../../user-guide/sermant-agent.md).
 
-The configuration items are described as follows:
-
-```properties
-#application name
-service.meta.application=default
-#service version
-service.meta.version=1.0.0
-#namespace, just keep default
-service.meta.project=default
-#you environment, currently, testing/development/production are supported
-service.meta.environment=development
-```
 
 ### Modify The [Plugin Configuration File](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-registry/config/config.yaml) On Demand
 

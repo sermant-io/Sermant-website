@@ -30,22 +30,7 @@ Application Framework Supports：SpringBoot 1.5.10.Release and above
 
 ### (Optional) Configuring the Dynamic Configuration Center
 
-You can configure it based on the configuration file or by using environment variables.
-
-（1）Configuration based on the configuration file
-
-You need to find the configuration file [config.properties]((https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-config/config/config.properties)) and modify the following configuration:
-
-```properties
-# Configuration Center Address
-dynamic.config.serverAddress=127.0.0.1:2181
-# Configuration Center Type, Currently, support ZOOKEEPER and KIE
-dynamic.config.dynamicConfigType=ZOOKEEPER
-```
-
-（2）Configuration based on Environment
-
-You can add environment variables during application startup, for example, `-Ddynamic.config.serverAddress=127.0.0.1:2181 -Ddynamic.config.dynamicConfigType=ZOOKEEPER`.
+To modify the type and address of the dynamic configuration center, refer to [Sermant-agent User Manual](../../user-guide/sermant-agent.md).
 
 ### (Optional) Configuring the Plugin
 
