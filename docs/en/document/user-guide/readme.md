@@ -4,7 +4,7 @@ Sermant is a bytecode enhancement technology based on Java Agent. It uses Java A
 
 ## Architecture Introduction
 
-The overall architecture of Sermant includes sermant-agent, Backend, configuration center, sermant-injector and other components. Among them, sermant-agent is the implementation component of the core bytecode enhancement, and the rest are the supporting components of the Sermant architecture.
+The overall architecture of Sermant includes sermant-agent, Backend, Dynamic Configuration Center, sermant-injector and other components. Among them, sermant-agent is the implementation component of the core bytecode enhancement, and the rest are the supporting components of the Sermant architecture.
 
 ### sermant-agent
 

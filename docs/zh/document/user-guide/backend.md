@@ -21,12 +21,6 @@ sermant-agent端参数配置：
 
 其中，`agent.config.serviceBlackList ` 配置禁止启动的核心服务，需去除`com.huaweicloud.sermant.implement.service.heartbeat.HeartbeatServiceImpl`以**启用心跳服务**。
 
-`heartbeat.interval` 配置心跳发送的间隔时间(ms)
-
-`backend.nettyIp` 配置对应的Backend的netty服务端地址
-
-`backend.nettyPort` 配置对应的Backend的netty服务端端口，默认为6888
-
 Backend端参数无需额外配置，默认以6888为netty消息接收端口，8900为服务进程端口。
 
 ## 支持版本

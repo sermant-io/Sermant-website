@@ -16,16 +16,16 @@ This article mainly introduces the plugins currently supported by Sermant.
 
 [Registry Plugin](./registry/README.md) allows microservices that have been registered with popular registration centers, such as Eureka, Nacos, ZooKeeper, and Consul, to be registered with Service Center (opens new window)in a non-intrusive manner. It also supports Dubbo and SpringCloud frameworks.
 
-### List of current plugin features
+### Compatibility List
 
-|Feature|Microservice Framework Supported|Configuration Center Supported|Registration Center Supported|
+|Plugin|Microservice Framework Supported|Configuration Center Supported|Registration Center Supported|
 |:-:|:-:|:-----|:--|:--|:--|
-|[Dynamic Configuration](./dynamic-config.md)|SpringBoot 1.5.x - 2.6.2<br>spring-cloud-starter-alibaba-nacos-config 1.5.0.RELEASE+<br>spring-cloud-starter-zookeeper-config 1.2.0.RELEASE+|servicecomb-kie<br/>ZooKeeper|N/A|
-|[FlowControl](./flowcontrol.md)|SpringBoot 1.2.x - 2.6.x <br> SpringWebMvc 4.1.3.RELEASE - 5.3.x<br>Dubbo 2.6.x-2.7.x|servicecomb-kie<br>ZooKeeper|N/A|
-|[Graceful Online/Offline](./graceful.md)|SpringBoot 1.5.x - 2.6.2 <br/> SpringCloud Edgware.SR2 - 2021.0.0|servicecomb-kie<br/>ZooKeeper|N/A|
-|[Loadbalancer](./loadbalancer.md)|SpringBoot 1.5.x - 2.6.2 <br/> SpringCloud Edgware.SR2 - 2021.0.0|servicecomb-kie<br/>ZooKeeper|N/A|
-|[Server Monitor](./monitor.md)|ALL|N/A|N/A|
-|[Tag Router](./router.md)|SpringBoot 1.5.x - 2.6.2 <br/>SpringCloud Edgware.SR2 - 2021.0.0<br/>Dubbo 2.6.x-2.7.x|servicecomb-kie|servicecomb-service-center|
-|[Service Registration](./registry/README.md)|SpringBoot 1.5.x - 2.6.2 <br> SpringCloud Edgware.SR2 - 2021.0.0<br>Dubbo 2.6.x-2.7.x|N/A|servicecomb-service-center|
-|[Service Dual Registration and Migration](./registry/spring-cloud-registry-migiration.md)|SpringBoot 1.5.x - 2.6.2 <br/> SpringCloud Edgware.SR2 - 2021.0.0<br>Dubbo 2.6.x-2.7.x|N/A|**Target Registration Center** supported：servicecomb-service-center<br/>**Original Registration Center of SpringCloud** supported：Eureka、Nacos、Zookeeper、Consul<br/>**Original Registration Center of Dubbo** supported：Nacos、Zookeeper|
-|[SpringBoot Service Registration and Discovery](./registry/springboot-registry.md)|SpringBoot 1.5.10.Release+|servicecomb-kie<br/>ZooKeeper|Zookeeper 3.4.x+|
+|[Dynamic Configuration Plugin](./dynamic-config.md)|SpringBoot 1.5.x - 2.6.2<br>spring-cloud-starter-alibaba-nacos-config 1.5.0.RELEASE+<br>spring-cloud-starter-zookeeper-config 1.2.0.RELEASE+|servicecomb-kie<br/>ZooKeeper|N/A|
+|[FlowControl Plugin](./flowcontrol.md)|SpringBoot 1.2.x - 2.6.x <br> SpringWebMvc 4.1.3.RELEASE - 5.3.x<br>Dubbo 2.6.x-2.7.x|servicecomb-kie<br>ZooKeeper|N/A|
+|[Graceful Online/Offline Plugin](./graceful.md)|SpringBoot 1.5.x - 2.6.2 <br/> SpringCloud Edgware.SR2 - 2021.0.0|servicecomb-kie<br/>ZooKeeper|N/A|
+|[Loadbalancer Plugin](./loadbalancer.md)|SpringBoot 1.5.x - 2.6.2 <br/> SpringCloud Edgware.SR2 - 2021.0.0|servicecomb-kie<br/>ZooKeeper|N/A|
+|[Monitor Plugin](./monitor.md)|ALL|N/A|N/A|
+|[Tag Router Plugin](./router.md)|SpringBoot 1.5.x - 2.6.2 <br/>SpringCloud Edgware.SR2 - 2021.0.0<br/>Dubbo 2.6.x-2.7.x|servicecomb-kie|servicecomb-service-center|
+|[Registry Plugin](./registry/README.md)|SpringBoot 1.5.x - 2.6.2 <br> SpringCloud Edgware.SR2 - 2021.0.0<br>Dubbo 2.6.x-2.7.x|N/A|servicecomb-service-center|
+|[Dual Registration and Migration Plugin](./registry/spring-cloud-registry-migiration.md)|SpringBoot 1.5.x - 2.6.2 <br/> SpringCloud Edgware.SR2 - 2021.0.0<br>Dubbo 2.6.x-2.7.x|N/A|**Target Registration Center** supported：servicecomb-service-center<br/>**Original Registration Center of SpringCloud** supported：Eureka、Nacos、Zookeeper、Consul<br/>**Original Registration Center of Dubbo** supported：Nacos、Zookeeper|
+|[SpringBoot Registration Plugin](./registry/springboot-registry.md)|SpringBoot 1.5.10.Release+|servicecomb-kie<br/>ZooKeeper|Zookeeper 3.4.x+|

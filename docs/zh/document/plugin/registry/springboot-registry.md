@@ -31,22 +31,7 @@
 
 ### 配置动态配置中心（可选）
 
-用户可基于配置文件配置或者采用环境变量方式配置。
-
-（1）基于配置文件配置
-
-您需找到配置文件[config.properties](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-config/config/config.properties), 修改如下配置：
-
-```properties
-# 配置中心地址
-dynamic.config.serverAddress=127.0.0.1:2181
-# 配置中心类型， 目前支持ZOOKEEPER与KIE
-dynamic.config.dynamicConfigType=ZOOKEEPER
-```
-
-（2）基于环境变量配置
-
-您可在应用启动时，增加环境变量进行指定，例如：`-Ddynamic.config.serverAddress=127.0.0.1:2181 -Ddynamic.config.dynamicConfigType=ZOOKEEPER` 便可达到上述配置文件的效果。
+修改动态配置中心类型与地址，参考[Sermant-agent使用手册](../../user-guide/sermant-agent.md)。
 
 ### 配置插件（可选）
 

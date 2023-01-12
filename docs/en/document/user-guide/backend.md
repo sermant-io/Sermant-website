@@ -23,12 +23,6 @@ Modify relevant configuration of `agent/config/config.properties` in sermant-age
 
 Where `agent.config.serviceBlackList ` configures core services that are not allowed to start，you must not add `com.huaweicloud.sermant.implement.service.heartbeat.HeartbeatServiceImpl` to enable heartbeat function.
 
-`heartbeat.interval` configures heartbeat intervals (ms).
-
-`backend.nettyIp` configures the netty server address of the corresponding Backend.
-
-`backend.nettyPort` configure the netty server port of the corresponding Backend. The default portis 6888.
-
 The Backend parameters do not need additional configuration. By default, 6888 is the netty message receiving port, and 8900 is the service process port.
 
 ## Versions Supported
