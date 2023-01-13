@@ -10,7 +10,7 @@
 
 ### 配置路由规则
 
-请参考[动态配置中心使用手册](../user-guide/configuration-center.md#Sermant动态配置中心模型)。
+请参考[动态配置中心使用手册](../user-guide/configuration-center.md#sermant动态配置中心模型)。
 
 其中key值为servicecomb.routeRule.${yourServiceName}，${yourServiceName}为目标应用的微服务名称。
 
