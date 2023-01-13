@@ -28,3 +28,4 @@ This article mainly introduces the plugins currently supported by Sermant.
 |[Tag Router Plugin](./router.md)|SpringBoot 1.5.x - 2.6.2 <br/>SpringCloud Edgware.SR2 - 2021.0.0<br/>Dubbo 2.6.x-2.7.x|servicecomb-kie|servicecomb-service-center|
 |[Registry Plugin](./registry/README.md)|SpringBoot 1.5.x - 2.6.2 <br> SpringCloud Edgware.SR2 - 2021.0.0<br>Dubbo 2.6.x-2.7.x|N/A|servicecomb-service-center|
 |[SpringBoot Registration Plugin](./registry/springboot-registry.md)|SpringBoot 1.5.10.Release+|servicecomb-kie<br/>ZooKeeper|Zookeeper 3.4.x+|
+|[Service visibility Plugin](./visibility.md)|SpringBoot 1.5.10+<br>Dubbo 2.6.x-2.7.x|ZooKeeper|N/A|

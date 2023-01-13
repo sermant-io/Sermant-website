@@ -16,6 +16,8 @@
 
 [注册插件](./registry/README.md)：提供代码无侵入方式，可让原本注册于Eureka，Nacos，Zookeeper、Consul等主流注册中心的微服务，无侵入地注册到[Service Center](https://github.com/apache/servicecomb-service-center)上, 同时支持Dubbo与SpringCloud框架。
 
+[服务可见性插件](./visibility.md)：为Spring Cloud和Dubbo应用提供契约信息和血缘关系采集展示的功能，方便用户在不修改代码的前提下可以通过backend查看所有服务对外提供的接口信息以及服务之间的调用关系信息。
+
 ### 兼容性列表
 
 |插件名称|微服务框架组件支持列表|配置中心支持列表|注册中心支持列表|
@@ -28,3 +30,4 @@
 |[标签路由插件](./router.md)|SpringBoot 1.5.x - 2.6.2 <br/>SpringCloud Edgware.SR2 - 2021.0.0<br/>Dubbo 2.6.x-2.7.x|servicecomb-kie|servicecomb-service-center|不支持异步调用<br>不支持混合框架（Dubbo调SpringCloud或者SpringCloud调Dubbo）做路由|
 |[注册插件](./registry/README.md)|SpringBoot 1.5.x - 2.6.2 <br> SpringCloud Edgware.SR2 - 2021.0.0<br>Dubbo 2.6.x-2.7.x|N/A|servicecomb-service-center|
 |[SpringBoot 注册插件](./registry/springboot-registry.md)|SpringBoot 1.5.10.Release+|servicecomb-kie<br/>ZooKeeper|Zookeeper 3.4.x+|
+|[服务可见性插件](./visibility.md)|SpringBoot 1.5.10.Release及以上<br>Dubbo 2.6.x-2.7.x|ZooKeeper|N/A|

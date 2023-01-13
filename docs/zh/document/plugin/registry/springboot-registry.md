@@ -1,4 +1,4 @@
-# SpringBoot Registry
+# SpringBoot 注册
 
 本篇文章主要介绍[SpringBoot注册插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-springboot-registry)以及使用方法。
 
