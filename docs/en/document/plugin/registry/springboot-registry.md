@@ -12,40 +12,32 @@ Currently, URL formats are supported.：http://www.domain.com/serviceName/apiPat
 
 Just like the URL above, ` www.domain.com` indicates the domain name, `serviceName` indicates the downstream service name, and `apiPath` indicates the downstream request interface path.
 
-## Supported Versions and Limitations
-
-Reistry Center Support： Zookeeper 3.4.x and above
-
-Client Supports：
-
-- HttpClient: 4.x
-- HttpAsyncClient: 4.1.4
-- OkhttpClient: 2.x, 3.x, 4.x
-- Feign(springcloud-openfeign-core): 2.1.x, 3.0.x
-- RestTemplate(Spring-web): 5.1.x, 5.3.x
-
-Application Framework Supports：SpringBoot 1.5.10.Release and above
 
 ## Parameter configuration
 
-### (Optional) Configuring the Dynamic Configuration Center
+### (Optional) Dynamic Configuration Center
 
 To modify the type and address of the dynamic configuration center, refer to [Sermant-agent User Manual](../../user-guide/sermant-agent.md).
 
-### (Optional) Configuring the Plugin
+### (Optional) SpringBoot Plugin
 
-After the sermant is packaged, you can find the configuration file of the plugin in `${agent path}/agent/pluginPackage/springboot-registry/config/config.yaml`. The configuration is as follows:
+You can find the configuration file of the plugin in `${agent path}/agent/pluginPackage/springboot-registry/config/config.yaml`. The configuration is as follows:
 
 ```yaml
 sermant.springboot.registry:
-  realmName: www.domain.com   # Replace the domain name with the domain name of your request address.
+  enableRegistry: false             # Whether to enable the boot registration capability
+  realmName: www.domain.com        # Match the domain name, the current version only takes effect for the scene where the url is http://${realmName}/serviceName/api/xx
+  enableRequestCount: false        # Whether to enable traffic statistics, after opening, each time the traffic entering the plug-in will be printed
 
 sermant.springboot.registry.lb:
-  lbType: RoundRobin               # Load balancer type. The options are RoundRobin, Random, WeightedResponseTime, and BestAvailable.
-  registryAddress: 127.0.0.1:2181  # Registration Center Address (Mandatory)
-  instanceCacheExpireTime: 0       # Instance expiration time, in seconds. If the value is less than or equal to 0, the instance never expires.
-  instanceRefreshInterval: 0       # Instance refresh time, in seconds. The value must be less than the value of instanceCacheExpireTime.
-  refreshTimerInterval: 5          # Interval for checking whether the instance has expired. If the value is greater than the value of instanceRefreshInterval, the value is set to instanceRefreshInterval.
+  lbType: RoundRobin               # Load balancing type, currently supports round robin (RoundRobin), random (Random), response time weight (WeightedResponseTime), minimum concurrency (BestAvailable)
+  registryAddress: 127.0.0.1:2181  # Registration center address
+  instanceCacheExpireTime: 0       # Instance expiration time, in seconds, if <=0, it will never expire
+  instanceRefreshInterval: 0       # Instance refresh time, in seconds, must be less than instanceCacheExpireTime
+  refreshTimerInterval: 5          # Instance timing check interval to determine whether the instance is expired, if it is greater than instanceRefreshInterval, then the value is set to instanceRefreshInterval
+  enableSocketReadTimeoutRetry: true # Whether to retry for {@link java.net.SocketTimeoutException}: read timed out, enabled by default
+  enableSocketConnectTimeoutRetry: true # Same as above, mainly for connect timed out, usually thrown when the connection is not upstream or downstream
+  enableTimeoutExRetry: true  
 ```
 
 Ensure that the values of` realName` and `registryAddress` are correct. Otherwise, the plugin does not take effect.
@@ -89,31 +81,6 @@ value: service-b
 
 #### **Gray Policy Delivery**
 
-##### Backend-Based Delivery
-
-How to configure and deliver a gray policy? You need to configure and deliver the gray policy based on the delivery interface of the backend. The backend provides the following interfaces:
-
-URL `/publishConfig`
-
-The request parameters are as follows:：
-
-| Configurations | Desc                                                         |
-| -------------- | ------------------------------------------------------------ |
-| key            | Config key                                                   |
-| group          | Config Group                                                 |
-| content        | Configuration content, that is, the specific rule configuration, is in `YAML` format. |
-
-> The format of group is k1=v1, and multiple values are separated by ampersands (&). For example, k1=v1&k2=v2, indicating the label group bound to the key.
-
-The default scenario plugin subscribes the groups `app=default&environment=`和`service=yourApplicationName&app=default&environment=`
-
-`yourApplicationName` is the `spring.application.name` of your current app. To modify a subscription group, you can set the following environment variables:
-
-- `-Dservice.meta.application`, Specifies the tag of an app.
-- `-Dservice.meta.environment`, Specifies the label of the environment.
-
-The preceding figure shows the configuration process. The configuration process is complete after the service is started with the sermant message.
-
 ##### Based On The Configuration Center
 
 You can also directly deliver configurations based on the configuration center client. The following uses ZooKeeper as an example.
@@ -138,6 +105,21 @@ create /app=default&environment= ""
 ```shell
 create /app=default&environment=/sermant.plugin.registry "strategy: all"
 ```
+
+## Supported Versions and Limitations
+
+Reistry Center Support： Zookeeper 3.4.x and above
+
+Client Supports：
+
+- HttpClient: 4.x
+- HttpAsyncClient: 4.1.4
+- OkhttpClient: 2.x, 3.x, 4.x
+- Feign(springcloud-openfeign-core): 2.1.x, 3.0.x
+- RestTemplate(Spring-web): 5.1.x, 5.3.x
+
+Application Framework Supports：SpringBoot 1.5.10.Release and above
+
 
 ## Operation and Result Verification
 
