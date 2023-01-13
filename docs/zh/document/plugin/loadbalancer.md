@@ -6,26 +6,6 @@
 
 根据配置中心的配置，无侵入地动态修改宿主应用的负载均衡策略。
 
-## 支持版本和限制
-
-| 框架类型                    | 策略名                       | 配置值 / 负载均衡策略                          | 版本支持                                                     |
-| --------------------------- | ---------------------------- | ---------------------------------------------- | ------------------------------------------------------------ |
-| dubbo                       | 随机（dubbo默认）            | Random / RANDOM                                | 2.6.x, 2.7.x                                                 |
-| dubbo                       | 轮询                         | RoundRobin / ROUNDROBIN                        | 2.6.x, 2.7.x                                                 |
-| dubbo                       | 最少活跃                     | leastActive / LEASTACTIVE                      | 2.6.x, 2.7.x                                                 |
-| dubbo                       | 一致性HASH                   | consistentHash / CONSISTENTHASH                | 2.6.x, 2.7.x                                                 |
-| dubbo                       | 最短响应时间                 | shortestResponse / SHORTESTRESPONSE            | 2.7.7+                                                       |
-| spring-cloud-netflix-ribbon | 区域权重（ribbon默认）       | zoneAvoidance / ZONE_AVOIDANCE                 | ZONE_AVOIDANCEspring cloud Edgware.x, spring cloud Finchley.x, spring cloud Greenwich.x, spring cloud Hoxton.x |
-| spring-cloud-netflix-ribbon | 随机                         | Random / RANDOM                                | spring cloud Edgware.x, spring cloud Finchley.x, spring cloud Greenwich.x, spring cloud Hoxton.x |
-| spring-cloud-netflix-ribbon | 轮询                         | RoundRobin / ROUND_ROBIN                       | spring cloud Edgware.x, spring cloud Finchley.x, spring cloud Greenwich.x, spring cloud Hoxton.x |
-| spring-cloud-netflix-ribbon | 重试                         | retry / RETRY                                  | spring cloud Edgware.x, spring cloud Finchley.x, spring cloud Greenwich.x, spring cloud Hoxton.x |
-| spring-cloud-netflix-ribbon | 最低并发                     | bestAvailable / BEST_AVAILABLE                 | spring cloud Edgware.x, spring cloud Finchley.x, spring cloud Greenwich.x, spring cloud Hoxton.x |
-| spring-cloud-netflix-ribbon | 筛选过滤轮询                 | availabilityFiltering / AVAILABILITY_FILTERING | spring cloud Edgware.x, spring cloud Finchley.x, spring cloud Greenwich.x, spring cloud Hoxton.x |
-| spring-cloud-netflix-ribbon | 响应时间加权重（Deprecated） | ResponseTimeWeighted / RESPONSE_TIME_WEIGHTED  | spring cloud Edgware.x, spring cloud Finchley.x, spring cloud Greenwich.x, spring cloud Hoxton.x |
-| spring-cloud-netflix-ribbon | 响应时间加权重               | weightedResponseTime / WEIGHTED_RESPONSE_TIME  | spring cloud Edgware.x, spring cloud Finchley.x, spring cloud Greenwich.x, spring cloud Hoxton.x |
-| spring-cloud-loadbalancer   | 轮询（loadbalancer默认）     | RoundRobin / ROUND_ROBIN                       | spring cloud Hoxton.SR10+, spring cloud 2020.0.x, spring cloud 2021.0.x |
-| spring-cloud-loadbalancer   | 随机                         | Random / RANDOM                                | spring cloud Hoxton.SR10+, spring cloud 2020.0.x, spring cloud 2021.0.x |
-
 ## 参数配置
 
 负载均衡基于配置中心进行动态配置，因此使用该能力需在配置中心配置对应负载均衡策略。负载均衡插件采用**流量标记+负载均衡规则**的方式规则，即配置一条规则需**同时配置两者**，下面分别介绍两项配置：
@@ -78,23 +58,9 @@ rule: Random
 
 ### 发布配置
 
-Sermant backend提供api的方式发布配置, 使用前需启动backend后台应用，如下为配置发布接口：
+负载均衡的配置发布可以参考[动态配置中心使用手册](../user-guide/configuration-center.md#发布配置)
 
-**URL**
-
-POST /publishConfig
-
-**请求Body**
-
-| 参数    | 是否必填 | 参数类型 | 描述                   |
-| ------- | -------- | -------- | ---------------------- |
-| key     | √        | String   | 配置键                 |
-| group   | √        | String   | 配置组，用于配置订阅   |
-| content | √        | String   | 配置文本，即为具体规则 |
-
-其中上表中`key`与`content`对应流量标记与负载均衡规则的配置key与配置content，而group则是针对指定服务的标签，group的配置采用标签对的模式进行配置，例如app=default&environment=development即对同时订阅该标签的微服务发布配置。
-
-负载均衡插件默认会存在三种订阅标签：
+负载均衡插件默认会存在三种订阅标签的发布：
 
 - 自定义标签：默认会订阅标签`public=default`，您也可以通过设置环境变量修改自定义标签，启动参数添加如下参数：`-Dservice.meta.customLabel=public -Dservice.meta.customLabelValue=default`
 - 微服务标签:  默认会订阅标签`app=default&service=${yourServiceName}&environment=`，其中`${yourServiceName}`为微服务的名称，`environment`默认为空。当然同样可以采用环境变量进行变更，启动参数添加如下参数：`-Dservice.meta.application=default -Dservice.meta.environment=${yourEnvironment}`, 分别对应`app`与`envrionment`，而服务名为动态获取。
@@ -106,70 +72,88 @@ POST /publishConfig
 
 - 在spring cloud Hoxton.SR10之前，spring-cloud-loadbalancer的负载均衡策略只有轮询（ROUND_ROBIN），所以插件并不支持修改Hoxton. SR10之前的spring-cloud-loadbalancer组件的负载均衡策略，spring cloud Hoxton.SR10之前版本建议使用spring-cloud-netflix-ribbon组件进行负载均衡。
 
+
+## 支持版本和限制
+
+| 框架类型                    | 策略名                       | 配置值 / 负载均衡策略                          | 版本支持                                                     |
+| --------------------------- | ---------------------------- | ---------------------------------------------- | ------------------------------------------------------------ |
+| dubbo                       | 随机（dubbo默认）            | Random / RANDOM                                | 2.6.x, 2.7.x                                                 |
+| dubbo                       | 轮询                         | RoundRobin / ROUNDROBIN                        | 2.6.x, 2.7.x                                                 |
+| dubbo                       | 最少活跃                     | leastActive / LEASTACTIVE                      | 2.6.x, 2.7.x                                                 |
+| dubbo                       | 一致性HASH                   | consistentHash / CONSISTENTHASH                | 2.6.x, 2.7.x                                                 |
+| dubbo                       | 最短响应时间                 | shortestResponse / SHORTESTRESPONSE            | 2.7.7+                                                       |
+| spring-cloud-netflix-ribbon | 区域权重（ribbon默认）       | zoneAvoidance / ZONE_AVOIDANCE                 | ZONE_AVOIDANCEspring cloud Edgware.x, spring cloud Finchley.x, spring cloud Greenwich.x, spring cloud Hoxton.x |
+| spring-cloud-netflix-ribbon | 随机                         | Random / RANDOM                                | spring cloud Edgware.x, spring cloud Finchley.x, spring cloud Greenwich.x, spring cloud Hoxton.x |
+| spring-cloud-netflix-ribbon | 轮询                         | RoundRobin / ROUND_ROBIN                       | spring cloud Edgware.x, spring cloud Finchley.x, spring cloud Greenwich.x, spring cloud Hoxton.x |
+| spring-cloud-netflix-ribbon | 重试                         | retry / RETRY                                  | spring cloud Edgware.x, spring cloud Finchley.x, spring cloud Greenwich.x, spring cloud Hoxton.x |
+| spring-cloud-netflix-ribbon | 最低并发                     | bestAvailable / BEST_AVAILABLE                 | spring cloud Edgware.x, spring cloud Finchley.x, spring cloud Greenwich.x, spring cloud Hoxton.x |
+| spring-cloud-netflix-ribbon | 筛选过滤轮询                 | availabilityFiltering / AVAILABILITY_FILTERING | spring cloud Edgware.x, spring cloud Finchley.x, spring cloud Greenwich.x, spring cloud Hoxton.x |
+| spring-cloud-netflix-ribbon | 响应时间加权重（Deprecated） | ResponseTimeWeighted / RESPONSE_TIME_WEIGHTED  | spring cloud Edgware.x, spring cloud Finchley.x, spring cloud Greenwich.x, spring cloud Hoxton.x |
+| spring-cloud-netflix-ribbon | 响应时间加权重               | weightedResponseTime / WEIGHTED_RESPONSE_TIME  | spring cloud Edgware.x, spring cloud Finchley.x, spring cloud Greenwich.x, spring cloud Hoxton.x |
+| spring-cloud-loadbalancer   | 轮询（loadbalancer默认）     | RoundRobin / ROUND_ROBIN                       | spring cloud Hoxton.SR10+, spring cloud 2020.0.x, spring cloud 2021.0.x |
+| spring-cloud-loadbalancer   | 随机                         | Random / RANDOM                                | spring cloud Hoxton.SR10+, spring cloud 2020.0.x, spring cloud 2021.0.x |
+
+
 ## 操作和结果验证
 
-1. 前提条件[已下载Sermant RELEASE包](https://github.com/huaweicloud/Sermant/releases), [已下载demo源码](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/demo-register)，[已下载zookeeper](https://zookeeper.apache.org/releases.html#download)
+### 环境准备
 
-2. 启动zookeeper
+- JDK1.8及以上
+- Maven
+- 完成下载[demo源码](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/demo-register)
+- 完成编译打包sermant
+- [下载](https://zookeeper.apache.org/releases.html#download)并启动zookeeper
+- 启动backend, 参考[后端模块介绍](../user-guide/backend.md)
 
-3. 启动backend, 参考[后端模块介绍](../user-guide/backend.md)
+### 编译打包demo应用
+```shell
+mvn clean package
+```
 
-4. 编译demo应用
+### 发布流量标记
+参考使用[发布配置](#发布配置)的灰度策略进行下发， 下发如下配置
 
-   ```
-   mvn clean package
-   ```   
+```json
+{
+    "content": "alias: loadbalancer-rule\nmatches:\n- serviceName: zk-rest-provider", 
+    "group": {
+        "app": "default", 
+        "environment": "", 
+        "service": "zk-rest-consumer"
+    }, 
+    "key": "servicecomb.matchGroup.testLb"
+}
+```
 
-5. 发布流量标记
+### 发布匹配的负载均衡规则（以Random为例）
+参考使用[发布配置](#发布配置)的灰度策略进行下发， 下发如下配置
 
-   调用接口`localhost:8900/publishConfig`, 请求参数如下:
-
-   ```json
-   {
-       "content": "alias: loadbalancer-rule\nmatches:\n- serviceName: zk-rest-provider", 
-       "group": {
-           "app": "default", 
-           "environment": "", 
-           "service": "zk-rest-consumer"
-       }, 
-       "key": "servicecomb.matchGroup.testLb"
-   }
-   ```
-
-   
-
-6. 发布匹配的负载均衡规则（以Random为例）
-
-   调用接口`localhost:8900/publishConfig`, 请求参数如下:
-
-   ```json
-   {
-       "content": "rule: Random", 
-       "group": {
-           "app": "default", 
-           "environment": "", 
-           "service": "zk-rest-consumer"
-       }, 
-       "key": "servicecomb.loadbalance.testLb"
-   }
+```json
+{
+    "content": "rule: Random", 
+    "group": {
+        "app": "default", 
+        "environment": "", 
+        "service": "zk-rest-consumer"
+    }, 
+    "key": "servicecomb.loadbalance.testLb"
+}
    ```
 
-   
+### 启动demo应用
+参考如下命令启动生产者
 
-7. 启动生产者（两个实例）
+```shell
+java -javaagent:${agent path}\agent\sermant-agent.jar=appName=default -Dserver.port=${port} -jar zk-rest-provider.jar
+```
+其中`path`需要替换为Sermant实际打包路径, `port`为生产者端口，这里需要启动两个实例, 请分别配置不同的端口，有利于结果观察
 
-   ```shell
-   java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -Dserver.port=${port} -jar zk-rest-provider.jar
-   ```
+参考如下命令启动消费者（一个实例即可）
 
-   其中`path`需要替换为Sermant实际打包路径, `port`为生产者端口，这里需要启动两个实例, 请分别配置不同的端口，有利于结果观察
+```shell
+java -javaagent:${agent path}\agent\sermant-agent.jar=appName=default -Dserver.port=8005 -jar zk-rest-consumer.jar
+```
 
-8. 启动消费者（一个实例即可）
+### 验证
 
-   ```shell
-   java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -Dserver.port=8005 -jar zk-rest-consumer.jar
-   ```
-
-9. 测试
-
-   上面步骤全部完成后，访问接口`localhost:8005/hello`, 通过返回的端口判断随机负载均衡规则（默认为轮询）是否生效。
+上面步骤全部完成后，访问接口`localhost:8005/hello`, 通过返回的端口判断随机负载均衡规则（默认为轮询）是否生效。
