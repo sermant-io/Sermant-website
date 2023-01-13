@@ -10,7 +10,7 @@ In the case of multiple versions and instances of microservices, the routing bet
 
 ### Configure Routing Rules
 
-Please refer to [Configuration Center User's Manual](../user-guide/configuration-center.md#Sermant-Dynamic-Configuration-Center-Model).
+Please refer to [Configuration Center User's Manual](../user-guide/configuration-center.md#sermant-dynamic-configuration-center-model).
 
 The key value needs to be servicecomb.routeRule.${yourServiceName}, ${yourServiceName} is the microservice name of the target application.
 
@@ -59,7 +59,7 @@ The content is the specific routing rule.
 |Greater Match|greater|The parameter value is greater than the configured value|
 |Less Match|less|The parameter value is less than the configured value|
 
-### Configuring tags for applications
+### Configure Routing Rules
 
 Add the following parameters as required at the start of the attached agent: 
 
@@ -120,7 +120,7 @@ ${path} needs to be replaced with the actual Sermant installation path.
 
 Registration center using Huawei CSE, download [Local-CSE](https://support.huaweicloud.com/devg-cse/cse_devg_0036.html), unzip and follow the documentation to start.
 
-Configuring Routing Rules, please refer to [Configure Routing Rules](#Configure Routing Rules).
+Configuring Routing Rules, please refer to [Configure Routing Rules](#configure-routing-rules).
 
 The key value is **servicecomb.routeRule.spring-cloud-router-provider**, the group is **app=default&&environment=**, and the configuration value is the specific routing rule, as follows.
 

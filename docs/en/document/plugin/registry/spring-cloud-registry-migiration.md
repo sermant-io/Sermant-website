@@ -37,7 +37,7 @@ servicecomb.service:
 
 The registration center migration plugin provides the method of disabling the heartbeat mechanism of the original registration center based on the dynamic configuration center to prevent continuous error log output.
 
-Please refer to [Dynamic Configuration Center User Manual](../../user-guide/configuration-center.md#Sermant-Dynamic-Configuration-Center-Model)。
+Please refer to [Dynamic Configuration Center User Manual](../../user-guide/configuration-center.md#sermant-dynamic-configuration-center-model)。
 
 The key value is **sermant.agent.registry**.
 

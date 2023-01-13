@@ -37,7 +37,7 @@ servicecomb.service:
 
 注册中心迁移插件提供基于动态配置中心下发关闭原注册中心心跳机制的方法，以避免源源不断的错误日志输出。
 
-请参考[动态配置中心使用手册](../../user-guide/configuration-center.md#Sermant动态配置中心模型)。
+请参考[动态配置中心使用手册](../../user-guide/configuration-center.md#sermant动态配置中心模型)。
 
 其中key值为**sermant.agent.registry**。
 
