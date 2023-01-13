@@ -10,14 +10,20 @@ The flow control plugin is based on the [resilience4j]((https://github.com/resil
 - **Circuit Breaker**：Configure a circuit breaker policy for a specified interface to collect statistics on the error rate or slow request rate in a specified time window. When the error rate or slow request rate reaches a specified threshold, the circuit breaker is triggered. Before the time window is reset, all requests are isolated.
 - **Bulkhead**：Controls concurrent traffic for a large number of concurrent traffic to prevent service breakdown caused by excessive instantaneous concurrent traffic.
 - **Retry**：If a service encounters a non-fatal error, you can retry the service to prevent the service failure.
-- **Error Injection:**  An error injection policy is configured for a specified service when the service is running. Before the client accesses the target service, the error injection policy is used. This policy is mainly used to reduce the access load of the target service and can be used as a measure of downgrading the target service.
-- **Fusing index collection:** During the service operation, collect the information related to the fuse, and report the indicators with the help of the [monitoring plugin](./monitor.md)
-
+- **Error Injection**：An error injection policy is configured for a specified service when the service is running. Before the client accesses the target service, the error injection policy is used. This policy is mainly used to reduce the access load of the target service and can be used as a measure of downgrading the target service.
+- **Fusing index collection**： During the service operation, collect the information related to the fuse, and report the indicators with the help of the [monitoring plugin](./monitor.md)
+- **System Rule**：When the instance is running, if the system load, CPU, number of threads, average response time, and any index of qps exceed the preset value, flow control will be triggered to limit the request flow.
+- **System Adaptive**：When the instance is running, the request is adaptively flow controlled according to the current load status of the system and the system data in the past period.
 ## Supported Versions and Limitations
+
+For plug-in support version information, refer to [plug-in introduction](README.md#Compatibility-List)
 
 ### Environment Preparation
 
 **Deploying the ServiceCenter and Kie environments**
+
+1. ServiceCenter environment and Kie environment need to be deployed, which can be rapidly deployed by deploying [Huawei CSE local development tools](https://support.huaweicloud.com/devg-cse/cse_devg_0036.html) 
+2. Sermant framework and plug-in download refer to [Sermant-agent user manual](../user-guide/sermant-agent.md)
 
 ## Parameter configuration
 
@@ -27,8 +33,6 @@ The flow control plugin is based on the [resilience4j]((https://github.com/resil
 
 To modify service information and dynamically configure the type and address of the center, refer to [Sermant-agent User Manual](../user-guide/sermant-agent.md).
 
-```
-
 **（2）Configure the Flow Control Plugin**
 
 Modify the Configuration File`${javaagent path}/pluginPackage/flowcontrol/config/config.yaml`
@@ -36,12 +40,19 @@ Modify the Configuration File`${javaagent path}/pluginPackage/flowcontrol/config
 ```yaml
 flow.control.plugin:
   useCseRule: true
-  enable-start-monitor: false 
+  enable-start-monitor: false
+  enable-system-adaptive: false # 是否开启系统自适应流控
+  enable-system-rule: false # 是否开启系统规则流控
 ```
 
-If adaptation is enabled, the plugin subscribes to the configuration center based on the application configuration, service configuration, and customized tag configuration.
+Refer to the following table for specific parameter configuration：
 
-> If useCseRule is set to false, the flow control plugin configures subscription based on the service name of the current instance. For example, if spring.application.name is set to flowControlDemo, the flow control plugin receives configuration based on the service=flowControlDemo tag during actual subscription.
+| Key in Input Parameters       | Description                     | Default Value | Required |
+| ----------  | ----------------------- | ----- | ------ |
+| useCseRule  | If adaptation is enabled, the plugin subscribes to the configuration center based on the application configuration, service configuration, and customized tag configuration.If useCseRule is set to false, the flow control plugin configures subscription based on the service name of the current instance. For example, if spring.application.name is set to flowControlDemo, the flow control plugin receives configuration based on the service=flowControlDemo tag during actual subscription.  | true  | true |
+| enable-start-monitor | Indicator monitoring switch | false | false |
+| enable-system-adaptive | Whether to turn on the system adaptive flow control switch. To turn on this switch, the **enable-system-rule** configuration item should also be turned on, set to true, and after the corresponding flow control strategy is issued, adaptive flow control will be performed on the request flow according to the system load status | false | false |
+| enable-system-rule | Whether to turn on the system rule flow control switch, set it to true and issue the corresponding flow control policy, then the request flow will be controlled according to the system parameter threshold set in the policy | false | false |
 
 ### Flow Control Rules Specification
 
@@ -72,9 +83,7 @@ The following describes the related configurations:
   **what traffic marking above can match  :**
 
   - If the request path is `/degrade`, the method type is `GET`, and the request header contains `key=value`, the matching is successful.
-
   
-
   > For details about the configuration items, see the traffic marking section in the [ServiceComb development document](http://servicecomb.gitee.io/servicecomb-java-chassis-doc/java-chassis/zh_CN/references-handlers/governance.html#_2).
 
   **Traffic marking request path (apiPath) configuration description**
@@ -93,50 +102,66 @@ The following describes the related configurations:
 
 - **Traffic Limiting**
 
-  | Configuration      | Description                                                  |
-  | ------------------ | ------------------------------------------------------------ |
-  | limitRefreshPeriod | Unit of statistics time, in milliseconds. If you need to set this parameter, the unit can be set to `S`, for example, `10s`. |
-  | rate               | Number of requests that can be processed in the unit of statistical time. |
+  | Configuration      | Description                                                  | Default Value | Required |
+  | ------------------ | ------------------------------------------------------------ | ---- | ---- |
+  | limitRefreshPeriod | Unit of statistics time, in milliseconds. If you need to set this parameter, the unit can be set to `S`, for example, `10s`. | 1000ms | false |
+  | rate               | Number of requests that can be processed in the unit of statistical time. | 1000 | false |
 
 - **Circuit Breaker**
 
-  | Configuration             | Description                                                  |
-  | ------------------------- | ------------------------------------------------------------ |
-  | failureRateThreshold      | Error rate required for fuse                                 |
-  | minimumNumberOfCalls      | Minimum number of requests in the sliding window. The fuse condition is determined only when the minimum number of requests is exceeded. |
-  | name                      | Specifies the name of a configuration item. This parameter is optional. |
-  | slidingWindowSize         | Size of the sliding statistics window. The value can be milliseconds or seconds. For example, 1000 indicates 1000 milliseconds, and 10s indicates 10 seconds. |
-  | slidingWindowType         | Sliding window type. Currently, `time` and `count` are supported. The former is based on the time window and the latter is based on the number of requests. |
-  | slowCallDurationThreshold | Slow request threshold. The unit is the same as that of the sliding window. |
-  | slowCallRateThreshold     | Percentage of slow invoking requests. When the number of slow invoking requests reaches this percentage, connectivity is triggered. |
-  | waitDurationInOpenState   | Recovery time after a circuit breaker. The default value is `60s`. |
+  | Configuration             | Description                                                  | Default Value | Required |
+  | ------------------------- | ------------------------------------------------------------ | ---- | ---- |
+  | failureRateThreshold      | Error rate required for fuse                                 | 50 | false |
+  | minimumNumberOfCalls      | Minimum number of requests in the sliding window. The fuse condition is determined only when the minimum number of requests is exceeded. | 100 | false |
+  | name                      | Specifies the name of a configuration item. This parameter is optional. | null | false |
+  | slidingWindowSize         | Size of the sliding statistics window. The value can be milliseconds or seconds. For example, 1000 indicates 1000 milliseconds, and 10s indicates 10 seconds. | 100ms | false |
+  | slidingWindowType         | Sliding window type. Currently, `time` and `count` are supported. The former is based on the time window and the latter is based on the number of requests. | time | false |
+  | slowCallDurationThreshold | Slow request threshold. The unit is the same as that of the sliding window. | 60s | false |
+  | slowCallRateThreshold     | Percentage of slow invoking requests. When the number of slow invoking requests reaches this percentage, connectivity is triggered. | 100 | false |
+  | waitDurationInOpenState   | Recovery time after a circuit breaker. The default value is `60s`. | 60s | false |
 
 - **Bulkhead**
 
-  | Configuration      | Description                                                  |
-  | ------------------ | ------------------------------------------------------------ |
-  | maxConcurrentCalls | Maximum number of concurrent calls                           |
-  | maxWaitDuration    | Maximum waiting time. If the thread exceeds maxConcurrentCalls, the thread attempts to wait. If the thread does not obtain resources after the waiting time expires, an isolation warehouse exception is thrown. |
-  | name               | name of configuration, which is optional.                    |
+  | Configuration      | Description                                                  | Default Value | Required |
+  | ------------------ | ------------------------------------------------------------ | ---- | ---- |
+  | maxConcurrentCalls | Maximum number of concurrent calls                           | 1000 | false |
+  | maxWaitDuration    | Maximum waiting time. If the thread exceeds maxConcurrentCalls, the thread attempts to wait. If the thread does not obtain resources after the waiting time expires, an isolation warehouse exception is thrown. | 0 | false |
+  | name               | name of configuration, which is optional.                    | null | false |
 
 - **Retry**
 
-  | Configuration         | Description                                                  |
-  | --------------------- | ------------------------------------------------------------ |
-  | waitDuration          | Retry wait time. The default value is milliseconds. The unit is second, for example, 2s. |
-  | retryStrategy         | Retry policy. Currently, two retry policies are supported: fixed interval (FixedInterval) and exponential increase interval (RandomBackoff). |
-  | maxAttempts           | Maximum number of retries                                    |
-  | retryOnResponseStatus | HTTP status code. Currently, only HTTP requests are supported. For dubbo requests, you can configure the exception type to determine whether to retry. The default value is RpcException. |
+  | Configuration         | Description                                                  | Default Value | Required |
+  | --------------------- | ------------------------------------------------------------ | ---- | ---- |
+  | waitDuration          | Retry wait time. The default value is milliseconds. The unit is second, for example, 2s. | 10ms | false |
+  | retryStrategy         | Retry policy. Currently, two retry policies are supported: fixed interval (FixedInterval) and exponential increase interval (RandomBackoff). | FixedInterval | false |
+  | maxAttempts           | Maximum number of retries                                    | 3 | false |
+  | retryOnResponseStatus | HTTP status code. Currently, only HTTP requests are supported. For dubbo requests, you can configure the exception type to determine whether to retry. The default value is RpcException. | null | false |
 
 - **Error Injection**
 
-  | Configuration | Description                                                  |
-  | ------------- | ------------------------------------------------------------ |
-  | type          | Error injection type. Currently, `abort (request response)` and `delay (request delay)` are supported. |
-  | percentage    | Error Injection triggering probability                       |
-  | fallbackType  | Return type of the request invoking. This parameter is valid only when `type is set to abort`. Currently, two types are supported, `ReturnNull`: empty content is directly returned and the status code is 200. `ThrowException`: The error code is returned based on the specified error code.` |
-  | errorCode     | Specifies the returned error code. The default value is 500. This parameter is valid only `when type is abort and fallbackType is ThrowException`. |
-  | forceClosed   | Indicates whether to forcibly disable the error injection capability. If this parameter is set to true, error injection does not take effect. The default value is false. |
+  | Configuration | Description                                                  | Default Value | Required |
+  | ------------- | ------------------------------------------------------------ | ---- | ---- |
+  | type          | Error injection type. Currently, `abort (request response)` and `delay (request delay)` are supported. | delay | false |
+  | percentage    | Error Injection triggering probability                       | -1 | true |
+  | fallbackType  | Return type of the request invoking. This parameter is valid only when `type is set to abort`. Currently, two types are supported, `ReturnNull`: empty content is directly returned and the status code is 200. `ThrowException`: The error code is returned based on the specified error code.` | ThrowException | false |
+  | errorCode     | Specifies the returned error code. The default value is 500. This parameter is valid only `when type is abort and fallbackType is ThrowException`. | 500 | false |
+  | forceClosed   | Indicates whether to forcibly disable the error injection capability. If this parameter is set to true, error injection does not take effect. The default value is false. | false | false |
+
+- **System Rule**
+
+  | Configuration | Configuration                                                          | Default Value | Required |
+  | ----------    | ------------------------------------------------------------ | ---- | ---- | 
+  | systemLoad    | System load threshold, only supports linux | Double.MAX_VALUE | false |
+  | cpuUsage      | System cpu usage threshold | 1.0 | false |
+  | qps           | Qps threshold of inlet flow | Double.MAX_VALUE | false |
+  | aveRt         | Average response time threshold of inlet flow, Unit: ms | Long.MAX_VALUE | false |
+  | threadNum     | Number of concurrent threads for the inlet traffic | Long.MAX_VALUE | false |
+
+- **System Adaptive**
+
+  | Configuration | Configuration                                                         | Default Value | Required |
+  | ----------    | ------------------------------------------------------------ | ---- | ---- | 
+  | systemLoad    | System load threshold, only supports linux | Double.MAX_VALUE | false |
 
 ### Configuring Flow Control Rule
 
@@ -172,6 +197,10 @@ servicecomb:
       matches:
         - apiPath:
             exact: "/flowcontrol/bulkhead"
+    demo-system: |
+      matched:
+        - apiPath:
+            prefix: /
   rateLimiting:
     demo-rateLimiting: |
       rate: 1
@@ -198,13 +227,20 @@ servicecomb:
       percentage: 100
       fallbackType: ReturnNull
       forceClosed: false
+  system:
+    demo-system: |
+      systemLoad: 0.6
+      cpuUsage: 0.6
+      qps: 100
+      aveRt: 20
+      threadNum: 100
 ```
 
 The preceding configurations are used to configure the supported flow control rules. Change the configuration items based on the site requirements.。
 
-#### Configuring Interface Advertisement Rules Based on Sermant Backend
+#### Publishing rules of dynamic configuration capability based on Sermant
 
-The backend service provides the function of publishing configurations through the /publishConfig request interface. The request parameters are as follows:
+For details, refer to [Dynamic Configuration User Manual](../user-guide/configuration-center.md)
 
 | Configuration | Description                                                  |
 | ------------- | ------------------------------------------------------------ |
@@ -225,14 +261,11 @@ The backend service provides the function of publishing configurations through t
       "content":"alias: scene\nmatches:\n- apiPath:\n    exact: /flow\n  headers: {}\n  method:\n  - POST\n  name: rule1\n"
   }
   ```
-
-
+  
 **Rule Interpretation:**
 
 - If the request path is `/flow` and the method type is `GET`, the matching is successful.
 - This parameter takes effect for the service instance whose app is `region-A`, service name is `flowControlDemo`, and environment is `testing`.
-
-
 
 > **Notices：**
 >
@@ -252,9 +285,7 @@ The backend service provides the function of publishing configurations through t
 
     - This parameter takes effect for the service instance whose app is region-A, service name is flowControlDemo, and environment is testing.
     - If more than two requests are received within one second, flow control is triggered.
-
   
-
   > **Notices：**
   >
   > The `key` must be preceded by `servicecomb.rateLimiting`. and scene indicates the service name. Ensure that the value is the same as the service scenario name of the traffic tag.
@@ -272,9 +303,7 @@ The backend service provides the function of publishing configurations through t
 
     - This parameter takes effect for the service instance whose app is region-A, service name is flowControlDemo, and environment is testing.
     - If the number of interface or flow requests exceeds three within 10 seconds and the error rate exceeds 90% or the percentage of slow requests exceeds 80%, the circuit breaker is triggered.
-
   
-
   > **Notices：**
   >
   > The key must be preceded by servicecomb.circuitBreaker. and scene indicates the service name. Ensure that the value is the same as the service scenario name of the traffic tag.
@@ -293,9 +322,7 @@ The backend service provides the function of publishing configurations through t
 
     - This parameter takes effect for the service instance whose app is region-A, service name is flowControlDemo, and environment is testing.
     - For an interface `/flow`, if the maximum number of concurrent requests exceeds 5 and a new request waits for 10 seconds and resources are not obtained, an exception occurs in the isolation repository.
-
   
-
   > **Notices：**
   >
   > The key must be preceded by servicecomb.bulkhead. and scene indicates the service name. Ensure that the value is the same as the service scenario name of the traffic tag.
@@ -314,9 +341,7 @@ The backend service provides the function of publishing configurations through t
 
     - This parameter takes effect for the service instance whose app is region-A, service name is flowControlDemo, and environment is testing.
     - For an interface `/flow`, when the 500 exception is thrown, the request is retried until the retry succeeds or the maximum number of retry times is reached.
-
   
-
   > **Notices**：
   >
   > The key must be preceded by servicecomb.retry. and scene indicates the service name. Ensure that the value is the same as the service scenario name of the traffic tag.
@@ -332,14 +357,12 @@ The backend service provides the function of publishing configurations through t
       "content":"type: abort\npercentage: 100\nfallbackType: ReturnNull\nforceClosed: false\nerrorCode: 503"
   }
   ```
-
+  
   **Rule Interpretation：**
 
   - This parameter takes effect for the service instance whose app is region-A, service name is flowControlDemo, and environment is testing.
   - When the interface /flow is requested, 100% returns null.
-
   
-
   > **Notices**：
   >
   > The key must be preceded by servicecomb.faultInjection. and scene indicates the service name. Ensure that the value is the same as the service scenario name of the traffic tag.
@@ -405,4 +428,4 @@ Configure traffic marking and traffic limiting rules by referring to [Configurin
 
 Request `localhost:8003/flow` for multiple times. If `rate limited` is returned when the number of requests exceeds 4 within 2 seconds, flow control is triggered successfully.
 
-See [monitoring plugin](./monitor.md) for the successful verification of monitoring collection.
+See [monitoring plugin](monitor.md) for the successful verification of monitoring collection.

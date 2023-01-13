@@ -10,14 +10,19 @@
 - **熔断**：对指定接口配置熔断策略，可从单位统计时间窗口内的错误率或者慢请求率进行统计，当请求错误率或者慢请求率达到指定比例阈值，即触发熔断，在时间窗口重置前，隔离所有请求。
 - **隔离仓**：针对大规模并发流量，对并发流量进行控制，避免瞬时并发流量过大导致服务崩溃。
 - **重试**：当服务遇到非致命的错误时，可以通过重试的方式避免服务的最终失败。
-- **错误注入:**  指在服务运行时，给指定服务配置错误注入策略，在客户端访问目标服务前，以指定策略模式返回。该策略多用于减少目标服务的访问负载，可作为降级的一种措施。
-- **熔断指标采集：** 在服务运行过程中，采集熔断的相关信息，并借助[监控插件](./monitor.md)进行指标上报。
+- **错误注入**：指在服务运行时，给指定服务配置错误注入策略，在客户端访问目标服务前，以指定策略模式返回。该策略多用于减少目标服务的访问负载，可作为降级的一种措施。
+- **熔断指标采集**： 在服务运行过程中，采集熔断的相关信息，并借助[监控插件](./monitor.md)进行指标上报。
+- **系统规则**：在实例运行时，若系统负载，CPU，线程数，平均响应时间，qps任意指标超出预置，将触发流控，限制请求流量。
+- **系统自适应**：在实例运行时，根据系统当前负载状态，以及过去一段时间内系统数据，对请求进行自适应流控。
 
 ## 支持版本和限制
 
+插件支持版本信息，参考[插件介绍](README.md#兼容性列表)
+
 ### 环境准备
 
-需部署ServiceCenter环境与Kie环境。
+1. 需部署ServiceCenter环境与Kie环境，可通过部署[华为CSE本地开发工具](https://support.huaweicloud.com/devg-cse/cse_devg_0036.html) 快速部署。
+2. Sermant框架和插件下载参考[Sermant-agent使用手册](../user-guide/sermant-agent.md)
 
 ## 参数配置
 
@@ -25,7 +30,7 @@
 
 **（1）修改服务注册信息和配置中心**
 
-修改服务信息和动态配置中心类型与地址，参考[Sermant-agent使用手册](../user-guide/sermant-agent.md)。
+修改服务信息和动态配置中心类型与地址，参考[Sermant-agent参数配置](../user-guide/sermant-agent.md#参数配置)。
 
 **（2）配置流控插件**
 
@@ -35,11 +40,18 @@
 flow.control.plugin:
   useCseRule: true # 是否开启ServiceComb适配
   enable-start-monitor: false # 是否启动指标监控
+  enable-system-adaptive: false # 是否开启系统自适应流控
+  enable-system-rule: false # 是否开启系统规则流控
 ```
 
-开启适配后，插件将根据应用配置，服务配置以及自定义标签订阅配置中心配置
+具体参数配置参考下表：
 
-> 此处若设置useCseRule为false，流控插件将基于当前实例的服务名进行配置订阅，例如：用户配置的spring.application.name=flowControlDemo, 则在实际订阅时会根据标签service=flowControlDemo接收配置。
+| 参数键       | 说明                     | 默认值 | 是否必须 |
+| ----------  | ----------------------- | ----- | ------ |
+| useCseRule  | 设置为true后，插件将根据应用配置，服务配置以及自定义标签订阅配置中心配置,设置为false后，流控插件将基于当前实例的服务名进行配置订阅，例如：用户配置的spring.application.name=flowControlDemo, 则在实际订阅时会根据标签service=flowControlDemo接收配置。  | true  | 是     |
+| enable-start-monitor | 是否开启指标监控的开关 | false | 否 |
+| enable-system-adaptive | 是否开启系统自适应流控的开关，开启此开关需**enable-system-rule**配置项也开启，设置为true，并下发对应的流控策略后，会根据系统负载状态对请求流量进行自适应流控 | false | 否 |
+| enable-system-rule | 是否开启系统规则流控开关，设置为true并下发对应的流控策略后，会根据策略中设置的系统参数阈值对请求流量进行流控 | false | 否 |
 
 ### 流控规则介绍
 
@@ -71,7 +83,7 @@ flow.control.plugin:
 
   - 请求路径为`/degrade`且方法类型为`GET`, 同时满足要求请求头包含`key=value`即匹配成功
 
-    详细配置项可参考[ServiceComb开发文档](http://servicecomb.gitee.io/servicecomb-java-chassis-doc/java-chassis/zh_CN/references-handlers/governance.html#_2)流量标记部分
+    详细配置项可参考[ServiceComb开发文档](http://servicecomb.gitee.io/servicecomb-java-chassis-doc/java-chassis/zh_CN/references-handlers/governance.html#_2) 流量标记部分
 
   **流量标记请求路径（apiPath）配置说明**
 
@@ -89,50 +101,66 @@ flow.control.plugin:
 
 - **限流**
 
-  | 配置项             | 说明                                                         |
-  | ------------------ | ------------------------------------------------------------ |
-  | limitRefreshPeriod | 单位统计时间，单位毫秒, 若需配置秒则可增加单位`S`， 例如`10S` |
-  | rate               | 单位统计时间所能通过的**请求个数**                           |
+  | 配置项             | 说明                                                         | 默认值 | 是否必须 |
+  | ------------------ | ------------------------------------------------------------ | ---- | ---- |
+  | limitRefreshPeriod | 单位统计时间，单位毫秒, 若需配置秒则可增加单位`S`， 例如`10S` | 1000ms | 否 |
+  | rate               | 单位统计时间所能通过的**请求个数**                           | 1000 | 否 |
 
 - **熔断**
 
-  | 配置项                    | 说明                                                         |
-  | ------------------------- | ------------------------------------------------------------ |
-  | failureRateThreshold      | 熔断所需达到的错误率                                         |
-  | minimumNumberOfCalls      | 滑动窗口内的最小请求数， 超过最小请求数才开始判断熔断条件    |
-  | name                      | 配置项名称，可选参数                                         |
-  | slidingWindowSize         | 滑动统计窗口大小，支持毫秒与秒，例如`1000`为1000毫秒, `10S`代表10秒 |
-  | slidingWindowType         | 滑动窗口类型，目前支持`time`与`count`两种类型，前者基于时间窗口统计，后者基于请求次数 |
-  | slowCallDurationThreshold | 慢请求阈值，单位同滑动窗口配置                               |
-  | slowCallRateThreshold     | 慢请求占比，当慢调用请求数达到该比例触发通断                 |
-  | waitDurationInOpenState   | 熔断后恢复时间，默认`60S`                                    |
+  | 配置项                     | 说明                                                          | 默认值 | 是否必须 |
+  | ------------------------- | ------------------------------------------------------------ | ---- | ---- |
+  | failureRateThreshold      | 熔断所需达到的错误率                                             | 50   | 否 |
+  | minimumNumberOfCalls      | 滑动窗口内的最小请求数， 超过最小请求数才开始判断熔断条件               | 100  | 否 |
+  | name                      | 配置项名称，可选参数                                             | null | 否 |
+  | slidingWindowSize         | 滑动统计窗口大小，支持毫秒与秒，例如`1000`为1000毫秒, `10S`代表10秒    | 100ms | 否 |
+  | slidingWindowType         | 滑动窗口类型，目前支持`time`与`count`两种类型，前者基于时间窗口统计，后者基于请求次数 | time | 否 | 
+  | slowCallDurationThreshold | 慢请求阈值，单位同滑动窗口配置                                     | 60s | 否 |
+  | slowCallRateThreshold     | 慢请求占比，当慢调用请求数达到该比例触发通断                          | 100 | 否 |
+  | waitDurationInOpenState   | 熔断后恢复时间                                                  | 60s | 否 |
 
 - **隔离**
 
-  | 配置项             | 说明                                                         |
-  | ------------------ | ------------------------------------------------------------ |
-  | maxConcurrentCalls | 最大并发数                                                   |
-  | maxWaitDuration    | 最大等待时间，若线程超过`maxConcurrentCalls`，会尝试等待，若超出等待时间还未获取资源，则抛出隔离仓异常 |
-  | name               | 可选，配置名称                                               |
+  | 配置项             | 说明                                                         | 默认值 | 是否必须 |
+  | ------------------ | ------------------------------------------------------------ | ---- | ---- |
+  | maxConcurrentCalls | 最大并发数                                                   | 1000 | 否 |
+  | maxWaitDuration    | 最大等待时间，若线程超过`maxConcurrentCalls`，会尝试等待，若超出等待时间还未获取资源，则抛出隔离仓异常 | 0 | 否 |
+  | name               | 可选，配置名称                                               | null | 否 |
 
 - **重试**
 
-  | 配置项                | 说明                                                         |
-  | --------------------- | ------------------------------------------------------------ |
-  | waitDuration          | 重试等待时间，默认毫秒；支持秒单位，例如2S                   |
-  | retryStrategy         | 重试策略，当前支持两种重试策略：固定时间间隔（FixedInterval）， 指数增长间隔(RandomBackoff) |
-  | maxAttempts           | 最大重试次数                                                 |
-  | retryOnResponseStatus | HTTP状态码，当前仅支持HTTP请求；针对dubbo请求，可通过配置异常类型确定是否需要重试，默认为RpcException |
+  | 配置项                | 说明                                                         | 默认值 | 是否必须 |
+  | --------------------- | ------------------------------------------------------------ | ---- | ---- |
+  | waitDuration          | 重试等待时间，默认毫秒；支持秒单位，例如2S                   | 10ms | 否 |
+  | retryStrategy         | 重试策略，当前支持两种重试策略：固定时间间隔（FixedInterval）， 指数增长间隔(RandomBackoff) | FixedInterval | 否 |
+  | maxAttempts           | 最大重试次数                                                 | 3 | 否 |
+  | retryOnResponseStatus | HTTP状态码，当前仅支持HTTP请求；针对dubbo请求，可通过配置异常类型确定是否需要重试，默认为RpcException | null | 否 |
 
 - **错误注入**
 
-  | 配置项       | 说明                                                         |
-  | ------------ | ------------------------------------------------------------ |
-  | type         | 错误注入类型, 目前支持abort(请求直接返回)与delay（请求延时） |
-  | percentage   | 错误注入触发概率                                             |
-  | fallbackType | 请求调用返回类型，仅`type=abort`生效。当前支持两种`ReturnNull`:直接返回空内容，状态码200；`ThrowException`: 按照指定错误码返回，关联配置`errorCode` |
-  | errorCode    | 指定错误码返回, 默认500, 仅在`type=abort`且`fallbackType=ThrowException`生效 |
-  | forceClosed  | 是否强制关闭错误注入能力, 当为true时，错误注入将不会生效。默认false |
+  | 配置项       | 说明                                                         | 默认值 | 是否必须 |
+  | ------------ | ------------------------------------------------------------ | ---- | ---- |
+  | type         | 错误注入类型, 目前支持abort(请求直接返回)与delay（请求延时） | delay | 否 |
+  | percentage   | 错误注入触发概率                                             | -1 | 是 |
+  | fallbackType | 请求调用返回类型，仅`type=abort`生效。当前支持两种`ReturnNull`:直接返回空内容，状态码200；`ThrowException`: 按照指定错误码返回，关联配置`errorCode` | ThrowException | 否 |
+  | errorCode    | 指定错误码返回, 默认500, 仅在`type=abort`且`fallbackType=ThrowException`生效 | 500 | 否 |
+  | forceClosed  | 是否强制关闭错误注入能力, 当为true时，错误注入将不会生效。默认false | false | 否 |
+
+- **系统规则**
+
+  | 配置项       | 说明                                                         | 默认值 | 是否必须 |
+  | ----------  | ------------------------------------------------------------ | ---- | ---- |
+  | systemLoad  | 系统负载阈值，仅支持linux | Double.MAX_VALUE | 否 |
+  | cpuUsage    | 系统cpu使用率阈值 | 1.0 | 否 |
+  | qps         | 入口流量的qps阈值 | Double.MAX_VALUE | 否 |
+  | aveRt       | 入口流量的平均响应时间阈值，单位ms | Long.MAX_VALUE | 否 |
+  | threadNum   | 入口流量的并发线程数阈值 | Long.MAX_VALUE | 否 |
+
+- **系统自适应**
+  
+  | 配置项       | 说明                                                         | 默认值 | 是否必须 |
+  | ----------  | ------------------------------------------------------------ | ---- | ---- |
+  | systemLoad  | 系统负载阈值，仅支持linux | Double.MAX_VALUE | 否 |
 
 ### 配置流控规则
 
@@ -168,6 +196,10 @@ servicecomb:
       matches:
         - apiPath:
             exact: "/flowcontrol/bulkhead"
+    demo-system: |
+      matched:
+        - apiPath:
+            prefix: /
   rateLimiting:
     demo-rateLimiting: |
       rate: 1
@@ -194,21 +226,20 @@ servicecomb:
       percentage: 100
       fallbackType: ReturnNull
       forceClosed: false
+  system:
+    demo-system: |
+      systemLoad: 0.6
+      cpuUsage: 0.6
+      qps: 100
+      aveRt: 20
+      threadNum: 100
 ```
 
 以上配置，配置当前支持的流控规则，具体配置项请根据实际需要进行变更。
 
-#### 基于sermant-backend统一配置接口发布规则
+#### 基于Sermant动态配置能力发布规则
 
-[backend]()服务提供配置发布功能, 通过请求接口`/publishConfig`发布配置，请求参数如下：
-
-| 配置参数 | 说明                                             |
-| -------- | ------------------------------------------------ |
-| key      | 配置键                                           |
-| group    | 配置的标签组                                     |
-| content  | 配置内容，即具体的规则配置，其格式均为`YAML`格式 |
-
-> 其中**group**的配置格式为k1=v1, 多个值使用"&"分隔，例如k1=v1&k2=v2, 代表该key绑定的标签组
+详情参考[动态配置使用手册](../user-guide/configuration-center.md)
 
 **以下配置以`app=region-A`,` serviceName=flowControlDemo`, `environment=testing`举例**
 
@@ -221,14 +252,11 @@ servicecomb:
       "content":"alias: scene\nmatches:\n- apiPath:\n    exact: /flow\n  headers: {}\n  method:\n  - POST\n  name: rule1\n"
   }
   ```
-
-
+  
 **规则解释:**
 
 - 请求路径为`/flow`且方法类型为`GET`即匹配成功
 - 针对app为region-A，服务名为flowControlDemo且环境为testing的服务实例生效
-
-
 
 > **注意事项：**
 >
@@ -248,9 +276,7 @@ servicecomb:
 
     - 针对app为region-A，服务名为flowControlDemo且环境为testing的服务实例生效
     - 1秒内超过2个请求，即触发流控效果
-
   
-
   > **注意事项：**
   >
   > `key`必须以`servicecomb.rateLimiting.`为前置，`scene`则为业务名称，确保与流量标记的业务场景名称一致
@@ -268,9 +294,7 @@ servicecomb:
 
     - 针对app为region-A，服务名为flowControlDemo且环境为testing的服务实例生效
     - 10秒内，若请求接口`/flow`次数超过3次，且错误率超过90%或者慢请求占比超过80%则触发熔断
-
   
-
   > **注意事项：**
   >
   > `key`必须以`servicecomb.circuitBreaker.`为前置，`scene`则为业务名称，确保与流量标记的业务场景名称一致
@@ -289,9 +313,7 @@ servicecomb:
 
     - 针对app为region-A，服务名为flowControlDemo且环境为testing的服务实例生效
     - 针对接口`/flow`, 若最大并发数超过5，且新的请求等待10S，还未获取资源，则触发隔离仓异常
-
   
-
   > **注意事项：**
   >
   > `key`必须以`servicecomb.bulkhead.`为前置，`scene`则为业务名称，确保与流量标记的业务场景名称一致
@@ -310,9 +332,7 @@ servicecomb:
 
     - 针对app为region-A，服务名为flowControlDemo且环境为testing的服务实例生效
     - 针对接口`/flow`, 当请求抛出500异常时进行重试，直到重试成功或者达到最大重试次数
-
   
-
   > **注意事项：**
   >
   > `key`必须以`servicecomb.retry.`为前置，`scene`则为业务名称，确保与流量标记的业务场景名称一致
@@ -333,9 +353,7 @@ servicecomb:
 
   - 针对app为region-A，服务名为flowControlDemo且环境为testing的服务实例生效
   - 当请求接口`/flow`时，100%将返回空
-
   
-
   > **注意事项：**
   >
   > `key`必须以`servicecomb.faultInjection.`为前置，`scene`则为业务名称，确保与流量标记的业务场景名称一致
@@ -400,4 +418,4 @@ java -javaagent:${agent路径}\sermant-agent-x.x.x\agent\sermant-agent.jar=appNa
 
 多次请求`localhost:8003/flow`, 若在2秒内请求数超过4个时返回`rate limited`，则触发流控成功
 
-监控采集成功验证情况参见[监控插件](./monitor.md)。
+监控采集成功验证情况参见[监控插件](monitor.md)。
