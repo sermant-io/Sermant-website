@@ -9,27 +9,13 @@
 当前插件插件支持[SpringCloud](https://github.com/spring-cloud)应用，需配合注解`@Value, @ConfigurationProperties以及@RefreshScope`使用
 
 
-## 支持版本和限制
-
-### 版本要求
-
-**SpringCloud:**  `Edgware.SR2`及以上的版本
-
-
 ## 参数配置
 
 ### 修改配置中心/动态配置插件的配置
 
 **（1）修改配置中心（可选）**
 
-修改配置文件`${javaagent路径}/config/config.properties`, 修改配置中心类型与地址，如下位置：
-
-```properties
-# 配置中心地址， 根据配置中心地址配置
-dynamic.config.server_address=127.0.0.1:2181
-# 配置中心类型， 支持KIE与ZOOKEEPER
-dynamic.config.dynamic_config_type=ZOOKEEPER
-```
+修改动态配置中心类型与地址，参考[Sermant-agent使用手册](../user-guide/sermant-agent.md)。
 
 **（2）配置动态配置插件**
 
@@ -45,34 +31,14 @@ dynamic.config.plugin:
 
 配置说明：
 
-| 配置项                    | 配置说明                                                     |
-| ------------------------- | ------------------------------------------------------------ |
-| enableCseAdapter          | 当配置为true时, 会根据ServiceMeta指定的应用配置，服务配置以及自定义标签配置三种类型进行配置订阅；当为false时，只会根据服务名进行订阅，即对键为`service`, 值为"宿主服务名（即spring.application.name获取）" |
-| enableDynamicConfig       | 动态配置开关，仅当配置为true时，动态配置才会生效             |
-| enableOriginConfigCenter | 是否开启原配置中心, 默认不开启。当前仅支持Zookeeper与Nacos配置中心（基于SpringCloud Config实现） |
-| sourceKeys                | 当需要指定的配置键生效时，可配置该值，例如只是想读取application.yaml，否则默认会读取所有的配置；多个键使用`,`隔开。 |
+| 参数键                     | 说明                                                         | 默认值         | 是否必须 |
+| ------------------------- | ------------------------------------------------------------ | -------------- | ------- |
+| dynamic.config.plugin.enableCseAdapter          | 当配置为true时, 会根据ServiceMeta指定的应用配置，服务配置以及自定义标签配置三种类型进行配置订阅；当为false时，只会根据服务名进行订阅，即对键为`service`, 值为"宿主服务名（即spring.application.name获取）" | true | 是  |
+| dynamic.config.plugin.enableDynamicConfig       | 动态配置开关，仅当配置为true时，动态配置才会生效             | false | 否  |
+| dynamic.config.plugin.enableOriginConfigCenter | 是否开启原配置中心, 默认不开启。当前仅支持Zookeeper与Nacos配置中心（基于SpringCloud Config实现） | false | 否  |
+| dynamic.config.plugin.sourceKeys                | 当需要指定的配置键生效时，可配置该值，例如只是想读取application.yaml，否则默认会读取所有的配置；多个键使用`,`隔开。 | - | 否  |
 
-### 发布配置
 
-发布配置有以下两种方式：
-
-（1）通过Sermant后台服务发布配置
-
-（2）直接通过配置中心发布配置
-
-下面将分别介绍这两种发布方式操作流程
-
-#### 通过Sermant后台服务发布配置
-
-1、首先需编译启动`backend`模块
-
-2、调用`backend`接口`/publishConfig`发布配置， 该接口参数如下:
-
-| 配置参数 | 说明                                                   |
-| -------- | ------------------------------------------------------ |
-| key      | 配置键                                                 |
-| group    | 配置的标签组                                           |
-| content  | 配置内容，即具体的规则配置，配置插件仅支持**yaml**格式 |
 
 动态配置主要基于`group`进行匹配配置订阅，该标签组由多个键值对组成，根据适配开关配置`enableCseAdapter`的不同，`group`的值将会有所区别，如下：
 
@@ -150,6 +116,16 @@ Zookeeper配置发布则需基于命令行配置，即`zkServer`, 其路径由[�
 # create /group/key content
 create /service=DynamicConfigDemo/test "sermant: sermant"
 ```
+
+## 支持版本和限制
+
+### 版本要求
+
+**SpringCloud:** 版本支持
+- SpringBoot 1.5.x - 2.6.2
+- spring-cloud-starter-alibaba-nacos-config 1.5.0.RELEASE+
+- spring-cloud-starter-zookeeper-config 1.2.0.RELEASE+
+
 
 ## 操作和结果验证
 

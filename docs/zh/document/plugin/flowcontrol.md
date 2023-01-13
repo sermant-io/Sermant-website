@@ -25,44 +25,18 @@
 
 ### 配置agent
 
-**（1）修改服务注册信息**
+**（1）修改服务注册信息和配置中心**
 
-找到`${javaagent path}/agent/config/config.properties`，修改如下配置
+修改服务信息和动态配置中心类型与地址，参考[Sermant-agent使用手册](../user-guide/sermant-agent.md)。
 
-```properties
-# 服务app名称
-service.meta.application=default
-# 服务版本
-service.meta.version=1.0.0
-# serviceComb 命名空间
-service.meta.project=default
-# 环境
-service.meta.environment=development
-# 自定义标签，按需配置，用于后续的配置订阅
-service.meta.customLabel=public
-service.meta.customLabelValue=default
-```
-
-**提示**：以上配置均可通过环境变量指定，对应的键值即为环境变量键，例如服务app名称可由`-Dservice.meta.application=application`指定, 其他配置文件的所有键均可采用该方式配置。
-
-**（2）修改配置中心**
-
-修改配置文件`${javaagent路径}/config/config.properties`, 修改配置中心类型与地址，如下位置：
-
-```properties
-# 配置中心地址， 根据配置中心地址配置
-dynamic.config.server_address=127.0.0.1:30110
-# 配置中心类型， 支持KIE与ZOOKEEPER
-dynamic.config.dynamic_config_type=KIE
-```
-
-**（3）配置流控插件**
+**（2）配置流控插件**
 
 修改配置文件`${javaagent路径}/pluginPackage/flowcontrol/config/config.yaml`
 
 ```yaml
 flow.control.plugin:
   useCseRule: true # 是否开启ServiceComb适配
+  enable-start-monitor: false # 是否启动指标监控
 ```
 
 开启适配后，插件将根据应用配置，服务配置以及自定义标签订阅配置中心配置

@@ -4,11 +4,11 @@ Sermant 是基于Java Agent的字节码增强技术，通过 Java Agent 对宿�
 
 ## 架构简介
 
-Sermant整体架构包括sermant-agent、Backend、配置中心、sermant-injector等组件。其中sermant-agent为核心字节码增强的实现组件，其余为Sermant架构的配套组件。
+Sermant整体架构包括sermant-agent、Backend、动态配置中心、sermant-injector等组件。其中sermant-agent为核心字节码增强的实现组件，其余为Sermant架构的配套组件。
 
 ### sermant-agent
 
-sermant-agent为Sermant必要核心组件，包含[sermant-agentcore](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore)、[sermant-plugins](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins)、[sermant-common](https://github.com/huaweicloud/Sermant/tree/develop/sermant-common)等字节码增强的实现，在宿主应用启动时通过`-javaagent`参数指定`sermant-agent.jar`包来挂载生效。
+sermant-agent为Sermant必要核心组件，其包含[sermant-agentcore](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore)、[sermant-plugins](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins)、[sermant-common](https://github.com/huaweicloud/Sermant/tree/develop/sermant-common)等字节码增强逻辑的实现主体，在宿主应用启动时通过`-javaagent`参数指定`sermant-agent.jar`包来挂载生效。
 
 sermant-agent基于Java Agent技术，支持JDK 1.6及以上版本。
 
@@ -22,13 +22,13 @@ Backend为Sermant的非必要组件，但是非常推荐用户部署Backend以�
 
 更多Backend使用指南请参考[Backend使用手册](backend.md)。
 
-### 配置中心
+### 动态配置中心
 
-配置中心为Sermant动态配置功能启用后必要配套组件，该功能允许Sermant动态从配置中心拉取配置以实现丰富多样的服务治理能力，例如标签路由、流控等。如不开启Sermant动态配置能力，配置中心可无需部署。
+动态配置中心为Sermant动态配置功能启用后必要配套组件，该功能允许Sermant动态从配置中心拉取配置以实现丰富多样的服务治理能力，例如标签路由、流控等。如不开启Sermant动态配置能力，动态配置中心可无需部署。
 
-Sermant配置中心目前支持两种类型：[Zookeeper](https://github.com/apache/zookeeper)和[ServiceComb Kie](https://github.com/apache/servicecomb-kie)。
+Sermant动态配置中心目前支持两种类型：[Zookeeper](https://github.com/apache/zookeeper)和[ServiceComb Kie](https://github.com/apache/servicecomb-kie)。
 
-更多配置中心使用指南请参考[配置中心使用手册](configuration-center.md)。
+更多动态配置中心使用指南请参考[Sermant动态配置中心使用手册](configuration-center.md)。
 
 ### **sermant-injector**
 

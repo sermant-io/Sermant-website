@@ -1,141 +1,105 @@
-# Configuration Center User Manual
+# Dynamic Configuration Center User Manual
 
-The configuration center is a supporting component for the dynamic configuration function of Sermant, which allows Sermant to dynamically pull configuration from the configuration center to achieve a variety of service governance capabilities. Users can enable dynamic configuration capabilities and deploy configuration centers on demand.
-This article describes how to use the configuration center.
+This paper introduces the scenario model of Dynamic Configuration Center in Sermant and how to use it.
 
-Configuration center plays an important role in the service governance capability of Sermant. For example, in the flowcontrol plugin, the configuration and delivery of traffic marking and flow control rules are realized by Sermant dynamic configuration and configuration center as the medium to achieve dynamic flow control. In the routing plugin, the configuration of label routing rules is also effective through this configuration center capability.
+## Dynamic Configuration Center in Sermant Scene and Positioning
 
-Configuration center makes Sermant have the key ability of dynamic configuration on the basis of static configuration, and solves the problem of immutable configuration provided by the former, which is the implementation basis of service management diversification in Sermant.
+The dynamic configuration center is a supporting component for the dynamic configuration function of Sermant, which allows Sermant to dynamically pull configuration from the configuration center to achieve a variety of service governance capabilities. Users can enable dynamic configuration capabilities and deploy dynamic configuration centers on demand.
 
-## Unified Model for Dynamic Configuration
+Configuration center makes Sermant have the key ability of dynamic configuration on the basis of static configuration, and solves the problem of immutable configuration provided by the former, which is the implementation basis of service management diversification in Sermant. For example, 
 
-### Dynamic Configuration API
+- In the flowcontrol plugin, the configuration and delivery of traffic marking and flow control rules are realized by Sermant dynamic configuration and configuration center as the medium to achieve dynamic flow control. 
 
-The functionality `API` of **Dynamic Configuration Service** is provided by the abstract class [DynamicConfigService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java) , which implements three interfaces, as seen in [api](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api) directory, The concrete interface is as follows:：
+- In the routing plugin, the configuration of label routing rules is also effective through this configuration center capability.
 
-|Interface|Method|Explanation|
-|:-|:-|:-|
-|[KeyService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyService.java)|String getConfig(String)|Get the configured value for a key (default group).|
-|[KeyService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyService.java)|boolean publishConfig(String, String)|Set value for a key (default group) .|
-|[KeyService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyService.java)|boolean removeConfig(String)|Remove a configured value for a key (default group).|
-|[KeyService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyService.java)|List\<String> listKeys()|Get all keys (default group).|
-|[KeyService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyService.java)|boolean addConfigListener(String, [DynamicConfigListener](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java))|Add a listener for a key (default group).|
-|[KeyService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyService.java)|boolean removeConfigListener(String)|Remove a listener for a key (default group).|
-|[KeyGroupService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyGroupService.java)|String getConfig(String, String)|Get the configured value for a key in the group.|
-|[KeyGroupService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyGroupService.java)|boolean publishConfig(String, String, String)|Set value for a key in the group.|
-|[KeyGroupService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyGroupService.java)|boolean removeConfig(String, String)|Remove the configured value for a key in the group.|
-|[KeyGroupService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyGroupService.java)|boolean addConfigListener(String, String, [DynamicConfigListener](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java))|Add a listener for a key in the group.|
-|[KeyGroupService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyGroupService.java)|boolean removeConfigListener(String, String)|Remove a listener for a key in the group.|
-|[GroupService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/GroupService.java)|List\<String> listKeysFromGroup(String)|Get all keys in the group.|
-|[GroupService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/GroupService.java)|boolean addGroupListener(String, [DynamicConfigListener](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java))|Add listeners for all keys in the group.|
-|[GroupService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/GroupService.java)|boolean removeGroupListener(String)|Remove listeners for all keys in the group.|
-|[DynamicConfigService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java)|boolean addConfigListener(String, [DynamicConfigListener](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java), boolean)|Add a listener for a key(default group). Whether to trigger the initialization event depends on the input parameters|
-|[DynamicConfigService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java)|boolean addConfigListener(String, String, [DynamicConfigListener](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java), boolean)|Add a listener for a key in the group. Whether to trigger the initialization event depends on the input parameters.|
-|[DynamicConfigService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java)|boolean addGroupListener(String, [DynamicConfigListener](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java), boolean)|Add listeners for all keys in the group. Whether to trigger the initialization event depends on the input parameters.|
+There are many mature open source products in the field of real-time configuration center and Sermant does not provide a single implementation of configuration center, but integrates the open source configuration center to achieve the business goal of real-time dynamic configuration of service governance rules.
 
-Above all, two concepts need to be clear:
+In the concrete implementation, sermant-agent defines a set of general interfaces for dynamic configuration. Based on this architecture,
 
-- `Key`, a single reference to a dynamical configuration key
-- `Group`, a dynamical configuration set of groups, often used to distinguish between users
+- The user determines the type of configuration center that the Sermant actually connects to through the configuration of the sermant-agent. It is also possible to directly operate the dynamic configuration center in the operation and maintenance scenario according to the manual of each service governance plugin to achieve the business goal of dynamic configuration.
+- In the development of plugins, developers only need the common interface of Sermant dynamic configuration to realize the function of dynamic configuration, and do not need to pay attention to the selection and implementation of the dynamic configuration center itself.
 
-As you can see, the above `API` is mainly divided into data adding, deleting, querying and modifying operations, and add/remove operations of the listener's [DynamicConfigListener](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java). The latter event callback is a crucial part of the functionality of the **Dynamic Configuration Service**, which is the main feature of the plugin using **Dynamic Configuration Service**.
+The following architecture diagram illustrates the principle of the architecture.
 
-Also, in the [KeyService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyService.java) interface, all the `API` defined are `API` without `Group`. They will actually use the default `Group` and be fixed to `API` of [KeyGroupService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyGroupService.java) in [DynamicConfigService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java). The default `Group` can be modified via `dynamic.config.default_group` in the **unified configuration file** `config.properties`.
+<MyImage src="/docs-img/dynamic-configuration-center.png"/>
 
-Finally, besides the above service interfaces, there are a few other interfaces, configurations, or entities that developers need to pay attention to:
+## Parameter Configuration
 
-- Static configuration [DynamicConfig](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/config/DynamicConfig.java) for **Dynamic Configuration Service**, which involves the following configuration:
-  |Type|Property|Key in Unified Configuration File|Explanation|
-  |:-|:-|:-|:-|
-  |int|timeoutValue|dynamic.config.timeoutValue|Timeout for server connection, unit: ms|
-  |String|defaultGroup|dynamic.config.defaultGroup|Default group|
-  |String|serverAddress|dynamic.config.serverAddress|Server address, must be of the form: {@code host:port[(,host:port)...]}|
-  |[DynamicConfigServiceType](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigServiceType.java)|serviceType|dynamic.config.dynamicConfigType|Service implementation type, take NOP, ZOOKEEPER, KIE|
-  
-- **Dynamic configuration service implementation type**[DynamicConfigServiceType](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigServiceType.java), contains:
-  
-  |Enum|Explanation|
-  |:-|:-|
-  |ZOOKEEPER|ZooKeeper|
-  |KIE|ServiceComb Kie|
-  |NOP|No implementation|
-  
-- **Dynamic configuration listener** [DynamicConfigListener](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java), which contains the following interface methods:
-  
-  |Method|Explanation|
-  |:-|:-|
-  |void process([DynamicConfigEvent](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigEvent.java))|Callback interface for handling change events of configuration|
-  
-- **Change events of dynamic configuration** [DynamicConfigEvent](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigEvent.java), whose member properties are as follows:
-  
-  |Type|Property|Explanation|
-  |:-|:-|:-|
-  |String|key|Key of configuration|
-  |String|group|Group of configuration|
-  |String|content|Content of configuration|
-  |[DynamicConfigEventType](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigEventType.java)|changeType|Type of configuration change event|
-  
-- **Type of change events of dynamic configuration** [DynamicConfigEventType](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigEventType.java), which contains following four kinds:
-  
-  |Enum|Explanation|
-  |:-|:-|
-  |INIT|Initial response when adding a listener|
-  |CREATE|Event of adding new configuration|
-  |MODIFY|Event of modifying configuration|
-  |DELETE|Event of deleting configuration|
+For configuration of the dynamic configuration center, see the corresponding open source dynamic configuration center([ZooKeeper](https://zookeeper.apache.org/releases.html) , [ServiceComb Kie](). We will not go into details in this paper.
 
-#### ZooKeeper
+The corresponding parameters of dynamic configuration center in sermant-agent can be configured in sermant-agent product package `agent/config/config.properties`:
+
+| Parameter Key                    | Description                                                  | Default Value  | Required |
+| :------------------------------- | :----------------------------------------------------------- | -------------- | -------- |
+| dynamic.config.timeoutValue      | Server connection timeout, in ms                             | 30000          | True     |
+| dynamic.config.defaultGroup      | Default group                                                | sermant        | True     |
+| dynamic.config.serverAddress     | Server address, configured like: {@code host:port[(,host:port)...]} | 127.0.0.1:2181 | True     |
+| dynamic.config.dynamicConfigType | Dynamic config type: NOP、ZOOKEEPER、KIE                     | ZOOKEEPER      | True     |
+| dynamic.config.connectRetryTimes | ZOOKEEPER: the number of configuration center reconnects when starting the Sermant | 5              | True     |
+| dynamic.config.connectTimeout    | ZOOKEEPER: connection timeout to the configuration center when starting the Sermant | 1000           | True     |
+| dynamic.config.userName          | ZOOKEEPER：user name                                         | -              | False    |
+| dynamic.config.password          | ZOOKEEPER：password after encryption                         | -              | False    |
+| dynamic.config.privateKey        | ZOOKEEPER：decryption key                                    | -              | False    |
+| dynamic.config.enableAuth        | ZOOKEEPER：authorization switch                              | false          | False    |
+
+## Sermant Dynamic Configuration Center Model
+
+以sermant-agent中的[KeyGroupService.publishConfig](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyGroupService.java)接口函数说明Sermant中的配置模型。
+
+The configuration model in Sermant is illustrated by the interface function [KeyGroupService.publishConfig](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyGroupService.java) in sermant-agent.
+
+```java
+/**
+ * Sets the configuration value for a key under the group
+ *
+ * @param key     key
+ * @param group   group
+ * @param content configuration value
+ * @return success
+ */
+boolean publishConfig(String key, String group, String content);
+```
+
+As you can see in the example above, the two parameters used to determine the configuration in sermant-agent are:
+
+- `key`: the key value of the smallest configuration unit。
+- `group`: group, like a prefix for `key`. Sermant mainly uses the group to be related with some configuration center tenant isolation function。
+
+For different configuration centers, there are different matching models for group and key. This is explained in detail below.
+
+For users, to use the dynamic configuration center, you need to obtain the instance of `DynamicConfigService` in the development process of the plugin, and call various abstract interfaces provided by `DynamicConfigService` according to their own scenarios to perform corresponding service governance. You can refer to [plugin function development related chapters](https://sermant.io/zh/document/developer-guide/dev-complex-plugin.html#%E5%8A%A8%E6%80%81%E9%85%8D%E7%BD%AE%E5%8A%9F%E8%83%BD) for detailed API interface parsing and development guide.
+
+## Sermant Implementation of Configuration Model Based on Different Dynamic Configuration Centers
+
+The following sections discuss several typical implementations of configuration centers. By understanding the implementation of the model, users can understand how to find the corresponding configuration items in different configuration centers and how to configure them dynamically to achieve the goal of service governance management.
+
+### Implementation of Configuration Model Based on Zookeeper
 
 For `ZooKeeper` servers, the dynamic configuration is the value of the ZooKeeper node. The `Key` and `Group` should be used as elements to build the **node path**. Since `Group` contains user-specific information, it should be the prefix string for the **node path** so that the `Key` value exists as the second half:
+
 ```txt
 /${group}/${key} -> ${value}
 ```
 
-As for [DynamicConfigListener](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java), we convert it to a `Watcher` of `ZooKeeper`.
-
-The implementation of `Zookeeper` could be found in zookeeper. It mainly contains ZooKeeperDynamicConfigService and ZooKeeperBufferedClient.
-
-- ZooKeeperDynamicConfigService is an implementation of [DynamicConfigService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java) for `ZooKeeper`, whose main duty is to complete the following parameter conversions:
-  
-  - `Key` and `Group` -> `ZooKeeper` node path
-  - [DynamicConfigListener](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java) -> `Watcher` of `ZooKeeper`。
-  
-  After they are parsed, ZooKeeperBufferedClient will do the business operation.
-- ZooKeeperBufferedClient, its main function is to wrap the native `ZooKeeper` client to provide higher-level `API`:
-  
-  |Method|Explanation|
-  |:-|:-|
-  |boolean ifNodeExist(String)|Check whether the node exists.|
-  |String getNode(String)|Query node information.|
-  |boolean createParent(String)|Create the parent node of a node.|
-  |boolean updateNode(String, String)|Update the content of a node. If the node does not exist, it will be automatically created.|
-  |boolean removeNode(String)|Remove a node|
-  |List\<String> listAllNodes(String)|Query the path set of all descendant nodes under a node|
-  |boolean addDataLoopWatch(String, Watcher, BreakHandler)|Add a temporary data watcher for a loop. This watcher will be re-registered after triggering until it receives a watcher remove event Note that when other watchers on the same node are accurately removed, the watcher will choose to abandon the loop registration because it cannot identify whether it has been removed.|
-  |boolean addPersistentRecursiveWatches(String, Watcher)|Add a watches for persistent recursion, valid for descendant nodes|
-  |boolean removeDataWatches(String)|Remove data watchers|
-  |boolean removeAllWatches(String)|Remove all watchers under a node, including descendant nodes|
-  |void close()|Close `ZooKeeper` client|
-
-#### Kie
+### **Implementation of Configuration Model Based on ServiceComb Kie**
 
 For the `Kie` service, the so-called dynamic configuration is the value of the `Kie'` configuration. `Kie` queries the associated configuration based on the label. `Key` and `Group` are the elements of the associated configuration. `Key` is the name of the configured Key, and `Group` is the label of the associated Key. Each `Key` can be configured with one or more labels. The format is usually as follows:
 
 ```properties
 {
-	"key": "keyName",                # key
-	"value": "value",                # value
-	"labels": {
-		"service": "serviceName"     #label，support one or more
-	},
-	"status": "enabled"
+  "key": "keyName",                # key
+  "value": "value",                # value
+  "labels": {
+    "service": "serviceName"     #labels, kv form and support multiple labels
+  },
+  "status": "enabled"
 }
 ```
 
 Compared with `Zookeeper`, `Kie` is more focused on `Group` and its value transfer format is different. The value transfer format of `Kie` is as follows:
 
-```properties
-groupKey1=groupValue1[&groupKey2=groupValue2...]
+```txt
+groupKey1=groupValue1[&groupKey2=groupVaue2...]
 ```
 
 > `groupKey` is the key of label, `groupValue` is the value of label. Multiple labels are spliced by `&`. `Group` could be  generated by LabelGroupUtils.
@@ -143,26 +107,6 @@ groupKey1=groupValue1[&groupKey2=groupValue2...]
 > **NOTE：**
 >
 > ​	If the input `Group` is not in the above format, the label `Group=input Group` will be added by default.
-
-The implementation of `Kie` could be found in kie, which contains KieDynamicConfigService, LabelGroupUtils and SubscriberManager:
-
-- KieDynamicConfigService is an implementation of [DynamicConfigService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java) for `Kie`. Its main duty is to wrap the subscription API of SubscriberManager and the `Key` management of `Group`.
-
-- LabelGroupUtils is used for conversion of `Group`, which contains following APIs：
-
-  | Method                      | Explanation                                         |
-  | --------------------------- | --------------------------------------------------- |
-  | createLabelGroup（Map）     | Create labels and transfer multiple labels in KV    |
-  | getLabelCondition（String） | Converts the `Group` to the condition for a request |
-  | isLabelGroup（String）      | Check whether it is a label of `Kie`                |
-
-- The main responsibility of SubscriberManager is to manage all the `Group` subscribers and to provide data update notifications. It will establish a connection request task with `Kie` according to the subscribed Group, namely the Label Group, and dynamically monitor data update changes. This class contains the following APIs:
-
-  | Method                                                       | Explanation                                                  |
-  | ------------------------------------------------------------ | ------------------------------------------------------------ |
-  | boolean addGroupListener(String, DynamicConfigListener, boolean) | And a listener for a label group , which is managed by SubscriberManager. Listening task will be established and the ability to notify the first subscription is provided. |
-  | boolean removeGroupListener(String, DynamicConfigListener)   | Remove a label group listener.                               |
-  | boolean publishConfig(String, String, String)                | Publish configuration of Kie                                 |
 
 ## Configuration Center and Version Supported
 
@@ -173,7 +117,7 @@ The configuration center components currently supported by Sermant are:
 
 ## Operation and Result Validation
 
-This document uses the demo plugin in [Sermant-examples](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template)  to demonstrate dynamic configuration capability, whose implementation adds a listener to listen for dynamic configuration changes.
+This document uses the demo plugin in [Sermant-examples](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template) to demonstrate dynamic configuration capability, whose implementation adds a listener to listen for dynamic configuration changes.
 
 ### Zookeeper
 

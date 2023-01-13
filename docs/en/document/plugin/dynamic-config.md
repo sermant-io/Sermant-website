@@ -8,12 +8,6 @@ This plugin implements dynamic configuration based on the Sermant configuration 
 
 The current plugin supports SpringCloud applications and needs to be used together with the `@Value, @ConfigurationProperties, and @RefreshScope` annotations.
 
-## Supported Versions and Limitations
-
-### Version Required
-
-**SpringCloud:**  `Edgware.SR2 `and later versions
-
 
 ## Parameter configuration
 
@@ -21,14 +15,8 @@ The current plugin supports SpringCloud applications and needs to be used togeth
 
 **（1）Modify the config center(Optional)**
 
-Modify the `${javaagent path}/config/config.properties`, configuration file to change the configuration center type and address as follows:
+To modify the type and address of the dynamic configuration center, refer to [Sermant-agent User Manual](../user-guide/sermant-agent.md).
 
-```properties
-# IP address of the configuration center. Set this parameter based on the IP address of the configuration center.
-dynamic.config.server_address=127.0.0.1:2181
-# Configuration center type. The options are KIE and ZOOKEEPER.
-dynamic.config.dynamic_config_type=ZOOKEEPER
-```
 
 **（2）Configure Dynamic Configuratin plugin**
 
@@ -44,12 +32,12 @@ dynamic.config.plugin:
 
 Configuration description:
 
-| Configuration    | Description                                         |
-| ------------------------- | ------------------------------------------------------------ |
-| enableCseAdapter          | If this parameter is set to true, subscription is performed based on the application configuration, service configuration, and customized tag configuration specified by ServiceMeta. If the value is false, subscription is performed only based on the service name. That is, the key is service and the value is "Host service name (obtained by spring.application.name)". |
-| enableDynamicConfig       | Indicates whether to enable dynamic configuration. The dynamic configuration takes effect only when this parameter is set to true. |
-| enableOriginConfigCenter | Indicates whether to enable the original configuration center. This parameter is disabled by default. Currently, only ZooKeeper and Nacos configuration center (implemented based on SpringCloud Config) are supported. |
-| sourceKeys                | When the specified configuration key takes effect, you can set this parameter. For example, you only want to read the application.yaml file. Otherwise, all configurations are read by default. Use commas (,) to separate multiple keys. |
+| Key in Input Parameters    | Description                                         |  Default Value  |   Required  |
+| ------------------------- | ------------------------------------------------------------ | --------- | --------- |
+| enableCseAdapter          | If this parameter is set to true, subscription is performed based on the application configuration, service configuration, and customized tag configuration specified by ServiceMeta. If the value is false, subscription is performed only based on the service name. That is, the key is service and the value is "Host service name (obtained by spring.application.name)". | true | true|
+| enableDynamicConfig       | Indicates whether to enable dynamic configuration. The dynamic configuration takes effect only when this parameter is set to true. | false | false|
+| enableOriginConfigCenter | Indicates whether to enable the original configuration center. This parameter is disabled by default. Currently, only ZooKeeper and Nacos configuration center (implemented based on SpringCloud Config) are supported. | false | false|
+| sourceKeys                | When the specified configuration key takes effect, you can set this parameter. For example, you only want to read the application.yaml file. Otherwise, all configurations are read by default. Use commas (,) to separate multiple keys. | - | false|
 
 ### Publish Configuration
 
@@ -151,6 +139,15 @@ If the current service name is **DynamicConfigDemo**, the corresponding **group 
 # create /group/key content
 create /service=DynamicConfigDemo/test "sermant: sermant"
 ```
+
+## Supported Versions and Limitations
+
+### Version Required
+
+**SpringCloud:**  version support
+- SpringBoot 1.5.x - 2.6.2
+- spring-cloud-starter-alibaba-nacos-config 1.5.0.RELEASE+
+- spring-cloud-starter-zookeeper-config 1.2.0.RELEASE+
 
 
 ## Operation and result validation

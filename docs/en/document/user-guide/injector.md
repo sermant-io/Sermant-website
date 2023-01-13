@@ -9,7 +9,7 @@ Sermant-injector is a MutatingAdmissionWebhook that can intercept and modify req
 
 ### Parameter Configuration for sermant-injector
 
-This project adopts  Helm for Kubernetes package management. The parameters for deploying sermant-injector are set in `sermant-injector/deployment/release/values.yaml`.
+This project adopts  Helm for Kubernetes package management. The parameters for deploying sermant-injector are set in [sermant-injector/deployment/release/values.yaml](https://github.com/huaweicloud/Sermant/blob/develop/sermant-injector/deployment/release/injector/values.yaml).
 
 | <span style="display:inline-block;width:100px">First indent</span>  | <span style="display:inline-block;width:120px">Second indent</span>   | <span style="display:inline-block;width:100px">Third indent</span>    | Description | <span style="display:inline-block;width:80px">Required</span> |
 | ------------ | ------------- | ------------ | ------------------------------------------------------------ | -------- |
@@ -58,7 +58,7 @@ All sermants in pods of default namespace are connected to the **Backend**.
 
 ### Parameter Configuration for mirror scripts
 
-**build-sermant-image.sh**
+**[build-sermant-image.sh](https://github.com/huaweicloud/Sermant/blob/develop/sermant-injector/images/sermant-agent/build-sermant-image.sh)**
 
 | Parameters     | Description                           | Required |
 | -------------- | ------------------------------------- | -------- |
@@ -66,7 +66,7 @@ All sermants in pods of default namespace are connected to the **Backend**.
 | imageName      | Image name of sermant-agent mirror    | True     |
 | imageVersion   | Image version of sermant-agent mirror | True     |
 
-**build-injector-image.sh**
+**[build-injector-image.sh](https://github.com/huaweicloud/Sermant/blob/develop/sermant-injector/images/injector/build-injector-image.sh)**
 
 | Parameters   | Description                              | Required |
 | ------------ | ---------------------------------------- | -------- |

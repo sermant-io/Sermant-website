@@ -14,22 +14,14 @@ Parameter configuration of sermant-agent:
 
 Modify relevant configuration of `agent/config/config.properties` in sermant-agent product package.
 
-```properties
-agent.config.serviceBlackList=com.huaweicloud.sermant.implement.service.tracing.TracingServiceImpl
-
-heartbeat.interval=30000
-
-backend.nettyIp=127.0.0.1
-backend.nettyPort=6888
-```
+|         Parameter Key         | <span style="display:inline-block;width:200px">Description</span> |                        Default Value                         | Required |
+| :---------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :------: |
+| agent.config.serviceBlackList | Sermant-agent core functionality blacklist to disable related services | com.huaweicloud.sermant.implement.service.heartbeat.HeartbeatServiceImpl<br>,com.huaweicloud.sermant.implement.service.send.NettyGatewayClient<br>,com.huaweicloud.sermant.implement.service.tracing.TracingServiceImpl |  False   |
+|      heartbeat.interval       |                   Heartbeat send interval                    |                            30000                             |  False   |
+|        backend.nettyIp        |              Backend message receiving address               |                          127.0.0.1                           |  False   |
+|       backend.nettyPort       |                Backend message receiving port                |                             6888                             |  False   |
 
 Where `agent.config.serviceBlackList ` configures core services that are not allowed to start，you must not add `com.huaweicloud.sermant.implement.service.heartbeat.HeartbeatServiceImpl` to enable heartbeat function.
-
-`heartbeat.interval` configures heartbeat intervals (ms).
-
-`backend.nettyIp` configures the netty server address of the corresponding Backend.
-
-`backend.nettyPort` configure the netty server port of the corresponding Backend. The default portis 6888.
 
 The Backend parameters do not need additional configuration. By default, 6888 is the netty message receiving port, and 8900 is the service process port.
 

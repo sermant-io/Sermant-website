@@ -10,20 +10,8 @@
 
 ### 按需修改[核心配置文件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-config/config/config.properties)
 
-文件路径为：`${agent_package_path}/agent/config/config.properties`，其中`${agent_package_path}`需要替换为实际的打包路径。
+修改服务信息（应用名、版本号、命名空间、环境），参考[Sermant-agent使用手册](../../user-guide/sermant-agent.md)
 
-配置项说明如下:
-
-```properties
-#应用名
-service.meta.application=default
-#版本号
-service.meta.version=1.0.0
-#命名空间
-service.meta.project=default
-#环境
-service.meta.environment=development
-```
 
 ### 按需修改[插件配置文件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-registry/config/config.yaml)
 

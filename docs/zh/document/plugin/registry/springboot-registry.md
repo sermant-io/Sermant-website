@@ -12,57 +12,31 @@
 
 其中`www.domain.com`为实际调用的域名，`serviceName`为下游的服务名，`apiPath`则为下游请求接口路径。
 
-
-## 支持版本和限制
-
-注册中心支持： Zookeeper 3.4.x及以上
-
-客户端支持：
-
-- HttpClient: 4.x
-- HttpAsyncClient: 4.1.4
-- OkhttpClient: 2.x, 3.x, 4.x
-- Feign(springcloud-openfeign-core): 2.1.x, 3.0.x
-- RestTemplate(Spring-web): 5.1.x, 5.3.x
-
-框架支持：SpringBoot 1.5.10.Release及以上
-
 ## 参数配置
 
-### 配置动态配置中心（可选）
+### 动态配置中心（可选）
 
-用户可基于配置文件配置或者采用环境变量方式配置。
+修改动态配置中心类型与地址，参考[Sermant-agent使用手册](../../user-guide/sermant-agent.md)。
 
-（1）基于配置文件配置
+### SpringBoot 插件（可选）
 
-您需找到配置文件[config.properties](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-config/config/config.properties), 修改如下配置：
-
-```properties
-# 配置中心地址
-dynamic.config.serverAddress=127.0.0.1:2181
-# 配置中心类型， 目前支持ZOOKEEPER与KIE
-dynamic.config.dynamicConfigType=ZOOKEEPER
-```
-
-（2）基于环境变量配置
-
-您可在应用启动时，增加环境变量进行指定，例如：`-Ddynamic.config.serverAddress=127.0.0.1:2181 -Ddynamic.config.dynamicConfigType=ZOOKEEPER` 便可达到上述配置文件的效果。
-
-### 配置插件（可选）
-
-在sermant打包后，您可在路径`${agent path}/agent/pluginPackage/springboot-registry/config/config.yaml`找到该插件的配置文件， 配置如下所示：
+您可在路径`${agent path}/agent/pluginPackage/springboot-registry/config/config.yaml`找到该插件的配置文件， 配置如下所示：
 
 ```yaml
 sermant.springboot.registry:
-  realmName: www.domain.com   # 该域名需替换为您的请求地址的域名!
+  enableRegistry: false             # 是否开启boot注册能力
+  realmName: www.domain.com        # 匹配域名, 当前版本仅针对url为http://${realmName}/serviceName/api/xx场景生效
+  enableRequestCount: false        # 是否开启流量统计, 开启后每次进入插件的流量将都会打印
 
 sermant.springboot.registry.lb:
   lbType: RoundRobin               # 负载均衡类型, 当前支持轮询(RoundRobin)、随机(Random)、响应时间权重(WeightedResponseTime)、最低并发数(BestAvailable)
-  registryAddress: 127.0.0.1:2181  # 注册中心地址(必填)
+  registryAddress: 127.0.0.1:2181  # 注册中心地址
   instanceCacheExpireTime: 0       # 实例过期时间, 单位秒, 若<=0则永不过期
   instanceRefreshInterval: 0       # 实例刷新时间, 单位秒, 必须小于instanceCacheExpireTime
   refreshTimerInterval: 5          # 实例定时检查间隔, 判断实例是否过期, 若其大于instanceRefreshInterval, 则值设置为instanceRefreshInterval
-
+  enableSocketReadTimeoutRetry: true # 针对{@link java.net.SocketTimeoutException}: read timed out是否需要重试, 默认开启
+  enableSocketConnectTimeoutRetry: true # 同上, 主要针对connect timed out, 通常在连接不上下游抛出
+  enableTimeoutExRetry: true  
 
 ```
 
@@ -70,7 +44,7 @@ sermant.springboot.registry.lb:
 
 除以上用户需要注意的配置外，如下为可选配置， 用户可采用环境变量的方式进行配置
 
-| 参数名                          | 描述                                                         | 默认值            |
+| 参数键                          | 说明                                                         | 默认值            |
 | ------------------------------- | ------------------------------------------------------------ | ----------------- |
 | connectionTimeoutMs             | 连接ZK的超时时间                                             | 2000ms            |
 | readTimeoutMs                   | 连接ZK的响应超时时间                                         | 10000ms           |
@@ -105,38 +79,11 @@ strategy: all
 value: service-b
 ```
 
-
-
 #### **灰度策略下发**
-
-##### 基于backend下发
-
-那如何配置下发灰度策略， 这里需要基于backend的下发接口进行配置下发，backend提供如下接口：
-
-URL `/publishConfig`
-
-请求参数如下：
-
-| 配置参数 | 说明                                             |
-| -------- | ------------------------------------------------ |
-| key      | 配置键                                           |
-| group    | 配置的标签组                                     |
-| content  | 配置内容，即具体的规则配置，其格式均为`YAML`格式 |
-
-> 其中**group**的配置格式为k1=v1, 多个值使用"&"分隔，例如k1=v1&k2=v2, 代表该key绑定的标签组
-
-默认插件会订阅分组`app=default&environment=`和`service=yourApplicationName&app=default&environment=`
-
-其中`yourApplicationName`为您当前的app的`spring.application.name`。若您想修改订阅分组， 您可设置如下环境变量进行指定：
-
-- `-Dservice.meta.application`, 可指定app的标签
-- `-Dservice.meta.environment`, 可指定environment的标签
-
-以上，为配置流程，随后携带sermant启动即可完成。
 
 ##### 基于配置中心
 
-当然此处您也可以直接基于配置中心客户端直接配置下发， 以zookeeper为例：
+当然此处您可以直接基于配置中心客户端直接配置下发， 以zookeeper为例：
 
 （1）登录zookeeper 客户端
 
@@ -159,7 +106,19 @@ create /app=default&environment= ""
 create /app=default&environment=/sermant.plugin.registry "strategy: all"
 ```
 
+## 支持版本和限制
 
+注册中心支持： Zookeeper 3.4.x及以上
+
+客户端支持：
+
+- HttpClient: 4.x
+- HttpAsyncClient: 4.1.4
+- OkhttpClient: 2.x, 3.x, 4.x
+- Feign(springcloud-openfeign-core): 2.1.x, 3.0.x
+- RestTemplate(Spring-web): 5.1.x, 5.3.x
+
+框架支持：SpringBoot 1.5.10.Release及以上
 
 ## 操作和结果验证
 

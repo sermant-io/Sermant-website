@@ -24,44 +24,20 @@ The flow control plugin is based on the [resilience4j]((https://github.com/resil
 
 ### Configure Agent
 
-**（1）Modify Service Registration Information**
+**（1）Modify service registration information and configuration center**
 
-Find the `${javaagent path}/agent/config/config.properties`  and modify the content comply following configuration:
+To modify service information and dynamically configure the type and address of the center, refer to [Sermant-agent User Manual](../user-guide/sermant-agent.md).
 
-```properties
-# application name, you can keep default
-service.meta.application=default
-# service version
-service.meta.version=1.0.0
-# serviceComb namespace, keep default
-service.meta.project=default
-# environment, it only support development/testing/production
-service.meta.environment=development
-# custom label, it use to subscribe the config of config center
-service.meta.customLabel=public
-service.meta.customLabelValue=default
 ```
 
-**Notice**：The preceding configurations can be specified using environment variables. The corresponding key value is the environment variable key. For example, the service app name can be specified by `-Dservice.meta.application=application`. All keys in other configuration files can be configured using this method.
-
-**（2）Modify the Configuration Center**
-
-Modify the configuration file ${javaagent path}/config/config.properties and modify the configuration center type and address as follows:
-
-```properties
-# IP address of the configuration center. Set this parameter based on the IP address of the configuration center.
-dynamic.config.server_address=127.0.0.1:30110
-# Configuration center type. The options are KIE and ZOOKEEPER.
-dynamic.config.dynamic_config_type=KIE
-```
-
-**（3）Configure the Flow Control Plugin**
+**（2）Configure the Flow Control Plugin**
 
 Modify the Configuration File`${javaagent path}/pluginPackage/flowcontrol/config/config.yaml`
 
 ```yaml
 flow.control.plugin:
-  useCseRule: true 
+  useCseRule: true
+  enable-start-monitor: false 
 ```
 
 If adaptation is enabled, the plugin subscribes to the configuration center based on the application configuration, service configuration, and customized tag configuration.

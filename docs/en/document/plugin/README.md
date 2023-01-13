@@ -10,8 +10,22 @@ This article mainly introduces the plugins currently supported by Sermant.
 
 [Loadbalancer Plugin](./loadbalancer.md) is based on the configuration in the configuration center, the loadbalance rules of the host application can be dynamically modified without intrusion.
 
-[Monitor Plugin](./monitor/document-en.md) can monitor the usage of hardware resources such as CPU, memory, disk IO and network IO of the server where the host application is located, as well as the usage of the host application Java virtual machine and the Druid database connection pool used by it.
+[Monitor Plugin](./monitor.md) can monitor the usage of hardware resources such as CPU, memory, disk IO and network IO of the server where the host application is located, as well as the usage of the host application Java virtual machine and the Druid database connection pool used by it.
 
 [Tag Router Plugin](./router.md) can manage the routing between services by configuring routing rules when there are multiple versions and instances of microservices, so as to achieve business purposes such as non-destructive upgrades and application dialing tests.
 
 [Registry Plugin](./registry/README.md) allows microservices that have been registered with popular registration centers, such as Eureka, Nacos, ZooKeeper, and Consul, to be registered with Service Center (opens new window)in a non-intrusive manner. It also supports Dubbo and SpringCloud frameworks.
+
+### Compatibility List
+
+|Plugin|Microservice Framework Supported|Configuration Center Supported|Registration Center Supported|
+|:-:|:-:|:-----|:--|:--|:--|
+|[Dynamic Configuration Plugin](./dynamic-config.md)|SpringBoot 1.5.x - 2.6.2<br>spring-cloud-starter-alibaba-nacos-config 1.5.0.RELEASE+<br>spring-cloud-starter-zookeeper-config 1.2.0.RELEASE+|servicecomb-kie<br/>ZooKeeper|N/A|
+|[FlowControl Plugin](./flowcontrol.md)|SpringBoot 1.2.x - 2.6.x <br> SpringWebMvc 4.1.3.RELEASE - 5.3.x<br>Dubbo 2.6.x-2.7.x|servicecomb-kie<br>ZooKeeper|N/A|
+|[Graceful Online/Offline Plugin](./graceful.md)|SpringBoot 1.5.x - 2.6.2 <br/> SpringCloud Edgware.SR2 - 2021.0.0|servicecomb-kie<br/>ZooKeeper|N/A|
+|[Loadbalancer Plugin](./loadbalancer.md)|SpringBoot 1.5.x - 2.6.2 <br/> SpringCloud Edgware.SR2 - 2021.0.0|servicecomb-kie<br/>ZooKeeper|N/A|
+|[Monitor Plugin](./monitor.md)|ALL|N/A|N/A|
+|[Tag Router Plugin](./router.md)|SpringBoot 1.5.x - 2.6.2 <br/>SpringCloud Edgware.SR2 - 2021.0.0<br/>Dubbo 2.6.x-2.7.x|servicecomb-kie|servicecomb-service-center|
+|[Registry Plugin](./registry/README.md)|SpringBoot 1.5.x - 2.6.2 <br> SpringCloud Edgware.SR2 - 2021.0.0<br>Dubbo 2.6.x-2.7.x|N/A|servicecomb-service-center|
+|[Dual Registration and Migration Plugin](./registry/spring-cloud-registry-migiration.md)|SpringBoot 1.5.x - 2.6.2 <br/> SpringCloud Edgware.SR2 - 2021.0.0<br>Dubbo 2.6.x-2.7.x|N/A|**Target Registration Center** supported：servicecomb-service-center<br/>**Original Registration Center of SpringCloud** supported：Eureka、Nacos、Zookeeper、Consul<br/>**Original Registration Center of Dubbo** supported：Nacos、Zookeeper|
+|[SpringBoot Registration Plugin](./registry/springboot-registry.md)|SpringBoot 1.5.10.Release+|servicecomb-kie<br/>ZooKeeper|Zookeeper 3.4.x+|

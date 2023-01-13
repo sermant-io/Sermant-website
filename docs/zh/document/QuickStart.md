@@ -12,22 +12,29 @@ mvn clean package -Dmaven.test.skip
 
 ## 启动Sermant
 
-**准备和启动zookeeper**，启动 **Sermant** demo 应用：
+**提前准备和启动zookeeper**，再启动 **Sermant** demo 应用：
 
 ```shell
 # Run under Linux
 java -cp sermant-template/demo-application/target/demo-application.jar \
-  -javaagent:sermant-template/agent/sermant-agent.jar=appName=test \
+  -javaagent:sermant-agent-x.x.x/agent/sermant-agent.jar=appName=test \
   com.huawei.example.demo.DemoApplication
 ```
 
 ```shell
 # Run under Windows
 java -cp sermant-template\demo-application\target\demo-application.jar ^
-  -javaagent:sermant-template\agent\sermant-agent.jar=appName=test ^
+  -javaagent:sermant-agent-x.x.x\agent\sermant-agent.jar=appName=test ^
   com.huawei.example.demo.DemoApplication
 ```
 
-检查**Sermant**的运行状态。在本例中，打开浏览器并导航到URL“http://localhost:8900".
+查看demo-application的日志文件开头是否包含以下内容：
 
-<MyImage src="/docs-img/backend_sermant_info.png"></MyImage>
+```
+[INFO] Loading core library... 
+[INFO] Building argument map... 
+[INFO] Loading sermant agent... 
+[INFO] Load sermant done. 
+```
+
+若日志如上正常输出，则说明sermant挂载成功。
