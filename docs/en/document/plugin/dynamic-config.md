@@ -6,7 +6,7 @@ This document is used to introduce the usage of [dynamic configuration plugin](h
 
 This plugin implements dynamic configuration based on the Sermant configuration center capability. During running, the configuration can be updated to the host application. The priority of the plugin is higher than that of the environment variable configuration.
 
-The current plugin supports SpringCloud applications and needs to be used together with the `@Value, @ConfigurationProperties, and @RefreshScope` annotations.
+The current plugin supports [SpringCloud](https://github.com/spring-cloud) applications and needs to be used together with the `@Value, @ConfigurationProperties, and @RefreshScope` annotations.
 
 
 ## Parameter configuration
@@ -30,6 +30,10 @@ dynamic.config.plugin:
   #sourceKeys: sourceKeys # related the keys that can effect， default is null
 ```
 
+## Publish Configurations by Config Center
+
+Configuration distribution reference [Dynamic Configuration Center User Manual](../user-guide/configuration-center.md)
+
 Configuration description:
 
 | Key in Input Parameters    | Description                                         |  Default Value  |   Required  |
@@ -38,28 +42,6 @@ Configuration description:
 | enableDynamicConfig       | Indicates whether to enable dynamic configuration. The dynamic configuration takes effect only when this parameter is set to true. | false | false|
 | enableOriginConfigCenter | Indicates whether to enable the original configuration center. This parameter is disabled by default. Currently, only ZooKeeper and Nacos configuration center (implemented based on SpringCloud Config) are supported. | false | false|
 | sourceKeys                | When the specified configuration key takes effect, you can set this parameter. For example, you only want to read the application.yaml file. Otherwise, all configurations are read by default. Use commas (,) to separate multiple keys. | - | false|
-
-### Publish Configuration
-
-You can publish configurations in either of the following ways:
-
-（1）Publish configurations through the Sermant Backend service
-
-（2）Release the configuration directly through the configuration center.
-
-The following describes the operation processes of the two publishing modes.
-
-#### Publish Configurations Through The Sermant Backend Service
-
-1、Compile and start the backend module.
-
-2、Invoke the backend interface `/publishConfig` to publish the configuration. The parameters of the interface are as follows:
-
-| Configuration | Description                                                  |
-| ------------- | ------------------------------------------------------------ |
-| key           | configuration key                                            |
-| group         | configuration group                                          |
-| content       | Configuration content, that is, specific rule configuration. The configuration plugin supports only YAML format. |
 
 Dynamic configuration is performed based on a group. The tag group consists of multiple key-value pairs. The value of group varies with the adaptation switch enableCseAdapter, as shown in the following figure.
 
@@ -105,11 +87,7 @@ spring:
 
 There is no special requirement for key configuration. Note that if you set the **sourceKeys** configuration item, the configuration item **takes effect only when the key matches the sourceKeys** configuration item.
 
-#### Publish Configurations by Config Center
-
-The configuration modes vary according to the config center. The following describes the configuration modes of the ZOOKEEPER and KIE config centers.
-
-##### KIE Config Center
+### KIE Config Center
 
 The KIE publish configuration needs to be released through its own API. The configuration content of the http://ip:30110/v1/default/kie/kv, interface is as follows:
 
@@ -127,7 +105,7 @@ The KIE publish configuration needs to be released through its own API. The conf
 
 The preceding configuration keys and labels correspond to the keys and groups that are released [through the Sermant background service](#Publish-configurations-through-the-Sermant-Backend-service). If you are not familiar with KIE requests, see the [API document](https://github.com/apache/servicecomb-kie/tree/master/docs).
 
-##### ZOOKEEPER Config Center
+### ZOOKEEPER Config Center
 
 The ZOOKEEPER configuration publishment needs to be configured based on the command line, that is, zkServer. Its path consists of the key and group configured [through the Sermant background service](#Publish-configurations-through-the-Sermant-Backend-service) release, that is, /group/key, whose value is content. 
 
