@@ -72,6 +72,7 @@ module.exports = {
                 "plugin/registry/springboot-registry",
                 "plugin/registry/spring-cloud-registry-migiration",
                 "plugin/registry/dubbo-registry-migiration",
+                "plugin/visibility",
               ],
             },
             {
@@ -161,6 +162,7 @@ module.exports = {
                 "plugin/registry/springboot-registry",
                 "plugin/registry/spring-cloud-registry-migiration",
                 "plugin/registry/dubbo-registry-migiration",
+                "plugin/visibility",
               ],
             },
             {
