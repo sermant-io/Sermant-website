@@ -15,16 +15,6 @@ Dubbo迁移见[Dubbo注册中心迁移](dubbo-registry-migiration.md)
 | Nacos     | ✅        |
 | Zookeeper | ✅        |
 
-## 支持版本和限制
-
-| Spring Cloud Version | Spring Boot Version | Zookeeper Discovery Version | Nacos Discovery Version     | Consul Discovery Version     | Eureka Client Version                                 |
-| -------------------- | ------------------- | --------------------------- | --------------------------- | ---------------------------- | ----------------------------------------------------- |
-| Edgware.x            | 1.5.x               | 1.x.x, 2.0.x                | 1.5.x                       | 1.x.x,   2.0.x, 2.1.x        | 1.4.x, 2.0.x, 2.1.x                                   |
-| Finchley.x           | 2.0.x, 2.1.x        | 2.x.x                       | 1.5.x, 2.0.x, 2.1.x         | 1.3.x, 2.0.x, 2.1.x          | 1.4.x, 2.0.x, 2.1.x                                   |
-| Hoxton.x             | 2.2.x, 2.3.x        | 2.x.x, 3.0.0 - 3.1.0        | 2.x.x, 2020.0.RC1,   2021.1 | 1.3.x, 2.0.x, 2.1.x,   2.2.x | 1.4.4.RELEASE -   1.4.7.RELEASE, 2.x.x, 3.0.0 - 3.1.0 |
-| 2020.0.x             | 2.4.x, 2.5.x        | 3.0.0 - 3.1.0               | 2.x.x, 2020.0.RC1,   2021.1 | 3.0.0   - 3.1.0              | 2.1.x, 2.2.x, 3.0.0 -   3.1.0                         |
-| 2021.0.0             | 2.6.x               | 3.0.0 - 3.1.0               | 2.x.x, 2020.0.RC1, 2021.1   | 3.0.0   - 3.1.0              | 3.0.0 - 3.1.0                                         |
-
 **搬迁示意图**
 
 <MyImage src="/docs-img/sermant-register-migration.png"/>
@@ -39,61 +29,120 @@ Dubbo迁移见[Dubbo注册中心迁移](dubbo-registry-migiration.md)
 
 ```yaml
 servicecomb.service:
-  openMigration: true #是否开启迁移功能 若进行注册中心迁移，则需将该值设置为true
-  enableSpringRegister: true #开启spring注册插件
+  openMigration: true # 是否开启迁移功能 若进行注册中心迁移，则需将该值设置为true
+  enableSpringRegister: true # 开启spring注册插件
 ```
 
 ### 注册中心心跳配置下发
 
-注册中心迁移插件提供基于动态配置中心下发关闭原注册中心心跳机制的方法，以避免源源不断的错误日志输出
+注册中心迁移插件提供基于动态配置中心下发关闭原注册中心心跳机制的方法，以避免源源不断的错误日志输出。
 
-**后台提供配置下发接口进行动态配置下发：**
+请参考[动态配置中心使用手册](../../user-guide/configuration-center.md#Sermant动态配置中心模型)。
 
-URL
+其中key值为**sermant.agent.registry**。
 
-POST /publishConfig
+group建议配置为微服务级别，即**app=${yourApp}&environment=${yourEnvironment}&service={yourServiceName}**，其中app默认为default，environment默认为空, service为微服务名（通常为spring.application.name配置的值）。
 
-**请求Body**
-
-| 参数    | 是否必填 | 参数类型 | 描述      | 配置值                                  |
-| ------- | -------- | -------- | --------- | --------------------------------------- |
-| key     | 是       | String   | 配置的key | sermant.agent.registry                  |
-| group   | 是       | String   | 配置的组  | service=YourServiceName                 |
-| content | 是       | String   | 配置文本  | origin.\_\_registry\_\_.needClose: true |
-
-若需要关闭请参考表格**配置值**列进行配置下发
+content为**origin.\_\_registry\_\_.needClose: true**。
 
 > ***注意 :***
 >
 > *该操作为一次性操作，关闭注册中心心跳后，将无法开启，仅当应用实例重启才可恢复。*
 
+## 支持版本和限制
 
-## 操作和结果验证
+| Spring Cloud Version | Spring Boot Version | Zookeeper Discovery Version | Nacos Discovery Version     | Consul Discovery Version   | Eureka Client Version                               |
+| -------------------- | ------------------- | --------------------------- | --------------------------- | -------------------------- | --------------------------------------------------- |
+| Edgware.SR2          | 1.5.x               | 1.x.x, 2.0.x                | 1.5.x                       | 1.x.x, 2.0.x, 2.1.x        | 1.4.x, 2.0.x, 2.1.x                                 |
+| Finchley.x           | 2.0.x, 2.1.x        | 2.x.x                       | 1.5.x, 2.0.x, 2.1.x         | 1.3.x, 2.0.x, 2.1.x        | 1.4.x, 2.0.x, 2.1.x                                 |
+| Hoxton.x             | 2.2.x, 2.3.x        | 2.x.x, 3.0.0 - 3.1.0        | 2.x.x, 2020.0.RC1, 2021.1   | 1.3.x, 2.0.x, 2.1.x, 2.2.x | 1.4.4.RELEASE - 1.4.7.RELEASE, 2.x.x, 3.0.0 - 3.1.0 |
+| 2020.0.x             | 2.4.x, 2.5.x        | 3.0.0 - 3.1.0               | 2.x.x, 2020.0.RC1, 2021.1   | 3.0.0 - 3.1.0              | 2.1.x, 2.2.x, 3.0.0 - 3.1.0                         |
+| 2021.0.0             | 2.6.x               | 3.0.0 - 3.1.0               | 2.x.x, 2020.0.RC1, 2021.1   | 3.0.0 - 3.1.0              | 3.0.0 - 3.1.0                                       |
 
-### 启动Service Center
+## 操作步骤和结果验证
 
-Service Center启动流程详见[官网](https://github.com/apache/servicecomb-service-center)
+### 部署应用
 
-### 进行双注册迁移模拟
+1. 准备环境
 
-（1）首先不带agent启动应用，例如有provider与consumer两个实例，启动后确保应用已成功注册到原注册中心且可正常访问
+- 启动Service Center，下载、使用说明和启动流程详见[官网](https://github.com/apache/servicecomb-service-center)。
 
-（2）启动一个新的provider，附加以下JVM参数，带agent一起启动
+- 启动Zookeeper，下载、使用说明和启动流程详见[官网](https://zookeeper.apache.org/index.html)。
+
+- 编译[demo应用](https://github.com/huaweicloud/Sermant-examples/tree/main/registry-demo/spring-cloud-registry-demo)。
 
 ```shell
-java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=appName
+mvn clean package
 ```
+
+- 说明：此处以原注册中心为Zookeeper进行举例。
+
+2. 启动demo应用
+
+（1）启动原生产者与原消费者（注册到Zookeeper中）
+
+```shell
+# windows
+java -jar spring-cloud-registry-provider.jar
+
+java -jar spring-cloud-registry-consumer.jar
+
+# mac, linux
+java -jar spring-cloud-registry-provider.jar
+
+java -jar spring-cloud-registry-consumer.jar
+```
+
+（2）启动成功后，访问消费者接口<http://localhost:8161/hello>，确认接口是否正常返回。
+
+（3）启动双注册生产者
+
+```shell
+# windows
+java -Dserver.port=8262 -Dservicecomb.service.openMigration=true -Dservicecomb.service.enableSpringRegister=true -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -jar spring-cloud-registry-provider.jar
+
+# mac, linux
+java -Dserver.port=8262 -Dservicecomb.service.openMigration=true -Dservicecomb.service.enableSpringRegister=true -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -jar spring-cloud-registry-provider.jar
+```
+
+注：为了便于测试，这里使用了-Dservicecomb.service.openMigration=true -Dservicecomb.service.enableSpringRegister=true的方式打开了spring迁移功能，如果使用了其它的方式打开了spring迁移开关，则无需添加该参数。为了便于观察，使用了-Dserver.port=8262的方式，修改了生产者的端口。
 
 其中path需要替换为Sermant实际打包路径，x.x.x需要替换为Sermant实际版本号，appName为agent的启动参数，与注册参数无关。
 
-（3）启动成功后，新的provider实例会同时注册到Service Center与原注册中心，且consumer可以成功访问
+（4）启动成功后，多次访问消费者接口<http://localhost:8161/hello>，确认接口是否能够访问2个生产者。
 
-（4）关闭旧的provider， 再按照（2）的方式启动新的consumer实例，同样确认新和旧的consumer都可以访问到provider，再停止旧的consumer即可
+（5）关闭原生产者
 
-（5）最后再停止旧的注册中心
+（6）启动双注册消费者
+
+```shell
+# windows
+java -Dserver.port=8261 -Dservicecomb.service.openMigration=true -Dservicecomb.service.enableSpringRegister=true -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -jar spring-cloud-registry-consumer.jar
+
+# mac, linux
+java -Dserver.port=8261 -Dservicecomb.service.openMigration=true -Dservicecomb.service.enableSpringRegister=true -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -jar spring-cloud-registry-consumer.jar
+```
+
+注：为了便于测试，这里使用了-Dservicecomb.service.openMigration=true -Dservicecomb.service.enableSpringRegister=true的方式打开了spring迁移功能，如果使用了其它的方式打开了spring迁移开关，则无需添加该参数。为了便于观察，使用了-Dserver.port=8261的方式，修改了消费者的端口。
+
+其中path需要替换为Sermant实际打包路径，x.x.x需要替换为Sermant实际版本号，appName为agent的启动参数，与注册参数无关。
+
+（7）启动成功后，多次访问消费者接口<http://localhost:8161/hello>和<http://localhost:8261/hello>，确认2个接口是否能够访问双注册生产者。
+
+（8）关闭原消费者
+
+（9）停止旧的注册中心（Zookeeper）
 
 > ***提示：***
 >
-> *关闭原注册中心，由于大部分注册中心存在心跳检查机制，实例可能会不断刷错误日志，但不影响应用的正常调用。*
+> 关闭原注册中心，由于大部分注册中心存在心跳检查机制，实例可能会不断刷错误日志，但不影响应用的正常调用。
 >
-> *若需要停止此类错误日志，参考节[**注册中心心跳配置下发**](#注册中心心跳配置下发)*
+> 若需要停止此类错误日志，参考节[**注册中心心跳配置下发**](#注册中心心跳配置下发)。
+> 
+> 给生产者下发配置时，key值为**sermant.agent.registry**，group为**app=default&environment=&service=spring-cloud-registry-provider**，content为**origin.\_\_registry\_\_.needClose: true**。
+>
+> 给消费者下发配置时，key值为**sermant.agent.registry**，group为**app=default&environment=&service=spring-cloud-registry-consumer**，content为**origin.\_\_registry\_\_.needClose: true**。
+
+### 结果验证
+
+在注册中心的迁移过程中，生产者始终可以调用消费者，不需要中断服务。

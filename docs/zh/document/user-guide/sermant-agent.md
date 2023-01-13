@@ -74,6 +74,7 @@ service.meta.version=1.0.0
 service.meta.project=default
 service.meta.environment=
 service.meta.zone=
+service.meta.parameters=
 ```
 
 其中涉及的参数与sermant-agent、Backend、动态配置中心等有关联，具体参数配置参考下表：
@@ -101,11 +102,12 @@ service.meta.zone=
 | heartbeat.interval | 心跳发送间隔 | 30000 | 否 |
 | backend.nettyIp | Backend消息接收地址 | 127.0.0.1 | 否 |
 | backend.nettyPort | Backend消息接收端口 | 6888 | 否 |
-| service.meta.application | 服务名称 | default | 否 |
+| service.meta.application | 应用名 | default | 否 |
 | service.meta.version | 服务版本 | 1.0.0 | 否 |
 | service.meta.project | 服务命名空间 | default | 否 |
 | service.meta.environment | 服务所在环境 | - | 否 |
 | service.meta.zone | 服务所在az | - | 否 |
+| service.meta.parameters | 服务元数据 | - | 否 |
 
 ### Sermant-agent挂载插件配置
 

@@ -74,6 +74,7 @@ service.meta.version=1.0.0
 service.meta.project=default
 service.meta.environment=
 service.meta.zone=
+service.meta.parameters=
 ```
 
 The parameters involved are associated with sermant-agent, Backend, Dynamic Configuration Center, etc. Refer to the following table for specific parameter configurations:
@@ -101,11 +102,12 @@ The parameters involved are associated with sermant-agent, Backend, Dynamic Conf
 |          heartbeat.interval           |                   Heartbeat send interval                    |                            30000                             |  False   |
 |            backend.nettyIp            |              Backend message receiving address               |                          127.0.0.1                           |  False   |
 |           backend.nettyPort           |                Backend message receiving port                |                             6888                             |  False   |
-|       service.meta.application        |                         Service name                         |                           default                            |  False   |
+|       service.meta.application        |                         Application name                         |                           default                            |  False   |
 |         service.meta.version          |                       Service version                        |                            1.0.0                             |  False   |
 |         service.meta.project          |                      Service namespace                       |                           default                            |  False   |
 |       service.meta.environment        |                     Service environment                      |                              -                               |  False   |
 |           service.meta.zone           |                   Az that service locates                    |                              -                               |  False   |
+|           service.meta.parameters     |                   Service Metadata                           |                              -                               |  False   |
 
 ### Sermant-agent Mounted Plugins Configuration
 
