@@ -14,11 +14,11 @@
 
 ## 参数配置
 
-### 动态配置中心（可选）
+### 动态配置中心
 
 修改动态配置中心类型与地址，参考[Sermant-agent使用手册](../../user-guide/sermant-agent.md)。
 
-### SpringBoot 插件（可选）
+### SpringBoot 插件
 
 您可在路径`${agent path}/agent/pluginPackage/springboot-registry/config/config.yaml`找到该插件的配置文件， 配置如下所示：
 
@@ -37,7 +37,6 @@ sermant.springboot.registry.lb:
   enableSocketReadTimeoutRetry: true # 针对{@link java.net.SocketTimeoutException}: read timed out是否需要重试, 默认开启
   enableSocketConnectTimeoutRetry: true # 同上, 主要针对connect timed out, 通常在连接不上下游抛出
   enableTimeoutExRetry: true  
-
 ```
 
 如上配置， **请注意务必确保配置`realName`与`registryAddress`填写正确**， 否则插件不会生效！

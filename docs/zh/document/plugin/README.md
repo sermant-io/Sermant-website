@@ -27,5 +27,4 @@
 |[监控插件](./monitor.md)|ALL|N/A|N/A|
 |[标签路由插件](./router.md)|SpringBoot 1.5.x - 2.6.2 <br/>SpringCloud Edgware.SR2 - 2021.0.0<br/>Dubbo 2.6.x-2.7.x|servicecomb-kie|servicecomb-service-center|不支持异步调用<br>不支持混合框架（Dubbo调SpringCloud或者SpringCloud调Dubbo）做路由|
 |[注册插件](./registry/README.md)|SpringBoot 1.5.x - 2.6.2 <br> SpringCloud Edgware.SR2 - 2021.0.0<br>Dubbo 2.6.x-2.7.x|N/A|servicecomb-service-center|
-|[双注册迁移插件](./registry/spring-cloud-registry-migiration.md)|SpringBoot 1.5.x - 2.6.2 <br/> SpringCloud Edgware.SR2 - 2021.0.0<br>Dubbo 2.6.x-2.7.x|N/A|**目标注册中心**支持：servicecomb-service-center<br/>**SpringCloud原注册中心**支持：Eureka、Nacos、Zookeeper、Consul<br/>**Dubbo原注册中心**支持：Nacos、Zookeeper|
 |[SpringBoot 注册插件](./registry/springboot-registry.md)|SpringBoot 1.5.10.Release+|servicecomb-kie<br/>ZooKeeper|Zookeeper 3.4.x+|
