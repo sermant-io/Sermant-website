@@ -88,7 +88,19 @@ module.exports = {
               sidebarDepth: 1,
               children: [
                 "developer-guide/",
-                "developer-guide/dev-complex-plugin",
+                {
+                  title: "插件功能开发",
+                  path: "",
+                  collapsable: true,
+                  sidebarDepth: 1,
+                  children: [
+                    "developer-guide/plugin/",
+                    "developer-guide/plugin/log-func",
+                    "developer-guide/plugin/dynamic-config-func",
+                    "developer-guide/plugin/heartbeat-func",
+                    "developer-guide/plugin/trace-tracking-func",
+                  ]
+                },
                 "developer-guide/third-party-copyright",
                 "developer-guide/version-manage",
               ],
@@ -184,7 +196,19 @@ module.exports = {
               sidebarDepth: 1,
               children: [
                 "developer-guide/",
-                "developer-guide/dev-complex-plugin",
+                {
+                  title: "Plugin development",
+                  path: "",
+                  collapsable: true,
+                  sidebarDepth: 1,
+                  children: [
+                    "developer-guide/plugin/",
+                    "developer-guide/plugin/log-func",
+                    "developer-guide/plugin/dynamic-config-func",
+                    "developer-guide/plugin/heartbeat-func",
+                    "developer-guide/plugin/trace-tracking-func",
+                  ]
+                },
                 "developer-guide/third-party-copyright",
                 "developer-guide/version-manage",
               ],
