@@ -1,42 +1,33 @@
 # Service visibility
 
-This document is mainly used for [Visibility module](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-visibility) Instructions for use of
+This article describes how to use the [Service Visibility Plugin](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-visibility).
 
 ## Function introduction
 
-This plug-in provides Spring Cloud and Dubbo applications with the function of collecting and displaying contract information and blood relationship, so that users can view the interface information provided by all services and the call relationship information between services through backend without modifying the code.
+The service visibility plugin can collect the contract information and blood relationship of Spring Cloud and Dubbo applications, and can view the interface information provided by all services and the call relationship information between services through Backend without modifying the code.
 
-The plug-in completes the collection of interface information of service registration and provider information during service subscription based on the service registration, service subscription and other functions of Spring Cloud and Dubbo services, so as to facilitate the unified management of users.
+This plugin is based on the service registration, service subscription and other functions of Spring Cloud and Dubbo applications to complete the collection of interface information for service registration and provider information during service subscription, so as to facilitate unified management by users.
 
 ## Parameter configuration
 
-### AgentCore configuration (required)
+### Sermant-agent configuration
 
-The service visibility plug-in needs to use the agentCore configuration, including the service visibility reconnection switch, service metadata configuration, and blacklist configuration. Refer to the [Sermant-agent User Manual](../user-guide/sermant-agent.md#sermant-agent-parameter-configuration).
+The service visibility plug-in needs to configure the blacklist (`agent.config.serviceBlackList`) in Sermant-agent, enable the service visibility reconnection switch (`visibility.service.flag`), and configure the service metadata (`service.meta.*`), for details, refer to [Sermant-agent User Manual](../user-guide/sermant-agent.md#sermant-agent-parameter-configuration).
 
-### Service visibility plug-in configuration (required)
+### Plugin configuration
 
-You can find the configuration file of the plug-in in the path `${agent path}/agent/pluginPackage/service-visibility/config/config.yaml`. The configuration is as follows:
+The service visibility plugin needs to enable the collection switch, and the configuration file of the plug-in can be found in the path, and the configuration is as follows:
+
+You can find the configuration file of the plug-in in the path `${sermant-agent-x.x.x}/agent/pluginPackage/service-visibility/config/config.yaml`. The configuration is as follows:
 ```yaml
 visibility.config:
   StartFlag: true       # Service visibility collection switch. The plug-in takes effect when it is true
 ```
 
-### Backend configuration (required)
+| Key in Input Parameters                         | Description | Default Value            | Required |
+| ------------------------------- | ---------------- | ------ | ------ |
+| visibility.config.startFlag     | 服务可见性采集开关 | false | true |
 
-You can find the configuration file in the path `${Sermant path}/sermant-backend/src/main/resources/application.properties`,Where `Sermant path` is the path of the Sermant project. The configuration is as follows:
-
-```yaml
-Visibility. effectiveTimes=60000    # heartbeat effective time (ms), after which the next heartbeat is not received, the service is considered offline. Delete the contract and blood relationship information of the corresponding service.
-```
-
-For the above configuration, **Please ensure that the `startFlag`, `visibility.service.flag` and `serviceBlackList` are correctly configured**, otherwise the plug-in will not take effect!
-
-In addition to the above configurations that users need to pay attention to, the following are optional configurations. Users can use environment variables to configure
-
-|Parameter key | Description | Default value|
-| ------------------------------- |--| ----------------- |
-|AppName | App name | -|
 
 ## Supported versions and restrictions
 
@@ -45,63 +36,65 @@ Framework support:
 - Dubbo 2.6.x-2.7.x
 
 ## Operation and result verification
-Take the dubbo-test project as an example to demonstrate how to use plug-ins
-### Environmental preparation
 
-- JDK1.8 and above
-- Maven
-- Download the [dubbo-test source code](https://github.com/huaweicloud/Sermant/tree/develop/sermant-integration-tests/dubbo-test)
-- Finish compiling and packaging the sermant.
+The following takes the dubbo-test project as an example to demonstrate how to use the service visibility plugin.
 
-### Modify service visibility configuration
+### Preparation
 
-- Modify the agentCore configuration.
-You can find the configuration file in the path `${agent path}/agent/config/config.properties`. The modified configuration items are as follows:
+- Download/Compile the Sermant package
+- Download [dubbo-test source code](https://github.com/huaweicloud/Sermant/tree/develop/sermant-integration-tests/dubbo-test)
+- Download zookeeper and start the application
+
+### Step 1: Modify the configuration
+
+- Modify Sermant-agent configuration
+
+Find the configuration file in the path`${sermant-agent-x.x.x}/agent/config/config.properties`, and the modified configuration items are as follows:
+
 ```yaml
-agent.config.serviceBlackList=      # Blacklist configuration. The HeartbeatServiceImpl and NettyGatewayClient need to be deleted when the plug-in takes effect. Turn on heartbeat and message sending
-service.meta.application=default    # Application grouping information. Modify to actual application grouping information.
-service.meta.version=1.0.0          # Application version number. Modify to the actual application version number
-service.meta.project=default        # Application namespace. Modify to the actual application namespace
-service.meta.environment=           # Application environment information. Modify to actual application environment information
-service.meta.zone=                  # Application area information. The formula is changed to the actual application area information
-visibility.service.flag=true        # Service visibility reconnection switch (used to send all information to backend when backend reconnects). Open when modified to true
+agent.config.serviceBlackList=              # Blacklist configuration, HeartbeatServiceImpl and NettyGatewayClient need to be deleted when the plugin takes effect
+visibility.service.flag=true                # Service visibility reconnection switch (used to send all information to backend when backend reconnects)
 ```
 
-- Modify the service visibility plug-in configuration.
-You can find the configuration file of the plug-in in the path `${agent path}/agent/pluginPackage/service-visibility/config/config.yaml`. The modified configuration items are as follows:
+- Modify service visibility plugin configuration
+
+Find the configuration file of the plugin in the path`${sermant-agent-x.x.x}/agent/pluginPackage/service-visibility/config/config.yaml`, and the modified configuration items are as follows:
 
 ```yaml
 visibility.config:
-  StartFlag: true # Service visibility collection switch. Change to tue
+  startFlag: true        # Service visibility collection switch
 ```
 
-### Compile and package dubbo-test application
+### Step 2: Compile and package the dubbo-test application
 
-Execute the following command to package the subprojects dubbo-2-6-integration-consumer and dubbo-2-6-integration-provider of the dubbo-test project:
+Execute the following command to package the sub-projects dubbo-2-6-integration-consumer and dubbo-2-6-integration-provider in the dubbo-test project:
 
 ```shell
 mvn clean package
 ```
 
-You can get the Jar package of dubbo-2-6-integration-consumer project dubbo-integration-consumer.jar and the Jar package of dubbo-2-6-integration-provider project dubbo-integration-provider.jar
+You can get the dubbo-integration-consumer.jar package in the dubbo-2-6-integration-consumer project and the dubbo-integration-provider.jar package in the dubbo-2-6-integration-provider project.
 
-### Start application
-Refer to the following command to start the dubbo-2-6-integration-consumer application
+### Step 3: Start the application
+
+Refer to the following command to start the dubbo-2-6-integration-consumer application.
+
 ```shell
-java --javaagent:${agent path}\agent\sermant-agent.jar=appName=consumer -jar dubbo-integration-consumer.jar
+java -javaagent:${sermant-agent-x.x.x}\agent\sermant-agent.jar=appName=consumer -jar  dubbo-integration-consumer.jar
 ```
 
-Refer to the following command to start the dubbo-2-6-integration-provider application
+Refer to the following command to start the dubbo-2-6-integration-provider application.
 
 ```shell
-java --javaagent:${agent path}\agent\sermant-agent.jar=appName=provider -jar dubbo-integration-provider.jar
+java -javaagent:${sermant-agent-x.x.x}\agent\sermant-agent.jar=appName=provider -jar dubbo-integration-provider.jar
 ```
 
-Start the backend application with the following command
+Refer to the following command to start the backend application.
 
 ```shell
-java -jar ${agent path}\server\sermant\sermant-backend-1.0.0.jar
+java -jar ${sermant-agent-x.x.x}\server\sermant\sermant-backend-x.x.x.jar
 ```
 
 ### Verification
-Visit the blood relationship information display page <http://127.0.0.1:8900/#/consanguinity> Or contract information display page <http://127.0.0.1:8900/#/contract>, if the page successfully displays the collection information, the plug-in will take effect.
+
+Visit the blood relationship information display page <http://127.0.0.1:8900/#/consanguinity> or the contract information display page <http://127.0.0.1:8900/#/contract>, if the page successfully displays the collection information, it means the plugin take effect.
