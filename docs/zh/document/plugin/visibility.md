@@ -1,40 +1,32 @@
 # 服务可见性
 
-本文档主要用于[Visibility模块](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-visibility)的使用说明
+本文介绍如何使用[服务可见性插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-visibility)。
 
 ## 功能介绍
 
-该插件为Spring Cloud和Dubbo应用提供契约信息和血缘关系采集展示的功能，方便用户在不修改代码的前提下可以通过backend查看所有服务对外提供的接口信息以及服务之间的调用关系信息。
+服务可见性插件可以采集Spring Cloud和Dubbo应用的契约信息和血缘关系，在不修改代码的前提下可以通过Backend查看所有服务对外提供的接口信息以及服务之间的调用关系信息。
 
-插件基于Spring Cloud和Dubbo服务的服务注册、服务订阅等功能完成服务注册的接口信息以及服务订阅时的提供者信息的采集，以便于用户统一管理。
+本插件基于Spring Cloud和Dubbo应用的服务注册、服务订阅等功能完成服务注册的接口信息以及服务订阅时的提供者信息的采集，以便于用户统一管理。
 
 ## 参数配置
 
-### agentCore配置（必须）
-服务可见性插件需要使用agentCore的配置，包括服务可见性重连开关、服务元数据配置以及黑名单配置。参考[Sermant-agent使用手册](../user-guide/sermant-agent.md#sermant-agent使用参数配置)。
+### Sermant-agent配置
+服务可见性插件需要在Sermant-agent中配置黑名单（`agent.config.serviceBlackList`）、开启服务可见性重连开关(`visibility.service.flag`)以及配置服务元数据（`service.meta.*`），具体参考[Sermant-agent使用手册](../user-guide/sermant-agent.md#sermant-agent使用参数配置)。
 
-### 服务可见性插件配置（必须）
-您可在路径`${agent path}/agent/pluginPackage/service-visibility/config/config.yaml`找到该插件的配置文件， 配置如下所示：
+### 插件配置
+服务可见性插件需要开启采集开关，可在路径`${sermant-agent-x.x.x}/agent/pluginPackage/service-visibility/config/config.yaml`找到该插件的配置文件，配置如下所示：
 
 ```yaml
 visibility.config:
   startFlag: true        # 服务可见性采集开关。为true时插件生效
 ```
 
-### backend配置（必须）
-您可在路径`${Sermant path}/sermant-backend/src/main/resources/application.properties`找到该配置文件，其中`Sermant path`为Sermant项目所在路径。 配置如下所示：
+| 参数键                          | 说明 | 默认值            | 是否必须 |
+| ------------------------------- | ---------------- | ------ | ------ |
+| visibility.config.startFlag     | 服务可见性采集开关 | false | 是 |
 
-```yaml
-visibility.effectiveTimes=60000        # 心跳有效时间（ms），超过这个时间没有收到下一次心跳认为服务下线。删除对应服务的契约、血缘关系信息。
-```
 
-如上配置， **请注意务必确保`startFlag`与`visibility.service.flag`、`serviceBlackList`正确配置**， 否则插件不会生效！
-
-除以上用户需要注意的配置外，如下为可选配置， 用户可采用环境变量的方式进行配置
-
-| 参数键                          | 说明 | 默认值            |
-| ------------------------------- |--| ----------------- |
-| appName             | 应用名称 | - |
+**注意事项**：请务必确保`agent.config.serviceBlackList`、`visibility.service.flag`与`visibility.config.startFlag`正确， 否则插件不会生效！
 
 ## 支持版本与限制
 
@@ -44,61 +36,59 @@ visibility.effectiveTimes=60000        # 心跳有效时间（ms），超过这�
 
 ## 操作和结果验证
 
-下面以dubbo-test项目为例，演示如何使用插件
+下面以dubbo-test项目为例，演示如何使用服务可见性插件。
 
-### 环境准备
+### 准备工作
 
-- JDK1.8及以上
-- Maven
-- 完成下载[dubbo-test源码](https://github.com/huaweicloud/Sermant/tree/develop/sermant-integration-tests/dubbo-test)
-- 完成编译打包sermant。
-- 下载zookeeper并启动应用。使用默认端口2181。
+- 下载/编译Sermant包
+- 下载[dubbo-test源码](https://github.com/huaweicloud/Sermant/tree/develop/sermant-integration-tests/dubbo-test)
+- 下载zookeeper并启动应用
 
-### 修改服务可见性配置
+### 步骤一：修改配置
 
-- 修改agentCore配置。
-您可在路径`${agent path}/agent/config/config.properties`找到该配置文件， 修改的配置项如下所示：
+- 修改Sermant-agent配置
+在路径`${sermant-agent-x.x.x}/agent/config/config.properties`找到该配置文件，修改的配置项如下所示：
 
 ```yaml
-agent.config.serviceBlackList=              # 黑名单配置。插件生效时需要删除HeartbeatServiceImpl和NettyGatewayClient。开启心跳和消息发送
-visibility.service.flag=true                # 服务可见性重连开关（用于backend重连时将全部信息发送给backend）。修改为true时开启
+agent.config.serviceBlackList=              # 黑名单配置，插件生效时需要删除HeartbeatServiceImpl和NettyGatewayClient。
+visibility.service.flag=true                # 服务可见性重连开关（用于backend重连时将全部信息发送给backend）。
 ```
 
-- 修改服务可见性插件配置。
-您可在路径`${agent path}/agent/pluginPackage/service-visibility/config/config.yaml`找到该插件的配置文件， 修改的配置项如下所示：
+- 修改服务可见性插件配置
+在路径`${sermant-agent-x.x.x}/agent/pluginPackage/service-visibility/config/config.yaml`找到该插件的配置文件， 修改的配置项如下所示：
 ```yaml
 visibility.config:
-  startFlag: true        # 服务可见性采集开关。修改为tue
+  startFlag: true        # 服务可见性采集开关
 ```
 
-### 编译打包dubbo-test应用
+### 步骤二：编译打包dubbo-test应用
 
-执行如下命令对dubbo-test项目的子项目dubbo-2-6-integration-consumer和dubbo-2-6-integration-provider进行打包:
+执行如下命令，对dubbo-test项目中的子项目dubbo-2-6-integration-consumer和dubbo-2-6-integration-provider进行打包:
 
 ```shell
 mvn clean package
 ```
 
-您可得到dubbo-2-6-integration-consumer项目的Jar包dubbo-integration-consumer.jar和dubbo-2-6-integration-provider项目的Jar包dubbo-integration-provider.jar
+可在dubbo-2-6-integration-consumer项目中得到dubbo-integration-consumer.jar包和dubbo-2-6-integration-provider项目中得到dubbo-integration-provider.jar包。
 
-### 启动应用
+### 步骤三：启动应用
 
-参考如下命令启动dubbo-2-6-integration-consumer应用
+参考如下命令, 启动dubbo-2-6-integration-consumer应用。
 
 ```shell
-java --javaagent:${agent path}\agent\sermant-agent.jar=appName=consumer -jar  dubbo-integration-consumer.jar
+java -javaagent:${sermant-agent-x.x.x}\agent\sermant-agent.jar=appName=consumer -jar  dubbo-integration-consumer.jar
 ```
 
-参考如下命令启动dubbo-2-6-integration-provider应用
+参考如下命令, 启动dubbo-2-6-integration-provider应用。
 
 ```shell
-java --javaagent:${agent path}\agent\sermant-agent.jar=appName=provider -jar dubbo-integration-provider.jar
+java -javaagent:${sermant-agent-x.x.x}\agent\sermant-agent.jar=appName=provider -jar dubbo-integration-provider.jar
 ```
 
-参考如下命令启动backend应用。backend JAR包地址为
+参考如下命令, 启动backend应用。
 
 ```shell
-java -jar ${agent path}\server\sermant\sermant-backend-1.0.0.jar
+java -jar ${sermant-agent-x.x.x}\server\sermant\sermant-backend-x.x.x.jar
 ```
 
 ### 验证
