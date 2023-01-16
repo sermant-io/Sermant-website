@@ -3,7 +3,7 @@
 Sermant-injector is based on the **Kubernetes Admission Controllers.** The admission controller is located in the K8s API Server and is able to intercept requests to the API Server to complete operations such as authentication, authorization, and mutation. This article introduces how to use the sermant-injector component to realize the rapid deployment of the host application to automatically mount the sermant-agent package in the k8s environment.
 
 
-Sermant-injector is a MutatingAdmissionWebhook that can intercept and modify requests before creating container resources. After sermant-injector is deployed on K8s, just add `sermant-injection:Enabled` to the YAML file of the host application deployment configuration at the `spec > Template > metadata> labels` ' then the host application can automatically mount the sermant-agent package.
+Sermant-injector is a MutatingAdmissionWebhook that can intercept and modify requests before creating container resources. After sermant-injector is deployed on K8s, just add `sermant-injection:Enabled` to the YAML file of the host application deployment configuration at the `spec > Template > metadata> labels` ' then the host application can automatically mount the sermant-agent package. Additionally, sermant-injector supports configuring environment variables via `annotations`. How the deployed applications can automatically mount Sermant and configure environment variables via `annotations` is described in [Deploy Host Application](# deploy-host-application) below.
 
 ## Parameter Configuration
 
@@ -11,13 +11,43 @@ Sermant-injector is a MutatingAdmissionWebhook that can intercept and modify req
 
 This project adopts  Helm for Kubernetes package management. The parameters for deploying sermant-injector are set in [sermant-injector/deployment/release/values.yaml](https://github.com/huaweicloud/Sermant/blob/develop/sermant-injector/deployment/release/injector/values.yaml).
 
-| <span style="display:inline-block;width:100px">First indent</span>  | <span style="display:inline-block;width:120px">Second indent</span>   | <span style="display:inline-block;width:100px">Third indent</span>    | Description | <span style="display:inline-block;width:80px">Required</span> |
+```yaml
+namespace:
+  name: default
+
+injector:
+  replicas: 2
+  image:
+    addr:
+    pullPolicy: IfNotPresent
+    pullSecrets: default-secret
+
+agent:
+  image:
+    addr:
+    pullPolicy: IfNotPresent
+
+config:
+  type: ZOOKEEPER
+  endpoints: http://localhost:30110
+registry:
+  endpoints: http://localhost:30100
+
+configMap:
+  enabled: false
+  namespaces: [default]
+  env:
+```
+
+The parameters are described as follows:
+
+| <span style="display:inline-block;width:100px">Primary Parameter Key</span> | <span style="display:inline-block;width:120px">Second Parameter Key</span> | <span style="display:inline-block;width:100px">Third Parameter Key</span> | Description | <span style="display:inline-block;width:80px">Required</span> |
 | ------------ | ------------- | ------------ | ------------------------------------------------------------ | -------- |
 | namespace    | name          | -            | The namespace where the sermant-injector resides.            | True     |
 | injector     | replicas      | -            | Number of deployed sermant-injector instances.               | True     |
 |              | image         | addr         | The mirror address of sermant-injector.                      | True     |
 |              |               | pullPolicy   | Sermant-injector image pull strategy: Always(always pull), IfNotPresent(default value, use local mirror if exists), Never(only use local mirror and never pull). | True     |
-|              |               | pullSecrets  | Pull secrets. The default key is default-secret and you do not need to change it. | True     |
+|              |               | pullSecrets  | Pull secrets. The default key is default-secret and you can change it on command. | True     |
 | agent        | image         | addr         | The mirror address of sermant-agent.                         | True     |
 |              |               | pullPolicy   | Sermant-agent image pull strategy: Always(always pull), IfNotPresent(default value, use local mirror if exists), Never(only use local mirror and never pull). | True     |
 | config       | type          | -            | Configuration center type of sermant-agent: Currently two types are supported, ZOOKEEPER and KIE. | True     |
@@ -25,8 +55,8 @@ This project adopts  Helm for Kubernetes package management. The parameters for 
 | registry     | endpoints     | -            | Registration center address of sermant-agent.                | True     |
 | configMap    | enabled       | -            | Common environment variable configuration switch. The default value is false. Set it to true if you want to config common environment variables. | True     |
 |              | namespaces    | -            | The namespaces to be injected with configMap which must be the same as that of the service application. | True     |
-|              | env           | custom key1  | custom value1                                                | False    |
-|              |               | custom key2  | custom value2                                                | False    |
+|              | env           | custom key1  | You can configure custom value1.                         | False    |
+|              |               | custom key2  | You can configure custom value2.                           | False    |
 
 **Public environment variables configuration: **
 
@@ -54,7 +84,7 @@ configMap:
 
 All sermants in pods of default namespace are connected to the **Backend**.
 
-**Note** : The priority of environment variables configured here is lower than that of `env` in yaml. Because `config.type`, `config.endpoints`, and `registry.endpoints` are essentially `env ` loaded environment variables, they also take precedence over the corresponding sermant environment variables configured with configMap.
+**Note** : The priority of environment variables configured `configMap`  is lower than that of `env` in yaml of host application. Because `config.type`, `config.endpoints`, and `registry.endpoints` are essentially `env ` loaded environment variables, they also take precedence over the corresponding sermant environment variables configured with `configMap`.
 
 ### Parameter Configuration for mirror scripts
 
@@ -101,6 +131,8 @@ Move `build-sermant-image.sh` and `Sermant.dockerfile` to the same directory as 
 sh build-sermant-image.sh
 ```
 
+To push the image to the image repository, run the `docker push ${imageName}:{imageVerison}` command.
+
 ### Build Image of Sermant-injector
 
 #### Package Sermant-injector
@@ -116,6 +148,8 @@ Move `build-injector-image.sh`, `start.sh` and `Injector.Dockerfile` to the same
 ```shell
 sh build-injector-image.sh
 ```
+
+To push the image to the image repository, run the `docker push ${imageName}:{imageVerison}` command.
 
 ### Deploy Workload of Sermant-injector 
 
@@ -133,7 +167,15 @@ At this point, the environment configuration of the host application before depl
 
 ### Deploy Host Application 
 
+**Mount Sermant Automatically**
+
 After the deployment of above sermant-injector, developers should write YAML file to deploy K8s Deployment resources according to the actual application. Simply add `sermant-injection: enabled` at the `spec > Template > Metadata > Labels` to automatically mount the sermant-agent. (If you do not want to mount it later, just delete it and restart the application)
+
+**Configure Environment Variables via Annotations**
+
+If you want to configure custom environment variables in K8s Deployment, simply add the corresponding key-value pair in the `spec > template > metadata> annotations`. For details about the configuration, see the following example.
+
+Take `env.sermant.io/key1: "value1"` as an example, the configuration rules are: `env.sermant.io/` is the standard prefix for configuring environment variables through `annotations`, `key1` is the name of a custom environment variable that users configure on demand, and `value1` is the value of a custom environment variable that users configure on demand.
 
 ```yaml
 apiVersion: v1
@@ -153,6 +195,9 @@ spec:
       labels:
         app: demo-test
         sermant-injection: enabled
+      annotations:
+        env.sermant.io/key1: "value1"
+        env.sermant.io/key2: "value2"
     spec:
       containers:
       - name: image
@@ -175,7 +220,7 @@ Once the pod is created, execute the following command, where `${pod_name}` is t
 kubectl get po/${pod_name} -o yaml
 ```
 
-1. Check if the output contains the environment variable whose name is `JAVA_TOOL_OPTIONS`and value is `-javaagent:/home/sermant-agent/agent/sermant-agent.jar=appName=default` in `spec > containers > - env`.
+1. Check if the output contains the environment variable whose name is `JAVA_TOOL_OPTIONS`and value is `-javaagent:/home/sermant-agent/agent/sermant-agent.jar=appName=default` in `spec > containers > env`.
 
 2. Check if the value of `spec > containers > initContainers > image` is the image address used to build the sermant-agent image.
 

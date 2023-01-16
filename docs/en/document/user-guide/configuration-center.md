@@ -27,20 +27,9 @@ The following architecture diagram illustrates the principle of the architecture
 
 For configuration of the dynamic configuration center, see the corresponding open source dynamic configuration center([ZooKeeper](https://zookeeper.apache.org/releases.html) , [ServiceComb Kie](). We will not go into details in this paper.
 
-The corresponding parameters of dynamic configuration center in sermant-agent can be configured in sermant-agent product package `agent/config/config.properties`:
+First, when configure `agent.config.serviceBlackList` in [Parameters Related to Agent Framework of Sermant-agent User Manual](sermant-agent.md#parameters-related-to-agent-framework) to decide which core services are forbidden to start, it is necessary to remove `com.huaweicloud.sermant.implement.service.dynamicconfig.BufferedDynamicConfigService` to **enable dynamic configuration service**.
 
-| Parameter Key                    | Description                                                  | Default Value  | Required |
-| :------------------------------- | :----------------------------------------------------------- | -------------- | -------- |
-| dynamic.config.timeoutValue      | Server connection timeout, in ms                             | 30000          | True     |
-| dynamic.config.defaultGroup      | Default group                                                | sermant        | True     |
-| dynamic.config.serverAddress     | Server address, configured like: {@code host:port[(,host:port)...]} | 127.0.0.1:2181 | True     |
-| dynamic.config.dynamicConfigType | Dynamic config type: NOP、ZOOKEEPER、KIE                     | ZOOKEEPER      | True     |
-| dynamic.config.connectRetryTimes | ZOOKEEPER: the number of configuration center reconnects when starting the Sermant | 5              | True     |
-| dynamic.config.connectTimeout    | ZOOKEEPER: connection timeout to the configuration center when starting the Sermant | 1000           | True     |
-| dynamic.config.userName          | ZOOKEEPER：user name                                         | -              | False    |
-| dynamic.config.password          | ZOOKEEPER：password after encryption                         | -              | False    |
-| dynamic.config.privateKey        | ZOOKEEPER：decryption key                                    | -              | False    |
-| dynamic.config.enableAuth        | ZOOKEEPER：authorization switch                              | false          | False    |
+Second, you can configure parameters for dynamic configuration center of sermant-agent in `agent/config/config.properties` of sermant-agent product package. For specific parameters, please refer to [Parameters Related to Dynamic Configuration Center of Sermant-agent User Manual](sermant-agent.md#parameters-related-to-dynamic-configuration-center).
 
 ## Sermant Dynamic Configuration Center Model
 
@@ -115,7 +104,7 @@ The configuration center components currently supported by Sermant are:
 - [ZooKeeper](https://zookeeper.apache.org/releases.html), version 3.6.3.
 - [ServiceComb Kie](https://servicecomb.apache.org/cn/release/kie-downloads/), version 0.2.0.
 
-## Operation and Result Validation
+## Startup and Result Validation
 
 This document uses the demo plugin in [Sermant-examples](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template) to demonstrate dynamic configuration capability, whose implementation adds a listener to listen for dynamic configuration changes.
 

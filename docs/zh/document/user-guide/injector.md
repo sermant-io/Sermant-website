@@ -2,7 +2,7 @@
 
 sermant-injector是基于Kubernetes准入控制器（Admission Controllers）特性开发而来。准入控制器位于k8s API Server中，能够拦截对API Server的请求，完成身份验证、授权、变更等操作。本文介绍在k8s环境下，如何通过sermant-injector组件来实现宿主应用自动挂载sermant-agent包的快速部署。
 
-sermant-injector属于变更准入控制器(MutatingAdmissionWebhook), 能够在创建容器资源前对请求进行拦截和修改。sermant-injector部署在k8s后，只需在宿主应用部署的YAML文件中`spec > template > metadata> labels`层级加入`sermant-injection: enabled`即可实现自动挂载sermant-agent。
+sermant-injector属于变更准入控制器(MutatingAdmissionWebhook), 能够在创建容器资源前对请求进行拦截和修改。sermant-injector部署在k8s后，只需在宿主应用部署的YAML文件中`spec > template > metadata> labels`层级加入`sermant-injection: enabled`即可实现自动挂载sermant-agent。另外，sermant-injector还支持通过`annotations`的方式配置环境变量。部署应用自动挂载Sermant并通过`annotations`配置环境变量的使用方式可参考下文[部署宿主应用](#部署宿主应用)中的描述。
 
 ## 参数配置
 
@@ -10,26 +10,56 @@ sermant-injector属于变更准入控制器(MutatingAdmissionWebhook), 能够在
 
 本项目采用Helm进行Kubernetes包管理, 部署sermant-injector相关参数需在[sermant-injector/deployment/release/values.yaml](https://github.com/huaweicloud/Sermant/blob/develop/sermant-injector/deployment/release/injector/values.yaml)中做修改配置。
 
-| <span style="display:inline-block;width:100px">一级缩进</span>  | <span style="display:inline-block;width:100px">二级缩进</span>   | <span style="display:inline-block;width:100px">三级缩进</span>    | 说明                                                         | <span style="display:inline-block;width:40px">是否必须</span> |
-| --------- | ---------- | ----------- | ------------------------------------------------------------ | -------- |
-| namespace | name       | -           | 部署sermant-injector所在的namespace                          | 是       |
-| injector  | replicas   | -           | 部署sermant-injector的实例个数                               | 是       |
-|           | image      | addr        | sermant-injector的镜像地址                                   | 是       |
-|           |            | pullPolicy  | sermant-injector的镜像拉取策略：Always(总是拉取)，IfNotPresent(默认值,本地有则使用本地镜像,不拉取)，Never(只使用本地镜像，从不拉取) | 是       |
-|           |            | pullSecrets | 拉取镜像的密钥，默认为default-secret，无需修改               | 是       |
-| agent     | image      | addr        | sermant-agent的镜像地址                                      | 是       |
-|           |            | pullPolicy  | sermant-agent的镜像拉取策略：Always(总是拉取)，IfNotPresent(默认值,本地有则使用本地镜像,不拉取)，Never(只使用本地镜像，从不拉取) | 是       |
-| config    | type       | -           | sermant-agent配置中心类型: 当前支持两种类型，ZOOKEEPER和KIE  | 是       |
-|           | endpoints  | -           | sermant-agent配置中心地址                                    | 是       |
-| registry  | endpoints  | -           | sermant-agent注册插件的注册中心地址                          | 是       |
-| configMap | enabled    | -           | 通用环境变量配置开关，默认为false，如需开始请配置为true      | 是       |
-|           | namespaces | -           | 注入configMap的namespace，需与业务应用的namespace保持一致    | 是       |
-|           | env        | 自定义key1  | 自定义value1                                                 | 否       |
-|           |            | 自定义key2  | 自定义value2                                                 | 否       |
+```yaml
+namespace:
+  name: default
+
+injector:
+  replicas: 2
+  image:
+    addr:
+    pullPolicy: IfNotPresent
+    pullSecrets: default-secret
+
+agent:
+  image:
+    addr:
+    pullPolicy: IfNotPresent
+
+config:
+  type: ZOOKEEPER
+  endpoints: http://localhost:30110
+registry:
+  endpoints: http://localhost:30100
+
+configMap:
+  enabled: false
+  namespaces: [default]
+  env:
+```
+
+ 参数说明如下：
+
+| <span style="display:inline-block;width:100px">主参数键</span> | <span style="display:inline-block;width:100px">二层参数键</span> | <span style="display:inline-block;width:100px">三层参数键</span> | 说明                                                         | <span style="display:inline-block;width:40px">是否必须</span> |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| namespace                                                    | name                                                         | -                                                            | 部署sermant-injector所在的namespace                          | 是                                                           |
+| injector                                                     | replicas                                                     | -                                                            | 部署sermant-injector的实例个数                               | 是                                                           |
+|                                                              | image                                                        | addr                                                         | sermant-injector的镜像地址                                   | 是                                                           |
+|                                                              |                                                              | pullPolicy                                                   | sermant-injector的镜像拉取策略：Always(总是拉取)，IfNotPresent(默认值,本地有则使用本地镜像,不拉取)，Never(只使用本地镜像，从不拉取) | 是                                                           |
+|                                                              |                                                              | pullSecrets                                                  | 拉取镜像的密钥，默认为default-secret，按需修改               | 是                                                           |
+| agent                                                        | image                                                        | addr                                                         | sermant-agent的镜像地址                                      | 是                                                           |
+|                                                              |                                                              | pullPolicy                                                   | sermant-agent的镜像拉取策略：Always(总是拉取)，IfNotPresent(默认值,本地有则使用本地镜像,不拉取)，Never(只使用本地镜像，从不拉取) | 是                                                           |
+| config                                                       | type                                                         | -                                                            | sermant-agent配置中心类型: 当前支持两种类型，ZOOKEEPER和KIE  | 是                                                           |
+|                                                              | endpoints                                                    | -                                                            | sermant-agent配置中心地址                                    | 是                                                           |
+| registry                                                     | endpoints                                                    | -                                                            | sermant-agent注册插件的注册中心地址                          | 是                                                           |
+| configMap                                                    | enabled                                                      | -                                                            | 通用环境变量配置开关，默认为false，如需开启请配置为true      | 是                                                           |
+|                                                              | namespaces                                                   | -                                                            | 注入configMap的namespace，需与业务应用的namespace保持一致    | 是                                                           |
+|                                                              | env                                                          | 自定义key1                                                   | 配置自定义value1                                             | 否                                                           |
+|                                                              |                                                              | 自定义key2                                                   | 配置自定义value2                                             | 否                                                           |
 
 **通用环境变量配置：**
 
-sermant-injector支持为宿主应用所在pod配置自定义的环境变量，方法为在`sermant-injector/deployment/release/injector/values.yaml`中修改`configMap.env`的内容，前提是`configMap.enabled`配置为`true`，并正确配置`configMap.namespace`。通用环境变量的配置方式如下(kv形式)：
+sermant-injector支持为宿主应用所在pod配置自定义的环境变量，方法为在`sermant-injector/deployment/release/injector/values.yaml`中修改`configMap.env`的内容，前提是`configMap.enabled`配置为`true`，并正确配置`configMap.namespaces`。通用环境变量的配置方式如下(kv形式)：
 
 ```yaml
 configMap:
@@ -53,7 +83,7 @@ configMap:
 
 即可使default命名空间下的所有pod挂载的Sermant都与该**Backend**后端连接。
 
-**注意**：此处配置的环境变量优先级低于yaml中`env`的优先级。由于`config.type`,`config.endpoints`和`registry.endpoints`本质上是通过`env`的方式加载环境变量，因此优先级也高于configMap配置的相应的sermant的环境变量。
+**注意**：此处`configMap`配置的环境变量优先级低于宿主应用yaml中`env`的优先级。由于`config.type`,`config.endpoints`和`registry.endpoints`本质上是通过`env`的方式加载环境变量，因此优先级也高于`configMap`配置的相应的sermant的环境变量。
 
 ### 镜像制作脚本的参数配置
 
@@ -100,6 +130,8 @@ sermant-injector当前支持在Kubernetes 1.15及以上版本进行部署，通�
 sh build-sermant-image.sh
 ```
 
+如需将镜像推送至镜像仓库，请执行`docker push ${imageName}:{imageVerison}` 命令。
+
 ### 构建sermant-injector镜像
 
 #### 准备sermant-injector包
@@ -115,6 +147,8 @@ sh build-sermant-image.sh
 ```shell
 sh build-injector-image.sh
 ```
+
+如需将镜像推送至镜像仓库，请执行`docker push ${imageName}:{imageVerison}` 命令。
 
 ### 部署sermant-injector实例
 
@@ -132,7 +166,15 @@ helm install sermant-injector sermant-injector/deployment/release/injector
 
 ### 部署宿主应用
 
+**自动挂载Sermant**
+
 在完成上述sermant-injector部署后，用户根据实际应用编写yaml部署K8s Deployment资源，只需在`spec > template > metadata> labels`层级加入`sermant-injection: enabled`即可实现自动挂载sermant-agent。(如后续不希望挂载，删除后重新启动应用即可)
+
+**通过annotations方式配置环境变量**
+
+如果用户希望在Deployment中配置自定义环境变量，只需在`spec > template > metadata> annotations`层级添加相应的键值对即可。配置方式可参考下文示例。
+
+以`env.sermant.io/key1: "value1"`为例，配置规则为：`env.sermant.io/`为通过`annotations`配置环境变量的标准前缀，`key1`为用户按需配置的自定义环境变量名称，`value1`为用户按需配置的自定义环境变量值。
 
 ```yaml
 apiVersion: v1
@@ -152,6 +194,9 @@ spec:
       labels:
         app: demo-test
         sermant-injection: enabled
+      annotations:
+        env.sermant.io/key1: "value1"
+        env.sermant.io/key2: "value2"
     spec:
       containers:
       - name: image
@@ -174,7 +219,7 @@ pod创建成功后，执行如下命令，其中`${pod_name}`为宿主应用的p
 kubectl get po/${pod_name} -o yaml
 ```
 
-1. 查看上述命令输出内容`spec > containers > - env`下是否包含环境变量：name为`JAVA_TOOL_OPTIONS`，value为 `-javaagent:/home/sermant-agent/agent/sermant-agent.jar=appName=default`。
+1. 查看上述命令输出内容`spec > containers > env`下是否包含环境变量：name为`JAVA_TOOL_OPTIONS`，value为 `-javaagent:/home/sermant-agent/agent/sermant-agent.jar=appName=default`。
 
 2. 查看上述命令输出内容`spec > containers > initContainers > image` 的值是否为构建sermant-agent镜像时的镜像地址。
 
