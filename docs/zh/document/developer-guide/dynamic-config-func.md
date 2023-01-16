@@ -1,10 +1,6 @@
-# 动态配置功能
+# 动态配置
 
-本文档介绍Sermant插件如何使用动态配置功能。
-
-**动态配置功能**是[**Sermant**核心功能模块](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core)的核心服务之一。该功能允许Sermant从动态配置中心拉取配置以实现丰富多样的服务治理能力。
-
-如何使用动态配置中心能力可参考[Sermant动态配置中心使用手册](https://sermant.io/zh/document/user-guide/configuration-center.html)。 下文将介绍如何在插件中开发动态配置相关能力。
+本文主要介绍如何在插件开发中如何使用动态配置的能力，**动态配置**允许Sermant从动态配置中心获取配置以实现丰富多样的服务治理能力。在**Sermant**场景中如何使用动态配置中心可参考[Sermant动态配置中心使用手册](../user-guide/configuration-center.md)。 
 
 ## 动态配置服务API
 
