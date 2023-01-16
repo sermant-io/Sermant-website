@@ -28,20 +28,9 @@
 
 动态配置中心的配置，请参见对应的开源动态配置中心 (如[ZooKeeper](https://zookeeper.apache.org/releases.html) 、[ServiceComb Kie](https://servicecomb.apache.org/cn/release/kie-downloads/)) 。本文中不作详细赘述。
 
-sermant-agent中对应的动态配置中心参数，对应在sermant-agent的产品包`agent/config/config.properties`中的以下配置：
+首先，在[Sermant-agent使用手册agent框架相关参数配置](sermant-agent.md#agent框架相关参数)中`agent.config.serviceBlackList` 配置禁止启动的核心服务时，需去除`com.huaweicloud.sermant.implement.service.dynamicconfig.BufferedDynamicConfigService`以**启用动态配置服务**。
 
-| 参数键                           | 说明                                                     | 默认值         | 是否必须 |
-| :------------------------------- | :------------------------------------------------------- | -------------- | -------- |
-| dynamic.config.timeoutValue      | 服务器连接超时时间，单位：ms                             | 30000          | 是       |
-| dynamic.config.defaultGroup      | 默认分组                                                 | sermant        | 是       |
-| dynamic.config.serverAddress     | 服务器地址，必须形如：{@code host:port[(,host:port)...]} | 127.0.0.1:2181 | 是       |
-| dynamic.config.dynamicConfigType | 服务实现类型，取NOP、ZOOKEEPER、KIE                      | ZOOKEEPER      | 是       |
-| dynamic.config.connectRetryTimes | ZOOKEEPER：启动Sermant时的配置中心的重连次数             | 5              | 是       |
-| dynamic.config.connectTimeout    | ZOOKEEPER：启动Sermant时连接配置中心的时间时间           | 1000           | 是       |
-| dynamic.config.userName          | ZOOKEEPER：配置中心的用户名                              | -              | 否       |
-| dynamic.config.password          | ZOOKEEPER：配置中心的加密后的密码                        | -              | 否       |
-| dynamic.config.privateKey        | ZOOKEEPER：加密密钥                                      | -              | 否       |
-| dynamic.config.enableAuth        | ZOOKEEPER：是否需要配置授权                              | false          | 否       |
+其次，sermant-agent中对应的动态配置中心参数，对应在sermant-agent的产品包`agent/config/config.properties`中进行配置，具体配置说明请参考[Sermant-agent使用手册动态配置中心相关参数配置](sermant-agent.md#动态配置中心相关参数)。
 
 ## Sermant动态配置中心模型
 
@@ -102,7 +91,7 @@ boolean publishConfig(String key, String group, String content);
 groupKey1=groupValue1[&groupKey2=groupVaue2...]
 ```
 
-> 其中`groupKey`为标签键， groupValue则为标签值，多个标签使用&拼接；`Group`可通过`LabelGroupUtils#createLabelGroup`生成
+> 其中`groupKey`为标签键， `groupValue`则为标签值，多个标签使用&拼接；`Group`可通过`LabelGroupUtils#createLabelGroup`生成
 >
 > **特别说明：**
 >
@@ -117,7 +106,7 @@ groupKey1=groupValue1[&groupKey2=groupVaue2...]
 - [ZooKeeper](https://zookeeper.apache.org/releases.html)，使用版本为3.6.3。
 - [ServiceComb Kie](https://servicecomb.apache.org/cn/release/kie-downloads/)，使用的版本为0.2.0.
 
-## 操作和结果验证
+## 启动和结果验证
 
 本教程使用[Sermant-examples](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template)仓库中的demo插件来进行动态配置能力的演示，该插件中实现添加监听器以监听动态配置变化。
 
