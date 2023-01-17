@@ -1,24 +1,32 @@
 # Tag Router
 
-This document is used to introduce the usage of [tag router](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-router)
+This document is used to introduce the usage of [tag router](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-router).
 
 ## Function
 
 In the case of multiple versions and instances of microservices, the routing between services is managed by configuring routing rules to achieve business purposes such as lossless upgrade and application dial test.
 
-## Parameter configuration
+## Parameter Configuration
 
-### Configure Routing Rules
+### Sermant-agent Configuration
 
-Please refer to [Configuration Center User's Manual](../user-guide/configuration-center.md#sermant-dynamic-configuration-center-model).
+The routing plugin requires service metadata (version number, other metadata) to be configured in the Sermant-agent, refer to [Sermant-agent User Manual](../user-guide/sermant-agent.md#sermant-agent-parameter-configuration).
 
-The key value needs to be servicecomb.routeRule.${yourServiceName}, ${yourServiceName} is the microservice name of the target application.
+- service.meta.version: version, used to identify the current version of the microservice.
 
-The group needs to be configured to application level, i.e. app=${yourApp}&&environment=${yourEnvironment}, app defaults to default, environment defaults to empty.
+- service.meta.parameters: other metadata, used to tag the current microservice, like k1:v1,k2:v2.
+
+## Detailed Routing Rules
+
+Router plugin based on dynamic configuration center for configuration release, configuration release can refer to [Configuration Center User's Manual](../user-guide/configuration-center.md#sermant-dynamic-configuration-center-model).
+
+The key value needs to be **servicecomb.routeRule.${yourServiceName}**, ${yourServiceName} is the microservice name (i.e. the value of spring.application.name/dubbo.application.name configuration) of the target application.
+
+The group needs to be configured to application level, i.e. **app=${service.meta.application}&environment=${service.meta.environment}**, for the configuration of service.meta.application and service.meta.environment, please refer to [Sermant-agent User Manual](../user-guide/sermant-agent.md#sermant-agent-parameter-configuration).
 
 The content is the specific routing rule.
 
-#### Examples of tag routing rules and descriptions are as follows
+### Examples of tag routing rules and descriptions are as follows:
 
 ```yaml
 ---
@@ -35,19 +43,19 @@ The content is the specific routing rule.
     - weight: 80 # Weight
       tags:
         version: 1.0.1 # Instance tagging. Instances that meet the tagging criteria are placed in this group.
-- precedence: 1
+- precedence: 1 2 # Priority, the higher the number, the higher the priority.
   route:
-    - weight: 20
+    - weight: 20 # Weight
       tags:
-        group: red
-    - weight: 80
+        group: red # Instance tagging. Instances that meet the tagging criteria are placed in this group.
+    - weight: 80 # Weight
       tags:
-        group: green
+        group: green # Instance tagging. Instances that meet the tagging criteria are placed in this group.
 ```
 
 **Note: When adding a new configuration, please remove the comment, otherwise it will cause the addition to fail.**
 
-#### Configuration Policy Table
+### Configuration Policy Table
 
 |Strategy Name|Strategy Value|Matching Rules|
 |---|---|---|
@@ -59,70 +67,99 @@ The content is the specific routing rule.
 |Greater Match|greater|The parameter value is greater than the configured value|
 |Less Match|less|The parameter value is less than the configured value|
 
-### Configure Routing Rules
-
-Add the following parameters as required at the start of the attached agent: 
-
-```
--Dservice_meta_version=${VERSION} -Dservice_meta_parameters=${PARAMETERS}
-```
-
-The parameters are described as follows: 
-
-- ${VERSION} needs to be replaced with the version number at the time of service registration (The format of a.b.c, where a,b,c are numbers and the default is 1.0.0). The tag application needs to be modified to a different version number than the normal application.
-- ${PARAMETERS} needs to be replaced with the custom tag from the service registration (Such as tag1:value1, tag2:value2). That is, tag keys and tag values are separated by colons, and multiple tags are separated by commas.
-- In general, only service_meta_version needs to be configured if routing by version number, or service_meta_parameters if routing by custom tag.
-
 ## Supported Versions and Limitations
 
-|Microservice Framework Supported|Registration Center Supported|Notice|
-|:-----|:--|:--|
-|SpringCloud Edgware.SR2 - 2021.0.0|servicecomb-service-center<br/>Zookeeper<br/>Nacos|Asynchronous invocation is not supported.|
-|Dubbo 2.6.x-2.7.x|servicecomb-service-center<br/>Zookeeper<br/>Nacos|Asynchronous invocation is not supported.|
+Framework Supported: 
 
-## Operation Steps and Result Verification
+- SpringCloud Edgware.SR2 - 2021.0.0
 
-### Deploying Applications
+- Dubbo 2.6.x - 2.7.x
 
-1.Compile [demo application](https://github.com/huaweicloud/Sermant-examples/tree/main/router-demo/spring-cloud-router-demo)
+Limitations:
+
+- Asynchronous invocation is not supported
+
+## Operation and Result Verification
+
+The following is an example of the spring-cloud-router-demo project to demonstrate how to use the tag route plugin.
+
+### Preparations
+
+- [Download](https://github.com/huaweicloud/Sermant/releases)/Compile the sermant package
+
+- [Download](https://github.com/huaweicloud/Sermant-examples/tree/main/router-demo/spring-cloud-router-demo) spring-cloud-router-demo source code
+
+- [Download](https://github.com/apache/servicecomb-service-center) ServiceComb, and start
+
+- [Download](https://zookeeper.apache.org/releases.html#download) zookeeper, and start
+
+### Step 1: Compile and package the spring-cloud-router-demo application
+
+Execute the following command in the `${path}/Sermant-examples/router-demo/spring-cloud-router-demo` directory:
 
 ```shell
+# windows
+mvn clean package
+
+# mac, linux
 mvn clean package
 ```
 
-2.Start the zuul gateway
+After successful packaging, you can get `spring-cloud-router-consumer.jar` in `${path}/Sermant-examples/router-demo/spring-cloud-router-demo/spring-cloud-router-consumer/target` , get `spring-cloud-router-provider.jar` in `${path}/Sermant-examples/router-demo/spring-cloud-router-demo/spring-cloud-router-provider/target` , get `spring-cloud-router-zuul.jar` in `${path}/Sermant-examples/router-demo/spring-cloud-router-demo/spring-cloud-router-zuul/target`.
+
+> Note: path is the path where the spring-cloud-router-demo application is downloaded.
+
+### Step 2: Deploying the applications
+
+(1) Start the zuul gateway
 
 ```shell
-java -Dservicecomb_service_enableSpringRegister=true -javaagent:${path}\agent\sermant-agent.jar=appName=default -jar spring-cloud-router-zuul.jar
+# windows
+java -Dservicecomb_service_enableSpringRegister=true -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -jar spring-cloud-router-zuul.jar
+
+# mac, linux
+java -Dservicecomb_service_enableSpringRegister=true -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -jar spring-cloud-router-zuul.jar
 ```
 
-3.Start the consumer
+(2) Start the consumer
 
 ```shell
-java -Dservicecomb_service_enableSpringRegister=true -javaagent:${path}\agent\sermant-agent.jar=appName=default -jar spring-cloud-router-consumer.jar
+# windows
+java -Dservicecomb_service_enableSpringRegister=true -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -jar spring-cloud-router-consumer.jar
+
+# mac, linux
+java -Dservicecomb_service_enableSpringRegister=true -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -jar spring-cloud-router-consumer.jar
 ```
 
-4.Start the provider
+(3) Start the provider
 
 ```shell
-java -Dservicecomb_service_enableSpringRegister=true -javaagent:${path}\agent\sermant-agent.jar=appName=default -jar spring-cloud-router-provider.jar
+# windows
+java -Dservicecomb_service_enableSpringRegister=true -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -jar spring-cloud-router-provider.jar
+
+# mac, linux
+java -Dservicecomb_service_enableSpringRegister=true -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -jar spring-cloud-router-provider.jar
 ```
 
-5.Start the provider with tag (version is 1.0.1, tag is group:gray.)
+(4) Start the provider with tag (version is 1.0.1, tag is group:gray.)
 
 ```shell
-java -Dservicecomb_service_enableSpringRegister=true -Dservice_meta_version=1.0.1 -Dservice_meta_parameters=group:gray -Dserver.port=8163 -javaagent:${path}\agent\sermant-agent.jar=appName=default -jar spring-cloud-router-provider.jar
+# windows
+java -Dservicecomb_service_enableSpringRegister=true -Dservice_meta_version=1.0.1 -Dservice_meta_parameters=group:gray -Dserver.port=8163 -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -jar spring-cloud-router-provider.jar
+
+# mac, linux
+java -Dservicecomb_service_enableSpringRegister=true -Dservice_meta_version=1.0.1 -Dservice_meta_parameters=group:gray -Dserver.port=8163 -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -jar spring-cloud-router-provider.jar
 ```
 
-${path} needs to be replaced with the actual Sermant installation path.
+> **Description**:
+> where path needs to be replaced with the actual installation path of Sermant.
+> x.x.x represents a Sermant version number.
 
-### Publish Configuration
+### Step 3: Publish Configuration
 
-Registration center using Huawei CSE, download [Local-CSE](https://support.huaweicloud.com/devg-cse/cse_devg_0036.html), unzip and follow the documentation to start.
+Configuring Routing Rules, please refer to [Detailed Routing Rules](#detailed-routing-rules).
 
-Configuring Routing Rules, please refer to [Configure Routing Rules](#configure-routing-rules).
-
-The key value is **servicecomb.routeRule.spring-cloud-router-provider**, the group is **app=default&&environment=**, and the configuration value is the specific routing rule, as follows.
+The key value is **servicecomb.routeRule.spring-cloud-router-provider**, the group is **app=default&&environment=**, and the content is the specific routing rule, as follows.
 
 ```yaml
 ---
@@ -148,8 +185,8 @@ The key value is **servicecomb.routeRule.spring-cloud-router-provider**, the gro
       weight: 100
 ```
 
-### Result Verification
+### Verification
 
-After starting the above 4 applications and configuring the routing rules correctly, when accessing <http://127.0.0.1:8170/consumer/hello/rest> through the http client tool, we can find that when the request header is id: 1 or id: 2, it will be routed to the provider of version 1.0.1, and when the above conditions are not met When the above condition is not met, it will visit the provider with version 1.0.0.
+<MyImage src="/docs-img/router-result.png"/>
 
-[return **Sermant** Documentation](../document/UserGuide/README.md)
+After starting the above 4 applications and configuring the routing rules correctly, when accessing `http://127.0.0.1:8170/consumer/hello/rest` through the http client tool, we can find that when the request header is id: 1 or id: 2, it will be routed to the provider of version 1.0.1, and when the above conditions are not met When the above condition is not met, it will visit the provider with version 1.0.0.

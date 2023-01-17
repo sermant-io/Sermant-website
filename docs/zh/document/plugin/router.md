@@ -1,6 +1,6 @@
 # 标签路由
 
-本文档主要介绍[标签路由插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-router)的使用方法
+本文档主要介绍[标签路由插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-router)的使用方法。
 
 ## 功能介绍
 
@@ -8,17 +8,25 @@
 
 ## 参数配置
 
-### 配置路由规则
+### Sermant-agent配置
 
-请参考[动态配置中心使用手册](../user-guide/configuration-center.md#sermant动态配置中心模型)。
+路由插件需要在Sermant-agent中配置服务元数据（版本号、其它元数据），参考[Sermant-agent使用手册](../user-guide/sermant-agent.md#sermant-agent使用参数配置)
 
-其中key值为servicecomb.routeRule.${yourServiceName}，${yourServiceName}为目标应用的微服务名称。
+- service.meta.version: 版本号，用来标识当前微服务的版本。
 
-group需要配置为应用级别，即app=${yourApp}&&environment=${yourEnvironment}，其中app默认为default，environment默认为空。
+- service.meta.parameters: 其它元数据，用来给当前微服务打标签，形如k1:v1,k2:v2。
+
+## 详细路由规则
+
+路由插件基于动态配置中心进行配置发布，配置发布可以参考[动态配置中心使用手册](../user-guide/configuration-center.md#sermant动态配置中心模型)。
+
+其中key值为**servicecomb.routeRule.${yourServiceName}**，${yourServiceName}为目标应用的微服务名称（即spring.application.name/dubbo.application.name配置的值）。
+
+group需要配置为应用级别，即**app=${service.meta.application}&environment=${service.meta.environment}**，service.meta.application、service.meta.environment的配置请参考[Sermant-agent使用手册](../user-guide/sermant-agent.md#sermant-agent使用参数配置)。
 
 content为具体的路由规则。
 
-#### 标签路由规则示例及说明如下：
+### 标签路由规则示例及说明如下：
 
 ```yaml
 ---
@@ -35,19 +43,19 @@ content为具体的路由规则。
     - weight: 80 # 权重值
       tags:
         version: 1.0.1 # 实例标记。满足标记条件的实例放到这一组。
-- precedence: 1
+- precedence: 1 # 优先级，数字越大，优先级越高。
   route:
-    - weight: 20
+    - weight: 20 # 权重值
       tags:
-        group: red
-    - weight: 80
+        group: red # 实例标记。满足标记条件的实例放到这一组。
+    - weight: 80 # 权重值
       tags:
-        group: green
+        group: green # 实例标记。满足标记条件的实例放到这一组。
 ```
 
 **注意：新增配置时，请去掉注释，否则会导致新增失败。**
 
-#### 配置策略列表
+### 配置策略列表
 
 |策略名|策略值|匹配规则|
 |---|---|---|
@@ -59,70 +67,99 @@ content为具体的路由规则。
 |大于|greater|参数值大于配置值|
 |小于|less|参数值小于配置值|
 
-### 配置应用的标签
-
-在附带agent启动时，按需加上以下参数：
-
-```
--Dservice_meta_version=${VERSION} -Dservice_meta_parameters=${PARAMETERS}
-```
-
-参数说明如下：
-
-- ${VERSION}需替换为服务注册时的版本号（形如a.b.c的格式，其中a,b,c均为数字，默认为1.0.0），标签应用需要修改为不同于正常应用的版本号。
-- ${PARAMETERS}需替换为服务注册时的自定义标签（形如tag1:value1,tag2:value2），即标签名与标签值以英文冒号分隔，多个标签之间以英文逗号分隔。
-- 一般地，如果用版本号进行路由，则只需配置service_meta_version，如果用自定义标签进行路由，则只需配置service_meta_parameters。
-
 ## 支持版本和限制
 
-|微服务框架组件支持列表|注册中心支持列表|注意事项|
-|:-----|:--|:--|
-|SpringCloud Edgware.SR2 - 2021.0.0|servicecomb-service-center<br/>Zookeeper<br/>Nacos|不支持异步调用|
-|Dubbo 2.6.x-2.7.x|servicecomb-service-center<br/>Zookeeper<br/>Nacos|不支持异步调用|
+框架支持：
 
-## 操作步骤与结果验证
+- SpringCloud Edgware.SR2 - 2021.0.0
 
-### 部署应用
+- Dubbo 2.6.x - 2.7.x
 
-1.编译[demo应用](https://github.com/huaweicloud/Sermant-examples/tree/main/router-demo/spring-cloud-router-demo)
+限制：
+
+- 不支持异步调用
+
+## 操作和结果验证
+
+下面以spring-cloud-router-demo项目为例，演示如何使用标签路由插件。
+
+### 准备工作
+
+- [下载](https://github.com/huaweicloud/Sermant/releases)/编译sermant包
+  
+- [下载](https://github.com/huaweicloud/Sermant-examples/tree/main/router-demo/spring-cloud-router-demo)spring-cloud-router-demo源码
+
+- [下载](https://github.com/apache/servicecomb-service-center)ServiceComb，并启动
+
+- [下载](https://zookeeper.apache.org/releases.html#download)zookeeper，并启动
+
+### 步骤一：编译打包spring-cloud-router-demo应用
+
+在`${path}/Sermant-examples/router-demo/spring-cloud-router-demo`目录执行如下命令：
 
 ```shell
+# windows
+mvn clean package
+
+# mac, linux
 mvn clean package
 ```
 
-2.启动zuul网关
+打包成功后可在`${path}/Sermant-examples/router-demo/spring-cloud-router-demo/spring-cloud-router-consumer/target`得到` spring-cloud-router-consumer.jar`包，在`${path}/Sermant-examples/router-demo/spring-cloud-router-demo/spring-cloud-router-provider/target`得到`spring-cloud-router-provider`包，在`${path}/Sermant-examples/router-demo/spring-cloud-router-demo/spring-cloud-router-zuul/target`得到`spring-cloud-router-zuul`包。
+
+> 说明：path为spring-cloud-router-demo应用下载所在路径。
+
+### 步骤二：部署应用
+
+（1）启动zuul网关
 
 ```shell
-java -Dservicecomb_service_enableSpringRegister=true -javaagent:${path}\agent\sermant-agent.jar=appName=default -jar spring-cloud-router-zuul.jar
+# windows
+java -Dservicecomb_service_enableSpringRegister=true -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -jar spring-cloud-router-zuul.jar
+
+# mac, linux
+java -Dservicecomb_service_enableSpringRegister=true -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -jar spring-cloud-router-zuul.jar
 ```
 
-3.启动消费者
+（2）启动消费者
 
 ```shell
-java -Dservicecomb_service_enableSpringRegister=true -javaagent:${path}\agent\sermant-agent.jar=appName=default -jar spring-cloud-router-consumer.jar
+# windows
+java -Dservicecomb_service_enableSpringRegister=true -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -jar spring-cloud-router-consumer.jar
+
+# mac, linux
+java -Dservicecomb_service_enableSpringRegister=true -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -jar spring-cloud-router-consumer.jar
 ```
 
-4.启动生产者
+（3）启动生产者
 
 ```shell
-java -Dservicecomb_service_enableSpringRegister=true -javaagent:${path}\agent\sermant-agent.jar=appName=default -jar spring-cloud-router-provider.jar
+# windows
+java -Dservicecomb_service_enableSpringRegister=true -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -jar spring-cloud-router-provider.jar
+
+# mac, linux
+java -Dservicecomb_service_enableSpringRegister=true -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -jar spring-cloud-router-provider.jar
 ```
 
-5.启动标签生产者（版本为1.0.1，标签为group:gray）
+（4）启动标签生产者（版本为1.0.1，标签为group:gray）
 
 ```shell
-java -Dservicecomb_service_enableSpringRegister=true -Dservice_meta_version=1.0.1 -Dservice_meta_parameters=group:gray -Dserver.port=8163 -javaagent:${path}\agent\sermant-agent.jar=appName=default -jar spring-cloud-router-provider.jar
+# windows
+java -Dservicecomb_service_enableSpringRegister=true -Dservice_meta_version=1.0.1 -Dservice_meta_parameters=group:gray -Dserver.port=8163 -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -jar spring-cloud-router-provider.jar
+
+# mac, linux
+java -Dservicecomb_service_enableSpringRegister=true -Dservice_meta_version=1.0.1 -Dservice_meta_parameters=group:gray -Dserver.port=8163 -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -jar spring-cloud-router-provider.jar
 ```
 
-其中path需要替换为Sermant实际安装路径。
+> **说明**：
+> 其中path需要替换为Sermant实际安装路径。
+> x.x.x代表Sermant某个版本号。
 
-### 发布配置
+### 步骤三：发布配置
 
-注册中心使用华为CSE，下载[Local-CSE](https://support.huaweicloud.com/devg-cse/cse_devg_0036.html) ，解压后按照文档说明进行启动。
+配置路由规则，请参考[详细路由规则](#详细路由规则)。
 
-配置路由规则，请参考[配置路由规则](#配置路由规则)。
-
-其中key值为**servicecomb.routeRule.spring-cloud-router-provider**，group为**app=default&&environment=**，配置值为具体的路由规则，如下所示：
+其中key值为**servicecomb.routeRule.spring-cloud-router-provider**，group为**app=default&&environment=**，content为具体的路由规则，如下所示：
 
 ```yaml
 ---
@@ -148,6 +185,8 @@ java -Dservicecomb_service_enableSpringRegister=true -Dservice_meta_version=1.0.
       weight: 100
 ```
 
-### 结果验证
+### 验证
 
-当启动以上4个应用并正确配置路由规则后，通过http客户端工具访问<http://127.0.0.1:8170/consumer/hello/rest>，可以发现，当请求头为id: 1或者id: 2时，会路由到版本为1.0.1的provider，当不满足以上条件时，会访问到版本为1.0.0的provider
+<MyImage src="/docs-img/router-result.png"/>
+
+当启动以上4个应用并正确配置路由规则后，通过http客户端工具访问`http://127.0.0.1:8170/consumer/hello/rest`，可以发现，当请求头为id: 1或者id: 2时，会路由到版本为1.0.1的provider，当不满足以上条件时，会访问到版本为1.0.0的provider

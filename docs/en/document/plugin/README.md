@@ -14,7 +14,7 @@ This article mainly introduces the plugins currently supported by Sermant.
 
 [Tag Router Plugin](./router.md) can manage the routing between services by configuring routing rules when there are multiple versions and instances of microservices, so as to achieve business purposes such as non-destructive upgrades and application dialing tests.
 
-[Registry Plugin](./registry/README.md) allows microservices that have been registered with popular registration centers, such as Eureka, Nacos, ZooKeeper, and Consul, to be registered with Service Center (opens new window)in a non-intrusive manner. It also supports Dubbo and SpringCloud frameworks.
+[Registry Plugin](./registry/README.md) allows microservices that have been registered with popular registration centers, such as Eureka, Nacos, ZooKeeper, and Consul, to be registered with ServiceComb (opens new window)in a non-intrusive manner. It also supports Dubbo and SpringCloud frameworks.
 
 ### Compatibility List
 
