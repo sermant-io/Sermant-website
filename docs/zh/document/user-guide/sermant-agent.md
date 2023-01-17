@@ -140,7 +140,7 @@ plugins:                 # 可自定义配置默认挂载的插件名称
   - monitor
   - springboot-registry
   - mq-consume-deny
-profiles:                # 各profile自定义配置挂载的插件列表
+profiles:                # profiles自定义不同场景需配置挂载的插件列表
   cse:
     - flowcontrol
     - service-router
@@ -220,6 +220,12 @@ sermant-agent支持Linux、Windows、Aix操作系统,支持JDK 1.6及以上版�
 以**Sermant-example**项目 [demo-application](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/demo-application)为宿主应用，执行以下命令挂载sermant-agent启动demo-application:
 
 ```shell
+# Run under Windows
+java -javaagent:sermant-agent-x.x.x\agent\sermant-agent.jar=appName=test -jar demo-application.jar
+```
+
+```shell
+# Run under Linux
 java -javaagent:sermant-agent-x.x.x/agent/sermant-agent.jar=appName=test -jar demo-application.jar
 ```
 

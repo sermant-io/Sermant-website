@@ -220,6 +220,12 @@ Sermant-agent supports Linux, Windows, and Aix operating systems, supports JDK 1
 Start with a **Sermant-example** project [demo-application] (https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/demo-application) as the host application, execute the following command to mount the sermant-agent and start demo-application:
 
 ```shell
+# Run under Windows
+java -javaagent:sermant-agent-x.x.x\agent\sermant-agent.jar=appName=test -jar demo-application.jar
+```
+
+```shell
+# Run under Linux
 java -javaagent:sermant-agent-x.x.x/agent/sermant-agent.jar=appName=test -jar demo-application.jar
 ```
 
