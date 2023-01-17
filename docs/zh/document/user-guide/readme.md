@@ -65,7 +65,7 @@ mvn clean package -DskipTests -Pagent
 - *agent*: 包含sermant-agent相关内容
     - *config*: 包含**Sermant**配置文件
     - *core*: 包含**Sermant**的核心框架包
-    - implement: 包含**Sermant**核心功能实现包
+    - *implement*: 包含**Sermant**核心功能实现包
     - *common*: 包含**Sermant**公共依赖包
     - *pluginPackage*: 包含各扩展功能插件包以及配置文件等
     - *sermant-agent.jar*: **Sermant**入口包，`-javaagent`参数的指定入口

@@ -65,7 +65,7 @@ After the command is executed, a folder such as `sermant-agent-x.x.x` and a comp
 - *agent*: sermant-agent related product
   - *config*: contains **Sermant** configuration files
   - *core*: contains **Sermant** core framework jars
-  - implement: contains **Sermant** core implementation jars
+  - *implement*: contains **Sermant** core implementation jars
   - *common*: contains **Sermant** common dependencies
   - *pluginPackage*: contains the extension function plugin package and configuration files
   - *sermant-agent.jar*:  the entrance of **Sermant** via `-javaagent`
