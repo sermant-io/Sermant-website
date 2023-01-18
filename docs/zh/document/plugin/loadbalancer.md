@@ -1,6 +1,6 @@
 # 负载均衡
 
-本文档介绍如何使用[负载均衡插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-loadbalancer)。
+本文介绍如何使用[负载均衡插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-loadbalancer)。
 
 ## 功能介绍
 
@@ -10,7 +10,7 @@
 
 ### 插件配置
 
-负载均衡插件需要配置默认的负载均衡策略、是否强制使用插件的负载均衡等信息。可在路径`${sermant-agent-x.x.x}/agent/pluginPackage/loadbalancer/config/config.yaml`找到该插件的配置文件，配置如下所示：
+负载均衡插件需要配置默认的负载均衡策略、是否强制使用插件的负载均衡等信息。可在`${path}/sermant-agent-x.x.x/agent/pluginPackage/loadbalancer/config/config.yaml`找到该插件的配置文件，配置如下所示：
 
 ```yml
 loadbalancer.plugin:
@@ -31,8 +31,6 @@ loadbalancer.plugin:
 
 负载均衡插件需要配置的动态配置信息如下:
 
-**xxx为具体的业务场景名称， 流量标记和负载均衡策略的场景一致时负载均衡策略生效**
-
 - servicecomb.matchGroup.xxx: 流量标记（动态配置的key值）。用于标记当前业务场景针对那些服务生效。其对应的content为
 ```yaml
 alias: loadbalancer-rule
@@ -46,6 +44,8 @@ matches:
 ```yaml
 rule: Random
 ```
+
+> 说明： **xxx为具体的业务场景名称， 流量标记和负载均衡策略的场景一致时负载均衡策略生效**。
 
 配置值的范围见表[支持版本和限制](#支持版本与限制)的**配置值**。
 
@@ -82,17 +82,25 @@ rule: Random
 
 ### 准备工作
 
-- 下载[demo源码](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/demo-register)
-- 下载/编译sermant包
+- [下载](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/demo-register)demo源码
+- [下载](https://github.com/huaweicloud/Sermant/releases)/编译sermant包
 - [下载](https://zookeeper.apache.org/releases.html#download)并启动zookeeper
+- [下载](https://github.com/vran-dev/PrettyZoo/releases)PrettyZoo并启动连接zookeeper
 
 ### 步骤一：编译打包demo应用
+
+在`${path}/Sermant-examples/sermant-template/demo-register`目录执行如下命令：
+
 ```shell
 mvn clean package
 ```
 
+打包成功后可在`${path}/Sermant-examples/sermant-template/demo-register/resttemplate-consumer/target`得到`resttemplate-consumer.jar`包，在`${path}/Sermant-examples/sermant-template/demo-register/resttemplate-provider/target`得到`resttemplate-provider.jar`。
+
+> 说明：path为demo应用下载所在路径。
+
 ### 步骤二：发布流量标记
-参考使用[动态配置中心使用手册](../user-guide/configuration-center.md#发布配置)进行配置发布， 发布如下配置
+参考使用[动态配置中心使用手册](../user-guide/configuration-center.md#发布配置)进行配置发布，发布如下配置
 
 ```json
 {
@@ -101,6 +109,16 @@ mvn clean package
     "key": "servicecomb.matchGroup.testLb"
 }
 ```
+
+以zookeeper为例，利用PrettyZoo工具来发布流量标记策略：
+
+1. 创建节点`/app=default&environment=&service=zk-rest-consumer`
+
+<MyImage src="/docs-img/loadbalancer_node.png"/>
+
+2. 创建节点`/app=default&environment=&service=zk-rest-consumer/servicecomb.matchGroup.testLb`和数据`alias: loadbalancer-rule\n matches:\n- serviceName: zk-rest-provider`
+
+<MyImage src="/docs-img/loadbalance_matchgroup.png"/>
 
 ### 步骤三：发布匹配的负载均衡规则（以Random为例）
 参考使用[动态配置中心使用手册](../user-guide/configuration-center.md#发布配置)进行配置发布， 发布如下配置
@@ -111,49 +129,58 @@ mvn clean package
     "group": "app=default&environment=&service=zk-rest-consumer", 
     "key": "servicecomb.loadbalance.testLb"
 }
-   ```
+```
+
+以zookeeper为例，利用PrettyZoo工具来发布负载均衡策略：
+
+1. 创建节点`/app=default&environment=&service=zk-rest-consumer/servicecomb.loadbalance.testLb`和数据`rule: Random`
+
+<MyImage src="/docs-img/loadbalance_lb.png"/>
 
 ### 步骤四：启动demo应用
 
 参考如下命令启动两个生产者
 
-- 参考如下命令启动服务提供者-8006端口
+- 参考如下命令启动服务提供者，端口为8006
 ```shell
 # Run under Linux
-java -javaagent:${sermant-agent-x.x.x}/agent/sermant-agent.jar=appName=default -Dserver.port=8006 -jar resttemplate-provider.jar
+java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -Dserver.port=8006 -jar resttemplate-provider.jar
 ```
 
 ```shell
 # Run under Windows
-java -javaagent:${sermant-agent-x.x.x}\agent\sermant-agent.jar=appName=default -Dserver.port=8006 -jar resttemplate-provider.jar
+java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -Dserver.port=8006 -jar resttemplate-provider.jar
 ```
-- 参考如下命令启动服务提供者-8007端口
+- 参考如下命令启动服务提供者，端口为8007
 
 ```shell
 # Run under Linux
-java -javaagent:${sermant-agent-x.x.x}/agent/sermant-agent.jar=appName=default -Dserver.port=8007 -jar resttemplate-provider.jar
+java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -Dserver.port=8007 -jar resttemplate-provider.jar
 ```
 
 ```shell
 # Run under Windows
-java -javaagent:${sermant-agent-x.x.x}\agent\sermant-agent.jar=appName=default -Dserver.port=8007 -jar resttemplate-provider.jar
+java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -Dserver.port=8007 -jar resttemplate-provider.jar
 ```
 
-- 参考如下命令启动消费者（一个实例即可）
+- 参考如下命令启动消费者（一个实例即可），端口为8005
 
 ```shell
 # Run under Linux
-java -javaagent:${sermant-agent-x.x.x}/agent/sermant-agent.jar=appName=default -Dserver.port=8005 -jar resttemplate-consumer.jar
+java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -Dserver.port=8005 -jar resttemplate-consumer.jar
 ```
 
 ```shell
 # Run under Windows
-java -javaagent:${sermant-agent-x.x.x}\agent\sermant-agent.jar=appName=default -Dserver.port=8005 -jar resttemplate-consumer.jar
+java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -Dserver.port=8005 -jar resttemplate-consumer.jar
 ```
+> **说明**：
+> 其中path需要替换为Sermant实际安装路径。
+> x.x.x代表Sermant某个版本号。
 
 ### 验证
 
-上面步骤全部完成后，访问接口 <http://localhost:8005/hello>, 多次调用，如果返回的端口信息中8006、8007随机展示则表示随机负载均衡规则（默认为轮询）已生效。
+上面步骤全部完成后，访问接口 `http://localhost:8005/hello`, 多次调用，如果返回的端口信息中8006、8007随机展示则表示随机负载均衡规则（默认为轮询）已生效。
 
 效果图如下所示：
 

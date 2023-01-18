@@ -1,6 +1,6 @@
 # Load balancing
 
-This document describes how to use the [Load Balancing plug-in](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-loadbalancer).
+This article describes how to use [Load balancing plugin](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-loadbalancer).
 
 ## Function introduction
 
@@ -10,13 +10,13 @@ The load balancing plug-in is mainly used to dynamically modify the load balanci
 
 ### Plug-in configuration
 
-The load balancing plug-in needs to configure the default load balancing policy, whether to force the use of plug-in load balancing and other information. The configuration file of the plug-in can be found in the path `${sermant-agent-x.x.x}/agent/pluginPackage/loadbalancer/config/config.yaml`. The configuration is as follows:
+The load balancing plug-in needs to configure the default load balancing policy, whether to force the use of plug-in load balancing and other information. The configuration file of the plug-in can be found in the `${path}/sermant-agent-x.x.x/agent/pluginPackage/loadbalancer/config/config.yaml`. The configuration is as follows:
 
 ```yml
 loadbalancer.plugin:
     defaultRule:          # Default load balancing policy. When no load balancing policy is configured, the default load balancing policy is used.
     forceUseSermantLb:    # Whether to force the use of plug-in load balancing. The load balancing plug-in determines whether to force the modification of the user's load balancing policy through this configuration. The current configuration is only valid for Ribon. Ribon may have its own load balancing configuration. If you do not want to affect your own load balancing configuration, you can set it to false.
-    useCseRule:           # Whether to use CSE rules. The load balancing plug-in subscribes to different dynamic configuration paths based on whether to use CSE rules.
+    useCseRule:           # Whether to use CSE rules. The load balancing plugin subscribes to different dynamic configuration paths based on whether to use CSE rules.
 ```
 
 | Parameter key                         | Description                                        | Default value | Required |
@@ -30,8 +30,6 @@ loadbalancer.plugin:
 The load balancing plug-in publishes the configuration based on the dynamic configuration center. For configuration publishing, please refer to the [Dynamic Configuration Center User Manual](../user-guide/configuration-center.md#publish-configuration).
 
 The dynamic configuration information to be configured for the load balancing plug-in is as follows:
-
-**xxx is the name of the specific business scenario, and the load balancing strategy takes effect when the traffic tag is consistent with the load balancing strategy scenario**
 
 - servicecomb.matchGroup.xxx: traffic token (dynamically configured key value). It is used to mark the services for which the current business scenario is effective. Its corresponding content is
 
@@ -47,6 +45,8 @@ matches:
 ```yaml
 rule: Random
 ```
+
+> Note: **xxx is the name of the specific business scenario, and the load balancing policy takes effect when the traffic marking and load balancing policy scenarios are consistent**.
 
 For the range of configuration values, see **Configuration Values** in Table [Supported Versions and Restrictions](#supported-versions-and-restrictions).
 
@@ -82,17 +82,25 @@ The following will demonstrate how to use the load balancing plug-in.
 
 ### Preparations
 
-- Download [demo source code](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/demo-register)
+- [Download](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/demo-register) demo source code
 
-- Download/compile the sermant package
+- [Download](https://github.com/huaweicloud/Sermant/releases)/compile the sermant package
 
 - [Download](https://zookeeper.apache.org/releases.html#download) And start zookeeper
 
+- [Download](https://github.com/vran-dev/PrettyZoo/releases) PrettyZoo and start connecting to zookeeper
+
 ### Step 1: Compile and package the demo application
+
+Execute the following command in the `${path}/Sermant-examples/sermant-template/demo-register` directory:
 
 ```shell
 mvn clean package
 ```
+
+After successful packaging, you can get the `resttemplate-consumer.jar` package in `${path}/Sermant-examples/sermant-template/demo-register/resttemplate-consumer/target`, in `${path}/Sermant-examples/ sermant-template/demo-register/resttemplate-provider/target` gets `resttemplate-provider.jar`.
+
+> Note: path is the path where the demo application is downloaded.
 
 ### Step 2: Publish traffic tags
 
@@ -106,6 +114,17 @@ Refer to the [Dynamic Configuration Center User Manual](../user-guide/configurat
 }
 ```
 
+Taking zookeeper as an example, use the PrettyZoo tool to publish the traffic marking strategy:
+
+1. Create node `/app=default&environment=&service=zk-rest-consumer`
+
+<MyImage src="/docs-img/loadbalancer_node.png"/>
+
+2. Create node `/app=default&environment=&service=zk-rest-consumer/servicecomb.matchGroup.testLb` and data `alias: loadbalancer-rule\n matches:\n- serviceName: zk-rest-provider`
+
+<MyImage src="/docs-img/loadbalance_matchgroup.png"/>
+
+
 ### Step 3: Publish matching load balancing rules (take Random as an example)
 
 Refer to the [Dynamic Configuration Center User Manual](../user-guide/configuration-center.md#publish-configuration) for configuration publishing, and publish the following configuration
@@ -118,44 +137,55 @@ Refer to the [Dynamic Configuration Center User Manual](../user-guide/configurat
 }
 ```
 
+Taking zookeeper as an example, use the PrettyZoo tool to publish the load balancing strategy:
+
+1. Create node `/app=default&environment=&service=zk-rest-consumer/servicecomb.loadbalance.testLb` and data `rule: Random`
+
+<MyImage src="/docs-img/loadbalance_lb.png"/>
+
+
 ### Step 4: Start the demo application
 
 Refer to the following command to start two producers
 
-- Refer to the following command to start the service provider-8006 port
+- Refer to the following command to start the service provider, the port is 8006
 ```shell
 # Run under Linux
-java -javaagent:${sermant-agent-x.x.x}/agent/sermant-agent.jar=appName=default -Dserver.port=8006 -jar resttemplate-provider.jar
+java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -Dserver.port=8006 -jar resttemplate-provider.jar
 ```
 
 ```shell
 # Run under Windows
-java -javaagent:${sermant-agent-x.x.x}\agent\sermant-agent.jar=appName=default -Dserver.port=8006 -jar resttemplate-provider.jar
+java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -Dserver.port=8006 -jar resttemplate-provider.jar
 ```
 
-- Refer to the following command to start the service provider-8007 port
+- Refer to the following command to start the service provider, the port is 8007
 
 ```shell
 # Run under Linux
-java -javaagent:${sermant-agent-x.x.x}/agent/sermant-agent.jar=appName=default -Dserver.port=8007 -jar resttemplate-provider.jar
+java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -Dserver.port=8007 -jar resttemplate-provider.jar
 ```
 
 ```shell
 # Run under Windows
-java -javaagent:${sermant-agent-x.x.x}\agent\sermant-agent.jar=appName=default -Dserver.port=8007 -jar resttemplate-provider.jar
+java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -Dserver.port=8007 -jar resttemplate-provider.jar
 ```
 
-- Refer to the following command to start the consumer (one example is enough)
+- Refer to the following command to start the consumer (one instance is enough), the port is 8005
 
 ```shell
 # Run under Linux
-java -javaagent:${sermant-agent-x.x.x}/agent/sermant-agent.jar=appName=default -Dserver.port=8005 -jar resttemplate-consumer.jar
+java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -Dserver.port=8005 -jar resttemplate-consumer.jar
 ```
 
 ```shell
 # Run under Windows
-java -javaagent:${sermant-agent-x.x.x}\agent\sermant-agent.jar=appName=default -Dserver.port=8005 -jar resttemplate-consumer.jar
+java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -Dserver.port=8005 -jar resttemplate-consumer.jar
 ```
+
+> **illustrate**:
+> Where path needs to be replaced with the actual installation path of Sermant.
+> x.x.x represents a Sermant version number.
 
 ### Verification
 After all the above steps are completed, access the interface <http://localhost:8005/hello>, multiple calls. If 8006 and 8007 are randomly displayed in the returned port information, it means that the random load balancing rule (polling by default) has taken effect.
