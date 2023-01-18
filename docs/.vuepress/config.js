@@ -88,21 +88,15 @@ module.exports = {
               sidebarDepth: 1,
               children: [
                 "developer-guide/",
-                {
-                  title: "插件功能开发",
-                  path: "",
-                  collapsable: true,
-                  sidebarDepth: 1,
-                  children: [
-                    "developer-guide/plugin/",
-                    "developer-guide/plugin/log-func",
-                    "developer-guide/plugin/dynamic-config-func",
-                    "developer-guide/plugin/heartbeat-func",
-                    "developer-guide/plugin/trace-tracking-func",
-                  ]
-                },
+                "developer-guide/package-structure",
+                "developer-guide/bytecode-enhancement",
+                "developer-guide/plugin-configuration",
+                "developer-guide/dynamic-config-func",
+                "developer-guide/heartbeat-func",
+                "developer-guide/trace-tracking-func",
+                "developer-guide/log-func",
                 "developer-guide/third-party-copyright",
-                "developer-guide/version-manage",
+                "developer-guide/version-manage"
               ],
             },
             {
