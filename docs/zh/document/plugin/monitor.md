@@ -109,7 +109,7 @@ monitor.config:                       # 监控插件配置。
 
 限制：
 - 依赖Prometheus
-- 服务器指标的采集依赖于linux环境
+- 服务器指标的采集依赖于Linux环境
 
 ## 操作和结果验证
 
@@ -118,11 +118,11 @@ monitor.config:                       # 监控插件配置。
 ### 准备工作
 
 - 下载[demo应用](https://start.spring.io/#!type=maven-project&language=java&platformVersion=2.7.7&packaging=jar&jvmVersion=1.8&groupId=com.example&artifactId=demo&name=demo&description=Demo%20project%20for%20Spring%20Boot&packageName=com.example.demo&dependencies=web)
-- 下载/编译sermant包
-- 下载prometheus
+- [下载](https://github.com/huaweicloud/Sermant/releases)/编译sermant包
+- [下载](https://github.com/prometheus/prometheus/releases)prometheus
 
 ### 步骤一：编译打包demo应用
-执行如下命令对demo应用进行打包:
+在demo应用的根目录执行如下命令对demo应用进行打包:
 
 ```shell
 mvn clean package
@@ -142,7 +142,7 @@ monitor.config:                       # 监控插件配置
   reportType: PROMETHEUS              # 监控指标上报方式。目前只支持PROMETHEUS。
 ```
 
-- 修改prometheus的配置文件prometheus.yml。
+- 修改[Prometheus](https://prometheus.io/docs/introduction/overview/)的配置文件prometheus.yml。
 在原有的作业信息下新增作业信息。
 
 ```yaml
@@ -177,7 +177,7 @@ java -javaagent:${sermant-agent-x.x.x}\agent\sermant-agent.jar=appName=default -
 
 ### 验证
 
-打开prometheus（默认为<http://127.0.0.1:9090>），查询指标。例如：查询`heap_memory_used`，能查询到信息则标示插件生效。
+打开Prometheus（默认为`http://127.0.0.1:9090`），查询指标。例如：查询`heap_memory_used`，能查询到信息则标示插件生效。
 
 查询效果图如下所示：
 
