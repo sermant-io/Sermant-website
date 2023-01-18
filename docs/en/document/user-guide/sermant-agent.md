@@ -75,6 +75,9 @@ service.meta.project=default
 service.meta.environment=
 service.meta.zone=
 service.meta.parameters=
+
+# service visibility config
+visibility.service.enableStart=false
 ```
 
 The parameters involved are associated with sermant-agent, Backend, Dynamic Configuration Center, etc. Refer to the following tables for specific parameter configurations.
@@ -125,6 +128,11 @@ The parameters involved are associated with sermant-agent, Backend, Dynamic Conf
 |                   service.meta.environment                   | Service environment, can be used in service governance scenarios such as service registration. |  Service Metadata  |       -       |  False   |
 |                      service.meta.zone                       | Az that service locates, can be used in service governance scenarios such as service registration and label routing. |  Service Metadata  |       -       |  False   |
 |                   service.meta.parameters                    | Service extra parameters.The value is in the form of key:value. Multiple key-value pairs are separated by commas (,). It is used in service governance scenarios, such as service registration and label routing. |  Service Metadata  |       -       |  False   |
+
+#### Plugin related parameters
+| <span style="display:inline-block;width:100px">Parameter Key</span> |  <span style="display:inline-block;width:200px">Description</span>  | Parameter Category | Default Value  | Required |
+| :----------------------------------------------------------: | :----------------------------------------------------------: | :------------: | ------- | :------: |
+|                visibility.service.enableStart                |             Service visibility information reset switch, when agentCore reconnects with Netty, it will push full service visibility data             | Plugin parameters | False |    False   |
 
 ### Sermant-agent Mounted Plugins Configuration
 

@@ -1,15 +1,15 @@
 # Monitoring
-This article describes how to use the [Monitoring plug-in](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-monitor)。
+This article describes how to use the [Monitoring plugin](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-monitor).
 
 ## Function introduction
 
-The monitoring plug-in is used to monitor the usage of CPU, memory, disk IO, network IO and other hardware resources of the server where the host application is located. The usage of JVM resources, such as heap memory usage, non-heap memory usage, cache usage, throughput (QPS, TPS, average response time). The monitoring plug-in relies on Prometheus for indicator collection. Prometheus will periodically pull the indicator data collected by the monitoring plug-in.
+The monitoring plug-in is used to monitor the usage of CPU, memory, disk IO, network IO and other hardware resources of the server where the host application is located. The usage of JVM resources, such as heap memory usage, non-heap memory usage, cache usage, throughput (QPS, TPS, average response time). The monitoring plug-in relies on Prometheus for indicator collection. Prometheus will periodically pull the indicator data collected by the monitoring plugin.
 
 ## Parameter configuration
 
-### Plug-in configuration
+### Plugin configuration
 
-The monitoring plug-in needs to be configured with monitoring enable switch (`monitor.config.enableStartService`), IP address/domain name of the host application's environment (`monitor.config.address`), the port of the host service (`monitor.config.port`) and the reporting method (`monitor.config.reportType`). The configuration file of the plug-in can be found in the path `${sermant-agent-x.x.x}/agent/pluginPackage/monitor/config/config.yaml`. The configuration is as follows:
+The monitoring plugin needs to be configured with monitoring enable switch (`monitor.config.enableStartService`), IP address/domain name of the host application's environment (`monitor.config.address`), the port of the host service (`monitor.config.port`) and the reporting method (`monitor.config.reportType`). The configuration file of the plug-in can be found in the `${path}/sermant-agent-x.x.x/agent/pluginPackage/monitor/config/config.yaml`. The configuration is as follows:
 
 ```yaml
 monitor.config:                     # Monitoring plug-in configuration.
@@ -24,7 +24,7 @@ monitor.config:                     # Monitoring plug-in configuration.
 
 | Parameter key                     | Description                                                              | Default value | Required |
 |-----------------------------------|--------------------------------------------------------------------------|---------------|----------|
-| monitor.config.enableStartService | Monitoring plug-in start switch                                          | false         | Yes      |
+| monitor.config.enableStartService | Monitoring plugin start switch                                          | false         | Yes      |
 | monitor.config.address            | IP address/domain name of the host application's environment             | 127.0.0.1     | Yes      |
 | monitor.config.port               | Port information for external Http service                               | 12345         | Yes      |
 | monitor.config.reportType         | Monitoring indicator reporting method currently only supports PROMETHEUS | PROMETHEUS    | Yes      |
@@ -120,11 +120,11 @@ The following will demonstrate how to use the monitoring plug-in.
 
 ### Preparations
 
-- Download [demo application](https://start.spring.io/#!type=maven-project&language=java&platformVersion=2.7.7&packaging=jar&jvmVersion=1.8&groupId=com.example&artifactId=demo&name=demo&description=Demo%20project%20for%20Spring%20Boot&packageName=com.example.demo&dependencies=web)
+- [Download](https://start.spring.io/#!type=maven-project&language=java&platformVersion=2.7.7&packaging=jar&jvmVersion=1.8&groupId=com.example&artifactId=demo&name=demo&description=Demo%20project%20for%20Spring%20Boot&packageName=com.example.demo&dependencies=web) demo application
 
 - [Download](https://github.com/huaweicloud/Sermant/releases)/Compile the sermant package
 
-- [Download](https://github.com/prometheus/prometheus/releases) prometheus
+- [Download](https://github.com/prometheus/prometheus/releases) Prometheus
 
 ### Step 1: Compile and package the demo application
 
@@ -134,15 +134,15 @@ Execute the following command in the root directory of the demo application to p
 mvn clean package
 ```
 
-The demo-0.0.1-SNAPSHOT.jar package can be obtained.
+After the packaging is successful, a `target` folder will be generated in the demo root directory, enter the `target` folder to get the demo-0.0.1-SNAPSHOT.jar package.
 
 ### Step 2: Modify the configuration
 
-- Modify the monitoring plug-in configuration, which can be found in the path `${sermant-agent-x.x.x}/agent/pluginPackage/monitor/config/config.yaml`.
+- Modify the monitoring plug-in configuration, which can be found in the `${path}/sermant-agent-x.x.x/agent/pluginPackage/monitor/config/config.yaml`.
 
 ```yaml
-monitor.config:                   # Monitoring plug-in configuration
-    enableStartService: true      # Monitoring plug-in start switch. Modify to true.
+monitor.config:                   # Monitoring plugin configuration
+    enableStartService: true      # Monitoring plugin start switch. Modify to true.
     address: 127.0.0.1            # IP address/domain name of the host application's environment. Modify to host specific IP address.
     port: 12345                   # Provides the port information of Http service externally. Modify to an available port.
     reportType: PROMETHEUS        # Monitoring indicator reporting method. Currently only PROMETHEUS is supported.
@@ -170,12 +170,17 @@ scrape_ configs:
 
 ```shell
 # Run under Linux
-java -javaagent:${sermant-agent-x.x.x}/agent/sermant-agent.jar=appName=default -jar demo-0.0.1-SNAPSHOT.jar
+java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -jar demo-0.0.1-SNAPSHOT.jar
 ```
 ```shell
 # Run under Windows
-java -javaagent:${sermant-agent-x.x.x}\agent\sermant-agent.jar=appName=default -jar demo-0.0.1-SNAPSHOT.jar
+java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -jar demo-0.0.1-SNAPSHOT.jar
 ```
+
+> **illustrate**:
+> Where path needs to be replaced with the actual installation path of Sermant.
+> x.x.x represents a Sermant version number.
+
 - Start Prometheus
 
 ### Verification

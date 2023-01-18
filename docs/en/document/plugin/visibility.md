@@ -1,6 +1,6 @@
 # Service visibility
 
-This article describes how to use [Service Visibility Plug-in](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-visibility)。
+This article describes how to use [Service Visibility Plugin](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-visibility)。
 
 ## Terminology
 
@@ -20,15 +20,15 @@ This plug-in completes the collection of interface information of service regist
 
 ### Sermant-agent configuration
 
-The service visibility plug-in needs to configure the blacklist (`agent.config.serviceBlackList`), turn on the service visibility reconnection switch (`visibility.service.flag`) and configure the service metadata (`service.meta.*`) in the Sermant-agent. For details, refer to the [Sermant-agent User Manual](../user-guide/sermant-agent.md#sermant-agent-parameter-configuration)
+The service visibility plug-in needs to configure the blacklist (`agent.config.serviceBlackList`), configure the service metadata (`service.meta.*`) and turn on the service visibility reconnection switch (`visibility.service.flag`) in the Sermant-agent. For details, refer to the [Sermant-agent User Manual](../user-guide/sermant-agent.md#sermant-agent-parameter-configuration)
 
 - agent.config.serviceBlackList: blacklist configuration, which controls whether basic functions are enabled. The visibility plug-in depends on the message sending function (the plug-in sends the collected information to the backend for display through the message sending function) and the heartbeat function (monitors whether the service is offline, and does not display the information of the service when the service is offline). Therefore, it is necessary to delete HeartbeatServiceImpl and NettyGatewayClient to ensure that the plug-in takes effect normally.
-- visibility.service.flag: service visibility reconnection switch configuration. Prevent data loss after backend restart. When the switch is true, if backend reconnects, it will resend the current service information to backend to ensure data integrity.
 - service.meta.*: service metadata information. For example: group name, version number, region, etc. The service visibility plug-in collects metadata information for page display.
+- visibility.service.flag: service visibility reconnection switch configuration. Prevent data loss after backend restart. When the switch is true, if backend reconnects, it will resend the current service information to backend to ensure data integrity.
 
 ### Plug-in configuration
 
-The service visibility plug-in needs to enable the collection switch. The configuration file of the plug-in can be found in the path `${sermant-agent-x.x.x}/agent/pluginPackage/service-visibility/config/config.yaml`. The configuration is as follows:
+The service visibility plug-in needs to enable the collection switch. The configuration file of the plug-in can be found in the `${path}/sermant-agent-x.x.x/agent/pluginPackage/service-visibility/config/config.yaml`. The configuration is as follows:
 
 ```yaml
 visibility.config:
@@ -52,15 +52,15 @@ The following will demonstrate how to use the service visibility plug-in.
 
 ### Preparations
 
-- Download/compile Sermant package
-- Download [dubbo-test source code](https://github.com/huaweicloud/Sermant/tree/develop/sermant-integration-tests/dubbo-test)
-- Download zookeeper and start the application
+- [Download](https://github.com/huaweicloud/Sermant/releases)/compile Sermant package
+- [Download](https://github.com/huaweicloud/Sermant/tree/develop/sermant-integration-tests/dubbo-test) dubbo-test source code
+- [Download](https://zookeeper.apache.org/releases.html) zookeeper and start the application
 
 ### Step 1: Modify the configuration
 
 - Modify the Sermant-agent configuration
 
-Find the configuration file in the path `${sermant-agent-x.x.x}/agent/config/config.properties`. The modified configuration items are as follows:
+Find the configuration file in the `${path}/sermant-agent-x.x.x/agent/config/config.properties`. The modified configuration items are as follows:
 
 ```properties
 agent.config.serviceBlackList=    # Blacklist configuration, delete the configured HeartbeatServiceImpl and NettyGatewayClient.
@@ -69,7 +69,7 @@ visibility.service.flag=true      # Service visibility reconnection switch (used
 
 - Modify service visibility plug-in configuration
 
-Find the configuration file of the plug-in in the path '${sermant-agent-x.x.x}/agent/pluginPackage/service-visibility/config/config. yaml'. The modified configuration items are as follows:
+Find the configuration file of the plugin in the `${path}/sermant-agent-x.x.x/agent/pluginPackage/service-visibility/config/config. yaml`. The modified configuration items are as follows:
 
 ```yaml
 visibility.config:
@@ -84,7 +84,7 @@ Execute the following command to package the subprojects dubbo-2-6-integration-c
 mvn clean package
 ```
 
-You can get the dubbo-integration-consumer.jar package in the dubbo-2-6-integration-consumer project and the dubbo-integration-provider.jar package in the dubbo-2-6-integration-provider project.
+You can get the dubbo-integration-consumer.jar package in the `target` folder in the dubbo-2-6-integration-consumer project and the dubbo-integration-provider.jar package in the dubbo-2-6-integration-provider project .
 
 ### Step 3: Start the application
 
@@ -92,40 +92,44 @@ You can get the dubbo-integration-consumer.jar package in the dubbo-2-6-integrat
 
 ```shell
 # Run under Linux
-java -jar ${sermant-agent-x.x.x}/server/sermant/sermant-backend-x.x.x.jar
+java -jar ${path}/sermant-agent-x.x.x/server/sermant/sermant-backend-x.x.x.jar
 ```
 
 ```shell
 # Run under Windows
-java -jar ${sermant-agent-x.x.x}\server\sermant\sermant-backend-x.x.x.jar
+java -jar ${path}\sermant-agent-x.x.x\server\sermant\sermant-backend-x.x.x.jar
 ```
 
 - Refer to the following command to start the dubbo-2-6-integration-consumer application.
 
 ```shell
 # Run under Linux
-java -javaagent:${sermant-agent-x.x.x}/agent/sermant-agent.jar=appName=consumer -jar  dubbo-integration-consumer.jar
+java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=consumer -jar  dubbo-integration-consumer.jar
 ```
 
 ```shell
 # Run under Windows
-java -javaagent:${sermant-agent-x.x.x}\agent\sermant-agent.jar=appName=consumer -jar  dubbo-integration-consumer.jar
+java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=consumer -jar  dubbo-integration-consumer.jar
 ```
 
 - Refer to the following command to start the dubbo-2-6-integration-provider application.
 
 ```shell
 # Run under Linux
-java -javaagent:${sermant-agent-x.x.x}/agent/sermant-agent.jar=appName=provider -jar dubbo-integration-provider.jar
+java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=provider -jar dubbo-integration-provider.jar
 ```
 
 ```shell
 # Run under Windows
-java -javaagent:${sermant-agent-x.x.x}\agent\sermant-agent.jar=appName=provider -jar dubbo-integration-provider.jar
+java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=provider -jar dubbo-integration-provider.jar
 ```
 
+> **illustrate**:
+> Where path needs to be replaced with the actual installation path of Sermant.
+> x.x.x represents a Sermant version number.
+
 ### Verification
-Visit the blood relationship information display page <http://127.0.0.1:8900/#/consanguinity> Or contract information display page <http://127.0.0.1:8900/#/contract>, if the page successfully displays the collection information, the plug-in will take effect.
+Visit the blood relationship information display page `http://127.0.0.1:8900/#/consanguinity` Or contract information display page `http://127.0.0.1:8900/#/contract`, if the page successfully displays the collection information, the plug-in will take effect.
 
 The display effect is shown below:
 
