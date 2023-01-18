@@ -12,40 +12,31 @@
 本地执行如下Maven指令：
 
 ```shell
-$ mvn archetype:generate -DarchetypeGroupId=com.huaweicloud.sermant -DarchetypeArtifactId=sermant-template-archetype -DarchetypeVersion=0.0.1 -DgroupId=com.huaweicloud.sermant -Dversion=0.0.1 -Dpackage=com.huaweicloud
+$ mvn archetype:generate -DarchetypeGroupId=com.huaweicloud.sermant -DarchetypeArtifactId=sermant-template-archetype -DarchetypeVersion=0.0.1 -DgroupId=com.huaweicloud.sermant -Dversion=0.0.1 -Dpackage=com.huaweicloud -DartifactId=first-plugin
 ```
 
-执行上述指令后，输出如下信息，在执行过程中按需自定义项目`artifactId`：
+执行上述指令后，出现下述日志后回车进行确认：
 
 ```shell
-[INFO] Scanning for projects...
-[INFO] 
-[INFO] ------------------< org.apache.maven:standalone-pom >-------------------
-[INFO] Building Maven Stub Project (No POM) 1
-[INFO] --------------------------------[ pom ]---------------------------------
-[INFO] 
-[INFO] >>> maven-archetype-plugin:3.2.1:generate (default-cli) > generate-sources @ standalone-pom >>>
-[INFO] 
-[INFO] <<< maven-archetype-plugin:3.2.1:generate (default-cli) < generate-sources @ standalone-pom <<<
-[INFO] 
-[INFO] 
-[INFO] --- maven-archetype-plugin:3.2.1:generate (default-cli) @ standalone-pom ---
-[INFO] Generating project in Interactive mode
-[WARNING] Archetype not found in any catalog. Falling back to central repository.
-[WARNING] Add a repository with id 'archetype' in your settings.xml if archetype's repository is elsewhere.
-# 需要在执行过程中输入项目artifactId
-Define value for property 'artifactId': template
+[INFO] Using property: groupId = com.huaweicloud.sermant
+[INFO] Using property: artifactId = first-plugin
+[INFO] Using property: version = 0.0.1
+[INFO] Using property: package = com.huaweicloud
+Confirm properties configuration:
+groupId: com.huaweicloud.sermant
+artifactId: first-plugin
+version: 0.0.1
+package: com.huaweicloud
+ Y: : 
 ```
 
-出现如下日志，则创建成功：
+出现下述成功提示日志，则通过Archetype模版创建项目成功：
 
 ```shell
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time:  05:41 min
-[INFO] Finished at: 2023-01-15T17:47:39+08:00
-[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  01:30 min
 ```
 
 ### 工程结构
