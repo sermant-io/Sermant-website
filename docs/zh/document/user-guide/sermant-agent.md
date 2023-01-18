@@ -75,6 +75,9 @@ service.meta.project=default
 service.meta.environment=
 service.meta.zone=
 service.meta.parameters=
+
+# service visibility config
+visibility.service.enableStart=false
 ```
 
 其中涉及的参数与sermant-agent、Backend、动态配置中心等有关联，具体参数配置参考下面说明。
@@ -125,6 +128,11 @@ service.meta.parameters=
 |                   service.meta.environment                   |           服务所在环境，用于服务注册等服务治理场景           | 服务元数据参数 | -       |    否    |
 |                      service.meta.zone                       |       服务所在az，用于服务注册、标签路由等服务治理场景       | 服务元数据参数 | -       |    否    |
 |                   service.meta.parameters                    | 服务额外参数信息，以key:value形式配置，逗号分隔多个键值对，用于服务注册、标签路由等服务治理场景 | 服务元数据参数 | -       |    否    |
+
+#### 插件相关参数
+| <span style="display:inline-block;width:100px">参数键</span> |  <span style="display:inline-block;width:200px">说明</span>  |    参数类别    | 默认值  | 是否必须 |
+| :----------------------------------------------------------: | :----------------------------------------------------------: | :------------: | ------- | :------: |
+|                visibility.service.enableStart                |     服务可见性信息重推开关，当agentCore与Netty重连后会推送全量服务可见性数据 | 插件参数 | false |    否    |
 
 ### Sermant-agent挂载插件配置
 

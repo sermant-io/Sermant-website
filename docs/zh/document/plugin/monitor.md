@@ -10,7 +10,7 @@
 
 ### 插件配置
 
-监控插件需要配置监控启用开关（`monitor.config.enableStartService`）、宿主应用所在环境的IP地址/域名（`monitor.config.address`）、宿主服务的端口（`monitor.config.port`）和上报方式（`monitor.config.reportType`）,可在路径`${sermant-agent-x.x.x}/agent/pluginPackage/monitor/config/config.yaml`找到该插件的配置文件， 配置如下所示：
+监控插件需要配置监控启用开关（`monitor.config.enableStartService`）、宿主应用所在环境的IP地址/域名（`monitor.config.address`）、宿主服务的端口（`monitor.config.port`）和上报方式（`monitor.config.reportType`）,可在`${path}/sermant-agent-x.x.x/agent/pluginPackage/monitor/config/config.yaml`找到该插件的配置文件， 配置如下所示：
 
 ```yaml
 monitor.config:                       # 监控插件配置。
@@ -24,7 +24,7 @@ monitor.config:                       # 监控插件配置。
 ```
 
 | 参数键                               | 说明                        | 默认值        | 是否必须 |
-|-----------------------------------|---------------------------|------------|------|
+| :----------------------------------- | :------------------------- | :------------| :------- |
 | monitor.config.enableStartService | 监控插件启动开关                  | false      | 是    |
 | monitor.config.address            | 宿主应用所在环境的IP地址/域名              | 127.0.0.1  | 是    |
 | monitor.config.port               | 对外提供Http服务的端口信息           | 12345      | 是    |
@@ -117,9 +117,9 @@ monitor.config:                       # 监控插件配置。
 
 ### 准备工作
 
-- 下载[demo应用](https://start.spring.io/#!type=maven-project&language=java&platformVersion=2.7.7&packaging=jar&jvmVersion=1.8&groupId=com.example&artifactId=demo&name=demo&description=Demo%20project%20for%20Spring%20Boot&packageName=com.example.demo&dependencies=web)
+- [下载](https://start.spring.io/#!type=maven-project&language=java&platformVersion=2.7.7&packaging=jar&jvmVersion=1.8&groupId=com.example&artifactId=demo&name=demo&description=Demo%20project%20for%20Spring%20Boot&packageName=com.example.demo&dependencies=web)demo应用
 - [下载](https://github.com/huaweicloud/Sermant/releases)/编译sermant包
-- [下载](https://github.com/prometheus/prometheus/releases)prometheus
+- [下载](https://github.com/prometheus/prometheus/releases)Prometheus
 
 ### 步骤一：编译打包demo应用
 在demo应用的根目录执行如下命令对demo应用进行打包:
@@ -127,12 +127,12 @@ monitor.config:                       # 监控插件配置。
 ```shell
 mvn clean package
 ```
-可以得到demo-0.0.1-SNAPSHOT.jar包。
+打包成功后，在demo根目录会生成`target`文件夹,进入`target`文件夹可以得到demo-0.0.1-SNAPSHOT.jar包。
 
 
 ### 步骤二：修改配置
 
-- 修改监控插件配置，可在路径`${sermant-agent-x.x.x}/agent/pluginPackage/monitor/config/config.yaml`找到该配置文件。
+- 修改监控插件配置，可在`${path}/sermant-agent-x.x.x/agent/pluginPackage/monitor/config/config.yaml`找到该配置文件。
 
 ```yaml
 monitor.config:                       # 监控插件配置
@@ -165,13 +165,18 @@ scrape_configs:
 
 ```shell
 # Run under Linux
-java -javaagent:${sermant-agent-x.x.x}/agent/sermant-agent.jar=appName=default -jar demo-0.0.1-SNAPSHOT.jar
+java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -jar demo-0.0.1-SNAPSHOT.jar
 ```
 
 ```shell
 # Run under Windows
-java -javaagent:${sermant-agent-x.x.x}\agent\sermant-agent.jar=appName=default -jar demo-0.0.1-SNAPSHOT.jar
+java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -jar demo-0.0.1-SNAPSHOT.jar
 ```
+
+> **说明**：
+> 其中path需要替换为Sermant实际安装路径。
+> x.x.x代表Sermant某个版本号。
+
 
 - 启动 Prometheus
 
