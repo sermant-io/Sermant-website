@@ -16,7 +16,7 @@ The load balancing plug-in needs to configure the default load balancing policy,
 loadbalancer.plugin:
     defaultRule:          # Default load balancing policy. When no load balancing policy is configured, the default load balancing policy is used.
     forceUseSermantLb:    # Whether to force the use of plug-in load balancing. The load balancing plug-in determines whether to force the modification of the user's load balancing policy through this configuration. The current configuration is only valid for Ribon. Ribon may have its own load balancing configuration. If you do not want to affect your own load balancing configuration, you can set it to false.
-    useCseRule:           # Whether to use cse rules. The load balancing plug-in subscribes to different dynamic configuration paths based on whether to use CSE rules.
+    useCseRule:           # Whether to use CSE rules. The load balancing plug-in subscribes to different dynamic configuration paths based on whether to use CSE rules.
 ```
 
 | Parameter key                         | Description                                        | Default value | Required |

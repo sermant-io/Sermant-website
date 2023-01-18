@@ -122,13 +122,13 @@ The following will demonstrate how to use the monitoring plug-in.
 
 - Download [demo application](https://start.spring.io/#!type=maven-project&language=java&platformVersion=2.7.7&packaging=jar&jvmVersion=1.8&groupId=com.example&artifactId=demo&name=demo&description=Demo%20project%20for%20Spring%20Boot&packageName=com.example.demo&dependencies=web)
 
-- Download/compile the sermant package
+- [Download](https://github.com/huaweicloud/Sermant/releases)/Compile the sermant package
 
-- Download prometheus
+- [Download](https://github.com/prometheus/prometheus/releases) prometheus
 
 ### Step 1: Compile and package the demo application
 
-Execute the following command to package the demo application:
+Execute the following command in the root directory of the demo application to package the demo application:
 
 ```shell
 mvn clean package
@@ -147,7 +147,7 @@ monitor.config:                   # Monitoring plug-in configuration
     port: 12345                   # Provides the port information of Http service externally. Modify to an available port.
     reportType: PROMETHEUS        # Monitoring indicator reporting method. Currently only PROMETHEUS is supported.
 ```
-- Modify the configuration file prometheus.yml of prometheus.
+- Modify the configuration file prometheus.yml of [Prometheus](https://prometheus.io/docs/introduction/overview/).
 
 Add job information under the original job information.
 
@@ -180,7 +180,7 @@ java -javaagent:${sermant-agent-x.x.x}\agent\sermant-agent.jar=appName=default -
 
 ### Verification
 
-Open prometheus (default is <http://127.0.0.1:9090>), query indicators. For example, query `heap_memory_used`. If the information can be queried, the plug-in will become effective.
+Open Prometheus (default is `http://127.0.0.1:9090`), query indicators. For example, query `heap_memory_used`. If the information can be queried, the plug-in will become effective.
 
 The query effect is as follows:
 
