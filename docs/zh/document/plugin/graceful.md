@@ -1,6 +1,6 @@
 # 优雅上下线
 
-本文主要介绍优雅上下线能力以及其使用方法，该功能当前集成在[注册插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-registry) 中, 但功能可独立使用。
+本文介绍如何使用优雅上下线插件，目前优雅上下线功能当前集成在[注册插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-registry) 中, 可独立使用。
 
 ## 功能介绍
 
@@ -19,20 +19,20 @@
 
 ### 插件配置
 
-优雅上下线插件需要打开优雅上下线开关（`grace.rule.enableSpring`）、配置启动延迟时间（`grace.rule.startDelayTime`）、开启预热（`grace.rule.enableWarmUp`）等配置，可在`${path}/sermant-agent/agent/pluginPackge/service-registry/config/config.yaml`找到该插件的配置文件，配置如下所示：
+优雅上下线插件需要打开优雅上下线开关（`grace.rule.enableSpring`）、配置启动延迟时间（`grace.rule.startDelayTime`）、开启预热（`grace.rule.enableWarmUp`）等配置，可在`${path}/sermant-agent-x.x.x/agent/pluginPackge/service-registry/config/config.yaml`找到该插件的配置文件，配置如下所示：
 
 ```yaml
 grace.rule:
   enableSpring: false # springCloud优雅上下线开关
-  startDelayTime: 0  # 优雅上下线启动延迟时间, 单位S
-  enableWarmUp: false # 是否开启预热
-  warmUpTime: 120    # 预热时间, 单位S
+  startDelayTime: 0  # 优雅上下线启动延迟时间, 单位S。上线延迟为避免实例未准备就绪就注册导致上游服务调用时无法提供服务。下线延迟为避免实例停止后，上游服务发现实例列表未刷新，依然调用该实例导致流量丢失。
+  enableWarmUp: false # 是否开启预热。针对新实例，为避免实例初始化时涌入大量流量而导致请求响应超时、阻塞、资源耗尽等造成新实例宕机，可开启预热在初始化时分配少量流量。
+  warmUpTime: 120    # 预热时间, 单位S。预热过程的持续时间。
   enableGraceShutdown: false # 是否开启优雅下线
-  shutdownWaitTime: 30  # 关闭前相关流量检测的最大等待时间, 单位S. 需开启enabledGraceShutdown才会生效
+  shutdownWaitTime: 30  # 关闭前相关流量检测的最大等待时间, 单位S. 需开启enabledGraceShutdown才会生效。在优雅下线前，Agent会定期检查当前实例是否完成全部请求处理，通过此配置指定检查的持续时间。
   enableOfflineNotify: false # 是否开启下线主动通知
-  httpServerPort: 16688 # 开启下线主动通知时的httpServer端口
-  upstreamAddressMaxSize: 500 # 缓存上游地址的默认大小
-  upstreamAddressExpiredTime: 60 # 缓存上游地址的过期时间, 单位S
+  httpServerPort: 16688 # 开启下线主动通知时的httpServer端口。接收下游下线主动通知的http服务端口。
+  upstreamAddressMaxSize: 500 # 缓存上游地址的默认大小。上游实例接收主动通知的地址会被下游缓存，此处设置地址最多的缓存个数。
+  upstreamAddressExpiredTime: 60 # 缓存上游地址的过期时间, 单位S。上游实例接收主动通知的地址会被下游缓存，此处设置地址的失效时间。
 ```
 
 | 参数键                               | 说明                                                                     | 默认值        | 是否必须 |
@@ -142,9 +142,13 @@ java -Dgrace.rule.enableSpring=true -Dgrace.rule.enableWarmUp=true -Dgrace.rule.
 
 #### 预热能力验证
 
-访问接口`localhost:8800/graceHot`, 根据接口返回的ip与port判断预热是否生效。若预热时间段内（默认120s）访问偏向8880，随时间推移流量逐渐平均，则说明预热生效。
+<MyImage src="/docs-img/springcloud-grace-warm-up.png"/>
+
+访问接口`localhost:8800/graceHot`, 根据接口返回的ip与port判断预热是否生效。若预热时间段内（默认120s）访问偏向端口为`8880`的provider，随时间推移流量逐渐**平均**，则说明预热生效。
 
 
 #### 优雅下线验证
+
+<MyImage src="/docs-img/springcloud-grace-graceful-offline.png"/>
 
 持续访问接口`localhost:8800/graceDownOpen`, 此时下线其中一个provider实例，观察请求是否出现错误，若未出现错误，则优雅下线能力验证成功。

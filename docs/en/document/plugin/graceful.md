@@ -1,6 +1,6 @@
 # Graceful Online/Offline
 
-This article mainly introduces the ability of graceful log-off and how to use it. This function is currently integrated in [Registration Plugin](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-registry), but the function can be used independently.
+This article introduces how to use the graceful log-in and log-in plugin. Currently, the elegant log-in and log-out function is currently integrated in the [registration plugin](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-registry), Can be used independently.
 
 ## Functions
 
@@ -27,7 +27,7 @@ Regitry Center Support：Zookeeper、Consul、Naocs、Eureka、Service Center
 
 ### Enabling Graceful Online and Offline
 
-The graceful log-in plug-in needs to enable the graceful log-in switch (`grace.rule.enableSpring`), configure the startup delay time (`grace.rule.startDelayTime`), enable the warm-up (`grace.rule.enableWarmUp`), and other configurations. Find the configuration file of the plugin in `${path}/sermant-agent/agent/pluginPackge/service-registry/config/config.yaml`, the configuration is as follows:
+The graceful log-in plug-in needs to enable the graceful log-in switch (`grace.rule.enableSpring`), configure the startup delay time (`grace.rule.startDelayTime`), enable the warm-up (`grace.rule.enableWarmUp`), and other configurations. Find the configuration file of the plugin in `${path}/sermant-agent-x.x.x/agent/pluginPackge/service-registry/config/config.yaml`, the configuration is as follows:
 
 ```yaml
 grace.rule:
@@ -149,8 +149,12 @@ java -Dgrace.rule.enableSpring=true -Dgrace.rule.enableWarmUp=true -Dgrace.rule.
 
 #### Preheating capability verification
 
-Access the interface `localhost:8800/graceHot`, and judge whether the preheating is effective according to the ip and port returned by the interface. If the access is biased towards 8880 during the warm-up period (default 120s), and the traffic gradually averages over time, it means that the warm-up is in effect.
+<MyImage src="/docs-img/springcloud-grace-warm-up.png"/>
+
+Access the interface `localhost:8800/graceHot`, and judge whether the preheating is effective according to the ip and port returned by the interface. If during the warm-up period (default 120s) the access is biased towards the provider whose port is `8880`, and the traffic becomes **average** over time, it means that the pre-heating takes effect.
 
 #### Elegant offline verification
+
+<MyImage src="/docs-img/springcloud-grace-graceful-offline.png"/>
 
 Continue to access the interface `localhost:8800/graceDownOpen`, and then log off one of the provider instances to observe whether there is an error in the request. If there is no error, the graceful offline capability verification is successful.
