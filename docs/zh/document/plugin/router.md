@@ -91,7 +91,7 @@ content为具体的路由规则。
 
 - [下载](https://github.com/apache/servicecomb-service-center)ServiceComb，并启动
 
-- [下载](https://zookeeper.apache.org/releases.html#download)zookeeper，并启动
+- [下载](https://zookeeper.apache.org/releases.html#download)Zookeeper，并启动
 
 ### 步骤一：编译打包spring-cloud-router-demo应用
 
@@ -159,7 +159,7 @@ java -Dservicecomb_service_enableSpringRegister=true -Dservice_meta_version=1.0.
 
 配置路由规则，请参考[详细路由规则](#详细路由规则)。
 
-其中key值为**servicecomb.routeRule.spring-cloud-router-provider**，group为**app=default&&environment=**，content为具体的路由规则，如下所示：
+其中key值为**servicecomb.routeRule.spring-cloud-router-provider**，group为**app=default&environment=**，content为具体的路由规则，如下所示：
 
 ```yaml
 ---

@@ -102,7 +102,7 @@ Note that the address information of **this configuration item is not used**. On
 
 ## Operation and Result Verification
 
-The following is an example of the dubbo-registry-demo project to demonstrate how to use the service registry plugin.
+The following is an example of the dubbo-registry-demo project to demonstrate how to register to ServiceComb using the service registry plugin.
 
 ### Preparations
 
@@ -111,6 +111,8 @@ The following is an example of the dubbo-registry-demo project to demonstrate ho
 - [Download](https://github.com/huaweicloud/Sermant-examples/tree/main/registry-demo/dubbo-registry-demo) dubbo-registry-demo source code
 
 - [Download](https://github.com/apache/servicecomb-service-center) ServiceComb, and start
+
+- [Download](https://zookeeper.apache.org/releases.html#download) Zookeeper, and start
 
 ### Step 1: Compile and package the dubbo-registry-demo application
 
@@ -227,7 +229,7 @@ The following is an example of the spring-cloud-registry-demo project to demonst
 
 - [Download](https://github.com/apache/servicecomb-service-center) ServiceComb, and start
 
-- [Download](https://zookeeper.apache.org/releases.html#download) zookeeper, and start
+- [Download](https://zookeeper.apache.org/releases.html#download) Zookeeper, and start
 
 ### Step 1: Compile and package the spring-cloud-registry-demo application
 
@@ -374,7 +376,7 @@ The following is an example of the dubbo-registry-demo project to demonstrate ho
 
 - [Download](https://github.com/apache/servicecomb-service-center) ServiceComb, and start
 
-- [Download](https://zookeeper.apache.org/releases.html#download) zookeeper, and start
+- [Download](https://zookeeper.apache.org/releases.html#download) Zookeeper, and start
 
 ### Step 1: Compile and package the dubbo-registry-demo application
 

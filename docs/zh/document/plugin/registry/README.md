@@ -112,6 +112,8 @@ dubbo:
 
 - [下载](https://github.com/apache/servicecomb-service-center)ServiceComb，并启动
 
+- [下载](https://zookeeper.apache.org/releases.html#download)Zookeeper，并启动
+
 ### 步骤一：编译打包dubbo-registry-demo应用
 
 在`${path}/Sermant-examples/registry-demo/dubbo-registry-demo`目录执行如下命令：
@@ -227,7 +229,7 @@ content为**origin.\_\_registry\_\_.needClose: true**。
 
 - [下载](https://github.com/apache/servicecomb-service-center)ServiceComb，并启动
 
-- [下载](https://zookeeper.apache.org/releases.html#download)zookeeper，并启动
+- [下载](https://zookeeper.apache.org/releases.html#download)Zookeeper，并启动
 
 ### 步骤一：编译打包spring-cloud-registry-demo应用
 
@@ -374,7 +376,7 @@ servicecomb.service:
 
 - [下载](https://github.com/apache/servicecomb-service-center)ServiceComb，并启动
 
-- [下载](https://zookeeper.apache.org/releases.html#download)zookeeper，并启动
+- [下载](https://zookeeper.apache.org/releases.html#download)Zookeeper，并启动
 
 ### 步骤一：编译打包dubbo-registry-demo应用
 
