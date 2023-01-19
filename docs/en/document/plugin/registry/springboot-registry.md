@@ -21,7 +21,7 @@ SpringBoot Registry plugin requires modification of the plugin configuration fil
 sermant.springboot.registry:
   enableRegistry: false             # Whether to enable the boot registration capability
   realmName: www.domain.com        # Match the domain name, the current version only takes effect for the scene where the url is http://${realmName}/serviceName/api/xx
-  enableRequestCount: false        # Whether to enable traffic statistics, after opening, each time the traffic entering the plug-in will be printed
+  enableRequestCount: false        # Whether to enable traffic statistics, after opening, each time the traffic entering the plugin will be printed
 
 sermant.springboot.registry.lb:
   lbType: RoundRobin               # Load balancing type, currently supports round robin (RoundRobin), random (Random), response time weight (WeightedResponseTime), minimum concurrency (BestAvailable)
@@ -31,7 +31,7 @@ sermant.springboot.registry.lb:
   refreshTimerInterval: 5          # Instance timing check interval to determine whether the instance is expired, if it is greater than instanceRefreshInterval, then the value is set to instanceRefreshInterval
   enableSocketReadTimeoutRetry: true # Whether to retry for {@link java.net.SocketTimeoutException}: read timed out, enabled by default
   enableSocketConnectTimeoutRetry: true # Same as above, mainly for connect timed out, usually thrown when the connection is not upstream or downstream
-  enableTimeoutExRetry: true  
+  enableTimeoutExRetry: true       # Retry scenario, for {@link java.util.concurrent.TimeoutException}, whether retry is required, enabled by default, this timeout is mostly used in asynchronous scenarios, such as Future, MinimalHttpAsyncClient
 ```
 
 The configuration items are described as follows:
@@ -52,11 +52,9 @@ The configuration items are described as follows:
 
 Ensure that the values of` realName` and `registryAddress` are correct. Otherwise, the plugin does not take effect.
 
-## Configuring a Gray Strategy
+## Detailed Governance Rules
 
-To make the plugin effective, you also need to configure a gray strategy for the plugin, which determines whether the request needs to be proxied according to the specified service name, replacing the url address.
-
-SpringBoot registration plugin based on dynamic configuration center for gray strategy publishing, publishing configuration can refer to [Configuration Center User's Manual](../../user-guide/configuration-center.md#sermant-dynamic-configuration-center-model).
+The SpringBoot registration plug-in needs to judge whether it needs to proxy the request according to the specified service name, and replace the url address. The plugin needs to be released based on the dynamic configuration center for grayscale strategy, publishing configuration can refer to [Configuration Center User's Manual](../../user-guide/configuration-center.md#sermant-dynamic-configuration-center-model).
 
 The key value is **sermant.plugin.registry**.
 

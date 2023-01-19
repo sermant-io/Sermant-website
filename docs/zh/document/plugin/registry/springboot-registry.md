@@ -16,22 +16,23 @@
 
 ### 插件配置
 
-SpringBoot注册插件需要按需修改插件配置文件，可在路径`${path}/agent/pluginPackage/springboot-registry/config/config.yaml`找到该插件的配置文件，配置文件如下所示
+SpringBoot注册插件需要按需修改插件配置文件，可在`${path}/sermant-agent-x.x.x/agent/pluginPackage/springboot-registry/config/config.yaml`找到该插件的配置文件，配置文件如下所示
 
 ```yaml
 sermant.springboot.registry:
-  enableRegistry: false
-  realmName: www.domain.com
-  enableRequestCount: false
+  enableRegistry: false             # 是否开启boot注册能力
+  realmName: www.domain.com        # 匹配域名, 当前版本仅针对url为http://${realmName}/serviceName/api/xx场景生效
+  enableRequestCount: false        # 是否开启流量统计, 开启后每次进入插件的流量将都会打印
+
 sermant.springboot.registry.lb:
-  lbType: RoundRobin
-  registryAddress: 127.0.0.1:2181
-  instanceCacheExpireTime: 0
-  instanceRefreshInterval: 0
-  refreshTimerInterval: 5
-  enableSocketReadTimeoutRetry: true
-  enableSocketConnectTimeoutRetry: true
-  enableTimeoutExRetry: true
+  lbType: RoundRobin               # 负载均衡类型, 当前支持轮询(RoundRobin)、随机(Random)、响应时间权重(WeightedResponseTime)、最低并发数(BestAvailable)
+  registryAddress: 127.0.0.1:2181  # 注册中心地址
+  instanceCacheExpireTime: 0       # 实例过期时间, 单位秒, 若<=0则永不过期
+  instanceRefreshInterval: 0       # 实例刷新时间, 单位秒, 必须小于instanceCacheExpireTime
+  refreshTimerInterval: 5          # 实例定时检查间隔, 判断实例是否过期, 若其大于instanceRefreshInterval, 则值设置为instanceRefreshInterval
+  enableSocketReadTimeoutRetry: true # 针对{@link java.net.SocketTimeoutException}: read timed out是否需要重试, 默认开启
+  enableSocketConnectTimeoutRetry: true # 同上, 主要针对connect timed out, 通常在连接不上下游抛出
+  enableTimeoutExRetry: true       # 重试场景, 针对{@link java.util.concurrent.TimeoutException}, 是否需要重试, 默认开启, 该超时多用于异步场景, 例如Future, MinimalHttpAsyncClient
 ```
 
 配置项说明如下:
@@ -48,15 +49,11 @@ sermant.springboot.registry.lb:
 |sermant.springboot.registry.lb.refreshTimerInterval|实例定时检查间隔, 判断实例是否过期, 若其大于instanceRefreshInterval, 则值设置为instanceRefreshInterval|5|是|
 |sermant.springboot.registry.lb.enableSocketReadTimeoutRetry|针对**java.net.SocketTimeoutException: read timed out**是否需要重试（true/false）|true|是|
 |sermant.springboot.registry.lb.enableSocketConnectTimeoutRetry|针对**java.net.SocketTimeoutException: connect timed out**是否需要重试（true/false）|true|是|
-|sermant.springboot.registry.lb.enableTimeoutExRetry|针对**java.util.concurrent.TimeoutException**是否需要重试（true/false）|true|是|
+|sermant.springboot.registry.lb.enableTimeoutExRetry|重试场景, 针对**java.util.concurrent.TimeoutException**是否需要重试（true/false）|true|是|
 
-如上配置， **请注意务必确保配置`sermant.springboot.registry.realmName`与`sermant.springboot.registry.lb.registryAddress`填写正确**， 否则插件不会生效！
+## 详细治理规则
 
-## 配置灰度策略
-
-若使插件生效，还需为插件配置灰度策略，根据指定服务名判断是否需要为请求进行代理，替换url地址。
-
-SpringBoot注册插件基于动态配置中心进行灰度策略发布，配置发布可以参考[动态配置中心使用手册](../../user-guide/configuration-center.md#sermant动态配置中心模型)。
+SpringBoot注册插件需根据指定服务名判断是否需要为请求进行代理，替换url地址。插件需基于动态配置中心进行灰度策略发布，配置发布可以参考[动态配置中心使用手册](../../user-guide/configuration-center.md#sermant动态配置中心模型)。
 
 其中key值为**sermant.plugin.registry**。
 
