@@ -1,6 +1,6 @@
 # 流控
 
-本文档主要介绍[流控插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-flowcontrol) 以及该插件的使用方法。
+本文介绍如何使用[流控插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-flowcontrol)。
 
 ## 功能介绍
 
@@ -19,23 +19,11 @@
 
 ### Sermant-agent配置
 
-- 若使用**zookeeper**配置中心，则修改`${javaagent路径}/agent/config/config.properties`中以下内容：
-
-  ```properties
-  dynamic.config.serverAddress=127.0.0.1:2181
-  dynamic.config.dynamicConfigType=ZOOKEEPER
-  ```
-  
-- 若使用**KIE**配置中心，则修改`${javaagent路径}/agent/config/config.properties`中以下内容：
-
-  ```properties
-  dynamic.config.serverAddress=127.0.0.1:30110
-  dynamic.config.dynamicConfigType=KIE
-  ```
+流控插件依赖动态配置中心，需要在Sermant-agent中配置动态配置中心的地址（`dynamic.config.serverAddress`），动态配置中心的类型（`dynamic.config.dynamicConfigType`）,具体参考[Sermant-agent使用手册](../user-guide/sermant-agent.md#sermant-agent使用参数配置)。
 
 ### 插件配置
 
-修改配置文件`${javaagent路径}/agent/pluginPackage/flowcontrol/config/config.yaml`，配置如下：
+流控插件需打开是否开启ServiceComb适配（`flow.control.plugin.useCseRule`），是否开启指标监控（`flow.control.plugin.enable-start-monitor`）等开关，可在`${path}/sermant-agent-x.x.x/agent/pluginPackage/flowcontrol/config/config.yaml`找到插件的配置文件，配置如下所示：
 
 ```yaml
 flow.control.plugin:
@@ -55,7 +43,7 @@ flow.control.plugin:
 
 ## 详细治理规则
 
-流量治理采用流量标记+流控规则的方式对指定的流量进行流控，所谓流量标记，通俗讲为请求信息，例如接口路径、接口方法类型、请求头以及下游服务名
+流量治理采用流量标记+流控规则的方式对指定的流量进行流控，所谓流量标记，通俗讲为请求信息，例如接口路径、接口方法类型、请求头以及下游服务名。
 
 流控规则是否生效取决于流量标记，当流量标记与请求相匹配，流控规则才会生效。而如何将流量标记对应上具体规则，则取决于业务场景名，通常流量标记与流控规则配置均要配置指定前缀。
 
@@ -293,7 +281,7 @@ mvn clean package
 
 ### 步骤二：修改插件配置
 
-参考[插件配置](#插件配置) 修改`${agent路径}/sermant-agent-x.x.x/agent/pluginPackage/flowcontrol/config/config.yaml`文件为以下内容：
+参考[插件配置](#插件配置) 修改`${path}/sermant-agent-x.x.x/agent/pluginPackage/flowcontrol/config/config.yaml`文件为以下内容：
 ```shell
 flow.control.plugin:
   useCseRule: false # 是否开启ServiceComb适配
@@ -308,15 +296,15 @@ flow.control.plugin:
 
 ```shell
 # windwos
-java -javaagent:${agent路径}\sermant-agent-x.x.x\agent\sermant-agent.jar -Dspring.application.name=spring-flow-provider -Dspring.cloud.zookeeper.connectString=127.0.0.1:2181 -jar spring-provider.jar
+java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar -Dspring.application.name=spring-flow-provider -Dspring.cloud.zookeeper.connectString=127.0.0.1:2181 -jar spring-provider.jar
 
 #linux mac
-java -javaagent:${agent路径}/sermant-agent-x.x.x/agent/sermant-agent.jar -Dspring.application.name=spring-flow-provider -Dspring.cloud.zookeeper.connectString=127.0.0.1:2181 -jar spring-provider.jar
+java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar -Dspring.application.name=spring-flow-provider -Dspring.cloud.zookeeper.connectString=127.0.0.1:2181 -jar spring-provider.jar
 ```
 
 > **说明**
-> 上述命令中的${path}需要替换为Sermant实际下载路径
-> x.x.x代表Sermant某个版本号
+> 上述命令中的${path}需要替换为Sermant实际路径。
+> x.x.x代表Sermant某个版本号。
 
 ### 步骤四：发布流量标记
 

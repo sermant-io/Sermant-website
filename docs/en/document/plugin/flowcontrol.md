@@ -1,6 +1,6 @@
 # FlowControl
 
-This document is used to introduce the usage of [Flow Control Plugin](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-flowcontrol)
+This article describes how to use [Flow Control Plugin](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-flowcontrol).
 
 ## Functions
 
