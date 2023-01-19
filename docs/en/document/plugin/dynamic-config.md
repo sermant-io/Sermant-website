@@ -1,6 +1,6 @@
 # Dynamic Configuration
 
-This document is used to introduce the usage of [dynamic configuration plugin](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-dynamic-config)
+This article describes how to use the [Dynamic Configuration Plugin](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-dynamic-config)
 
 ## Functions
 
@@ -11,24 +11,7 @@ The current plugin supports [SpringCloud](https://github.com/spring-cloud) appli
 
 ## Parameter configuration
 
-### Modify the configuration of the configuration center/dynamic configuration plugin
-
-**（1）Modify the config center(Optional)**
-
-To modify the type and address of the dynamic configuration center, refer to [Sermant-agent User Manual](../user-guide/sermant-agent.md).
-
-
-**（2）Configure Dynamic Configuratin plugin**
-
-Modify the `${javaagent path}/pluginPackage/dynamic-config/config/config.yaml`, configuration file as follows:
-
-```yaml
-dynamic.config.plugin:
-  enableCseAdapter: true # Whether to enable CSE adaptation
-  enableDynamicConfig: true # Whether to enable the dynamic configuration plugin
-  enableOriginConfigCenter: false # Indicates whether to enable the original configuration center. By default, the configuration center is disabled.
-  #sourceKeys: sourceKeys # related the keys that can effect， default is null
-```
+The dynamic configuration plug-in depends on the dynamic configuration center. It is necessary to configure the address of the dynamic configuration center (`dynamic.config.serverAddress`) and the type of the dynamic configuration center (`dynamic.config.dynamicConfigType`) in Sermant-agent. For details, refer to [Sermant-agent User Manual](../user-guide/sermant-agent.md#sermant-agent-parameter-configuration)
 
 ## Publish Configurations by Config Center
 
@@ -51,7 +34,7 @@ Dynamic configuration is performed based on a group. The tag group consists of m
 
 （2）If the adaptation function is enabled(`enableCseAdapter: true`)
 
-​	In this case, subscription is performed based on the **application configuration, service configuration, and customized configuration**. For details about the three types of configurations, see `${javaagent path}/pluginPackage/config.properties`,  The related configurations are as follows:
+​	In this case, subscription is performed based on the **application configuration, service configuration, and customized configuration**. For details about the three types of configurations, see `${path}/sermant-agent-x.x.x/agent/config/config.properties`,  The related configurations are as follows:
 
 ```properties
 # application name
@@ -85,39 +68,6 @@ spring:
 
 ```
 
-There is no special requirement for key configuration. Note that if you set the **sourceKeys** configuration item, the configuration item **takes effect only when the key matches the sourceKeys** configuration item.
-
-### KIE Config Center
-
-The KIE publish configuration needs to be released through its own API. The configuration content of the http://ip:30110/v1/default/kie/kv, interface is as follows:
-
-```json
-{
-	"key": "test",
-	"value": "limitRefreshPeriod: \"1000\"\nname: hello\nrate: \"2\"\n",
-	"labels": {
-		"app": "discovery",
-		"environment": "testing"
-	},
-	"status": "enabled"
-}
-```
-
-The preceding configuration keys and labels correspond to the keys and groups that are released [through the Sermant background service](#Publish-configurations-through-the-Sermant-Backend-service). If you are not familiar with KIE requests, see the [API document](https://github.com/apache/servicecomb-kie/tree/master/docs).
-
-### ZOOKEEPER Config Center
-
-The ZOOKEEPER configuration publishment needs to be configured based on the command line, that is, zkServer. Its path consists of the key and group configured [through the Sermant background service](#Publish-configurations-through-the-Sermant-Backend-service) release, that is, /group/key, whose value is content. 
-
-The following shows how to publish a configuration:
-
-If the current service name is **DynamicConfigDemo**, the corresponding **group is service=DynamicConfigDemo**, the specified **key is test**, and the content is **sermant: sermant**, the released command is as follows:
-
-```shell
-# create /group/key content
-create /service=DynamicConfigDemo/test "sermant: sermant"
-```
-
 ## Supported Versions and Limitations
 
 ### Version Required
@@ -136,7 +86,7 @@ Prepare the demo application, for example, xxx.jar. Run the following command to
 
 ```shell
 #EnableCseAdapter based on the configuration
-java -javaagent:${agent path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=DynamicConfigDemo -Dspring.application.name=DynamicConfigDemo -Ddynamic.config.plugin.enableDynamicConfig=true -Ddynamic.config.plugin.enableCseAdapter=false -jar xxx.jar
+java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=DynamicConfigDemo -Dspring.application.name=DynamicConfigDemo -Ddynamic.config.plugin.enableDynamicConfig=true -Ddynamic.config.plugin.enableCseAdapter=false -jar xxx.jar
 ```
 
 The @Value annotation is used as an example. The @ConfigurationProperties annotation is similar.

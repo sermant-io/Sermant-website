@@ -1,6 +1,6 @@
 # 动态配置
 
-本文档主要介绍[动态配置插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-dynamic-config) 以及该插件的使用方法。
+本文介绍如何使用[动态配置插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-dynamic-config)。
 
 ## 功能介绍
 
@@ -10,22 +10,11 @@
 
 ### Sermant-agent配置
 
-- 若使用**zookeeper**配置中心，则修改`${javaagent路径}/agent/config/config.properties`中以下内容：
-
-    ```properties
-    dynamic.config.serverAddress=127.0.0.1:2181
-    dynamic.config.dynamicConfigType=ZOOKEEPER
-    ```
-- 若使用**KIE**配置中心，则修改`${javaagent路径}/agent/config/config.properties`中以下内容：
-
-    ```properties
-    dynamic.config.serverAddress=127.0.0.1:30110
-    dynamic.config.dynamicConfigType=KIE
-    ```
+动态配置插件依赖动态配置中心，需要在Sermant-agent中配置动态配置中心的地址（`dynamic.config.serverAddress`），动态配置中心的类型（`dynamic.config.dynamicConfigType`）,具体参考[Sermant-agent使用手册](../user-guide/sermant-agent.md#sermant-agent使用参数配置)。
 
 ### 插件配置
 
-修改配置文件`${javaagent路径}/agent/pluginPackage/dynamic-config/config/config.yaml`, 配置如下：
+动态配置插件需打开是否开启适配CSE（`dynamic.config.plugin.enableCseAdapter`），是否开启动态配置插件（`dynamic.config.plugin.enableDynamicConfig`）等开关，可在`${path}/sermant-agent-x.x.x/agent/pluginPackage/dynamic-config/config/config.yaml`找到插件的配置文件，配置如下所示：
 
 ```yaml
 dynamic.config.plugin:
@@ -52,7 +41,7 @@ dynamic.config.plugin:
     
 - 若开启适配, 即`enableCseAdapter: true`
 
-    此时将根据**应用配置**，**服务配置**以及**自定义配置**三项数据进行配置**同时**订阅， 而这三类配置可参考`${javaagent路径}/agent/config/config.properties`, 相关配置如下：
+    此时将根据**应用配置**，**服务配置**以及**自定义配置**三项数据进行配置**同时**订阅， 而这三类配置可参考`${path}/sermant-agent-x.x.x/agent/config/config.properties`, 相关配置如下：
 
     ```properties
     # 服务app名称
@@ -73,7 +62,7 @@ dynamic.config.plugin:
     - 服务配置：由`service.meta.application`、`service.meta.environment`以及服务名组成，此处服务即`spring.application.name`, 对应的`group`为`app=default&environment=development&service=DynamicConfigDemo`
     - 自定义配置：由`service.meta.customLabel`与`service.meta.customLabelValue`组成， 对应的`group`为`public=default`
 
-**以上为`group`的配置介绍**，下面说明`content`配置，当前动态配置仅支持yaml格式, 例如配置如下内容:
+以上为`group`的配置介绍，下面说明`content`配置，当前动态配置仅支持yaml格式, 例如配置如下内容:
 
 ```yaml
 server:
@@ -155,7 +144,7 @@ mvn clean package
 
 ### 步骤二：修改插件配置
 
-参考[插件配置](#插件配置) 修改`${agent路径}/sermant-agent-x.x.x/agent/pluginPackage/dynamic-config/config/config.yaml`文件为以下内容：
+参考[插件配置](#插件配置) 修改`${path}/sermant-agent-x.x.x/agent/pluginPackage/dynamic-config/config/config.yaml`文件为以下内容：
 ```shell
 dynamic.config.plugin:
   enableCseAdapter: false # 是否开启适配CSE
@@ -169,15 +158,15 @@ dynamic.config.plugin:
 
 ```shell
 # windwos
-java -javaagent:${agent路径}\sermant-agent-x.x.x\agent\sermant-agent.jar -Dspring.application.name=spring-flow-provider -Dspring.cloud.zookeeper.connectString=127.0.0.1:2181 -jar spring-provider.jar
+java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar -Dspring.application.name=spring-flow-provider -Dspring.cloud.zookeeper.connectString=127.0.0.1:2181 -jar spring-provider.jar
 
 #linux mac
-java -javaagent:${agent路径}/sermant-agent-x.x.x/agent/sermant-agent.jar -Dspring.application.name=spring-flow-provider -Dspring.cloud.zookeeper.connectString=127.0.0.1:2181 -jar spring-provider.jar
+java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar -Dspring.application.name=spring-flow-provider -Dspring.cloud.zookeeper.connectString=127.0.0.1:2181 -jar spring-provider.jar
 ```
 
-> **说明**
-> 上述命令中的${path}需要替换为Sermant实际下载路径
-> x.x.x代表Sermant某个版本号
+> **说明**：
+> 上述命令中的${path}需要替换为Sermant实际安装路径。
+> x.x.x代表Sermant某个版本号。
 
 ### 步骤四：查看原配置
 
