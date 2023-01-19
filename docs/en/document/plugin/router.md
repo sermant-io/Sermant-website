@@ -91,7 +91,7 @@ The following is an example of the spring-cloud-router-demo project to demonstra
 
 - [Download](https://github.com/apache/servicecomb-service-center) ServiceComb, and start
 
-- [Download](https://zookeeper.apache.org/releases.html#download) zookeeper, and start
+- [Download](https://zookeeper.apache.org/releases.html#download) Zookeeper, and start
 
 ### Step 1: Compile and package the spring-cloud-router-demo application
 
@@ -159,7 +159,7 @@ java -Dservicecomb_service_enableSpringRegister=true -Dservice_meta_version=1.0.
 
 Configuring Routing Rules, please refer to [Detailed Routing Rules](#detailed-routing-rules).
 
-The key value is **servicecomb.routeRule.spring-cloud-router-provider**, the group is **app=default&&environment=**, and the content is the specific routing rule, as follows.
+The key value is **servicecomb.routeRule.spring-cloud-router-provider**, the group is **app=default&environment=**, and the content is the specific routing rule, as follows.
 
 ```yaml
 ---
