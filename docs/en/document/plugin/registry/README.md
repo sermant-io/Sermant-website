@@ -24,7 +24,7 @@ Service registry plugin requires configuring the service metadata (application, 
 
 ### Plugin configuration
 
-Service registry plugin requires modification of the plugin configuration file on demand, which can be found in the path `${path}/agent/pluginPackage/service-registry/config/config.yaml`. The configuration file for the plugin is shown below:
+Service registry plugin requires modification of the plugin configuration file on demand, which can be found in the path `${path}/sermant-agent-x.x.x/agent/pluginPackage/service-registry/config/config.yaml`. The configuration file for the plugin is shown below:
 
 ```yaml
 register.service:
@@ -64,7 +64,7 @@ The configuration items are described as follows:
 |nacos.service.clusterName|cluster name|DEFAULT|NACOS|Yes|
 |nacos.service.ephemeral|Whether to enable ephemeral endpoint, true for yes，false for no|true|NACOS|Yes|
 
-### Notice:
+**Notice**:
 
 - group of nacos can setting by [Sermant-agent configuration](#sermant-agent-configuration)'s service.meta.application.
 

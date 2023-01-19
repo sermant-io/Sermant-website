@@ -24,7 +24,7 @@
 
 ### 插件配置
 
-注册插件需要按需修改插件配置文件，可在路径`${path}/agent/pluginPackage/service-registry/config/config.yaml`找到该插件的配置文件，配置文件如下所示：
+注册插件需要按需修改插件配置文件，可在路径`${path}/sermant-agent-x.x.x/agent/pluginPackage/service-registry/config/config.yaml`找到该插件的配置文件，配置文件如下所示：
 
 ```yaml
 register.service:
@@ -64,7 +64,7 @@ nacos.service:
 |nacos.service.clusterName|集群名称|DEFAULT|NACOS|是|
 |nacos.service.ephemeral|是否是临时节点，true为是，false为否|true|NACOS|是|
 
-### 说明：
+**说明**：
 
 - nacos的group通过[Sermant-agent配置](#sermant-agent配置)的service.meta.application设置。
   
@@ -154,7 +154,7 @@ java -Dservicecomb.service.enableDubboRegister=true -javaagent:${path}/sermant-a
 
 注：为了便于测试，这里使用了-Dservicecomb.service.enableDubboRegister=true的方式打开了dubbo注册开关，如果使用了[其它的方式](../../user-guide/sermant-agent.md#参数配置方式)打开了dubbo注册开关，则无需添加该参数。
 
-其中${path}需要替换为Sermant工程路径，x.x.x需要替换为Sermant实际版本号，appName为agent启动参数中的应用名，与注册参数无关，执行命令的目录需要为demo应用的jar包目录。
+其中${path}需要替换为Sermant包路径，x.x.x需要替换为Sermant实际版本号，appName为agent启动参数中的应用名，与注册参数无关，执行命令的目录需要为demo应用的jar包目录。
 
 ### 验证
 
@@ -279,7 +279,7 @@ java -Dserver.port=8262 -Dservicecomb.service.openMigration=true -Dservicecomb.s
 
 注：为了便于测试，这里使用了-Dservicecomb.service.openMigration=true -Dservicecomb.service.enableSpringRegister=true的方式打开了spring迁移功能，如果使用了[其它的方式](../../user-guide/sermant-agent.md#参数配置方式)打开了spring迁移开关，则无需添加该参数。为了便于观察，使用了-Dserver.port=8262的方式，修改了生产者的端口。
 
-其中path需要替换为Sermant实际打包路径，x.x.x需要替换为Sermant实际版本号，appName为agent的启动参数，与注册参数无关。
+其中${path}需要替换为Sermant实际包路径，x.x.x需要替换为Sermant实际版本号，appName为agent的启动参数，与注册参数无关。
 
 <MyImage src="/docs-img/springcloud-migration-2.png"/>
 
@@ -299,7 +299,7 @@ java -Dserver.port=8261 -Dservicecomb.service.openMigration=true -Dservicecomb.s
 
 注：为了便于测试，这里使用了-Dservicecomb.service.openMigration=true -Dservicecomb.service.enableSpringRegister=true的方式打开了spring迁移功能，如果使用了[其它的方式](../../user-guide/sermant-agent.md#参数配置方式)打开了spring迁移开关，则无需添加该参数。为了便于观察，使用了-Dserver.port=8261的方式，修改了消费者的端口。
 
-其中path需要替换为Sermant实际打包路径，x.x.x需要替换为Sermant实际版本号，appName为agent的启动参数，与注册参数无关。
+其中${path}需要替换为Sermant实际包路径，x.x.x需要替换为Sermant实际版本号，appName为agent的启动参数，与注册参数无关。
 
 <MyImage src="/docs-img/springcloud-migration-3.png"/>
 
@@ -430,7 +430,7 @@ java -Dservicecomb.service.enableDubboRegister=true -Dserver.port=48021 -Ddubbo.
 
 注：为了便于测试，这里使用了-Dservicecomb.service.enableDubboRegister=true的方式打开了dubbo注册开关，如果使用了[其它的方式](../../user-guide/sermant-agent.md#参数配置方式)打开了dubbo注册开关，则无需添加该参数；另外为了解决同一台服务器启动2个provider遇到的端口冲突问题，需要增加-Dserver.port=48021 -Ddubbo.protocol.port=48821参数，如果测试时2个provider在不同的服务器，则无需添加该参数。
 
-其中${path}需要替换为Sermant工程路径，x.x.x需要替换为Sermant实际版本号，appName为agent启动参数中的应用名，与注册参数无关，执行命令的目录需要为demo应用的jar包所在的目录。
+其中${path}需要替换为Sermant实际包路径，x.x.x需要替换为Sermant实际版本号，appName为agent启动参数中的应用名，与注册参数无关，执行命令的目录需要为demo应用的jar包所在的目录。
 
 #### 验证
 
