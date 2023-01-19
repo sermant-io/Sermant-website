@@ -6,68 +6,72 @@
 
 该插件基于Sermant配置中心能力实现动态配置，可在运行时将配置刷新到宿主应用，其优先级将高于环境变量配置。
 
-当前插件插件支持[SpringCloud](https://github.com/spring-cloud) 应用，需配合注解`@Value, @ConfigurationProperties以及@RefreshScope`使用
-
-
 ## 参数配置
 
-### 修改配置中心/动态配置插件的配置
+### Sermant-agent配置
 
-**（1）修改配置中心（可选）**
+- 若使用**zookeeper**配置中心，则修改`${javaagent路径}/agent/config/config.properties`中以下内容：
 
-修改动态配置中心类型与地址，参考[Sermant-agent使用手册](../user-guide/sermant-agent.md)。
+    ```properties
+    dynamic.config.serverAddress=127.0.0.1:2181
+    dynamic.config.dynamicConfigType=ZOOKEEPER
+    ```
+- 若使用**KIE**配置中心，则修改`${javaagent路径}/agent/config/config.properties`中以下内容：
 
-**（2）配置动态配置插件**
+    ```properties
+    dynamic.config.serverAddress=127.0.0.1:30110
+    dynamic.config.dynamicConfigType=KIE
+    ```
 
-修改配置文件`${javaagent路径}/pluginPackage/dynamic-config/config/config.yaml`, 配置如下：
+### 插件配置
+
+修改配置文件`${javaagent路径}/agent/pluginPackage/dynamic-config/config/config.yaml`, 配置如下：
 
 ```yaml
 dynamic.config.plugin:
-  enableCseAdapter: true # 是否开启适配CSE
+  enableCseAdapter: false # 是否开启适配CSE
   enableDynamicConfig: true # 是否开启动态配置插件
   enableOriginConfigCenter: false # 是否开启原配置中心, 默认关闭
-  #sourceKeys: sourceKey #针对指定键生效
 ```
-
-配置说明：
 
 | 参数键                     | 说明                                                         | 默认值         | 是否必须 |
 | ------------------------- | ------------------------------------------------------------ | -------------- | ------- |
-| enableCseAdapter          | 当配置为true时, 会根据ServiceMeta指定的应用配置，服务配置以及自定义标签配置三种类型进行配置订阅；当为false时，只会根据服务名进行订阅，即对键为`service`, 值为"宿主服务名（即spring.application.name获取）" | true | 是  |
-| enableDynamicConfig       | 动态配置开关，仅当配置为true时，动态配置才会生效             | false | 否  |
-| enableOriginConfigCenter | 是否开启原配置中心, 默认不开启。当前仅支持Zookeeper与Nacos配置中心（基于SpringCloud Config实现） | false | 否  |
-| sourceKeys                | 当需要指定的配置键生效时，可配置该值，例如只是想读取application.yaml，否则默认会读取所有的配置；多个键使用`,`隔开。 | - | 否  |
+| enableCseAdapter          | 是否开启适配CSE; <br> **true**:根据ServiceMeta指定的应用配置,服务配置,自定义标签配置进行配置订阅；<br> **false**:根据服务名进行订阅 | true | 是  |
+| enableDynamicConfig       | 是否开启动态配置插件              | false | 否  |
+| enableOriginConfigCenter | 是否开启原配置中心; <br> **false**:屏蔽原配置中心，只能通过Sermant下发配置; <br> **true**:不屏蔽原配置中心，可通过原配置中心下发配置| false | 否  |
 
-## 通过配置中心发布配置
+## 详细治理规则
 
-配置下发参考[动态配置中心使用手册](../user-guide/configuration-center.md)
+动态配置插件基于框架提供的动态配置能力进行配置发布，配置发布可以参考[动态配置中心使用手册](../user-guide/configuration-center.md#发布配置)
 
 动态配置主要基于`group`进行匹配配置订阅，该标签组由多个键值对组成，根据适配开关配置`enableCseAdapter`的不同，`group`的值将会有所区别，如下：
 
-（1）若关闭适配，即`enableCseAdapter: false`
+- 若关闭适配，即`enableCseAdapter: false`
 
-此时注册插件将根据宿主应用的服务名进行订阅, 即配置的`spring.applicaton.name`, 若此时配置的服务名为`DynamicConfigDemo`, 那么对应的`group`的值为`service=DynamicConfigDemo`， 其中键service是固定的, 值DynamicConfigDemo由宿主服务名决定
+    此时注册插件将根据宿主应用的服务名进行订阅, 即应用配置的`spring.applicaton.name`, 插件订阅配置的group为`service=${spring.applicaton.name}`
+    
+- 若开启适配, 即`enableCseAdapter: true`
 
-（2）若开启适配, 即`enableCseAdapter: true`
+    此时将根据**应用配置**，**服务配置**以及**自定义配置**三项数据进行配置**同时**订阅， 而这三类配置可参考`${javaagent路径}/agent/config/config.properties`, 相关配置如下：
 
-此时将根据**应用配置**，**服务配置**以及**自定义配置**三项数据进行配置**同时**订阅， 而这三类配置可参考`${javaagent路径}/agent/config/config.properties`, 相关配置如下：
+    ```properties
+    # 服务app名称
+    service.meta.application=default
+    # 服务版本
+    service.meta.version=1.0.0
+    # serviceComb 命名空间
+    service.meta.project=default
+    # 环境
+    service.meta.environment=development
+    # 自定义标签，按需配置，用于后续的配置订阅
+    service.meta.customLabel=public
+    service.meta.customLabelValue=default
+    ```
 
-```properties
-# 服务app名称
-service.meta.application=default
-# 服务版本
-service.meta.version=1.0.0
-# serviceComb 命名空间
-service.meta.project=default
-# 环境
-service.meta.environment=development
-# 自定义标签，按需配置，用于后续的配置订阅
-service.meta.customLabel=public
-service.meta.customLabelValue=default
-```
-- 应用配置：由`service.meta.application`与`service.meta.environment`组成， 对应的`group`为`app=default&environment=development`
-- 服务配置：由`service.meta.application`、`service.meta.environment`以及服务名组成，此处服务即`spring.application.name`, 对应的`group`为`app=default&environment=development&service=DynamicConfigDemo`
-- 自定义配置：由`service.meta.customLabel`与`service.meta.customLabelValue`组成， 对应的`group`为`public=default`
+    应用配置，服务配置，自定义配置说明参考[CSE配置中心概述](https://support.huaweicloud.com/devg-cse/cse_devg_0020.html)
+    - 应用配置：由`service.meta.application`与`service.meta.environment`组成， 对应的`group`为`app=default&environment=development`
+    - 服务配置：由`service.meta.application`、`service.meta.environment`以及服务名组成，此处服务即`spring.application.name`, 对应的`group`为`app=default&environment=development&service=DynamicConfigDemo`
+    - 自定义配置：由`service.meta.customLabel`与`service.meta.customLabelValue`组成， 对应的`group`为`public=default`
 
 **以上为`group`的配置介绍**，下面说明`content`配置，当前动态配置仅支持yaml格式, 例如配置如下内容:
 
@@ -81,62 +85,21 @@ spring:
   cloud:
     zookeeper:
       enabled: true
-
-```
-
-针对`key`配置无特殊要求，但需要注意的是，若您配置了`sourceKeys`配置项，仅当`key`与`sourceKeys`匹配时才会生效
-
-### Kie配置中心
-
-KIE发布配置需通过其自身API发布，其接口为`http://ip:30110/v1/default/kie/kv`, 配置内容如下:
-
-```json
-{
-	"key": "test",
-	"value": "limitRefreshPeriod: \"1000\"\nname: hello\nrate: \"2\"\n",
-	"labels": {
-		"app": "discovery",
-		"environment": "testing"
-	},
-	"status": "enabled"
-}
-```
-
-以上配置key与labels分别与[动态配置中心使用手册](../user-guide/configuration-center.md)的key与group相对应，若对KIE请求不了解，可参考[api文档](https://github.com/apache/servicecomb-kie/tree/master/docs)
-
-### Zookeeper配置中心
-
-Zookeeper配置发布则需基于命令行配置，即`zkServer`, 其路径由[动态配置中心使用手册](../user-guide/configuration-center.md)的key与group组成， 即/group/key, 其值即为content。例如发布一个配置：
-
-当前服务名为`DynamicConfigDemo`,对应的**group**为`service=DynamicConfigDemo`, 指定的**key**为`test`, **content**为`sermant: sermant`, 那么发布的命令为
-
-```shell
-# create /group/key content
-create /service=DynamicConfigDemo/test "sermant: sermant"
 ```
 
 ## 支持版本和限制
 
-### 版本要求
+### 支持版本
 
-**SpringCloud:** 版本支持
-- SpringBoot 1.5.x - 2.6.2
-- spring-cloud-starter-alibaba-nacos-config 1.5.0.RELEASE+
-- spring-cloud-starter-zookeeper-config 1.2.0.RELEASE+
+| 框架类型                     | 版本                                                         |
+| ------------------------- | ------------------------------------------------------------ |
+| SpringBoot | 1.5.x - 2.6.2 |
+| spring-cloud-starter-alibaba-nacos-config | 1.5.0.RELEASE+ |
+| spring-cloud-starter-zookeeper-config | 1.2.0.RELEASE+ |
 
+### 限制
 
-## 操作和结果验证
-
-### 部署应用
-
-准备好demo应用，例如xxx.jar, 参考如下启动命令如下:
-
-```shell
-#根据配置enableCseAdapter按需调整
-java -javaagent:${agent路径}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=DynamicConfigDemo -Dspring.application.name=DynamicConfigDemo -Ddynamic.config.plugin.enableDynamicConfig=true -Ddynamic.config.plugin.enableCseAdapter=false -jar xxx.jar
-```
-
-以下示范`@Value`注解使用，`@ConfigurationProperties`注解同理
+需配合注解`@Value, @ConfigurationProperties以及@RefreshScope`使用，以下示范`@Value`注解使用，`@ConfigurationProperties`注解同理
 
 ```java
 /**
@@ -152,36 +115,92 @@ public class ValueConfig {
     @Value("${server.port}")
     private int port;
 
-    @Value("${spring.application.name}")
-    private String name;
-
     @Override
     public String toString() {
         return "ValueConfig{" +
-            "test=" + test +
-            ", dubbo=" + dubbo +
-            ", sermant=" + sermant +
-            ", port=" + port +
-            ", name='" + name + '\'' +
+            "sermant=" + sermant +
+            ", port=" + port + '\'' +
             '}';
     }
 
     public Object getSermant() {
         return sermant;
     }
-
-    public Object getDubbo() {
-        return dubbo;
-    }
-
-    public Object getTest() {
-        return test;
-    }
 }
-
 ```
 
+## 操作和结果验证
+
+下面将演示如何使用负载均衡插件。
+
+### 准备工作
+
+- [下载](https://github.com/huaweicloud/Sermant-examples/tree/main/flowcontrol-demo/spring-cloud-demo/spring-provider) demo源码
+- [下载](https://github.com/huaweicloud/Sermant/releases) 或编译Sermant包
+- [下载](https://zookeeper.apache.org/releases#download) 并启动zookeeper 
+- [下载](https://github.com/vran-dev/PrettyZoo/releases) PrettyZoo并启动连接zookeeper
+
+### 步骤一：编译打包demo应用
+
+在`${path}/Sermant-examples/flowcontrol-demo/spring-cloud-demo/spring-provider`目录执行以下命令：
+
+```shell
+# windows,Linux,mac
+mvn clean package
+```
+
+打包成功后，在`${path}/Sermant-examples/flowcontrol-demo/spring-cloud-demo/spring-provider/target`得到`spring-provider.jar`
+
+> **说明**： path为demo应用下载所在路径
+
+### 步骤二：修改插件配置
+
+参考[插件配置](#插件配置) 修改`${agent路径}/sermant-agent-x.x.x/agent/pluginPackage/dynamic-config/config/config.yaml`文件为以下内容：
+```shell
+dynamic.config.plugin:
+  enableCseAdapter: false # 是否开启适配CSE
+  enableDynamicConfig: true # 是否开启动态配置插件
+  enableOriginConfigCenter: false # 是否开启原配置中心, 默认关闭
+```
+
+### 步骤三：启动demo应用
+
+参考如下命令启动demo应用
+
+```shell
+# windwos
+java -javaagent:${agent路径}\sermant-agent-x.x.x\agent\sermant-agent.jar -Dspring.application.name=spring-flow-provider -Dspring.cloud.zookeeper.connectString=127.0.0.1:2181 -jar spring-provider.jar
+
+#linux mac
+java -javaagent:${agent路径}/sermant-agent-x.x.x/agent/sermant-agent.jar -Dspring.application.name=spring-flow-provider -Dspring.cloud.zookeeper.connectString=127.0.0.1:2181 -jar spring-provider.jar
+```
+
+> **说明**
+> 上述命令中的${path}需要替换为Sermant实际下载路径
+> x.x.x代表Sermant某个版本号
+
+### 步骤四：查看原配置
+
+浏览器或curl工具访问`localhost:8003/flow`,查看控制台日志是否打印`sermant`日志，效果图如下：
+
+<MyImage src="/docs-img/dynamic-config-old-config.jpg"/>
+
+### 步骤五：修改应用配置
+
+参考使用[动态配置中心使用手册](../user-guide/configuration-center.md#发布配置) 进行配置发布
+
+以zookeeper为例，利用PrettyZoo工具来发布动态配置：
+
+1. 创建节点`/service=spring-flow-provider`
+
+<MyImage src="/docs-img/dynamic-config-create-node-1.jpg"/>
+
+2. 创建节点`/service=spring-flow-provider/config`和数据`sermant: sermant1`
+
+<MyImage src="/docs-img/dynamic-config-create-node-2.jpg"/>
 
 ### 验证
 
-尝试发布更新配置，再次访问demo应用，观察配置是否刷新，控制台是否有输出`Refresh Keys`日志。
+再次通过浏览器或curl工具访问`localhost:8003/flow`，查看控制台是否有输出`sermant1`日志。
+
+<MyImage src="/docs-img/dynamic-config-verify.jpg"/>
