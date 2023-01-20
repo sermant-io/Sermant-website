@@ -4,7 +4,7 @@
 
 ## 功能介绍
 
-该插件基于Sermant配置中心能力实现动态配置，可在运行时将配置刷新到宿主应用，其优先级将高于环境变量配置。
+该插件基于Sermant配置中心能力实现动态配置，可屏蔽原配置中心(zookeeper，nacos)，在运行时通过Sermant框架支持的配置中心(KIE, zookeeper)将配置刷新到宿主应用，其优先级将高于环境变量配置。
 
 ## 参数配置
 
@@ -170,7 +170,37 @@ java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar -Dspring.app
 
 ### 步骤四：查看原配置
 
-浏览器或curl工具访问`localhost:8003/flow`,查看控制台日志是否打印`sermant`日志，效果图如下：
+浏览器或curl工具访问`localhost:8003/flow`,查看控制台日志是否打印`sermant`日志，应用配置和源码，效果图如下：
+
+```yaml
+# demo 应用配置
+server:
+  port: 8003
+sermant: sermant
+spring:
+  application:
+    name: spring-flow-provider
+  cloud:
+    zookeeper:
+      enabled: true
+```
+
+```java
+// demo应用源码
+@Controller
+@ResponseBody
+@RefreshScope
+public class FlowController {
+  @Value("${sermant}")
+  private Object sermant;
+
+  @RequestMapping(value = "/flow", method = RequestMethod.GET)
+  public String flow(@RequestParam(required = false) Integer exRate, HttpServletRequest request) {
+    LOGGER.info((String) sermant);
+    return "Hello, I am zk rest template provider, my port is " + port;
+  }
+}
+```
 
 <MyImage src="/docs-img/dynamic-config-old-config.jpg"/>
 
