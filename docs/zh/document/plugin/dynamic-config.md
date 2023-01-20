@@ -170,7 +170,10 @@ java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar -Dspring.app
 
 ### 步骤四：查看原配置
 
-浏览器或curl工具访问`localhost:8003/flow`,查看控制台日志是否打印`sermant`日志，应用配置和源码，效果图如下：
+浏览器或curl工具访问`localhost:8003/flow`,查看控制台日志是否打印`sermant`日志
+
+
+**demo应用配置**如下：
 
 ```yaml
 # demo 应用配置
@@ -184,6 +187,8 @@ spring:
     zookeeper:
       enabled: true
 ```
+
+**demo应用/flow接口**代码如下：
 
 ```java
 // demo应用源码
@@ -201,6 +206,8 @@ public class FlowController {
   }
 }
 ```
+
+当调用**flow接口**时，demo应用执行`LOGGER.info((String) sermant);`语句，在控制台打印`sermant`变量的值`sermant`，如下图所示：
 
 <MyImage src="/docs-img/dynamic-config-old-config.jpg"/>
 
