@@ -6,6 +6,8 @@ Sermant is a bytecode enhancement technology based on Java Agent. It uses Java A
 
 The overall architecture of Sermant includes sermant-agent, Backend, Dynamic Configuration Center, sermant-injector and other components. Among them, sermant-agent is the implementation component of the core bytecode enhancement, and the rest are the supporting components of the Sermant architecture.
 
+<MyImage src="/docs-img/sermant-arch.png"/>
+
 ### sermant-agent
 
 Sermant-agent is the essential core component of Sermant, which contains bytecode enhancements of [sermant-agentcore](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore), [sermant-plugins](https://gIthub.com/huaweicloud/Sermant/tree/develop/sermant-plugins), [sermant-common](https://github.com/huaweicloud/Sermant/tree/develop/sermant-common). Sermant-agent takes effect when the host application is launched by specifying the `sermant-agent.jar'` package via the `-javaagent` argument. 
@@ -63,7 +65,7 @@ After the command is executed, a folder such as `sermant-agent-x.x.x` and a comp
 - *agent*: sermant-agent related product
   - *config*: contains **Sermant** configuration files
   - *core*: contains **Sermant** core framework jars
-  - implement: contains **Sermant** core implementation jars
+  - *implement*: contains **Sermant** core implementation jars
   - *common*: contains **Sermant** common dependencies
   - *pluginPackage*: contains the extension function plugin package and configuration files
   - *sermant-agent.jar*:  the entrance of **Sermant** via `-javaagent`

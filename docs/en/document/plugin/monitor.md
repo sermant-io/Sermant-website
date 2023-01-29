@@ -1,183 +1,192 @@
-# monitor
+# Monitoring
+This article describes how to use the [Monitoring plugin](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-monitor).
 
-This document is mainly used for the instructions of [monitor module](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-monitor)
+## Function introduction
 
-## Functions
-
-The resource monitoring module is used to monitor the use of CPU, memory, disk IO, network IO and other hardware resources of the server where the host application is located. The host application Java virtual machine has microservice use, and microservice public indicators are collected.
-
-The monitoring module relies on prometheus to collect indicators. prometheus periodically calls the httpServer service of the java agent to obtain the indicator information registered by the plug-in and store it for display.
-
-
+The monitoring plug-in is used to monitor the usage of CPU, memory, disk IO, network IO and other hardware resources of the server where the host application is located. The usage of JVM resources, such as heap memory usage, non-heap memory usage, cache usage, throughput (QPS, TPS, average response time). The monitoring plug-in relies on Prometheus for indicator collection. Prometheus will periodically pull the indicator data collected by the monitoring plugin.
 
 ## Parameter configuration
 
-```yaml
-monitor.Config:                 # Monitoring service configuration
-  Enable start service: false   # Monitoring service startup switch
-  Address: 127.0.0.1            # Address of the host service (HTTPS is recommended)
-  Port: 12345                   # Host service port information
-  ReportType: PROMETHEUS        # Monitoring indicator reporting method currently only supports HTTPS
-  UserName:                     # Authorization information -- Authorization user name
-  Password:                     # Authorization information -- authorized user password -- AES encryption -- see AESUtil
-  Key:                          # KEY used for authorized user password encryption
-```
+### Plugin configuration
 
-### Description of the monitor module
-
-*Use Background*
-
-This service includes three collection sub services, namely Linux resource monitoring and collection, JVM resource monitoring and collection, and microservice monitoring and collection
-
-- The Linux resource monitoring and collection function requires the host application to be deployed in the Linux environment.
-- The JVM memory monitoring and collection function requires the host application to use OpenJDK or the JDK version based on OpenJDK
-- Microservice monitoring mainly collects the indicator information of Dubbo service and Spring Cloud service
-
-
-
-*Function description*
-
-- **Linux's resource monitoring and collection**: Obtain the system CPU, memory, disk IO, and network IO resource usage data by executing the Linux command, and register to the default registrar of prometheus.
-
-```shell
-    #CPU
-    cat /proc/stat
-    #MEMORY
-    cat /proc/meminfo
-    #DISK
-    cat /proc/diskstats
-    #NETWORK
-    cat /proc/net/dev
-    #CPU CORE
-    lscpu
-```
-
-- **Collection content**
-
-```shell
-    #CPU
-    double cpu_user;   // User mode time proportion
-    double cpu_sys;    // Proportion of system time
-    double cpu_wait;   // Percentage of waiting time
-    double cpu_idle;   // Percentage of idle time
-    double cpu_cores;  // Number of CPU physical cores
-```
-
-```shell
-    #Memory usage
-    double memory_total;   // Total memory size
-    double memory_swap;    // SwapCached corresponding to cat/proc/meminfo instruction
-    double memory_cached;  // Cached corresponding to cat/proc/meminfo instruction
-    double memory_buffer;  // Buffers corresponding to cat/proc/meminfo instruction
-    double memory_used;    // Memory size used
-```
-
-```shell
-    #Memory usage
-    double memory_total;   // Total memory size
-    double memory_swap;    // SwapCached corresponding to cat/proc/meminfo instruction
-    double memory_cached;  // Cached corresponding to cat/proc/meminfo instruction
-    double memory_buffer;  // Buffers corresponding to cat/proc/meminfo instruction
-    double memory_used;    // Memory size used
-```
-
-```shell
-    #Disk IO
-    double disk_readBytesPerSec;   // Number of bytes read per second in the collection cycle
-    double disk_writeBytesPerSec;  // Number of bytes per second in the collection cycle
-    double disk_ioSpentPercentage; // Percentage of time spent on IO in the acquisition cycle
-```
-
-```shell
-    #network
-    double network_readBytesPerSec;    // Number of bytes read per second in the collection cycle
-    double network_writeBytesPerSec;   // Number of bytes per second in the collection cycle
-    double network_readPackagePerSec;  // Number of packets read per second in the collection cycle
-    double network_writePackagePerSec; // Number of packets written per second in the collection cycle
-```
-
-- **JVM Monitoring Collection**: Get JVM indicators from java.lang.management.ManagementFactory regularly
-
-```shell
-    #JVM memory
-    double heap_memory_init;                    // Heap memory initialization value
-    double heap_memory_max;                     // Maximum heap memory
-    double heap_memory_Used;                    // The heap memory has been used
-    double heap_memory_Committed                // The heap memory has been committed
-    double non_heap_memory_init;                // Non heap memory initialization value
-    double non_heap_memory_max;                 // Maximum non heap memory
-    double non_heap_memory_Used;                // Non heap memory is used
-    double non_heap_memory_Committed;           // Non heap memory has been committed
-    double code_cache_init;                     // Code buffer initialization value
-    double code_cache_max;                      // Maximum code buffer
-    double code_cache_Used                      // The code buffer has been used
-    double code_cache_Committed                 // The code cache has been committed
-    double meta_sapce_init;                     // Metaspace initialization value
-    double meta_sapce_max;                      // Metaspace maximum
-    double meta_sapce_Used;                     // Metaspace used
-    double meta_sapce_Committed;                // Metaspace has been committed
-    double compressed_class_space_init;         // Compression class space initialization value
-    double compressed_class_space_max;          // Maximum compression class space
-    double compressed_class_space_Used;         // The compressed class space has been used
-    double compressed_class_space_Committed;    // The compressed class space has been committed
-    double eden_init;                           // Initialization value of eden area memory
-    double eden_max;                            // Maximum memory in eden area
-    double eden_Used;                           // The eden memory has been used
-    double eden_Committed;                      // The eden memory has been committed
-    double survivor_init;                       // Initialized value of survivor area memory
-    double survivor_max;                        // Maximum value of survivor area memory
-    double survivor_Used;                       // The memory in the survivor area has been used
-    double survivor_Committed                   // The memory in the survivor area has been committed
-    double old_gen_init;                        // Memory initialization value in the old age
-    double old_gen_max;                         // Memory maximum in old age
-    double old_gen_Used;                        // The old memory has been used
-    double old_gen_Committed;                   // The memory of the old era has been committed
-```
-
-```shell
-    #thread
-    double thread_live;     // Active thread
-    double thread_peak;     // Thread Peak
-    double thread_daemon;   // Daemon thread
-```
-
-```shell
-    #GC
-    double new_gen_count; // GC times of young generation
-    double new_gen_spend; // Time consuming of GC of young generation
-    double old_gen_count; // GC frequency of the elderly generation
-    double old_gen_spend; // Time consumption of GC of the elderly generation
-```
-
-```shell
-    #Other JVM indicators
-    double cpu_used;        // CPU usage by JVM
-    double start_time;      // JVM started time, milliseconds
-```
-
-
-
-- **Microservice monitoring collection**: intercepts the service request of the host service and calculates the public request index of the host service
-
-```shell
-    #Microservice
-    double qps;                 // Requests per second
-    double tps;                 // Number of request processing per second
-    double avg_response_Time    // Average response time
-```
-
-## Operation and result validation
-1. Modify the current monitoring configuration of plug-in config -- config yaml。 Modify the IP ports and switches for external services
+The monitoring plugin needs to be configured with monitoring enable switch (`monitor.config.enableStartService`), IP address/domain name of the host application's environment (`monitor.config.address`), the port of the host service (`monitor.config.port`) and the reporting method (`monitor.config.reportType`). The configuration file of the plug-in can be found in the `${path}/sermant-agent-x.x.x/agent/pluginPackage/monitor/config/config.yaml`. The configuration is as follows:
 
 ```yaml
-monitor.Config:                 # Monitoring service configuration
-  Enable start service: false   # External service switch -- When the switch is true, prometheus can call the service port to obtain indicator information
-  Address: 127.0.0.1            # Modify to host service IP (HTTPS address is recommended)
-  Port: 12345                   # Modified to provide external service port
+monitor.config:                     # Monitoring plug-in configuration.
+    enableStartService: false       # Monitoring plug-in start switch. When it is true, the indicator is collected.
+    address: 127.0.0.1              # IP address/domain name of the host application's environment. Used when creating a server instance. Prometheus obtains the indicator information collected by the plug-in by calling the created server instance.
+    port: 12345                     # Provides the port information of Http service externally. Used when creating a server instance. Prometheus obtains the indicator information collected by the plug-in by calling the created server instance.
+    reportType: PROMETHEUS          # Monitoring indicator reporting method. Currently only PROMETHEUS is supported.
+    userName:                       # Authorization information -- authorization username. After the authorization information is configured, prometheus also needs to configure the authorization information to obtain the indicator normally to prevent malicious requests to obtain the indicator information.
+    password:                       # Authorization information -- authorized user password -- AES encryption ciphertext. After configuring the authorization information, prometheus also needs to configure the authorization information to obtain the indicator to prevent malicious requests to obtain the indicator information.
+    key:                            # KEY used for password encryption of authorized users.
 ```
 
-2. Modify the configuration file of prometheus In the sketch_ Add the corresponding job information under configs (according to the content configured in step 1)
+| Parameter key                     | Description                                                              | Default value | Required |
+|-----------------------------------|--------------------------------------------------------------------------|---------------|----------|
+| monitor.config.enableStartService | Monitoring plugin start switch                                          | false         | Yes      |
+| monitor.config.address            | IP address/domain name of the host application's environment             | 127.0.0.1     | Yes      |
+| monitor.config.port               | Port information for external Http service                               | 12345         | Yes      |
+| monitor.config.reportType         | Monitoring indicator reporting method currently only supports PROMETHEUS | PROMETHEUS    | Yes      |
+| monitor.config.userName           | authorization information -- authorization user name                     | null          | No       |
+| monitor.config.password           | authorization information -- authorized user password -- AES encryption  | null          | No       |
+| monitor.config.key                | KEY used for password encryption of authorized users                     | Empty         | No       |
 
-3. The host application mounts the java agent to start.
+## Detailed governance rules
 
-4. Start prometheus. You can view the indicator information on the prometheus page
+The indicator data that the monitoring plug-in can collect at present is shown in the following table (after docking with prometheus, users can query the specific indicator information in prometheus through the indicator name, see [Verification](#verification)):
+
+| Indicator name                   | Description                                                                | Indicator type |
+|:---------------------------------|:---------------------------------------------------------------------------|:---------------|
+| cpu_user                         | proportion of user time                                                    | CPU            |
+| cpu_sys                          | System time share                                                          | CPU            |
+| cpu_wait                         | Percentage of waiting time                                                 | CPU            |
+| cpu_idle                         | idle time ratio                                                            | CPU            |
+| cpu_cores                        | CPU physical cores                                                         | CPU            |
+| memory_total                     | Total memory size                                                          | memory         |
+| memory_swap                      | Size of swap space for cache memory                                        | memory         |
+| memory_cached                    | Total physical memory of cache memory                                      | memory         |
+| memory_buffer                    | Make a buffer size for the file                                            | memory         |
+| memory_used                      | Used memory size                                                           | memory         |
+| disk_readBytesPerSec             | Number of bytes read by the disk per second during the collection cycle    | Disk IO        |
+| disk_writeBytesPerSec            | Number of bytes written on the disk per second during the collection cycle | Disk IO        |
+| disk_ioSpentPercentage           | Percentage of time spent on disk IO during the acquisition cycle           | Disk IO        |
+| network_readBytesPerSec          | Number of bytes read by the network per second during the collection cycle | Network        |
+| network_writeBytesPerSec         | Number of bytes read by the network per second during the collection cycle | Network        |
+| network_readPackagePerSec        | Number of network bytes per second in the collection cycle                 | Network        |
+| network_writePackagePerSec       | Percentage of network IO time spent in the collection cycle                | Network        |
+| heap_memory_init                 | heap memory initialization value                                           | JVM            |
+| heap_memory_max                  | Maximum heap memory                                                        | JVM            |
+| heap_memory_used                 | Heap memory used                                                           | JVM            |
+| heap_memory_committed            | The heap memory has been committed                                         | JVM            |
+| non_heap_memory_init             | Non-heap memory initialization value                                       | JVM            |
+| non_heap_memory_max              | Maximum non-heap memory                                                    | JVM            |
+| non_heap_memory_used             | Non-heap memory used value                                                 | JVM            |
+| non_heap_memory_committed        | Non-heap memory committed                                                  | JVM            |
+| code_cache_init                  | Code cache initialization value                                            | JVM            |
+| code_cache_max                   | Maximum code cache size                                                    | JVM            |
+| code_cache_used                  | The code cache has been used                                               | JVM            |
+| code_cache_committed             | The code cache has been committed                                          | JVM            |
+| meta_sapce_init                  | Metaspace initialization value                                             | JVM            |
+| meta_sapce_max                   | Maximum value of metaspace                                                 | JVM            |
+| meta_sapce_used                  | Metaspace used value                                                       | JVM            |
+| meta_sapce_committed             | Metaspace committed value                                                  | JVM            |
+| compressed_class_space_init      | Compressed class space initialization value                                | JVM            |
+| compressed_class_space_max       | Maximum compressed class space                                             | JVM            |
+| compressed_class_space_used      | Compressed class space used value                                          | JVM            |
+| compressed_class_space_committed | Compressed class space committed value                                     | JVM            |
+| eden_init                        | eden memory initialization value                                           | JVM            |
+| eden_max                         | maximum memory of eden area                                                | JVM            |
+| eden_used                        | used value of eden area memory                                             | JVM            |
+| eden_committed                   | eden area memory committed value                                           | JVM            |
+| survivor_init                    | memory initialization value of the survivor area                           | JVM            |
+| survivor_max                     | maximum memory of the survivor area                                        | JVM            |
+| survivor_used                    | Memory used value of the survivor area                                     | JVM            |
+| survivor_committed               | memory committed value of the survivor area                                | JVM            |
+| old_gen_init                     | Memory initialization value in the old era                                 | JVM            |
+| old_gen_max                      | Maximum memory in the old age                                              | JVM            |
+| old_gen_used                     | Memory used in the old age                                                 | JVM            |
+| old_gen_committed                | Memory committed value in the old age                                      | JVM            |
+| thread_live                      | Active thread                                                              | JVM            |
+| thread_peak                      | thread peak                                                                | JVM            |
+| thread_daemon                    | daemon thread                                                              | JVM            |
+| new_gen_count                    | Young generation GC times                                                  | JVM            |
+| new_gen_spend                    | Young generation GC time                                                   | JVM            |
+| old_gen_count                    | GC times of older generation                                               | JVM            |
+| old_gen_spend                    | GC time of the elderly generation                                          | JVM            |
+| cpu_used                         | CPU usage of JVM                                                           | JVM            |
+| start_time                       | JVM started time, milliseconds                                             | JVM            |
+| qps                              | Requests per second                                                        | Throughput     |
+| tps                              | Number of requests processed per second                                    | Throughput     |
+| avg_response_time                | Average response time                                                      | Throughput     |
+
+## Supported versions and restrictions
+
+Framework support:
+
+- SpringBoot 1.5.10. Release and above
+
+- Dubbo 2.6.x-2.7.x
+
+Restrictions:
+
+- Dependent on Prometheus
+
+- The collection of server indicators depends on the Linux environment
+
+## Operation and result verification
+
+The following will demonstrate how to use the monitoring plug-in.
+
+### Preparations
+
+- [Download](https://start.spring.io/#!type=maven-project&language=java&platformVersion=2.7.7&packaging=jar&jvmVersion=1.8&groupId=com.example&artifactId=demo&name=demo&description=Demo%20project%20for%20Spring%20Boot&packageName=com.example.demo&dependencies=web) demo application
+
+- [Download](https://github.com/huaweicloud/Sermant/releases)/Compile the sermant package
+
+- [Download](https://github.com/prometheus/prometheus/releases) Prometheus
+
+### Step 1: Compile and package the demo application
+
+Execute the following command in the root directory of the demo application to package the demo application:
+
+```shell
+mvn clean package
+```
+
+After the packaging is successful, a `target` folder will be generated in the demo root directory, enter the `target` folder to get the demo-0.0.1-SNAPSHOT.jar package.
+
+### Step 2: Modify the configuration
+
+- Modify the monitoring plug-in configuration, which can be found in the `${path}/sermant-agent-x.x.x/agent/pluginPackage/monitor/config/config.yaml`.
+
+```yaml
+monitor.config:                   # Monitoring plugin configuration
+    enableStartService: true      # Monitoring plugin start switch. Modify to true.
+    address: 127.0.0.1            # IP address/domain name of the host application's environment. Modify to host specific IP address.
+    port: 12345                   # Provides the port information of Http service externally. Modify to an available port.
+    reportType: PROMETHEUS        # Monitoring indicator reporting method. Currently only PROMETHEUS is supported.
+```
+- Modify the configuration file prometheus.yml of [Prometheus](https://prometheus.io/docs/introduction/overview/).
+
+Add job information under the original job information.
+
+```yaml
+scrape_ configs:
+  - job_Name: "prometheus"            # Job name. This is the original task of prometheus.
+    static_configs:
+      - targets: ["localhost:9090"]   # Monitoring host address
+  - job_Name: "Sermant"               # Job name. Add the job of collecting and monitoring plug-in indicators
+    metrics_path: /                   # The request path for collecting indicators. Default is/
+    basic_auth:                       # Collect the authorization information of indicators, which is consistent with the monitoring plug-in configuration. The monitoring plug-in can be deleted when it is not configured.
+      username:                       # Collect the authorization information of the indicator - username
+      password:                       # Collect the authorization information of the indicator - password
+    static_configs:                   
+      - targets: ["127.0.0.1:12345"]  # The host address of the collection index. The IP and port information here is consistent with the monitoring plug-in configuration
+```
+### Step 3: Start the application
+
+- Start the demo application with the following command
+
+```shell
+# Run under Linux
+java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -jar demo-0.0.1-SNAPSHOT.jar
+```
+```shell
+# Run under Windows
+java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -jar demo-0.0.1-SNAPSHOT.jar
+```
+
+> **illustrate**:
+> Where path needs to be replaced with the actual installation path of Sermant.
+> x.x.x represents a Sermant version number.
+
+- Start Prometheus
+
+### Verification
+
+Open Prometheus (default is `http://127.0.0.1:9090`), query indicators. For example, query `heap_memory_used`. If the information can be queried, the plug-in will become effective.
+
+The query effect is as follows:
+
+<MyImage src="/docs-img/monitor.png"/>

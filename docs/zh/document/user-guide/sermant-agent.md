@@ -6,7 +6,7 @@ sermant-agent的框架主体为Sermant提供了字节码增强的实现逻辑，
 
 ## 参数配置
 
-在Java程序启动时，通过 `-javaagent`参数指定`sermant-agent.jar`的文件路径，即可使该Java程序(也称为宿主应用)在运行时挂载sermant-agent。
+在Java程序启动时，通过 `-javaagent`参数指定`sermant-agent.jar`的文件路径，即可使该Java程序(也称为宿主应用)在运行时挂载sermant-agent。`sermant-agent.jar`在Sermant打包后产品包的`agent/sermant-agent.jar`路径中存放。
 
 ```shell
 -javaagent:sermant-agent.jar[=${options}]
@@ -26,9 +26,9 @@ public static void premain(String agentArgs, Instrumentation inst);
 
 |参数键|说明|默认值|是否必须|
 |:-:|:-:|:-:|:-:|
-|appName|应用名称|default|否|
-|instanceName|实例名称|default|否|
-|appType|应用类型|0|否|
+|appName|应用名称，可用于实例心跳发送等|default|否|
+|instanceName|实例名称，可用于实例心跳发送等|default|否|
+|appType|应用类型，可用于实例心跳发送等|0|否|
 
 入参`agentArgs`中也可以为**启动参数**配置自定义的值。
 
@@ -64,7 +64,7 @@ dynamic.config.enableAuth=false
 # heartbeat config
 heartbeat.interval=30000
 
-#backend config
+# backend config
 backend.nettyIp=127.0.0.1
 backend.nettyPort=6888
 
@@ -74,38 +74,65 @@ service.meta.version=1.0.0
 service.meta.project=default
 service.meta.environment=
 service.meta.zone=
+service.meta.parameters=
+
+# service visibility config
+visibility.service.enableStart=false
 ```
 
-其中涉及的参数与sermant-agent、Backend、动态配置中心等有关联，具体参数配置参考下表：
+其中涉及的参数与sermant-agent、Backend、动态配置中心等有关联，具体参数配置参考下面说明。
 
-| <span style="display:inline-block;width:100px">参数键</span> |<span style="display:inline-block;width:200px">说明</span>|                            默认值                            | 是否必须 |
-| :-----------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :------: |
-| agent.config.isEnhanceBootStrapEnable |                增强启动类加载器加载的类的开关                |                            false                             |    是    |
-|     agent.config.ignoredPrefixes      | 增强忽略集，该集合中定义的全限定名前缀用于排除增强过程中被忽略的类 |          com.huawei.sermant,com.huaweicloud.sermant          |    否    |
-|    agent.config.ignoredInterfaces     | 增强忽略接口集，该集合中定义的接口用于排除增强过程中被忽略的类 |           org.springframework.cglib.proxy.Factory            |    否    |
-|     agent.config.combineStrategy      | 插件声明器的合并策略：NONE，不合并；BY_NAME，通过匹配的类名合并；ALL，所有都合并 |                             ALL                              |    是    |
-|     agent.config.serviceBlackList     |       sermant-agent核心功能黑名单，添加后禁用相关服务        | com.huaweicloud.sermant.implement.service.heartbeat.HeartbeatServiceImpl<br>,com.huaweicloud.sermant.implement.service.send.NettyGatewayClient<br>,com.huaweicloud.sermant.implement.service.tracing.TracingServiceImpl |    否    |
-|    agent.config.serviceInjectList     |                       拦截插件服务名单                       | com.huawei.discovery.service.lb.filter.NopInstanceFilter<br>,com.huawei.discovery.service.lb.DiscoveryManager |    否    |
-|  agent.config.isShowEnhanceLogEnable  |                 是否在增强过程中输出检索日志                 |                            false                             |    是    |
-| agent.config.enhancedClassOutputPath  |            被增强类的输出路径，如果为空，则不输出            |                              -                               |    否    |
-| dynamic.config.timeoutValue | 配置中心服务器连接超时时间，单位：ms | 30000 | 是 |
-| dynamic.config.defaultGroup | 动态配置默认分组 | sermant | 是 |
-| dynamic.config.serverAddress | 配置中心服务器地址，必须形如：{@code host:port[(,host:port)...]} | 127.0.0.1:2181 | 是 |
-| dynamic.config.dynamicConfigType | 动态配置中心服务实现类型，取NOP、ZOOKEEPER、KIE | ZOOKEEPER | 是 |
-| dynamic.config.connectRetryTimes | 动态配置中心ZOOKEEPER：启动Sermant时的配置中心的重连次数 | 5 | 是 |
-| dynamic.config.connectTimeout | 动态配置中心ZOOKEEPER：启动Sermant时连接配置中心的时间时间 | 1000 | 是 |
-| dynamic.config.userName | 动态配置中心ZOOKEEPER：配置中心的用户名 | - | 否 |
-| dynamic.config.password | 动态配置中心ZOOKEEPER：配置中心的加密后的密码 | - | 否 |
-| dynamic.config.privateKey | 动态配置中心ZOOKEEPER：加密密钥 | - | 否 |
-| dynamic.config.enableAuth | 动态配置中心ZOOKEEPER：是否需要配置授权 | false | 否 |
-| heartbeat.interval | 心跳发送间隔 | 30000 | 否 |
-| backend.nettyIp | Backend消息接收地址 | 127.0.0.1 | 否 |
-| backend.nettyPort | Backend消息接收端口 | 6888 | 否 |
-| service.meta.application | 服务名称 | default | 否 |
-| service.meta.version | 服务版本 | 1.0.0 | 否 |
-| service.meta.project | 服务命名空间 | default | 否 |
-| service.meta.environment | 服务所在环境 | - | 否 |
-| service.meta.zone | 服务所在az | - | 否 |
+#### agent框架相关参数
+
+| <span style="display:inline-block;width:100px">参数键</span> |  <span style="display:inline-block;width:200px">说明</span>  | <span style="display:inline-block;width:70px">参数类别</span> | 默认值                                                       | 是否必须 |
+| ------------------------------------------------------------ | :----------------------------------------------------------: | ------------------------------------------------------------ | ------------------------------------------------------------ | :------: |
+| agent.config.isEnhanceBootStrapEnable                        |                增强启动类加载器加载的类的开关                | agent参数                                                    | false                                                        |    否    |
+| agent.config.ignoredPrefixes                                 | 增强忽略集，该集合中定义的全限定名前缀用于排除增强过程中被忽略的类 | agent参数                                                    | com.huawei.sermant,com.huaweicloud.sermant                   |    否    |
+| agent.config.ignoredInterfaces                               | 增强忽略接口集，该集合中定义的接口用于排除增强过程中被忽略的类 | agent参数                                                    | org.springframework.cglib.proxy.Factory                      |    否    |
+| agent.config.combineStrategy                                 | 插件声明器的合并策略：NONE，不合并；BY_NAME，通过匹配的类名合并；ALL，所有都合并 | agent参数                                                    | ALL                                                          |    否    |
+| agent.config.serviceBlackList                                |       sermant-agent核心功能黑名单，添加后禁用相关服务        | agent参数                                                    | com.huaweicloud.sermant.implement.service.heartbeat.HeartbeatServiceImpl<br>,com.huaweicloud.sermant.implement.service.send.NettyGatewayClient<br>,com.huaweicloud.sermant.implement.service.tracing.TracingServiceImpl |    否    |
+| agent.config.serviceInjectList                               |                       拦截插件服务名单                       | agent参数                                                    | com.huawei.discovery.service.lb.filter.NopInstanceFilter<br>,com.huawei.discovery.service.lb.DiscoveryManager |    否    |
+| agent.config.isShowEnhanceLogEnable                          |                 是否在增强过程中输出检索日志                 | agent参数                                                    | false                                                        |    否    |
+| agent.config.enhancedClassOutputPath                         |            被增强类的输出路径，如果为空，则不输出            | agent参数                                                    | -                                                            |    否    |
+
+#### 动态配置中心相关参数
+
+| <span style="display:inline-block;width:100px">参数键</span> |<span style="display:inline-block;width:200px">说明</span>|参数类别|                            默认值                            | 是否必须 |
+| :----------------------------------------------------------: | :----------------------------------------------------------: | :------: | -------- | :------: |
+| dynamic.config.timeoutValue | 配置中心服务器连接超时时间，单位：ms | 动态配置中心参数 | 30000 | 是 |
+| dynamic.config.defaultGroup | 动态配置默认分组 | 动态配置中心参数 | sermant | 是 |
+| dynamic.config.serverAddress | 配置中心服务器地址，必须形如：{@code host:port[(,host:port)...]} | 动态配置中心参数 | 127.0.0.1:2181 | 是 |
+| dynamic.config.dynamicConfigType | 动态配置中心服务实现类型，当前支持Zookeeper和Kie。取值范围为NOP(无实现)、ZOOKEEPER或KIE。 | 动态配置中心参数 | ZOOKEEPER | 是 |
+| dynamic.config.connectRetryTimes | 动态配置中心ZOOKEEPER：启动Sermant时的配置中心的重连次数 | 动态配置中心参数 | 5 | 是 |
+| dynamic.config.connectTimeout | 动态配置中心ZOOKEEPER：启动Sermant时连接配置中心的时间时间 | 动态配置中心参数 | 1000 | 是 |
+| dynamic.config.userName | 动态配置中心ZOOKEEPER：配置中心的用户名 | 动态配置中心参数 | - | 否 |
+| dynamic.config.password | 动态配置中心ZOOKEEPER：配置中心的加密后的密码 | 动态配置中心参数 | - | 否 |
+| dynamic.config.privateKey | 动态配置中心ZOOKEEPER：用于对密码加解密的密钥 | 动态配置中心参数 | - | 否 |
+| dynamic.config.enableAuth | 动态配置中心ZOOKEEPER：是否开启配置中心授权，开启后需验证用户名密码 | 动态配置中心参数 | false | 否 |
+
+#### Backend相关参数
+
+| **参数键**         | **说明**               | **参数类别** | **默认值** | **是否必须** |
+| ------------------ | ---------------------- | ------------ | ---------- | :----------: |
+| heartbeat.interval | 心跳发送间隔，单位：ms | Backend参数  | 30000      |      否      |
+| backend.nettyIp    | Backend消息接收地址    | Backend参数  | 127.0.0.1  |      否      |
+| backend.nettyPort  | Backend消息接收端口    | Backend参数  | 6888       |      否      |
+
+#### 服务元数据相关参数
+
+| <span style="display:inline-block;width:100px">参数键</span> |  <span style="display:inline-block;width:200px">说明</span>  |    参数类别    | 默认值  | 是否必须 |
+| :----------------------------------------------------------: | :----------------------------------------------------------: | :------------: | ------- | :------: |
+|                   service.meta.application                   |             应用名称，用于服务注册等服务治理场景             | 服务元数据参数 | default |    否    |
+|                     service.meta.version                     |        服务版本，用于服务注册、标签路由等服务治理场景        | 服务元数据参数 | 1.0.0   |    否    |
+|                     service.meta.project                     |           服务命名空间，用于服务注册等服务治理场景           | 服务元数据参数 | default |    否    |
+|                   service.meta.environment                   |           服务所在环境，用于服务注册等服务治理场景           | 服务元数据参数 | -       |    否    |
+|                      service.meta.zone                       |       服务所在az，用于服务注册、标签路由等服务治理场景       | 服务元数据参数 | -       |    否    |
+|                   service.meta.parameters                    | 服务额外参数信息，以key:value形式配置，逗号分隔多个键值对，用于服务注册、标签路由等服务治理场景 | 服务元数据参数 | -       |    否    |
+
+#### 插件相关参数
+| <span style="display:inline-block;width:100px">参数键</span> |  <span style="display:inline-block;width:200px">说明</span>  |    参数类别    | 默认值  | 是否必须 |
+| :----------------------------------------------------------: | :----------------------------------------------------------: | :------------: | ------- | :------: |
+|                visibility.service.enableStart                |     服务可见性信息重推开关，当agentCore与Netty重连后会推送全量服务可见性数据 | 插件参数 | false |    否    |
 
 ### Sermant-agent挂载插件配置
 
@@ -121,7 +148,7 @@ plugins:                 # 可自定义配置默认挂载的插件名称
   - monitor
   - springboot-registry
   - mq-consume-deny
-profiles:                # 各profile自定义配置挂载的插件列表
+profiles:                # profiles自定义不同场景需配置挂载的插件列表
   cse:
     - flowcontrol
     - service-router
@@ -131,9 +158,60 @@ profiles:                # 各profile自定义配置挂载的插件列表
     - flowcontrol
     - service-router
 profile: cse,apm         # profile用于按场景配置挂载的插件列表，此处配置生效的场景
+
 ```
 
+其中各参数配置说明如下：
+
+|  参数键  |                 说明                 | 是否必须 |
+| :------: | :----------------------------------: | :------: |
+| plugins  |    以列表形式配置默认需加载的插件    |    是    |
+| profiles | 自定义配置各个场景下需挂载的插件列表 |    否    |
+| profile  |      自定义配置需加载的场景名称      |    否    |
+
 启动时，`plugins` 下配置的插件都会挂载至宿主应用，`profile`下的插件列表也可按需配置生效。
+
+**插件的加载顺序**
+
+Sermant插件的加载顺序如下：
+
+1. 首先按照`plugins`中配置的插件顺序来加载默认插件。
+2. 然后再按照`profile`配置的场景顺序来加载场景插件列表，各场景的插件加载顺序也和配置文件中的顺序一致。
+3. 如果`profiles`中的配置的插件已经在之前加载过，则不再重复加载。
+4. 不同插件的相同拦截点的字节码增强的**生效顺序与插件加载顺序**是一致的。
+
+### 参数配置方式
+
+Sermant项目sermant-agent的properties配置文件和各插件的中yaml配置文件都支持下列几种参数配置方式，以配置文件中的`backend.nettyIp=127.0.0.1`为例：
+
+1. 直接修改配置文件，即在配置文件中修改`backend.nettyIp=127.0.0.1`
+2. 通过应用启动时的-D参数配置，即`-Dbackend.nettyIp=127.0.0.1`
+3. 通过环境变量配置，即在环境变量中新增`backend.nettyIp=127.0.0.1`
+4. 通过sermant-agent启动参数配置，即`-javaagent:sermant-agent.jar=backend.nettyIp=127.0.0.1`
+
+以上四种方式，配置生效的优先级从高到低排列为：4 > 3 > 2 > 1。
+
+其中，后三种参数配置值的获取方式支持多种格式，以配置文件中的`backend.nettyIp=127.0.0.1`为例，下列配置格式都可识别：
+
+```txt
+backend.nettyIp=127.0.0.1
+backend_nettyIp=127.0.0.1
+backend-nettyIp=127.0.0.1
+BACKEND.NETTYIP=127.0.0.1
+BACKEND_NETTYIP=127.0.0.1
+BACKEND-NETTYIP=127.0.0.1
+backend.nettyip=127.0.0.1
+backend_nettyip=127.0.0.1
+backend-nettyip=127.0.0.1
+backend.netty.ip=127.0.0.1
+backend_netty_ip=127.0.0.1
+backend-netty-ip=127.0.0.1
+BACKEND.NETTY.IP=127.0.0.1
+BACKEND_NETTY_IP=127.0.0.1
+BACKEND-NETTY-IP=127.0.0.1
+```
+
+sermant-agent将从上至下依次检索各项配置值是否通过启动参数、环境变量、-D参数来配置。
 
 ## 支持版本
 
@@ -150,7 +228,13 @@ sermant-agent支持Linux、Windows、Aix操作系统,支持JDK 1.6及以上版�
 以**Sermant-example**项目 [demo-application](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/demo-application)为宿主应用，执行以下命令挂载sermant-agent启动demo-application:
 
 ```shell
-java -javaagent:sermant-agent/agent/sermant-agent.jar=appName=test -jar demo-application.jar
+# Run under Windows
+java -javaagent:sermant-agent-x.x.x\agent\sermant-agent.jar=appName=test -jar demo-application.jar
+```
+
+```shell
+# Run under Linux
+java -javaagent:sermant-agent-x.x.x/agent/sermant-agent.jar=appName=test -jar demo-application.jar
 ```
 
 ### 验证

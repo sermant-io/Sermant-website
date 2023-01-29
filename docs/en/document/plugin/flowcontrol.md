@@ -1,6 +1,6 @@
 # FlowControl
 
-This document is used to introduce the usage of [Flow Control Plugin](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-flowcontrol)
+This article describes how to use [Flow Control Plugin](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-flowcontrol).
 
 ## Functions
 
@@ -14,45 +14,58 @@ The flow control plugin is based on the [resilience4j]((https://github.com/resil
 - **Fusing index collection**： During the service operation, collect the information related to the fuse, and report the indicators with the help of the [monitoring plugin](./monitor.md)
 - **System Rule**：When the instance is running, if the system load, CPU, number of threads, average response time, and any index of qps exceed the preset value, flow control will be triggered to limit the request flow.
 - **System Adaptive**：When the instance is running, the request is adaptively flow controlled according to the current load status of the system and the system data in the past period.
-## Supported Versions and Limitations
-
-### Environment Preparation
-
-**Deploying the ServiceCenter and Kie environments**
 
 ## Parameter configuration
 
-### Configure Agent
-
-**（1）Modify service registration information and configuration center**
+### Configure Sermant-agent
 
 To modify service information and dynamically configure the type and address of the center, refer to [Sermant-agent User Manual](../user-guide/sermant-agent.md).
 
-```
-
-**（2）Configure the Flow Control Plugin**
+### Configure the Flow Control Plugin
 
 Modify the Configuration File`${javaagent path}/pluginPackage/flowcontrol/config/config.yaml`
 
 ```yaml
 flow.control.plugin:
-  useCseRule: true
-  enable-start-monitor: false 
+  useCseRule: false # Whether to enable ServiceComb adaptation
+  enable-start-monitor: false # Whether to start indicator monitoring
+  enable-system-adaptive: false # Whether the system adaptive flow control is enabled. Enabling this switch requires that the enable-system-rule configuration item also be enabled
+  enable-system-rule: false # Whether to enable system rule flow control
 ```
 
-If adaptation is enabled, the plugin subscribes to the configuration center based on the application configuration, service configuration, and customized tag configuration.
+| Key in Input Parameters       | Description                     | Default Value | Required |
+| ----------  | ----------------------- | ----- | ------ |
+| useCseRule  | If adaptation is enabled, the plugin subscribes to the configuration center based on the application configuration, service configuration, and customized tag configuration.If useCseRule is set to false, the flow control plugin configures subscription based on the service name of the current instance. For example, if spring.application.name is set to flowControlDemo, the flow control plugin receives configuration based on the service=flowControlDemo tag during actual subscription.  | true  | true |
+| enable-start-monitor | Indicator monitoring switch | false | false |
+| enable-system-adaptive | Whether to turn on the system adaptive flow control switch. To turn on this switch, the **enable-system-rule** configuration item should also be turned on, set to true, and after the corresponding flow control strategy is issued, adaptive flow control will be performed on the request flow according to the system load status | false | false |
+| enable-system-rule | Whether to turn on the system rule flow control switch, set it to true and issue the corresponding flow control policy, then the request flow will be controlled according to the system parameter threshold set in the policy | false | false |
 
-> If useCseRule is set to false, the flow control plugin configures subscription based on the service name of the current instance. For example, if spring.application.name is set to flowControlDemo, the flow control plugin receives configuration based on the service=flowControlDemo tag during actual subscription.
+## Detailed governance rules
 
-### Flow Control Rules Specification
+Traffic governance uses traffic marking and flow control rules to control specified traffic. Traffic marking refers to request information, such as the interface path, interface method type, request header, and downstream service name. 
 
-Traffic governance uses traffic marking and flow control rules to control specified traffic. Traffic marking refers to request information, such as the interface path, interface method type, request header, and downstream service name. Whether a flow control rule takes effect depends on the traffic flag. A flow control rule takes effect only when the traffic flag matches the request. The mapping between traffic marks and specific rules depends on the service scenario name. Generally, a specified prefix must be configured for traffic marks and traffic control rules. For example, the key of traffic marks must be prefixed with `servicecomb.MatchGroup`. The traffic limiting rule is prefixed with `servicecomb.rateLimiting`. The following is an example:
+Whether a flow control rule takes effect depends on the traffic flag. A flow control rule takes effect only when the traffic flag matches the request. The mapping between traffic marks and specific rules depends on the service scenario name. Generally, a specified prefix must be configured for traffic marks and traffic control rules. 
 
-The traffic marking configuration key：`servicecomb.MatchGroup.flow`
+Prefixes of flow marking and flow control rules are as follows:
 
-The key for configuring the traffic limiting rule：`servicecomb.rateLimiting.flow`
+| rule | prefix |
+| -- | -- |
+| traffic marks | servicecomb.MatchGroup |
+| traffic Limiting | servicecomb.rateLimiting |
+| Circuit Breaker | servicecomb.circuitBreaker |
+| Bulkhead | servicecomb.bulkhead |
+| Retry | servicecomb.retry |
+| Error Injection | servicecomb.faultInjection |
+| System Rule | servicecomb.system |
+| System Adaptive | servicecomb.system |
 
-In the preceding information, `flow `is the service scenario name. The traffic limiting rule takes effect only when the two service scenario names are the same and the request matches a traffic flag.
+For example, the key of traffic marks must be prefixed with `servicecomb.MatchGroup`. The traffic limiting rule is prefixed with `servicecomb.rateLimiting`. The following is an example:
+
+> The traffic marking configuration key：`servicecomb.MatchGroup.flow`
+> 
+> The key for configuring the traffic limiting rule：`servicecomb.rateLimiting.flow`
+> 
+> In the preceding information, `flow `is the service scenario name. The traffic limiting rule takes effect only when the two service scenario names are the same and the request matches a traffic flag.
 
 The following describes the related configurations:
 
@@ -73,9 +86,7 @@ The following describes the related configurations:
   **what traffic marking above can match  :**
 
   - If the request path is `/degrade`, the method type is `GET`, and the request header contains `key=value`, the matching is successful.
-
   
-
   > For details about the configuration items, see the traffic marking section in the [ServiceComb development document](http://servicecomb.gitee.io/servicecomb-java-chassis-doc/java-chassis/zh_CN/references-handlers/governance.html#_2).
 
   **Traffic marking request path (apiPath) configuration description**
@@ -94,72 +105,68 @@ The following describes the related configurations:
 
 - **Traffic Limiting**
 
-  | Configuration      | Description                                                  |
-  | ------------------ | ------------------------------------------------------------ |
-  | limitRefreshPeriod | Unit of statistics time, in milliseconds. If you need to set this parameter, the unit can be set to `S`, for example, `10s`. |
-  | rate               | Number of requests that can be processed in the unit of statistical time. |
+  | Configuration      | Description                                                  | Default Value | Required |
+  | ------------------ | ------------------------------------------------------------ | ---- | ---- |
+  | limitRefreshPeriod | Unit of statistics time, in milliseconds. If you need to set this parameter, the unit can be set to `S`, for example, `10s`. | 1000ms | false |
+  | rate               | Number of requests that can be processed in the unit of statistical time. | 1000 | false |
 
 - **Circuit Breaker**
 
-  | Configuration             | Description                                                  |
-  | ------------------------- | ------------------------------------------------------------ |
-  | failureRateThreshold      | Error rate required for fuse                                 |
-  | minimumNumberOfCalls      | Minimum number of requests in the sliding window. The fuse condition is determined only when the minimum number of requests is exceeded. |
-  | name                      | Specifies the name of a configuration item. This parameter is optional. |
-  | slidingWindowSize         | Size of the sliding statistics window. The value can be milliseconds or seconds. For example, 1000 indicates 1000 milliseconds, and 10s indicates 10 seconds. |
-  | slidingWindowType         | Sliding window type. Currently, `time` and `count` are supported. The former is based on the time window and the latter is based on the number of requests. |
-  | slowCallDurationThreshold | Slow request threshold. The unit is the same as that of the sliding window. |
-  | slowCallRateThreshold     | Percentage of slow invoking requests. When the number of slow invoking requests reaches this percentage, connectivity is triggered. |
-  | waitDurationInOpenState   | Recovery time after a circuit breaker. The default value is `60s`. |
+  | Configuration             | Description                                                  | Default Value | Required |
+  | ------------------------- | ------------------------------------------------------------ | ---- | ---- |
+  | failureRateThreshold      | Error rate required for fuse                                 | 50 | false |
+  | minimumNumberOfCalls      | Minimum number of requests in the sliding window. The fuse condition is determined only when the minimum number of requests is exceeded. | 100 | false |
+  | name                      | Specifies the name of a configuration item. This parameter is optional. | null | false |
+  | slidingWindowSize         | Size of the sliding statistics window. The value can be milliseconds or seconds. For example, 1000 indicates 1000 milliseconds, and 10s indicates 10 seconds. | 100ms | false |
+  | slidingWindowType         | Sliding window type. Currently, `time` and `count` are supported. The former is based on the time window and the latter is based on the number of requests. | time | false |
+  | slowCallDurationThreshold | Slow request threshold. The unit is the same as that of the sliding window. | 60s | false |
+  | slowCallRateThreshold     | Percentage of slow invoking requests. When the number of slow invoking requests reaches this percentage, connectivity is triggered. | 100 | false |
+  | waitDurationInOpenState   | Recovery time after a circuit breaker. The default value is `60s`. | 60s | false |
 
 - **Bulkhead**
 
-  | Configuration      | Description                                                  |
-  | ------------------ | ------------------------------------------------------------ |
-  | maxConcurrentCalls | Maximum number of concurrent calls                           |
-  | maxWaitDuration    | Maximum waiting time. If the thread exceeds maxConcurrentCalls, the thread attempts to wait. If the thread does not obtain resources after the waiting time expires, an isolation warehouse exception is thrown. |
-  | name               | name of configuration, which is optional.                    |
+  | Configuration      | Description                                                  | Default Value | Required |
+  | ------------------ | ------------------------------------------------------------ | ---- | ---- |
+  | maxConcurrentCalls | Maximum number of concurrent calls                           | 1000 | false |
+  | maxWaitDuration    | Maximum waiting time. If the thread exceeds maxConcurrentCalls, the thread attempts to wait. If the thread does not obtain resources after the waiting time expires, an isolation warehouse exception is thrown. | 0 | false |
+  | name               | name of configuration, which is optional.                    | null | false |
 
 - **Retry**
 
-  | Configuration         | Description                                                  |
-  | --------------------- | ------------------------------------------------------------ |
-  | waitDuration          | Retry wait time. The default value is milliseconds. The unit is second, for example, 2s. |
-  | retryStrategy         | Retry policy. Currently, two retry policies are supported: fixed interval (FixedInterval) and exponential increase interval (RandomBackoff). |
-  | maxAttempts           | Maximum number of retries                                    |
-  | retryOnResponseStatus | HTTP status code. Currently, only HTTP requests are supported. For dubbo requests, you can configure the exception type to determine whether to retry. The default value is RpcException. |
+  | Configuration         | Description                                                  | Default Value | Required |
+  | --------------------- | ------------------------------------------------------------ | ---- | ---- |
+  | waitDuration          | Retry wait time. The default value is milliseconds. The unit is second, for example, 2s. | 10ms | false |
+  | retryStrategy         | Retry policy. Currently, two retry policies are supported: fixed interval (FixedInterval) and exponential increase interval (RandomBackoff). | FixedInterval | false |
+  | maxAttempts           | Maximum number of retries                                    | 3 | false |
+  | retryOnResponseStatus | HTTP status code. Currently, only HTTP requests are supported. For dubbo requests, you can configure the exception type to determine whether to retry. The default value is RpcException. | null | false |
 
 - **Error Injection**
 
-  | Configuration | Description                                                  |
-  | ------------- | ------------------------------------------------------------ |
-  | type          | Error injection type. Currently, `abort (request response)` and `delay (request delay)` are supported. |
-  | percentage    | Error Injection triggering probability                       |
-  | fallbackType  | Return type of the request invoking. This parameter is valid only when `type is set to abort`. Currently, two types are supported, `ReturnNull`: empty content is directly returned and the status code is 200. `ThrowException`: The error code is returned based on the specified error code.` |
-  | errorCode     | Specifies the returned error code. The default value is 500. This parameter is valid only `when type is abort and fallbackType is ThrowException`. |
-  | forceClosed   | Indicates whether to forcibly disable the error injection capability. If this parameter is set to true, error injection does not take effect. The default value is false. |
+  | Configuration | Description                                                  | Default Value | Required |
+  | ------------- | ------------------------------------------------------------ | ---- | ---- |
+  | type          | Error injection type. Currently, `abort (request response)` and `delay (request delay)` are supported. | delay | false |
+  | percentage    | Error Injection triggering probability                       | -1 | true |
+  | fallbackType  | Return type of the request invoking. This parameter is valid only when `type is set to abort`. Currently, two types are supported, `ReturnNull`: empty content is directly returned and the status code is 200. `ThrowException`: The error code is returned based on the specified error code.` | ThrowException | false |
+  | errorCode     | Specifies the returned error code. The default value is 500. This parameter is valid only `when type is abort and fallbackType is ThrowException`. | 500 | false |
+  | forceClosed   | Indicates whether to forcibly disable the error injection capability. If this parameter is set to true, error injection does not take effect. The default value is false. | false | false |
 
 - **System Rule**
 
-  | Configuration | Configuration                                                          |
-  | ----------    | ------------------------------------------------------------ |
-  | systemLoad    | System load threshold, only supports linux |
-  | cpuUsage      | System cpu usage threshold |
-  | qps           | Qps threshold of inlet flow |
-  | aveRt         | Average response time threshold of inlet flow, Unit: ms |
-  | threadNum     | Number of concurrent threads for the inlet traffic |
+  | Configuration | Configuration                                                          | Default Value | Required |
+  | ----------    | ------------------------------------------------------------ | ---- | ---- | 
+  | systemLoad    | System load threshold, only supports linux | Double.MAX_VALUE | false |
+  | cpuUsage      | System cpu usage threshold | 1.0 | false |
+  | qps           | Qps threshold of inlet flow | Double.MAX_VALUE | false |
+  | aveRt         | Average response time threshold of inlet flow, Unit: ms | Long.MAX_VALUE | false |
+  | threadNum     | Number of concurrent threads for the inlet traffic | Long.MAX_VALUE | false |
 
 - **System Adaptive**
 
-  | Configuration | Configuration                                                         |
-  | ----------    | ------------------------------------------------------------ |
-  | systemLoad    | System load threshold, only supports linux |
+  | Configuration | Configuration                                                         | Default Value | Required |
+  | ----------    | ------------------------------------------------------------ | ---- | ---- | 
+  | systemLoad    | System load threshold, only supports linux | Double.MAX_VALUE | false |
 
-### Configuring Flow Control Rule
-
-#### Configuring Flow Control Rules Based On The Configuration File
-
-If your application is not a SpringBoot application, this method is not applicable.
+### Configuring Flow Control Rules Based On The Configuration File
 
 When an application is started, the flow control plugin attempts to read the flow control rules and corresponding traffic flags from the configuration source loaded by SpringBoot. You need to configure the flow control rules before starting the application. The following is a configuration example. The example configuration is based on the `application.yml` file.
 
@@ -228,209 +235,104 @@ servicecomb:
       threadNum: 100
 ```
 
-The preceding configurations are used to configure the supported flow control rules. Change the configuration items based on the site requirements.。
+### Publishing rules of dynamic configuration capability based on Sermant
 
-#### Configuring Interface Advertisement Rules Based on Sermant Backend
+For details, refer to [Dynamic Configuration User Manual](../user-guide/configuration-center.md)
 
-The backend service provides the function of publishing configurations through the /publishConfig request interface. The request parameters are as follows:
+## Supported Versions and Limitations
 
-| Configuration | Description                                                  |
-| ------------- | ------------------------------------------------------------ |
-| key           | Configuration key                                            |
-| group         | Configured tag group                                         |
-| content       | Configuration content, that is, specific rule configuration, is in YAML format. |
+### Version Required
 
-> The format of group is k1=v1, and multiple values are separated by ampersands (&). For example, k1=v1&k2=v2, indicating the label group bound to the key.
+| Framework | Version |
+| --- | --- |
+| SpringBoot | 1.2.x - 2.6.x |
+| SpringWebMvc | 4.1.3.RELEASE - 5.3.x |
+| Dubbo | 2.6.x-2.7.x |
 
-**The following uses `app=region-A,serviceName=flowControlDemo, environment=testing` as an example.**
+### Limitations
 
-- #### The Example Configuration For Traffic Marking Rule
-
-  ```json
-  {
-      "key":"servicecomb.matchGroup.scene",
-      "group":"app=region-A&service=flowControlDemo&environment=testing",
-      "content":"alias: scene\nmatches:\n- apiPath:\n    exact: /flow\n  headers: {}\n  method:\n  - POST\n  name: rule1\n"
-  }
-  ```
-
-
-**Rule Interpretation:**
-
-- If the request path is `/flow` and the method type is `GET`, the matching is successful.
-- This parameter takes effect for the service instance whose app is `region-A`, service name is `flowControlDemo`, and environment is `testing`.
-
-
-
-> **Notices：**
->
-> - To configure flow control, you need to configure the service scenario and then configure the flow control rule bound to the service scenario.
-> - The `key` must be preceded by `servicecomb.matchGroup`. and the scene indicates the service name.
-
-- #### The Example Configuration For Traffic Limiting Rule
-
-  ```json
-  {
-      "key":"servicecomb.rateLimiting.scene",
-      "group":"app=region-A&service=flowControlDemo&environment=testing",
-      "content":"limitRefreshPeriod: \"1000\"\nname: flow\nrate: \"2\"\n"
-  }
-  ```
-  **Rule Interpretation：**
-
-    - This parameter takes effect for the service instance whose app is region-A, service name is flowControlDemo, and environment is testing.
-    - If more than two requests are received within one second, flow control is triggered.
-
-  
-
-  > **Notices：**
-  >
-  > The `key` must be preceded by `servicecomb.rateLimiting`. and scene indicates the service name. Ensure that the value is the same as the service scenario name of the traffic tag.
-
-- #### The Example Configuration For Circuit Breaker Rule
-
-  ```json
-  {
-      "key":"servicecomb.circuitBreaker.scene",
-      "group":"app=region-A&service=flowControlDemo&environment=testing",
-      "content":"failureRateThreshold: 90\nminimumNumberOfCalls: 3\nname: degrade\nslidingWindowSize: 10S\nslidingWindowType: time\nslowCallDurationThreshold: \"1\"\nslowCallRateThreshold: 80\nwaitDurationInOpenState: 10s"
-  }
-  ```
-  **Rule Interpretation:**
-
-    - This parameter takes effect for the service instance whose app is region-A, service name is flowControlDemo, and environment is testing.
-    - If the number of interface or flow requests exceeds three within 10 seconds and the error rate exceeds 90% or the percentage of slow requests exceeds 80%, the circuit breaker is triggered.
-
-  
-
-  > **Notices：**
-  >
-  > The key must be preceded by servicecomb.circuitBreaker. and scene indicates the service name. Ensure that the value is the same as the service scenario name of the traffic tag.
-
-- #### The Example Configuration For Bulkhead Rule
-
-  ```json
-  {
-      "key":"servicecomb.bulkhead.scene",
-      "group":"app=region-A&service=flowControlDemo&environment=testing",
-      "content":"maxConcurrentCalls: \"5\"\nmaxWaitDuration: \"10S\"\nname: \"bulkhead\"\n"
-  }
-  ```
-
-  **Rule Interpretation:**
-
-    - This parameter takes effect for the service instance whose app is region-A, service name is flowControlDemo, and environment is testing.
-    - For an interface `/flow`, if the maximum number of concurrent requests exceeds 5 and a new request waits for 10 seconds and resources are not obtained, an exception occurs in the isolation repository.
-
-  
-
-  > **Notices：**
-  >
-  > The key must be preceded by servicecomb.bulkhead. and scene indicates the service name. Ensure that the value is the same as the service scenario name of the traffic tag.
-
-- #### The Example Configuration For Retry Rule
-
-  ```json
-  {
-      "key":"servicecomb.retry.scene",
-      "group":"app=region-A&service=flowControlDemo&environment=testing",
-      "content":"waitDuration: \"2000\"\nretryStrategy: FixedInterval\nmaxAttempts: 2\nretryOnResponseStatus:\n- 500"
-  }
-  ```
-
-  **Rule Interpretation：**
-
-    - This parameter takes effect for the service instance whose app is region-A, service name is flowControlDemo, and environment is testing.
-    - For an interface `/flow`, when the 500 exception is thrown, the request is retried until the retry succeeds or the maximum number of retry times is reached.
-
-  
-
-  > **Notices**：
-  >
-  > The key must be preceded by servicecomb.retry. and scene indicates the service name. Ensure that the value is the same as the service scenario name of the traffic tag.
-
-  **Notices**: For Dubbo retry, the flow control plugin will replace the original ClusterInvoker. The request logic is invoked by the ClusterInvoker implemented by the flow control plugin, and the original ClusterInvoker will become invalid (for example: Default FailoverClusterInvoker for dubbo. If you need to use original ClusterInvoker, you can add the environment variable `-Dflow.control.plugin.useOriginInvoker=true`. However, this method may cause a small performance loss.
-
-- #### The Example Configuration For Error Injection Rule
-
-  ```json
-  {
-      "key":"servicecomb.faultInjection.scene",
-      "group":"app=region-A&service=flowControlDemo&environment=testing",
-      "content":"type: abort\npercentage: 100\nfallbackType: ReturnNull\nforceClosed: false\nerrorCode: 503"
-  }
-  ```
-
-  **Rule Interpretation：**
-
-  - This parameter takes effect for the service instance whose app is region-A, service name is flowControlDemo, and environment is testing.
-  - When the interface /flow is requested, 100% returns null.
-
-  
-
-  > **Notices**：
-  >
-  > The key must be preceded by servicecomb.faultInjection. and scene indicates the service name. Ensure that the value is the same as the service scenario name of the traffic tag.
-
-- #### Description of Fusing Index
-  - Fusing indicator collection: collect the fusing indicator information under the fusing rules of the host service, and report it through [monitoring plugin](./monitor.md).
-  - The main indicators collected are:
-
-```shell
-  double fused_request;             // Number of requests passing the fusing rule
-  double failure_fuse_request;      // Number of failed requests in the fusing rule
-  double failure_rate_fuse_request; // Pass the failure rate in the fusing rule
-  double avg_response_ time;        // Average response time of requests through fusing rules
-  double slow_call_number;          // Number of slow requests
-  double permitted_fuse_request;    // Number of fused requests
-  double qps;                       // Number of requests per second passing the fusing rule
-  double tps;                       // Number of processes per second passed the fusing rule
-```
+- The `systemLoad` configuration in system rules and system adaptive rules is only limited to **linux**
+- The above [Configuring Flow Control Rules Based On The Configuration File](#Configuring Flow Control Rules Based On The Configuration File) is only applicable to **Springboot** applications
 
 ## Operation and result validation
 
-### 1、Compile And Package
+The following will demonstrate how to use the flow control plugin.
 
-[demo source code](https://github.com/huaweicloud/Sermant-examples/tree/main/flowcontrol-demo/spring-cloud-demo/spring-provider).
+### Preparation
 
-Run the following maven command to package the demo application:
+- [Download](https://github.com/huaweicloud/Sermant-examples/tree/main/flowcontrol-demo/spring-cloud-demo/spring-provider) Demo source code
+- [Download](https://github.com/huaweicloud/Sermant/releases) or build Sermant package
+- [Download](https://zookeeper.apache.org/releases#download) and start zookeeper
+- [Download](https://github.com/vran-dev/PrettyZoo/releases) PrettyZoo  and connect zookeeper
+
+### Step 1: Compile and package the demo application
+
+In the `${path}/Sermant-examples/flowcontrol-demo/spring-cloud-demo/spring-provider` directory execute the following command：
 
 ```shell
+# windows,Linux,mac
 mvn clean package
 ```
 
-### 2、Start Application
+After successful packaging， generate `spring-provider.jar` int the `${path}/Sermant-examples/flowcontrol-demo/spring-cloud-demo/spring-provider/target` directory
+
+> **Explain**： Path is the path where the demo application is downloaded
+
+### Step 2: Modify plug-in configuration
+
+Refer to [Plug-in Configuration](#Plugin Configurations) for modification`${path}/sermant-agent-x.x.x/agent/pluginPackage/dynamic-config/config/config.yaml`：
+```shell
+flow.control.plugin:
+  useCseRule: false 
+  enable-start-monitor: false 
+  enable-system-adaptive: false 
+  enable-system-rule: false 
+```
+
+### Step 3: Start the demo application
+
+Start the demo application with the following command
 
 ```shell
-java -javaagent:${agent path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=spring-flow-provider -Dservice.meta.application=region-A -Dservice.meta.environment=testing -Dspring.application.name=spring-flow-provider -jar spring-provider.jar
+# windwos
+java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar -Dspring.application.name=spring-flow-provider -Dspring.cloud.zookeeper.connectString=127.0.0.1:2181 -jar spring-provider.jar
+
+#linux mac
+java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar -Dspring.application.name=spring-flow-provider -Dspring.cloud.zookeeper.connectString=127.0.0.1:2181 -jar spring-provider.jar
 ```
 
-### 3、Configure The Rule
+> **Explain**：
+> The ${path} in the above command needs to be replaced with the actual installation path of Sermant。
+> x.x.x represents a certain version number of Sermant。
 
-Configure traffic marking and traffic limiting rules by referring to [Configuring Flow Control Rules](#Configuring-Flow-Control-Rule).
+### Step 4: Publish traffic tags
 
-**Traffic Marking:**
+Refer to [Dynamic Configuration Center User Manual](../user-guide/configuration-center.md)
 
 ```json
 {
-  "key": "servicecomb.matchGroup.sceneFlow",
-  "group": "app=sc&service=spring-flow-provider&environment=testing",
-  "content": "alias: scene\nmatches:\n- apiPath:\n    exact: /flow\n  headers: {}\n  method:\n  - POST\n  name: flow\n"
+  "content": "alias: scene\nmatches:\n- apiPath:\n    exact: /flow\n  headers: {}\n  method:\n  - GET\n  name: flow\n",
+  "group": "service=spring-flow-provider",
+  "key": "servicecomb.matchGroup.sceneFlow"
 }
 ```
 
-**Traffic Limiting Rule：**
+Take Zookeeper as an example, use PrettyZoo tool to publish traffic marking strategy and flow control strategy:
 
-```json
-{
-  "key": "servicecomb.rateLimiting.scene",
-  "group": "app=region-A&service=spring-flow-provider&environment=testing",
-  "content": "limitRefreshPeriod: \"2S\"\nname: flow\nrate: \"4\"\n"
-}
-```
+1. create node `/service=spring-flow-provider`
 
-### 4、Verify Result
+<MyImage src="/docs-img/flowcontrol-create-node-1.jpg"/>
+
+2. create node `/service=spring-flow-provider/servicecomb.matchGroup.sceneFlow` and data `"alias: scene\nmatches:\n- apiPath:\n    exact: /flow\n  headers: {}\n  method:\n  - GET\n  name: flow\n"`
+
+<MyImage src="/docs-img/flowcontrol-create-node-2.jpg"/>
+
+3. create node `/service=spring-flow-provider/servicecomb.rateLimiting.sceneFlow` and data `"limitRefreshPeriod: \"2S\"\nname: flow\nrate: \"4\"\n"`
+
+<MyImage src="/docs-img/flowcontrol-create-node-3.jpg"/>
+
+### Verify Result
 
 Request `localhost:8003/flow` for multiple times. If `rate limited` is returned when the number of requests exceeds 4 within 2 seconds, flow control is triggered successfully.
 
-See [monitoring plugin](./monitor.md) for the successful verification of monitoring collection.
+<MyImage src="/docs-img/flowcontrol-verity.jpg"/>

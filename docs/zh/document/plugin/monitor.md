@@ -1,184 +1,193 @@
 # 监控
 
-本文档主要用于[monitor模块](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-monitor)的使用说明
+本文介绍如何使用[监控插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-monitor)。
 
 ## 功能介绍
 
-资源监控模块用于监控宿主应用所在服务器的CPU、内存、磁盘IO和网络IO等硬件资源的使用情况，宿主应用Java虚拟机已经微服务的使用情况、微服务公共指标采集。
-
-监控模块依赖于prometheus进行指标收集,prometheus定期调用java agent的httpServer服务，获取插件注册的指标信息，并进行存储展示。
-
+监控插件用于监控宿主应用所在服务器的CPU、内存、磁盘IO和网络IO等硬件资源的使用情况，JVM资源使用情况比如堆内存使用、非堆内存使用、缓存区使用，吞吐量（QPS、TPS、平均响应时间）。监控插件依赖Prometheus进行指标收集，Prometheus会定期拉取监控插件采集的指标数据。
 
 ## 参数配置
 
+### 插件配置
+
+监控插件需要配置监控启用开关（`monitor.config.enableStartService`）、宿主应用所在环境的IP地址/域名（`monitor.config.address`）、宿主服务的端口（`monitor.config.port`）和上报方式（`monitor.config.reportType`）,可在`${path}/sermant-agent-x.x.x/agent/pluginPackage/monitor/config/config.yaml`找到该插件的配置文件， 配置如下所示：
+
 ```yaml
-monitor.config:                       # 监控服务配置
-  enable-start-service: false         # 监控服务启动开关
-  address: 127.0.0.1                  # 宿主服务的地址（建议使用HTTPS）
-  port: 12345                         # 宿主服务的端口信息
-  reportType: PROMETHEUS              # 监控指标上报方式  目前只支持HTTPS
-  userName:                           # 授权信息--授权用户名
-  password:                           # 授权信息--授权用户密码--AES加密--参见AESUtil
-  key:                                # 授权用户密码加密使用的KEY
+monitor.config:                       # 监控插件配置。
+  enableStartService: false           # 监控插件启动开关。为true时进行指标采集。
+  address: 127.0.0.1                  # 宿主应用所在环境的IP地址/域名。创建服务器实例时使用。prometheus通过调用创建的服务器实例获取插件采集的指标信息。
+  port: 12345                         # 对外提供Http服务的端口信息。创建服务器实例时使用。prometheus通过调用创建的服务器实例获取插件采集的指标信息。
+  reportType: PROMETHEUS              # 监控指标上报方式。目前只支持PROMETHEUS。
+  userName:                           # 授权信息--授权用户名。配置授权信息后，prometheus也需要配置授权信息才能正常获取指标，防止恶意请求获取指标信息。
+  password:                           # 授权信息--授权用户密码--AES加密密文。配置授权信息后，prometheus也需要配置授权信息才能获取指标，防止恶意请求获取指标信息。
+  key:                                # 授权用户密码加密使用的KEY。
 ```
 
-### monitor模块说明
+| 参数键                               | 说明                        | 默认值        | 是否必须 |
+| :----------------------------------- | :------------------------- | :------------| :------- |
+| monitor.config.enableStartService | 监控插件启动开关                  | false      | 是    |
+| monitor.config.address            | 宿主应用所在环境的IP地址/域名              | 127.0.0.1  | 是    |
+| monitor.config.port               | 对外提供Http服务的端口信息           | 12345      | 是    |
+| monitor.config.reportType         | 监控指标上报方式  目前只支持PROMETHEUS | PROMETHEUS | 是    |
+| monitor.config.userName           | 授权信息--授权用户名               | 空          | 否    |
+| monitor.config.password           | 授权信息--授权用户密码--AES加密       | 空          | 否    |
+| monitor.config.key                | 授权用户密码加密使用的KEY            | 空          | 否    |
 
-*使用背景*
+## 详细治理规则
 
-本服务包含三个采集子服务，分别为Linux资源监控采集、JVM资源监控、微服务监控采集
+监控插件目前能采集的指标数据如下表所示（对接prometheus之后用户可以通过指标名在prometheus查询具体的指标信息，参见[验证](#验证))：
 
-- Linux资源监控采集功能需要宿主应用部署在Linux环境。
-- JVM内存监控采集功能需要宿主应用使用OpenJDK或者基于OpenJDK的JDK版本
-- 微服务监控主要采集Dubbo服务以及Spring Cloud服务的指标信息
+| 指标名                              | 说明                  | 指标类型   |
+|:---------------------------------|:--------------------|:-------|
+| cpu_user                         | 用户态时间占比             | CPU    |
+| cpu_sys                          | 系统时间占比              | CPU    |
+| cpu_wait                         | 等待时间百分占比            | CPU    |
+| cpu_idle                         | 空闲时间占比              | CPU    |
+| cpu_cores                        | CPU物理核心数            | CPU    |
+| memory_total                     | 总内存大小               | memory |
+| memory_swap                      | 缓存内存用的交换空间的大小       | memory |
+| memory_cached                    | 缓存内存的物理内存总量         | memory |
+| memory_buffer                    | 给文件做缓冲大小            | memory |
+| memory_used                      | 已使用的内存大小            | memory |
+| disk_readBytesPerSec             | 采集周期内的磁盘每秒读字节数      | 磁盘IO   |
+| disk_writeBytesPerSec            | 采集周期内的磁盘每秒写字节数      | 磁盘IO   |
+| disk_ioSpentPercentage           | 采集周期内，磁盘IO花费的时间百分占比 | 磁盘IO   |
+| network_readBytesPerSec          | 采集周期内的网络每秒读字节数      | 网络     |
+| network_writeBytesPerSec         | 采集周期内的网络每秒读字节数      | 网络     |
+| network_readPackagePerSec        | 采集周期内的网络每秒写字节数      | 网络     |
+| network_writePackagePerSec       | 采集周期内，网络IO花费的时间百分占比 | 网络     |
+| heap_memory_init                 | 堆内存初始化值             | JVM    |
+| heap_memory_max                  | 堆内存最大值              | JVM    |
+| heap_memory_used                 | 堆内存已使用              | JVM    |
+| heap_memory_committed            | 堆内存已提交              | JVM    |
+| non_heap_memory_init             | 非堆内存初始化值            | JVM    |
+| non_heap_memory_max              | 非堆内存最大值             | JVM    |
+| non_heap_memory_used             | 非堆内存已使用值            | JVM    |
+| non_heap_memory_committed        | 非堆内存已提交             | JVM    |
+| code_cache_init                  | 代码缓存区初始化值           | JVM    |
+| code_cache_max                   | 代码缓存区最大值            | JVM    |
+| code_cache_used                  | 代码缓存区已使用            | JVM    |
+| code_cache_committed             | 代码缓存区已提交            | JVM    |
+| meta_sapce_init                  | 元空间初始化值             | JVM    |
+| meta_sapce_max                   | 元空间最大值              | JVM    |
+| meta_sapce_used                  | 元空间已使用值             | JVM    |
+| meta_sapce_committed             | 元空间已提交值             | JVM    |
+| compressed_class_space_init      | 压缩类空间初始化值           | JVM    |
+| compressed_class_space_max       | 压缩类空间最大值            | JVM    |
+| compressed_class_space_used      | 压缩类空间已使用值           | JVM    |
+| compressed_class_space_committed | 压缩类空间已提交值           | JVM    |
+| eden_init                        | eden区内存初始化值         | JVM    |
+| eden_max                         | eden区内存最大值          | JVM    |
+| eden_used                        | eden区内存已使用值         | JVM    |
+| eden_committed                   | eden区内存已提交值         | JVM    |
+| survivor_init                    | survivor区内存初始化值     | JVM    |
+| survivor_max                     | survivor区内存最大值      | JVM    |
+| survivor_used                    | survivor区内存已使用值     | JVM    |
+| survivor_committed               | survivor区内存已提交值     | JVM    |
+| old_gen_init                     | 老年代内存初始化值           | JVM    |
+| old_gen_max                      | 老年代内存最大值            | JVM    |
+| old_gen_used                     | 老年代内存已使用值           | JVM    |
+| old_gen_committed                | 老年代内存已提交值           | JVM    |
+| thread_live                      | 活动线程                | JVM    |
+| thread_peak                      | 线程峰值                | JVM    |
+| thread_daemon                    | 守护线程                | JVM    |
+| new_gen_count                    | 年轻代GC次数             | JVM    |
+| new_gen_spend                    | 年轻代GC耗时             | JVM    |
+| old_gen_count                    | 老年代GC次数             | JVM    |
+| old_gen_spend                    | 老年代GC耗时             | JVM    |
+| cpu_used                         | JVM占用CPU情况          | JVM    |
+| start_time                       | JVM已经启动时间，毫秒数       | JVM    |
+| qps                              | 每秒请求数               | 吞吐量    |
+| tps                              | 每秒请求处理数             | 吞吐量    |
+| avg_response_time                | 平均响应时间              | 吞吐量    |
 
-*功能说明*
+## 支持版本与限制
 
-- **Linux资源监控采集**：通过执行linux命令获取系统CPU、内存、磁盘IO、网络IO资源使用情况数据，并注册到prometheus的默认注册器。
-```shell
-  #CPU
-  cat /proc/stat
-  #MEMORY
-  cat /proc/meminfo
-  #DISK
-  cat /proc/diskstats
-  #NETWORK
-  cat /proc/net/dev
-  #CPU CORE
-  lscpu
-  ```
-- **采集内容**
-```shell
-  #CPU
-  double cpu_user;  // 用户态时间占比
-  double cpu_sys;   // 系统时间占比
-  double cpu_wait;  // 等待时间百分占比
-  double cpu_idle;  // 空闲时间占比
-  double cpu_cores; // CPU物理核心数
-```
+框架支持：
+- SpringBoot 1.5.10.Release及以上
+- Dubbo 2.6.x-2.7.x
 
-```shell
-  内存使用情况  
-  double memory_total;  // 总内存大小
-  double memory_swap;   // 对应cat /proc/meminfo指令的SwapCached
-  double memory_cached; // 对应cat /proc/meminfo指令的Cached
-  double memory_buffer; // 对应cat /proc/meminfo指令的Buffers
-  double memory_used;   // 已使用的内存大小
-```
-
-```shell
-  内存使用情况  
-  double memory_total;  // 总内存大小
-  double memory_swap;   // 对应cat /proc/meminfo指令的SwapCached
-  double memory_cached; // 对应cat /proc/meminfo指令的Cached
-  double memory_buffer; // 对应cat /proc/meminfo指令的Buffers
-  double memory_used;   // 已使用的内存大小
-```
-
-```shell
-  磁盘IO
-  double disk_readBytesPerSec;   // 采集周期内的每秒读字节数
-  double disk_writeBytesPerSec;  // 采集周期内的每秒写字节数
-  double disk_ioSpentPercentage; // 采集周期内，IO花费的时间百分占比
-```
-
-```shell
-  网络
-  double network_readBytesPerSec;    // 采集周期内的每秒读字节数
-  double network_writeBytesPerSec;   // 采集周期内的每秒写字节数
-  double network_readPackagePerSec;  // 采集周期内的每秒读包数
-  double network_writePackagePerSec; // 采集周期内的每秒写包数
-```
-
-- **JVM监控采集**：定时从java.lang.management.ManagementFactory获取JVM的指标情况
-
-```shell
-    JVM内存
-    double heap_memory_init;      // 堆内存初始化值
-    double heap_memory_max;       // 堆内存最大值
-    double heap_memory_used       // 堆内存已使用
-    double heap_memory_committed  // 堆内存已提交
-    
-    double non_heap_memory_init;      // 非堆内存初始化值
-    double non_heap_memory_max;       // 非堆内存最大值
-    double non_heap_memory_used       // 非堆内存已使用
-    double non_heap_memory_committed  // 非堆内存已提交
-    
-    double code_cache_init;      // 代码缓存区初始化值
-    double code_cache_max;       // 代码缓存区最大值
-    double code_cache_used       // 代码缓存区已使用
-    double code_cache_committed  // 代码缓存区已提交
-    
-    double meta_sapce_init;      // 元空间初始化值
-    double meta_sapce_max;       // 元空间最大值
-    double meta_sapce_used       // 元空间已使用
-    double meta_sapce_committed  // 元空间已提交
-    
-    double compressed_class_space_init;      // 压缩类空间初始化值
-    double compressed_class_space_max;       // 压缩类空间最大值
-    double compressed_class_space_used       // 压缩类空间已使用
-    double compressed_class_space_committed  // 压缩类空间已提交
-    
-    double eden_init;      // eden区内存初始化值
-    double eden_max;       // eden区内存最大值
-    double eden_used       // eden区内存已使用
-    double eden_committed  // eden区内存已提交
-    
-    double survivor_init;      // survivor区内存初始化值
-    double survivor_max;       // survivor区内存最大值
-    double survivor_used       // survivor区内存已使用
-    double survivor_committed  // survivor区内存已提交
-    
-    double old_gen_init;      // 老年代内存初始化值
-    double old_gen_max;       // 老年代内存最大值
-    double old_gen_used       // 老年代内存已使用
-    double old_gen_committed  // 老年代内存已提交
-```
-
-```shell
-    线程
-    double thread_live;   // 活动线程
-    double thread_peak;   // 线程峰值
-    double thread_daemon; // 守护线程
-```
-
-```shell
-    GC
-    double new_gen_count;  // 年轻代GC次数
-    double new_gen_spend;  // 年轻代GC耗时
-    double old_gen_count;  // 老年代GC次数
-    double old_gen_spend;  // 老年代GC耗时
-```
-
-```shell
-    JVM其他指标
-    double cpu_used;       // JVM占用CPU情况
-    double start_time;     // JVM已经启动时间，毫秒数
-```
-
-- **微服务监控采集**：拦截宿主服务的服务请求，计算宿主服务的公共请求指标
-```shell
-    微服务
-    double qps;                 // 每秒请求数
-    double tps;                 // 每秒请求处理数
-    double avg_response_time    // 平均响应时间
-```
+限制：
+- 依赖Prometheus
+- 服务器指标的采集依赖于Linux环境
 
 ## 操作和结果验证
 
-1. 修改插件config目前下的监控配置--config.yaml。修改对外提供服务的IP 端口 以及开关
+下面将演示如何使用监控插件。
+
+### 准备工作
+
+- [下载](https://start.spring.io/#!type=maven-project&language=java&platformVersion=2.7.7&packaging=jar&jvmVersion=1.8&groupId=com.example&artifactId=demo&name=demo&description=Demo%20project%20for%20Spring%20Boot&packageName=com.example.demo&dependencies=web)demo应用
+- [下载](https://github.com/huaweicloud/Sermant/releases)/编译sermant包
+- [下载](https://github.com/prometheus/prometheus/releases)Prometheus
+
+### 步骤一：编译打包demo应用
+在demo应用的根目录执行如下命令对demo应用进行打包:
+
+```shell
+mvn clean package
+```
+打包成功后，在demo根目录会生成`target`文件夹,进入`target`文件夹可以得到demo-0.0.1-SNAPSHOT.jar包。
+
+
+### 步骤二：修改配置
+
+- 修改监控插件配置，可在`${path}/sermant-agent-x.x.x/agent/pluginPackage/monitor/config/config.yaml`找到该配置文件。
+
 ```yaml
-monitor.config:                       # 监控服务配置
-  enable-start-service: false         # 对外服务开关 -- 开关true时prometheus可以调用服务端口获取指标信息
-  address: 127.0.0.1                  # 修改为宿主服务IP（建议使用HTTPS地址）
-  port: 12345                         # 修改为对外提供服务端口
+monitor.config:                       # 监控插件配置
+  enableStartService: true            # 监控插件启动开关。修改为true。
+  address: 127.0.0.1                  # 宿主应用所在环境的IP地址/域名。修改为宿主具体IP地址。
+  port: 12345                         # 对外提供Http服务的端口信息。修改为可用的端口。
+  reportType: PROMETHEUS              # 监控指标上报方式。目前只支持PROMETHEUS。
 ```
 
-2. 修改prometheus的配置文件. 在scrape_configs下增加对应的job信息（根据第一步配置的内容）
+- 修改[Prometheus](https://prometheus.io/docs/introduction/overview/)的配置文件prometheus.yml。
+在原有的作业信息下新增作业信息。
 
-3. 宿主应用挂载java agent进行启动。
+```yaml
+scrape_configs:
+  - job_name: "prometheus"            # 作业名称。此为prometheus原有的任务。
+    static_configs:
+      - targets: ["localhost:9090"]   # 监控主机地址
+  - job_name: "Sermant"               # 作业名称。新增采集监控插件指标的作业
+    metrics_path: /                   # 采集指标的请求路径。默认为 /
+    basic_auth:                       # 采集指标的授权信息，与监控插件配置保持一致。监控插件未配置时可删除该配置。
+      username:                       # 采集指标的授权信息-用户名称
+      password:                       # 采集指标的授权信息-密码
+    static_configs:                   
+      - targets: ["127.0.0.1:12345"]  # 采集指标的主机地址。此处的IP、端口信息与监控插件配置保持一致
+```
 
-4. 启动prometheus。即可在prometheus页面上查看指标信息
+### 步骤三：启动应用
+
+- 参考如下命令启动demo应用
+
+```shell
+# Run under Linux
+java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -jar demo-0.0.1-SNAPSHOT.jar
+```
+
+```shell
+# Run under Windows
+java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -jar demo-0.0.1-SNAPSHOT.jar
+```
+
+> **说明**：
+> 其中path需要替换为Sermant实际安装路径。
+> x.x.x代表Sermant某个版本号。
+
+
+- 启动 Prometheus
+
+### 验证
+
+打开Prometheus（默认为`http://127.0.0.1:9090`），查询指标。例如：查询`heap_memory_used`，能查询到信息则标示插件生效。
+
+查询效果图如下所示：
+
+<MyImage src="/docs-img/monitor.png"/>
+
 
 
 

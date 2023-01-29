@@ -1,10 +1,10 @@
 # SpringBoot Registry
 
-This article describes how to [SpringBoot registry plugin](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-springboot-registry) and how to use it.
+This article describes how to use the [SpringBoot registry plugin](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-springboot-registry).
 
 ## Function
 
-This plugin provides service registration and discovery abilities for pure SpringBoot applications. Users can quickly access the registration center without modifying code. In addition, the plugin also provides the service timeout retry ability, achieving high availability of service invocation.
+This plugin provides service registration and discovery abilities for pure SpringBoot applications. Users can quickly access the registration center(Currently only Zookeeper is supported) without modifying code. In addition, the plugin also provides the service timeout retry ability, achieving high availability of service invocation.
 
 The plugin takes effect based on URL resolution. The plugin parses downstream services based on the URL invoking by the client, selects a preferred instance based on load balancer, and dynamically replaces the URL to complete service invoking.
 
@@ -13,21 +13,15 @@ Currently, URL formats are supported.：http://www.domain.com/serviceName/apiPat
 Just like the URL above, ` www.domain.com` indicates the domain name, `serviceName` indicates the downstream service name, and `apiPath` indicates the downstream request interface path.
 
 
-## Parameter configuration
+## Plugin configuration
 
-### (Optional) Dynamic Configuration Center
-
-To modify the type and address of the dynamic configuration center, refer to [Sermant-agent User Manual](../../user-guide/sermant-agent.md).
-
-### (Optional) SpringBoot Plugin
-
-You can find the configuration file of the plugin in `${agent path}/agent/pluginPackage/springboot-registry/config/config.yaml`. The configuration is as follows:
+SpringBoot Registry plugin requires modification of the plugin configuration file on demand, which can be found in the path `${path}/agent/pluginPackage/springboot-registry/config/config.yaml`. The configuration file for the plugin is shown below:
 
 ```yaml
 sermant.springboot.registry:
   enableRegistry: false             # Whether to enable the boot registration capability
   realmName: www.domain.com        # Match the domain name, the current version only takes effect for the scene where the url is http://${realmName}/serviceName/api/xx
-  enableRequestCount: false        # Whether to enable traffic statistics, after opening, each time the traffic entering the plug-in will be printed
+  enableRequestCount: false        # Whether to enable traffic statistics, after opening, each time the traffic entering the plugin will be printed
 
 sermant.springboot.registry.lb:
   lbType: RoundRobin               # Load balancing type, currently supports round robin (RoundRobin), random (Random), response time weight (WeightedResponseTime), minimum concurrency (BestAvailable)
@@ -37,139 +31,135 @@ sermant.springboot.registry.lb:
   refreshTimerInterval: 5          # Instance timing check interval to determine whether the instance is expired, if it is greater than instanceRefreshInterval, then the value is set to instanceRefreshInterval
   enableSocketReadTimeoutRetry: true # Whether to retry for {@link java.net.SocketTimeoutException}: read timed out, enabled by default
   enableSocketConnectTimeoutRetry: true # Same as above, mainly for connect timed out, usually thrown when the connection is not upstream or downstream
-  enableTimeoutExRetry: true  
+  enableTimeoutExRetry: true       # Retry scenario, for {@link java.util.concurrent.TimeoutException}, whether retry is required, enabled by default, this timeout is mostly used in asynchronous scenarios, such as Future, MinimalHttpAsyncClient
 ```
+
+The configuration items are described as follows:
+
+|Parameter Key|Description|Default Value|Required|
+|---|---|---|---|---|
+|sermant.springboot.registry.enableRegistry|Whether to enable springboot registration capability (true/false)|false|Yes|
+|sermant.springboot.registry.realmName|Matching domain name, current version only works for **http://${realmName}/serviceName/api/xx** scenario|www.domain.com|Yes|
+|sermant.springboot.registry.enableRequestCount|Whether to turn on traffic statistics, after turning on the traffic will be printed every time you enter the plugin (true/false)|false|Yes|
+|sermant.springboot.registry.lb.lbType|Load balancing type, currently supports RoundRobin, Random, WeightedResponseTime, BestAvailable|RoundRobin|Yes|
+|sermant.springboot.registry.lb.registryAddress|Registration Center Address|127.0.0.1:2181|Yes|
+|sermant.springboot.registry.lb.instanceCacheExpireTime|Instance expiration time, in seconds, if <= 0 then never expires|0|Yes|
+|sermant.springboot.registry.lb.instanceRefreshInterval|Instance refresh time, in seconds, must be less than instanceCacheExpireTime|0|Yes|
+|sermant.springboot.registry.lb.refreshTimerInterval|Instance timing check interval, determine whether the instance is expired, if it is greater than instanceRefreshInterval, then the value is set to instanceRefreshInterval|5|Yes|
+|sermant.springboot.registry.lb.enableSocketReadTimeoutRetry|For **java.net.SocketTimeoutException: read timed out** whether to retry (true/false)|true|Yes|
+|sermant.springboot.registry.lb.enableSocketConnectTimeoutRetry|For **java.net.SocketTimeoutException: connect timed out** whether to retry (true/false)|true|Yes|
+|sermant.springboot.registry.lb.enableTimeoutExRetry|For **java.util.concurrent.TimeoutException** whether to retry (true/false)|true|Yes|
 
 Ensure that the values of` realName` and `registryAddress` are correct. Otherwise, the plugin does not take effect.
 
-In addition to the preceding configurations, the following configurations are optional. You can configure the configurations by using environment variables.
+## Detailed Governance Rules
 
-| Configuration                   | Desc                                                         | Default           |
-| ------------------------------- | ------------------------------------------------------------ | ----------------- |
-| connectionTimeoutMs             | Timeout interval for connecting to the ZooKeeper.            | 2000ms            |
-| readTimeoutMs                   | Read timeout interval for connecting to the ZooKeeper.       | 10000ms           |
-| retryIntervalMs                 | ZooKeeper connection retry interval                          | 3000ms            |
-| zkBasePath                      | Path of the node registered when the ZooKeeper as the registration center. | /sermant/services |
-| registryCenterType              | Registration center type. Currently, only ZooKeeper is supported. | Zookeeper         |
-| maxRetry                        | Maximum number of retries when a call timeout occurs         | 3 times           |
-| retryWaitMs                     | Retry Wait Time                                              | 1000ms            |
-| enableSocketConnectTimeoutRetry | Whether `SocketTimeoutException: connect timed out` to retry | true              |
-| enableSocketReadTimeoutRetry    | Whether `SocketTimeoutException: read timed out` to retry    | true              |
-| enableTimeoutExRetry            | Indicates whether to retry when a `TimeoutException` occurs. | true              |
-| specificExceptionsForRetry      | Extra retry exception                                        | emptyList         |
-| statsCacheExpireTime            | Indicates the cache duration of statistics indicators, in minutes. | 60Min             |
-| instanceStatTimeWindowMs        | Indicates the time window for counter statistics, in milliseconds. | 600000ms          |
+The SpringBoot registration plug-in needs to judge whether it needs to proxy the request according to the specified service name, and replace the url address. The plugin needs to be released based on the dynamic configuration center for grayscale strategy, publishing configuration can refer to [Configuration Center User's Manual](../../user-guide/configuration-center.md#sermant-dynamic-configuration-center-model).
 
-### (Mandatory) Configuring a Gray Policy
+The key value is **sermant.plugin.registry**.
 
-To make the plugin take effect, you need to configure a gray policy for the plugin.
+It is recommended to configure the group to microservice level, i.e. **app=${service.meta.application}&environment=${service.meta.environment}&service={spring.application.name}**, for the configuration of service.meta.application and service.meta.environment, please refer to the [Sermant-agent User Manual](../../user-guide/sermant-agent.md#sermant-agent-parameter-configuration), spring.application.name is the microservice name (i.e. the name of the service configured in the spring application).
 
-The gray policy is used to determine whether a request needs to be proxyed based on the specified service name and replace the URL. Currently, the gray policy includes the following three types:
-
-- all，all service URLs are replaced by proxy, regardless of downstream service names.
-- none, contrary to the above
-- white， In trustlist mode, the specified service collection proxy requests.
-
-The configuration format is as follows:
+The content is a gray strategy, which is described as follows:
 
 ```yaml
-# Gray Policy Type
-strategy: all
-# Trustlist service set. This parameter is valid only when strategy is set to white
-value: service-b
+strategy: all # Gray strategy , all (all effective)/none (all not effective)/white (white list)
+value: service-b,service-c # Whitelist service collection, only effective when strategy is configured as white, multiple service names separated by English commas
 ```
 
-#### **Gray Policy Delivery**
-
-##### Based On The Configuration Center
-
-You can also directly deliver configurations based on the configuration center client. The following uses ZooKeeper as an example.
-
-（1）Login the ZooKeeper Client.
-
-```shell
-# windows
-double click zkCli.cmd
-# linux
-sh zkCli.sh -server localhost:2181
-```
-
-（2）Create Group Path
-
-```shell
-create /app=default&environment= ""
-```
-
-（3）Create configuration node named `sermant.plugin.registry` 
-
-```shell
-create /app=default&environment=/sermant.plugin.registry "strategy: all"
-```
+**Note: When adding a new configuration, please remove the comment, otherwise it will cause the addition to fail.**
 
 ## Supported Versions and Limitations
 
-Reistry Center Support： Zookeeper 3.4.x and above
+Framework Supported:
 
-Client Supports：
+- SpringBoot 1.5.10.Release and above
+
+Registry Center Supported:
+
+- Zookeeper 3.4.x and above
+
+Client Supported：
 
 - HttpClient: 4.x
+
 - HttpAsyncClient: 4.1.4
+
 - OkhttpClient: 2.x, 3.x, 4.x
+
 - Feign(springcloud-openfeign-core): 2.1.x, 3.0.x
+
 - RestTemplate(Spring-web): 5.1.x, 5.3.x
-
-Application Framework Supports：SpringBoot 1.5.10.Release and above
-
 
 ## Operation and Result Verification
 
-The following uses the demo as an example to describe how to use the plugin ability.
+The following is an example of the springboot-registry-demo project to demonstrate how to register to Zookeeper using the springboot registry plugin.
 
-### Environment Preparation
+#### Preparations
 
-- JDK1.8 and above
-- Maven
-- Downloaded [demo souce code](https://github.com/huaweicloud/Sermant-examples/tree/springboor-registry-demo/registry-demo/springboot-registry-demo)
-- package sermant
+- [Download](https://github.com/huaweicloud/Sermant/releases)/Compile the sermant package
 
-### Package Demo
+- [Download](https://github.com/huaweicloud/Sermant-examples/tree/main/registry-demo/springboot-registry-demo) springboot-registry-demo source code
 
-Run the following command to pack the package:
+- [Download](https://zookeeper.apache.org/releases.html#download) Zookeeper, and start
+
+### Step 1: Compile and package the springboot-registry-demo application
+
+Execute the following command in the `${path}/Sermant-examples/registry-demo/springboot-registry-demo` directory:
 
 ```shell
+# windows
+mvn clean package
+
+# mac, linux
 mvn clean package
 ```
 
-You can get two JAR packages, service-a.jar and service-b.jar, and the calling relationship is a->b.
+After successful packaging, you can get `service-a.jar` in `${path}/Sermant-examples/registry-demo/springboot-registry-demo/service-a/target` , get `service-b.jar` in `${path}/Sermant-examples/registry-demo/springboot-registry-demo/service-b/target`.
 
-### Start the Demo Application.
+> Note: path is the path where the springboot-registry-demo application is downloaded.
 
-Run the following command to start application a:
+### Step 2: Deploy the applications
 
-```shell
-java --javaagent:${agent path}\sermant-agent-1.0.0\agent\sermant-agent.jar=appName=default -jar -Dserver.port=8989 service-a.jar
-```
-
-Run the following command to start application b:
+(1) Start application service-a:
 
 ```shell
-java --javaagent:${agent path}\sermant-agent-1.0.0\agent\sermant-agent.jar=appName=default -jar -Dserver.port=9999 service-b.jar
+# windows
+java -Dserver.port=8989 -Dsermant.springboot.registry.enableRegistry=true -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -jar service-a.jar
+
+# mac, linux
+java -Dserver.port=8989 -Dsermant.springboot.registry.enableRegistry=true -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -jar service-a.jar
 ```
 
-### Delivering a Gray Policy
+(2) start application service-b:
 
-[Deliver the gray policy](#(Mandatory) Configuring-a-Gray-Policy) by referring to. Deliver the following configurations:
+```shell
+# windows
+java -Dserver.port=9999 -Dsermant.springboot.registry.enableRegistry=true -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -jar service-b.jar
 
-```json
-{
-    "key":"sermant.plugin.registry",
-    "group":"app=default&environment=",
-    "content":"strategy: all"
-}
+# mac, linux
+java -Dserver.port=9999 -Dsermant.springboot.registry.enableRegistry=true -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -jar service-b.jar
 ```
 
-All downstream service requests will handled by plugin.
+> **Description**:
+> where path needs to be replaced with the actual installation path of Sermant.
+> x.x.x represents a Sermant version number.
+
+### Step 3: Configure gray strategy
+
+Configure gray strategy, please refer to [Configure gray strategy](#configuring-a-gray-strategy).
+
+The key is **sermant.plugin.registry**, group is **app=default&environment=&service=service-a**，content is **strategy: all**.
+
+```shell
+# zkClient command
+create /app=default&environment=&service=service-a
+
+create /app=default&environment=&service=service-a/sermant.plugin.registry "strategy: all"
+```
 
 ### Validation
+
+<MyImage src="/docs-img/springboot-registry.png"/>
 
 Invoke the` localhost:8989/httpClientGet` interface to check whether the interface is successfully returned. If yes, the plugin has taken effect.

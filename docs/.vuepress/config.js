@@ -68,10 +68,17 @@ module.exports = {
                 "plugin/loadbalancer",
                 "plugin/monitor",
                 "plugin/router",
-                "plugin/registry/",
-                "plugin/registry/springboot-registry",
-                "plugin/registry/spring-cloud-registry-migiration",
-                "plugin/registry/dubbo-registry-migiration",
+                {
+                  title: "注册",
+                  path: "",
+                  collapsable: true,
+                  sidebarDepth: 1,
+                  children: [
+                    "plugin/registry/",
+                    "plugin/registry/springboot-registry",
+                  ],  
+                },
+                "plugin/visibility",
               ],
             },
             {
@@ -81,9 +88,15 @@ module.exports = {
               sidebarDepth: 1,
               children: [
                 "developer-guide/",
-                "developer-guide/dev-complex-plugin",
+                "developer-guide/package-structure",
+                "developer-guide/bytecode-enhancement",
+                "developer-guide/plugin-configuration",
+                "developer-guide/dynamic-config-func",
+                "developer-guide/heartbeat-func",
+                "developer-guide/trace-tracking-func",
+                "developer-guide/log-func",
                 "developer-guide/third-party-copyright",
-                "developer-guide/version-manage",
+                "developer-guide/version-manage"
               ],
             },
             {
@@ -157,10 +170,17 @@ module.exports = {
                 "plugin/loadbalancer",
                 "plugin/monitor",
                 "plugin/router",
-                "plugin/registry/",
-                "plugin/registry/springboot-registry",
-                "plugin/registry/spring-cloud-registry-migiration",
-                "plugin/registry/dubbo-registry-migiration",
+                {
+                  title: "Registry",
+                  path: "",
+                  collapsable: true,
+                  sidebarDepth: 1,
+                  children: [
+                    "plugin/registry/",
+                    "plugin/registry/springboot-registry",
+                  ],  
+                },
+                "plugin/visibility",
               ],
             },
             {
@@ -170,7 +190,19 @@ module.exports = {
               sidebarDepth: 1,
               children: [
                 "developer-guide/",
-                "developer-guide/dev-complex-plugin",
+                {
+                  title: "Plugin development",
+                  path: "",
+                  collapsable: true,
+                  sidebarDepth: 1,
+                  children: [
+                    "developer-guide/plugin/",
+                    "developer-guide/plugin/log-func",
+                    "developer-guide/plugin/dynamic-config-func",
+                    "developer-guide/plugin/heartbeat-func",
+                    "developer-guide/plugin/trace-tracking-func",
+                  ]
+                },
                 "developer-guide/third-party-copyright",
                 "developer-guide/version-manage",
               ],

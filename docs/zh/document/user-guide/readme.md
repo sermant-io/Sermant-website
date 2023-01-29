@@ -6,6 +6,8 @@ Sermant 是基于Java Agent的字节码增强技术，通过 Java Agent 对宿�
 
 Sermant整体架构包括sermant-agent、Backend、动态配置中心、sermant-injector等组件。其中sermant-agent为核心字节码增强的实现组件，其余为Sermant架构的配套组件。
 
+<MyImage src="/docs-img/sermant-arch.png"/>
+
 ### sermant-agent
 
 sermant-agent为Sermant必要核心组件，其包含[sermant-agentcore](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore)、[sermant-plugins](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins)、[sermant-common](https://github.com/huaweicloud/Sermant/tree/develop/sermant-common)等字节码增强逻辑的实现主体，在宿主应用启动时通过`-javaagent`参数指定`sermant-agent.jar`包来挂载生效。
@@ -63,7 +65,7 @@ mvn clean package -DskipTests -Pagent
 - *agent*: 包含sermant-agent相关内容
     - *config*: 包含**Sermant**配置文件
     - *core*: 包含**Sermant**的核心框架包
-    - implement: 包含**Sermant**核心功能实现包
+    - *implement*: 包含**Sermant**核心功能实现包
     - *common*: 包含**Sermant**公共依赖包
     - *pluginPackage*: 包含各扩展功能插件包以及配置文件等
     - *sermant-agent.jar*: **Sermant**入口包，`-javaagent`参数的指定入口

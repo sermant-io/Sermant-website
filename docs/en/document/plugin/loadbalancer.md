@@ -1,177 +1,196 @@
-# Loadbalancer
+# Load balancing
 
-This document is used to introduce the usage of [loadbalancer](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-loadbalancer)
+This article describes how to use [Load balancing plugin](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-loadbalancer).
 
-## Functions
+## Function introduction
 
-Based on the configuration in the configuration center, the loadbalance rules of the host application can be dynamically modified without intrusion.
-
-## Supported Versions and Limitations
-
-| Framework                   | Strategy                             | Configuration value/Loadbalance Strategy       | version support                                              |
-| --------------------------- | ------------------------------------ | ---------------------------------------------- | ------------------------------------------------------------ |
-| dubbo                       | Random (Dubbo default)               | Random / RANDOM                                | 2.6.x, 2.7.x                                                 |
-| dubbo                       | RoundRobin                           | RoundRobin / ROUNDROBIN                        | 2.6.x, 2.7.x                                                 |
-| dubbo                       | leastActive                          | leastActive / LEASTACTIVE                      | 2.6.x, 2.7.x                                                 |
-| dubbo                       | Consistent hash                      | consistentHash / CONSISTENTHASH                | 2.6.x, 2.7.x                                                 |
-| dubbo                       | Minimum response time                | shortestResponse / SHORTESTRESPONSE            | 2.7.7+                                                       |
-| spring-cloud-netflix-ribbon | Area weight (default value)          | zoneAvoidance / ZONE_AVOIDANCE                 | ZONE_AVOIDANCEspring cloud Edgware.x, spring cloud Finchley.x, spring cloud Greenwich.x, spring cloud Hoxton.x |
-| spring-cloud-netflix-ribbon | Random                               | Random / RANDOM                                | spring cloud Edgware.x, spring cloud Finchley.x, spring cloud Greenwich.x, spring cloud Hoxton.x |
-| spring-cloud-netflix-ribbon | RoundRobin                           | RoundRobin / ROUND_ROBIN                       | spring cloud Edgware.x, spring cloud Finchley.x, spring cloud Greenwich.x, spring cloud Hoxton.x |
-| spring-cloud-netflix-ribbon | retry                                | retry / RETRY                                  | spring cloud Edgware.x, spring cloud Finchley.x, spring cloud Greenwich.x, spring cloud Hoxton.x |
-| spring-cloud-netflix-ribbon | bestAvailable                        | bestAvailable / BEST_AVAILABLE                 | spring cloud Edgware.x, spring cloud Finchley.x, spring cloud Greenwich.x, spring cloud Hoxton.x |
-| spring-cloud-netflix-ribbon | availabilityFiltering                | availabilityFiltering / AVAILABILITY_FILTERING | spring cloud Edgware.x, spring cloud Finchley.x, spring cloud Greenwich.x, spring cloud Hoxton.x |
-| spring-cloud-netflix-ribbon | Response Time Weighting (Deprecated) | ResponseTimeWeighted / RESPONSE_TIME_WEIGHTED  | spring cloud Edgware.x, spring cloud Finchley.x, spring cloud Greenwich.x, spring cloud Hoxton.x |
-| spring-cloud-netflix-ribbon | Response time weighting              | weightedResponseTime / WEIGHTED_RESPONSE_TIME  | spring cloud Edgware.x, spring cloud Finchley.x, spring cloud Greenwich.x, spring cloud Hoxton.x |
-| spring-cloud-loadbalancer   | RoundRobin(default)                  | RoundRobin / ROUND_ROBIN                       | spring cloud Hoxton.SR10+, spring cloud 2020.0.x, spring cloud 2021.0.x |
-| spring-cloud-loadbalancer   | Random                               | Random / RANDOM                                | spring cloud Hoxton.SR10+, spring cloud 2020.0.x, spring cloud 2021.0.x |
+The load balancing plug-in is mainly used to dynamically modify the load balancing policy of the host application without invasion.
 
 ## Parameter configuration
 
-Load balancing is dynamically configured based on the configuration center. To use this capability, you need to configure the corresponding load balancing policy in the configuration center. The loadbalance plugin uses **traffic marking + loadbalance rules**. To configure a rule, you **need to configure both of them**. The following describes the two configurations:
+### Plug-in configuration
 
-### Traffic Marking
+The load balancing plug-in needs to configure the default load balancing policy, whether to force the use of plug-in load balancing and other information. The configuration file of the plug-in can be found in the `${path}/sermant-agent-x.x.x/agent/pluginPackage/loadbalancer/config/config.yaml`. The configuration is as follows:
 
-Traffic marking is used to mark the services that take effect. If the service is empty, the traffic marking is applied to all microservices. The configuration example is as follows:
+```yml
+loadbalancer.plugin:
+    defaultRule:          # Default load balancing policy. When no load balancing policy is configured, the default load balancing policy is used.
+    forceUseSermantLb:    # Whether to force the use of plug-in load balancing. The load balancing plug-in determines whether to force the modification of the user's load balancing policy through this configuration. The current configuration is only valid for Ribon. Ribon may have its own load balancing configuration. If you do not want to affect your own load balancing configuration, you can set it to false.
+    useCseRule:           # Whether to use CSE rules. The load balancing plugin subscribes to different dynamic configuration paths based on whether to use CSE rules.
+```
 
-**Configuring key:**  `servicecomb.matchGroup.testLb`
+| Parameter key                         | Description                                        | Default value | Required |
+|---------------------------------------|----------------------------------------------------|---------------|----------|
+| Loadbalancer.plugin.defaultRule       | Default load balancing policy                      | Empty         | No       |
+| Loadbalancer.plugin.forceUseServantLb | Whether to force the use of plug-in load balancing | true          | No       |
+| Loadbalancer.plugin.useCseRule        | Whether to use cse rule                            | true          | No       |
 
-> description of key: 
->
-> `servicecomb.matchGroup. `：Fixed prefix of traffic marking. Traffic marking must be configured for all keys.
->
-> `testLb`：Service scenario name. The corresponding load balancing rule must be configured with the same service scenario name.
+## Detailed governance rules
 
-**configure content:**
+The load balancing plug-in publishes the configuration based on the dynamic configuration center. For configuration publishing, please refer to the [Dynamic Configuration Center User Manual](../user-guide/configuration-center.md#publish-configuration).
+
+The dynamic configuration information to be configured for the load balancing plug-in is as follows:
+
+- servicecomb.matchGroup.xxx: traffic token (dynamically configured key value). It is used to mark the services for which the current business scenario is effective. Its corresponding content is
 
 ```yaml
 alias: loadbalancer-rule
 matches:
-- serviceName: zk-rest-provider  # downstream service name
+  -serviceName: zk-rest-provider  # Target service name
 ```
+`serviceName`is the downstream service name. If the configuration item `serviceName` is not configured, it will be applied to all microservices. It should be noted that only the `serviceName` configuration item needs to be configured for this configuration, and other formats need to remain unchanged.
 
-Example rule description: serviceName indicates the name of the downstream service, that is, the loadbalance rule to be applied to the requested microservice zk-rest-provider. If the serviceName configuration item is not set, the configuration item applies to all microservices. Note that only the serviceName configuration item needs to be configured in this configuration. Other formats remain unchanged.
-
-> Priority: If multiple load balancing rules are configured, the plugin preferentially matches the load balancing rule with the service name configured. Otherwise, the plugin uses the load balancing rule with no service name configured.
-
-### Loadbalance Rule
-
-Load balancing rules must be configured for applications. Load balancing policies depend on the existing load balancing policies of the host. That is, load balancing policies can be configured only when the host supports the load balancing policies. For details about the supported load balancing policies, see the [Supported Versions and Limitations](#supported-versions-and-limitations).
-
-**configure key：**`servicecomb.loadbalance.testLb`
-
-> configuration item description: 
->
-> `servicecomb.loadbalance. `：Fixed prefix configured for the loadbalancer rule. Loadbalancer rules must be configured for all keys.
->
-> `testLb`：Service scenario name, which takes effect only when it is the same as the service scenario of the traffic flag.
-
-**configure content:**
+- servicecomb.loadbalance. xxx: Load balancing rule (dynamically configured key value). It is used to configure the load balancing rules that take effect in specific business scenarios. Its corresponding content is
 
 ```yaml
 rule: Random
 ```
 
-Example configuration item description: Configure a random load balancing rule. For details about the configuration values, see the [Supported Versions and Limitations](#supported-versions-and-limitations).
+> Note: **xxx is the name of the specific business scenario, and the load balancing policy takes effect when the traffic marking and load balancing policy scenarios are consistent**.
 
-> Check the framework version of the host application and determine the supported load balancing strategy.
+For the range of configuration values, see **Configuration Values** in Table [Supported Versions and Restrictions](#supported-versions-and-restrictions).
 
-### Publish Loadbalance Rule
+The load balancing plug-in supports two levels of group configuration by default:
 
-The Sermant Backend provides APIs for releasing configurations. Before using the API, you need to start the backend application. The following describes the configuration publishing interface:
+- Microservice level: that is, the value of group is `app=default&environment=&service=${yourServiceName}`, where `${yourServiceName}` is the microservice name obtained dynamically, and `environment` is empty by default. You can refer to [Parameter Configuration Method](../user-guide/sermant-agent.md#parameter-configuration-options) to change `app` and `envrionment`.
 
-**URL**
+- Application level: that is, the value of group is `app=default&environment=`, and `environment` is empty by default. The environment variable configuration method is the same as **microservice level**.
 
-POST /publishConfig
+## Supported versions and restrictions
 
-**Request Body**
+| Framework type              | policy name                    | configuration value/load balancing policy      | version support                                                                                                 |
+|-----------------------------|--------------------------------|------------------------------------------------|-----------------------------------------------------------------------------------------------------------------|
+| Dubbo                       | Random (dubbo default)         | Random/RANDOM                                  | 2.6. x, 2.7. x                                                                                                  |
+| Dubbo                       | Polling                        | RoundRobin/ROUNDROBIN                          | 2.6. x, 2.7. x                                                                                                  |
+| Dubbo                       | least active                   | leastActive/LEASTACTIVE                        | 2.6. x, 2.7. x                                                                                                  |
+| Dubbo                       | Consistency HASH               | consistentHash/CONSISTENTHASH                  | 2.6. x, 2.7. x                                                                                                  |
+| Dubbo                       | shortest response time         | shortestResponse/SHORTESTRESPONSE              | 2.7.7+                                                                                                          |
+| Spring-cloud-netflix-ribbon | region weight (ribbon default) | zoneAvoidance/ZONE_ AVOIDANCE                  | ZONE_ AVOIDANCEspring cloud Edgware.x, spring cloud Finchley.x, spring cloud Greenwich.x, spring cloud Hoxton.x |
+| Spring-cloud-netflix-ribbon | Random                         | Random/RANDOM                                  | spring cloud Edgware. x, spring cloud Finchley. x, spring cloud Greenwich. x, spring cloud Hoxton. x            |
+| Spring-cloud-netflix-ribbon | Polling                        | RoundRobin/ROUND_ ROBIN                        | spring cloud Edgware.x, spring cloud Finchley.x, spring cloud Greenwich.x, spring cloud Hoxton.x                |
+| Spring-cloud-netflix-ribbon | Retry                          | retry/RETRY                                    | spring cloud Edgware. x, spring cloud Finchley. x, spring cloud Greenwich. x, spring cloud Hoxton. x            |
+| Spring-cloud-netflix-ribbon | Minimum concurrency            | bestAvailable/BEST_ AVAILABLE                  | spring cloud Edgware.x, spring cloud Finchley.x, spring cloud Greenwich.x, spring cloud Hoxton.x                |
+| Spring cloud netflix rib    | filter polling                 | availability filtering/AVAILABILITY_ FILTERING | spring cloud Edgware.x, spring cloud Finchley.x, spring cloud Greenwich.x, spring cloud Hoxton.x                |
+| Spring-cloud-netflix-ribbon | Response time weighted         | ResponseTimeWeighted/RESPONSE_ TIME_ WEIGHTED  | spring cloud Edgware.x, spring cloud Finchley.x, spring cloud Greenwich.x, spring cloud Hoxton.x                |
+| Spring-cloud-netflix-ribbon | weighted response time         | weightedResponseTime/WEIGHTED_ RESPONSE_ TIME  | spring cloud Edgware.x, spring cloud Finchley.x, spring cloud Greenwich.x, spring cloud Hoxton.x                |
+| Spring-cloud-loadbalancer   | Polling (loadbalancer default) | RoundRobin/ROUND_ ROBIN                        | spring cloud Hoxton.SR10+, spring cloud 2020.0.x, spring cloud 2021.0.x                                         |
+| Spring cloud loader         | random                         | Random/RANDOM                                  | spring cloud Hoxton. SR10+, spring cloud 2020.0. x, spring cloud 2021.0. x                                      |
 
-| Params  | Mandatory or not | Param type | Description                                                  |
-| ------- | ---------------- | ---------- | ------------------------------------------------------------ |
-| key     | √                | String     | configuration key                                            |
-| group   | √                | String     | Configuration group, which is used to configure subscriptions |
-| content | √                | String     | Configuration text, that is, specific rules                  |
+## Operation and result verification
 
-In the preceding table, the key and content correspond to the key and content of the traffic tag and load balancing rule. The group refers to the tag of the specified service. The group is configured in the tag pair mode. For example, app=default&environment=development indicates publishing configurations for microservices that subscribe to this tag.
+The following will demonstrate how to use the load balancing plug-in.
 
-The loadbalance plugin has three subscription tags by default.：
+### Preparations
 
-- custom tag：By default, the tag `public=defaul`t is subscribed to. You can also modify the customized tag by setting environment variables and add the following parameters to the startup parameter: `-Dservice.meta.customLabel=public -Dservice.meta.customLabelValue=default`
-- microservice tag:  By default, the `app=default&service=${yourServiceName}&environment= tag is subscribed. ${yourServiceName}` indicates the microservice name and environment is empty by default. You can also use environment variables to change the startup parameters. Add the following parameters to the startup parameters: `-Dservice.meta.application=default -Dservice.meta.environment=${yourEnvironment}`, corresponds to app and envrionment, and the service name is dynamically obtained.
-- application tag：By default, the tag `app=default&environment=` is subscribed. The environment variable configuration method is the same as that of the microservice tag.
+- [Download](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/demo-register) demo source code
 
-### Version Notices
+- [Download](https://github.com/huaweicloud/Sermant/releases)/compile the sermant package
 
-- In versions earlier than spring cloud 20200.0.x, the core component used by spring cloud load balancers is spring-cloud-netflix-ribbon by default. (The host application can use the spring-cloud-loadbalancer component by excluding ribbon-related components.) From spring cloud 20200.0.x, the core component of load balancing is spring-cloud-loadbalancer.
+- [Download](https://zookeeper.apache.org/releases.html#download) And start zookeeper
 
-- In versions earlier than spring cloud Hoxton.SR10, the load balancing policy of spring-cloud-loadbalancer can only be round robin (ROUND_ROBIN). Therefore, the plugin does not support modifying the load balancing policy of spring-cloud-loadbalancer components earlier than Hoxton.SR10. For versions earlier than spring cloud Hoxton.SR10, you are advised to use the spring-cloud-netflix-ribbon component for load balancing.
+- [Download](https://github.com/vran-dev/PrettyZoo/releases) PrettyZoo and start connecting to zookeeper
 
-## Operation and result validation
+### Step 1: Compile and package the demo application
 
-1. Prerequisites: [sermant has been downloaded](https://github.com/huaweicloud/Sermant/releases), [the demo source code is downloaded](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/demo-register), and [the ZooKeeper is downloaded](https://zookeeper.apache.org/releases.html#download).
+Execute the following command in the `${path}/Sermant-examples/sermant-template/demo-register` directory:
 
-2. start zookeeper
+```shell
+mvn clean package
+```
 
-3. start backend, referring to the [backend module introduction](../user-guide/backend.md)
+After successful packaging, you can get the `resttemplate-consumer.jar` package in `${path}/Sermant-examples/sermant-template/demo-register/resttemplate-consumer/target`, in `${path}/Sermant-examples/ sermant-template/demo-register/resttemplate-provider/target` gets `resttemplate-provider.jar`.
 
-4. compile and package demo application
+> Note: path is the path where the demo application is downloaded.
 
-   ```
-   mvn clean package
-   ```
+### Step 2: Publish traffic tags
 
-   
+Refer to the [Dynamic Configuration Center User Manual](../user-guide/configuration-center.md#publish-configuration) for configuration publishing, and publish the following configuration
 
-5. publish traffic marking rule
+```json
+{
+    "content": "alias: loadbalancer-rule\n matches:\n- serviceName: zk-rest-provider", 
+    "group": "app=default&environment=&service=zk-rest-consumer", 
+    "key": "servicecomb.matchGroup.testLb"
+}
+```
 
-   Invoke the interface `localhost:8900/publishConfig`, request body just follow below:
+Taking zookeeper as an example, use the PrettyZoo tool to publish the traffic marking strategy:
 
-   ```json
-   {
-       "content": "alias: loadbalancer-rule\nmatches:\n- serviceName: zk-rest-provider", 
-       "group": {
-           "app": "default", 
-           "environment": "", 
-           "service": "zk-rest-consumer"
-       }, 
-       "key": "servicecomb.matchGroup.testLb"
-   }
-   ```
+1. Create node `/app=default&environment=&service=zk-rest-consumer`
 
-   
+<MyImage src="/docs-img/loadbalancer_node.png"/>
 
-6. publish loadbalance rule (Random as a example).
+2. Create node `/app=default&environment=&service=zk-rest-consumer/servicecomb.matchGroup.testLb` and data `alias: loadbalancer-rule\n matches:\n- serviceName: zk-rest-provider`
 
-   Invoke the interface`localhost:8900/publishConfig`, request body just follow below:
+<MyImage src="/docs-img/loadbalance_matchgroup.png"/>
 
-   ```json
-   {
-       "content": "rule: Random", 
-       "group": {
-           "app": "default", 
-           "environment": "", 
-           "service": "zk-rest-consumer"
-       }, 
-       "key": "servicecomb.loadbalance.testLb"
-   }
-   ```
 
-   
+### Step 3: Publish matching load balancing rules (take Random as an example)
 
-7. Starting a provider (two instances)
+Refer to the [Dynamic Configuration Center User Manual](../user-guide/configuration-center.md#publish-configuration) for configuration publishing, and publish the following configuration
 
-   ```shell
-   java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -Dserver.port=${port} -jar zk-rest-provider.jar
-   ```
+```json
+{
+    "content": "rule: Random", 
+    "group": "app=default&environment=&service=zk-rest-consumer", 
+    "key": "servicecomb.loadbalance.testLb"
+}
+```
 
-   Replace `path` with the **actual packaging path** of the Sermant and port with the producer port. In this example, you need to start two instances. Configure different ports for the two instances.
+Taking zookeeper as an example, use the PrettyZoo tool to publish the load balancing strategy:
 
-8. Start a consumer (one instance).
+1. Create node `/app=default&environment=&service=zk-rest-consumer/servicecomb.loadbalance.testLb` and data `rule: Random`
 
-   ```shell
-   java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -Dserver.port=8005 -jar zk-rest-consumer.jar
-   ```
+<MyImage src="/docs-img/loadbalance_lb.png"/>
 
-9. testing
 
-   After the preceding steps are complete, access the localhost:8005/hello interface and check whether the random load balancing rule (by default, RoundRobin) takes effect based on the returned port.
+### Step 4: Start the demo application
+
+Refer to the following command to start two producers
+
+- Refer to the following command to start the service provider, the port is 8006
+```shell
+# Run under Linux
+java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -Dserver.port=8006 -jar resttemplate-provider.jar
+```
+
+```shell
+# Run under Windows
+java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -Dserver.port=8006 -jar resttemplate-provider.jar
+```
+
+- Refer to the following command to start the service provider, the port is 8007
+
+```shell
+# Run under Linux
+java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -Dserver.port=8007 -jar resttemplate-provider.jar
+```
+
+```shell
+# Run under Windows
+java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -Dserver.port=8007 -jar resttemplate-provider.jar
+```
+
+- Refer to the following command to start the consumer (one instance is enough), the port is 8005
+
+```shell
+# Run under Linux
+java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -Dserver.port=8005 -jar resttemplate-consumer.jar
+```
+
+```shell
+# Run under Windows
+java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -Dserver.port=8005 -jar resttemplate-consumer.jar
+```
+
+> **illustrate**:
+> Where path needs to be replaced with the actual installation path of Sermant.
+> x.x.x represents a Sermant version number.
+
+### Verification
+After all the above steps are completed, access the interface <http://localhost:8005/hello>, multiple calls. If 8006 and 8007 are randomly displayed in the returned port information, it means that the random load balancing rule (polling by default) has taken effect.
+
+The renderings are as follows:
+
+<MyImage src="/docs-img/loadbanlance1.png"/>
+<MyImage src="/docs-img/loadbanlance2.png"/>

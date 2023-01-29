@@ -1,6 +1,6 @@
 # Backend使用手册
 
-Backend为Sermant数据处理后端模块和前端信息展示模块，旨在为Sermant提供运行时的可观测能力，当前主要包括Sermant心跳信息的接收和展示等功能。本文介绍如何使用Backend。
+Backend包含Sermant数据处理后端模块和前端信息展示模块，旨在为Sermant提供运行时的可观测能力，当前主要包括Sermant心跳信息的接收和展示等功能。本文介绍如何使用Backend。
 
 Backend与sermant-agent配合使用。sermant-agent挂载在宿主应用启动后作为数据发送端，可定时发送当前Sermant的心跳数据，包含应用名、实例ID、版本号、IP、时间戳、挂载插件信息等。Backend作为数据接收端，可接收处理sermant-agent发送的心跳数据，并在前端可视化展示，提供观测运行状态的能力。
 
@@ -8,20 +8,25 @@ Backend为**非必要组件**，用户可按需部署。
 
 ## 参数配置
 
-sermant-agent端参数配置：
+### sermant-agent参数配置
 
-修改sermant-agent产品包agent/config/config.properties配置文件的相关配置
+首先在[Sermant-agent使用手册agent框架相关参数配置](sermant-agent.md#agent框架相关参数)中`agent.config.serviceBlackList` 配置禁止启动的核心服务时，需去除`com.huaweicloud.sermant.implement.service.heartbeat.HeartbeatServiceImpl`以**启用心跳服务**。
 
-|            参数键             | <span style="display:inline-block;width:200px">说明</span> |                            默认值                            | 是否必须 |
-| :---------------------------: | :--------------------------------------------------------: | :----------------------------------------------------------: | :------: |
-| agent.config.serviceBlackList |      sermant-agent核心功能黑名单，添加后禁用相关服务       | com.huaweicloud.sermant.implement.service.heartbeat.HeartbeatServiceImpl<br>,com.huaweicloud.sermant.implement.service.send.NettyGatewayClient<br>,com.huaweicloud.sermant.implement.service.tracing.TracingServiceImpl |    否    |
-|      heartbeat.interval       |                        心跳发送间隔                        |                            30000                             |    否    |
-|        backend.nettyIp        |                    Backend消息接收地址                     |                          127.0.0.1                           |    否    |
-|       backend.nettyPort       |                    Backend消息接收端口                     |                             6888                             |    否    |
+其次，修改sermant-agent产品包`agent/config/config.properties`配置文件的相关配置，具体参数说明请参考[Sermant-agent使用手册Backend相关参数配置](sermant-agent.md#Backend相关参数)。
 
-其中，`agent.config.serviceBlackList ` 配置禁止启动的核心服务，需去除`com.huaweicloud.sermant.implement.service.heartbeat.HeartbeatServiceImpl`以**启用心跳服务**。
+心跳的部分数据从sermant-agent启动参数中采集，因此还需按实际场景配置启动参数，具体参数说明请参考[Sermant-agent使用手册的启动参数配置](sermant-agent.md#Sermant-agent启动参数)。
 
-Backend端参数无需额外配置，默认以6888为netty消息接收端口，8900为服务进程端口。
+### Backend参数配置
+
+Backend参数可在编译打包前通过`sermant-backend-lite/src/main/resources/application.properties`配置文件进行修改，同时也支持在jar包启动前通过-D参数或环境变量的方式进行配置。
+
+| **参数键**         | **说明**                             | **默认值** | **是否必须** |
+| ------------------ | ------------------------------------ | ---------- | ------------ |
+| server.port        | Backend的服务占用端口                | 8900       | 否           |
+| netty.port         | Netty消息接收端口                    | 127.0.0.1  | 否           |
+| netty.wait.time    | Netty的读等待时间，单位：s           | 60         | 否           |
+| max.effective.time | 判断应用心跳存活的有效时间，单位：ms | 60000      | 否           |
+| max.cache.time     | 应用心跳在缓存中的有效时间，单位：ms | 600000     | 否           |
 
 ## 支持版本
 

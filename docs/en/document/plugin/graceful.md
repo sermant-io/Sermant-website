@@ -1,15 +1,15 @@
 # Graceful Online/Offline
 
-The document is used to introduce the usage of graceful online/offline,  it is currently integrated in the [Service Registration Plugin](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-registry), but can be used independently.
+This article introduces how to use the graceful log-in and log-in plugin. Currently, the elegant log-in and log-out function is currently integrated in the [registration plugin](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-registry), Can be used independently.
 
 ## Functions
 
-Operations such as restarting, upgrading, and capacity expansion of applications cannot be avoided. During these operations, the following problems may occur:
+For any online application, operations such as release, expansion, reduction, and restart are unavoidable, and the following problems are often encountered in the process:
 
-- Due to heavy traffic, the instance is accessed by a large amount of traffic during initialization. As a result, requests may be blocked or even broken down. For example, lazy loading.
-- When an instance goes offline, the upstream application cannot be notified in real time due to it's refresh mechanism which need refresh instances at schedule time. As a result, traffic is lost or incorrect.
+- For a newly launched instance, due to excessive traffic, the instance is accessed by a large amount of traffic when it is initialized, resulting in request blocking or even downtime, such as lazy loading scenarios.
+- When the instance goes offline, due to the delayed refresh problem found in the registration, the upstream cannot be notified in time, resulting in traffic loss or errors.
 
-To solve the preceding problems, graceful online/offline is developed. To solve the preceding problems, the plug-in provides the **warm up** and **graceful offline** capabilities to protect against the preceding problems.
+In order to solve the above problems, graceful log-off came into being. For the above two problems, the plug-in provides **preheating** and **graceful log-off** capabilities to provide protection for the above-mentioned scenario problems.
 
 **Warm up**, as the name suggests, uses a small amount of traffic to access the instance first, and gradually increases the traffic based on time to ensure that the newly started instance can successfully transition.
 
@@ -27,7 +27,7 @@ Regitry Center Support：Zookeeper、Consul、Naocs、Eureka、Service Center
 
 ### Enabling Graceful Online and Offline
 
-To use the graceful Online and Offline capability, you need to enable the capability. For details, see the [configuration file](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-registry/config/config.yaml). If you have packed the Sermant or download Release package, the configuration file path is `${agent path}/agent/pluginPackge/service-registry/config/config.yaml` 
+The graceful log-in plug-in needs to enable the graceful log-in switch (`grace.rule.enableSpring`), configure the startup delay time (`grace.rule.startDelayTime`), enable the warm-up (`grace.rule.enableWarmUp`), and other configurations. Find the configuration file of the plugin in `${path}/sermant-agent-x.x.x/agent/pluginPackge/service-registry/config/config.yaml`, the configuration is as follows:
 
 ```yaml
 grace.rule:
@@ -40,150 +40,121 @@ grace.rule:
   enableOfflineNotify: true # Whether to enable proactive offline notification.
   httpServerPort: 16688 # Enable the http server port for proactive offline notification.
   upstreamAddressMaxSize: 500 # Default size of the cache upstream address
-  upstreamAddressExpiredTime: 60 # Expiration time of the cached upstream address
+  upstreamAddressExpiredTime: 60 # Expiration time of the cached upstream address. Unit: s.
 ```
 
-In addition to the preceding configuration file mode, you can also configure environment variables or system parameters. For example, you can set the environment variable `-Dgrace.rule.enableSpring=true to enable` for configuration 'enableSpring'.
+| Parameter key                        | Description                                                             | Default value | Required |
+| :----------------------------------- | :---------------------------------------------------------------------- | :------------| :------- |
+| grace.rule.enableSpring              | springCloud elegant online and offline switch                           | false         | YES    |
+| grace.rule.startDelayTime            | Graceful online and offline startup delay time, unit S                  | 0             | YES    |
+| grace.rule.enableWarmUp              | Whether to enable preheating                                            | false         | YES    |
+| grace.rule.enableGraceShutdown       | Whether to enable graceful offline                                      | false         | YES    |
+| grace.rule.shutdownWaitTime          | The maximum waiting time for related traffic detection before shutdown, unit S. EnabledGraceShutdown needs to be enabled to take effect  | 30            | YES    |
+| grace.rule.enableOfflineNotify       | Whether to open the offline active notification                         | false         | YES    |
+| grace.rule.httpServerPort            | The httpServer port for active offline notification is enabled          | 16688          | YES    |
+| grace.rule.upstreamAddressMaxSize    | The default size of cached upstream addresses                           | 5000           | YES    |
+| grace.rule.upstreamAddressExpiredTime| Expiration time of cache upstream address, unit S                       | 60            | YES    |
 
-### Use Graceful Online and Offline
+## Supported Versions and Limitations
 
-#### Virtual Machine Scenario
+Framework support:
 
-Based your OS, start application with agent, in addition configure  configuration which to enable graceful online/offline.
+- **Only supports SpringCloud applications**, you need to ensure that the SpringCloud version is `Edgware.SR2` and above
+- Registry support: Zookeeper, Consul, Naocs, Eureka, ServiceCenter
 
-```shell
-# windows
-java -Dgrace.rule.enableSpring=true -Dgrace.rule.enableWarmUp=true -Dgrace.rule.enableGraceShutdown=true -Dgrace.rule.enableOfflineNotify=true -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -jar xxx.jar
+Limit:
 
-# mac, linux
-java -Dgrace.rule.enableSpring=true -Dgrace.rule.enableWarmUp=true -Dgrace.rule.enableGraceShutdown=true -Dgrace.rule.enableOfflineNotify=true -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -jar xxx.jar
-```
-
-Description of relevant identifiers:
-
-- ${path}: path indicates the actual agent path. Please replace it with the actual path.
-- sermant-agent-x.x.x： x.x.x need be replaced  with the actual Sermant version, for example, 1.0.0.
-- xxx.jar: is your app package. Please replace it with your app package name.
-
-#### Container Scenario
-
-In container scenarios, you can quickly start using the `Sermant-Injector`. For details, see [Container-based Deployment](../injector.md).
-
-In addition, you need to modify the [deployment orchestration file](../injector.md#Deployment) by adding environment variables for graceful login and logout. The modified orchestration file is as follows:
-
-```yaml
-apiVersion: v1
-kind: Deployment
-metadata:
-  name: demo-test
-  labels:
-    app: demo-test
-spec:
-  replicas: 1
-  selector:
-    app: demo-test
-    matchLabels:
-      app: demo-test
-  template:
-    metadata:
-      labels:
-        app: demo-test
-        sermant-injection: enabled
-    spec:
-      containers:
-      - name: image
-        # Please replace it with own image
-        image: image:1.0.0
-        ports: 
-        - containerPort: 8080
-        env:
-        - name: "grace_rule_enableSpring"
-          value: "true"
-        - name: "grace.rule.enableWarmUp"
-          value: "true"
-        - name: "grace_rule_enableGraceShutdown"
-          value: "true"
-        - name: "grace.rule.enableOfflineNotify"
-          value: "true"
-  ports:
-    - port: 443
-      targetPort: 8443
-```
-
-Then start application according to the containerization process .
+- The ability to go online and offline gracefully is developed based on SpringCloud's default load balancing capability. If you implement a custom load balancing capability, this capability will no longer apply
 
 ## Operation and result validation
 
-The following uses a simple demo to demonstrate how to verify graceful online/offline in a VM scenario.
+The following demonstrates how to use the graceful online and offline plugin.
 
-1. Environment Preparation
+### Preparation
 
-   （1）Download the JDK and configure the JDK environment. The JDK version must be 1.8 or later. Download the Maven and configure the Maven environment.
+- [Download](https://github.com/huaweicloud/Sermant/releases)/Compile the sermant package
+- [Download](https://github.com/huaweicloud/Sermant-examples/tree/main/grace-demo/spring-grace-nacos-demo) Demo source code
+- [Download](https://github.com/alibaba/nacos/releases) nacos, and start
+- [Download](https://zookeeper.apache.org/releases.html#download) zookeeper, and start
 
-   （2）Download the latest Sermant release package. Click [here](https://github.com/huaweicloud/Sermant/releases) to download it.
+### Step 1: Compile and package the demo application
 
-   （3）Download the [Demo Source Code](https://github.com/huaweicloud/Sermant-examples/tree/main/grace-demo/spring-grace-nacos-demo)
+Execute the following command in the `${path}/Sermant-examples/grace-demo/spring-grace-nacos-demo` directory:
 
-   （4）Compile Demo
+```shell
+mvn clean package
+```
 
-   ​	Run the following command to package the demo:
+After successful packaging, you can get ` nacos-rest-data-2.2.0.RELEASE.jar in `${path}/Sermant-examples/grace-demo/spring-grace-nacos-demo/nacos-rest-data/target` `package, get `nacos-rest-consumer-2.2.0.RELEASE.jar` at `${path}/Sermant-examples/grace-demo/spring-grace-nacos-demo/nacos-rest-consumer/target` , get `nacos-rest-provider-2.2.0.RELEASE.jar` in `${path}/Sermant-examples/grace-demo/spring-grace-nacos-demo/nacos-rest-provider/target`.
 
-   ​	`mvn clean package`
+> Note: path is the path where the demo application is downloaded.
 
-   （5）Download nacos and start
+### Step 2: Deploy the application
 
-   （6）Download and start the ZooKeeper (the sermant configuration center).
+We will deploy a consumer instance, 2 provider instances, and a data instance. as follows:
 
-2. Deploy
+`consumer -----------> provider (two instances) -------------> data`
 
-   We will deploy one consumer instance, two provider instances, and one data instance, as shown in the following figure:
+Among them, the consumer enables the graceful log-off capability, one provider instance enables the warm-up and graceful log-off capabilities, and the other provider instance only enables the graceful log-off capability.
 
-   `consumer  ----------->  provider(two instances)  ------------->  data`
+> Note: The parameters of the graceful log-in and log-out plug-in are configured below through the -D parameter when the application starts.
 
-   The graceful online/offline are enabled for the consumer, the warm up and graceful offline are enabled for one provider instance, and only the graceful offline are enabled for the other provider instance.
+(1) start data
 
-   （1）Startup data
-
-   ```shell
+```shell
    java -Dspring.cloud.nacos.discovery.server-addr=localhost:8848 -jar nacos-rest-data-2.2.0.RELEASE.jar
-   ```
+```
 
-   （2）Start the first provider instance (port is 8880, with the **warm up  disabled**).
+(2) Start the first provider instance (port 8880, **Turn off preheating function**)
 
-   ```shell
-   # windows
-   java -Dgrace.rule.enableSpring=true -Dgrace.rule.enableWarmUp=false -Dgrace.rule.enableGraceShutdown=true -Dgrace.rule.enableOfflineNotify=true -Dgrace.rule.httpServerPort=16688 -Dspring.cloud.nacos.discovery.server-addr=localhost:8848 -Dserver.port=8880 -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -jar nacos-rest-provider-2.2.0.RELEASE.jar
-   
-   # mac, linux
-   java -Dgrace.rule.enableSpring=true -Dgrace.rule.enableWarmUp=false -Dgrace.rule.enableGraceShutdown=true -Dgrace.rule.enableOfflineNotify=true -Dgrace.rule.httpServerPort=16688 -Dspring.cloud.nacos.discovery.server-addr=localhost:8848 -Dserver.port=8880 -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -jar nacos-rest-provider-2.2.0.RELEASE.jar
-   ```
+```shell
+# Run under Linux
+java -Dgrace.rule.enableSpring=true -Dgrace.rule.enableWarmUp=false -Dgrace.rule.enableGraceShutdown=true -Dgrace.rule.enableOfflineNotify=true -Dspring.cloud.nacos.discovery.server-addr=localhost:8848 -Dserver.port=8880 -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -jar nacos-rest-provider-2.2.0.RELEASE.jar
+```
 
-   （3）Start the second provider instance (port is 8890,  with the **warm up  enabled**).
+```shell
+# Run under Windows
+java -Dgrace.rule.enableSpring=true -Dgrace.rule.enableWarmUp=false -Dgrace.rule.enableGraceShutdown=true -Dgrace.rule.enableOfflineNotify=true -Dspring.cloud.nacos.discovery.server-addr=localhost:8848 -Dserver.port=8880 -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -jar nacos-rest-provider-2.2.0.RELEASE.jar
+```
 
-   ```shell
-   # windows
-   java -Dgrace.rule.enableSpring=true -Dgrace.rule.enableWarmUp=true -Dgrace.rule.enableGraceShutdown=true -Dgrace.rule.enableOfflineNotify=true -Dgrace.rule.httpServerPort=16689 -Dspring.cloud.nacos.discovery.server-addr=localhost:8848 -Dserver.port=8890 -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -jar nacos-rest-provider-2.2.0.RELEASE.jar
-   
-   # mac, linux
-   java -Dgrace.rule.enableSpring=true -Dgrace.rule.enableWarmUp=true -Dgrace.rule.enableGraceShutdown=true -Dgrace.rule.enableOfflineNotify=true -Dgrace.rule.httpServerPort=16689 -Dspring.cloud.nacos.discovery.server-addr=localhost:8848 -Dserver.port=8890 -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -jar nacos-rest-provider-2.2.0.RELEASE.jar
-   ```
+(3) Start the second provider instance (port 8890, **enable preheating capability**)
 
-   （4）Startup consumer
+```shell
+# Run under Linux
+java -Dgrace.rule.enableSpring=true -Dgrace.rule.enableWarmUp=true -Dgrace.rule.enableGraceShutdown=true -Dgrace.rule.enableOfflineNotify=true -Dspring.cloud.nacos.discovery.server-addr=localhost:8848 -Dserver.port=8890 -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -jar nacos-rest-provider-2.2.0.RELEASE.jar
+```
 
-   ```shell
-   # windows
-   java -Dgrace.rule.enableSpring=true -Dgrace.rule.enableWarmUp=true -Dgrace.rule.enableGraceShutdown=true -Dgrace.rule.enableOfflineNotify=true -Dgrace.rule.httpServerPort=16690 -Dspring.cloud.nacos.discovery.server-addr=localhost:8848 -Dserver.port=8800 -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -jar nacos-rest-consumer-2.2.0.RELEASE.jar
-   
-   # mac, linux
-   java -Dgrace.rule.enableSpring=true -Dgrace.rule.enableWarmUp=true -Dgrace.rule.enableGraceShutdown=true -Dgrace.rule.enableOfflineNotify=true -Dgrace.rule.httpServerPort=16690 -Dspring.cloud.nacos.discovery.server-addr=localhost:8848 -Dserver.port=8800 -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -jar nacos-rest-consumer-2.2.0.RELEASE.jar
-   ```
+```shell
+# Run under Windows
+java -Dgrace.rule.enableSpring=true -Dgrace.rule.enableWarmUp=true -Dgrace.rule.enableGraceShutdown=true -Dgrace.rule.enableOfflineNotify=true -Dspring.cloud.nacos.discovery.server-addr=localhost:8848 -Dserver.port=8890 -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -jar nacos-rest-provider-2.2.0.RELEASE.jar
+```
 
-3. Verify warm up
+(4) start consumer
+```shell
+# Run under Linux
+java -Dgrace.rule.enableSpring=true -Dgrace.rule.enableWarmUp=true -Dgrace.rule.enableGraceShutdown=true -Dgrace.rule.enableOfflineNotify=true -Dspring.cloud.nacos.discovery.server-addr=localhost:8848 -Dserver.port=8800 -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -jar nacos-rest-consumer-2.2.0.RELEASE.jar
+```
 
-   Request the `localhost:8800/graceHot` interface and check whether the preheating takes effect based on the IP address and port number returned by the interface. If the response contains port 8880 in the majority during the warm up period (120s by default), and the traffic is averaged over time, the warm up has taken effect.
+```shell
+# Run under Windows
+java -Dgrace.rule.enableSpring=true -Dgrace.rule.enableWarmUp=true -Dgrace.rule.enableGraceShutdown=true -Dgrace.rule.enableOfflineNotify=true -Dspring.cloud.nacos.discovery.server-addr=localhost:8848 -Dserver.port=8800 -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -jar nacos-rest-consumer-2.2.0.RELEASE.jar
+```
 
-4. Verify graceful offline
 
-   Continuously request the `localhost:8800/graceDownOpen` interface. Make one of the provider instances offline. Check whether occurs error in the request. If no error occurs, the graceful offline  verification is successful.
+> **Description**:
+> where path needs to be replaced with the actual installation path of Sermant.
+> x.x.x represents a Sermant version number.
 
-   [return **Sermant** Documentation](../document/UserGuide/README.md)
+### Verification
+
+#### Preheating capability verification
+
+<MyImage src="/docs-img/springcloud-grace-warm-up.png"/>
+
+Access the interface `localhost:8800/graceHot`, and judge whether the preheating is effective according to the ip and port returned by the interface. If during the warm-up period (default 120s) the access is biased towards the provider whose port is `8880`, and the traffic becomes **average** over time, it means that the pre-heating takes effect.
+
+#### Elegant offline verification
+
+<MyImage src="/docs-img/springcloud-grace-graceful-offline.png"/>
+
+Continue to access the interface `localhost:8800/graceDownOpen`, and then log off one of the provider instances to observe whether there is an error in the request. If there is no error, the graceful offline capability verification is successful.

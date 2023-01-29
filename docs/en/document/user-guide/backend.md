@@ -10,20 +10,25 @@ The Backend is a **non-essential component** that can be deployed on demand.
 
 ## Parameter Configuration
 
-Parameter configuration of sermant-agent:
+### Sermant-agent Parameter Configuration
 
-Modify relevant configuration of `agent/config/config.properties` in sermant-agent product package.
+First, when configure `agent.config.serviceBlackList` in [Parameters Related to Agent Framework of Sermant-agent User Manual](sermant-agent.md#parameters-related-to-agent-framework) to decide which core services are forbidden to start, it is necessary to remove `com.huaweicloud.sermant.implement.service.heartbeat.HeartbeatServiceImpl` to **enable heartbeat service**.
 
-|         Parameter Key         | <span style="display:inline-block;width:200px">Description</span> |                        Default Value                         | Required |
-| :---------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :------: |
-| agent.config.serviceBlackList | Sermant-agent core functionality blacklist to disable related services | com.huaweicloud.sermant.implement.service.heartbeat.HeartbeatServiceImpl<br>,com.huaweicloud.sermant.implement.service.send.NettyGatewayClient<br>,com.huaweicloud.sermant.implement.service.tracing.TracingServiceImpl |  False   |
-|      heartbeat.interval       |                   Heartbeat send interval                    |                            30000                             |  False   |
-|        backend.nettyIp        |              Backend message receiving address               |                          127.0.0.1                           |  False   |
-|       backend.nettyPort       |                Backend message receiving port                |                             6888                             |  False   |
+Second, modify relative configuration in `agent/config/config.properties` of sermant-agent product package. Please refer to [Parameters Related to Backend of Sermant-agent User Manual](sermant-agent.md#parameters-related-to-backend) for specific parameters.
 
-Where `agent.config.serviceBlackList ` configures core services that are not allowed to start，you must not add `com.huaweicloud.sermant.implement.service.heartbeat.HeartbeatServiceImpl` to enable heartbeat function.
+Part of the data of heartbeat is collected from the startup parameters of sermant-agent, so it is necessary to configure the startup parameters according to the actual scene. For specific parameters, please refer to [Sermant-agent Startup Parameters of Sermant-agent User Manual](sermant-agent.md#sermant-agent-startup-parameters).
 
-The Backend parameters do not need additional configuration. By default, 6888 is the netty message receiving port, and 8900 is the service process port.
+### Backend Parameter Configuration
+
+Backend parameters can be configured before compilation or packaging in `sermant-backend-lite/src/main/resources/application.properties`. It is also possible to configure backend parameters by -D parameter or environment variables before the jar starts.
+
+| **Parameter Key**  | **Description**                                              | **Default Value** | **Required** |
+| ------------------ | ------------------------------------------------------------ | ----------------- | ------------ |
+| server.port        | The occupied port of the Backend                             | 8900              | False        |
+| netty.port         | Message receiving port of net                                | 127.0.0.1         | False        |
+| netty.wait.time    | Read wait time of Netty, in second                           | 60                | False        |
+| max.effective.time | Time, in milliseconds, to determine whether the application is alive or not | 60000             | False        |
+| max.cache.time     | Valid time in the cache for the application heartbeat, in millisecond | 600000            | False        |
 
 ## Versions Supported
 
