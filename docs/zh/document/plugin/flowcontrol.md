@@ -1,17 +1,17 @@
 # 流控
 
-本文介绍如何使用[流控插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-flowcontrol)。
+本文介绍如何使用[流控插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-flowcontrol)
 
 ## 功能介绍
 
 流控插件基于[resilience4j](https://github.com/resilience4j) 框架，以"流量"切入点，实现"无侵入式"流量控制；当前支持**限流**、**熔断**、**隔离仓**、**错误注入**与**重试**、**熔断指标采集**能力，并且支持配置中心动态配置规则，实时生效。
 
-- **限流**：对指定接口限制1S秒内通过的QPS，当1S内流量超过指定阈值，将触发流控，限制请求流量。
-- **熔断**：对指定接口配置熔断策略，可从单位统计时间窗口内的错误率或者慢请求率进行统计，当请求错误率或者慢请求率达到指定比例阈值，即触发熔断，在时间窗口重置前，隔离所有请求。
-- **隔离仓**：针对大规模并发流量，对并发流量进行控制，避免瞬时并发流量过大导致服务崩溃。
-- **重试**：当服务遇到非致命的错误时，可以通过重试的方式避免服务的最终失败。
+- **限流**：对指定接口限制1S秒内通过的QPS，当1S内流量超过指定阈值，将触发流控，限制请求流量，在客户端和服务端都可生效。
+- **熔断**：对指定接口配置熔断策略，可从单位统计时间窗口内的错误率或者慢请求率进行统计，当请求错误率或者慢请求率达到指定比例阈值，即触发熔断，在时间窗口重置前，隔离所有请求，在客户端和服务端都可生效。
+- **隔离仓**：对指定接口设置允许的最大并发量，当超过最大并发量时，对并发流量进行排队等待控制，等待超过最大等待时间则拒绝调用，避免瞬时并发流量过大导致服务崩溃，在客户端和服务端都可生效。
+- **重试**：当服务遇到非致命的错误时，可以通过重试的方式避免服务的最终失败，插件配置重试策略后，应用原重试策略即失效。
 - **错误注入**：指在服务运行时，给指定服务配置错误注入策略，在客户端访问目标服务前，以指定策略模式返回。该策略多用于减少目标服务的访问负载，可作为降级的一种措施。
-- **熔断指标采集**： 在服务运行过程中，采集熔断的相关信息，并借助[监控插件](./monitor.md)进行指标上报。
+- **熔断指标采集**：当服务配置了熔断策略后，插件会异步采集熔断的相关信息，并通过[监控插件](./monitor.md)进行指标上报，
 - **系统规则**：在实例运行时，若系统负载，CPU，线程数，平均响应时间，qps任意指标超出预置，将触发流控，限制请求流量。
 - **系统自适应**：在实例运行时，根据系统当前负载状态，以及过去一段时间内系统数据，对请求进行自适应流控。
 
@@ -37,11 +37,46 @@ flow.control.plugin:
 | 参数键       | 说明                     | 默认值 | 是否必须 |
 | :----------  | ----------------------- | ----- | ------ |
 | useCseRule  | 是否开启ServiceComb适配; <br> **true**:插件根据应用配置,服务配置,自定义标签订阅配置 <br> **false**:插件根据实例服务名进行配置订阅  | true  | 是     |
-| enable-start-monitor | 是否开启指标监控的开关; | false | 否 |
+| enable-start-monitor | 是否开启指标监控的开关; **true**:熔断指标数据通过监控插件上传至Prometheus，详情查看[监控插件](./monitor.md) | false | 否 |
 | enable-system-adaptive | 是否开启系统自适应流控的开关; <br> **true**:根据系统负载对请求流量进行自适应流控 | false | 否 |
 | enable-system-rule | 是否开启系统规则流控开关; <br> **true**:根据流控策略中的系统参数阈值进行流控 | false | 否 |
 
 ## 详细治理规则
+
+流控配置主要基于`group`进行配置订阅，该`group`由多个键值对组成。
+
+> 配置中心的设置参考[动态配置中心使用手册](../user-guide/configuration-center.md#发布配置)
+
+#### 根据采用配置中心的不同，`group`的值将会有所区别，如下：
+
+- 采用`zookeeper`
+
+  此时插件将根据宿主应用的服务名进行订阅, 即应用配置的`spring.applicaton.name`, 插件订阅配置的group为`service=${spring.applicaton.name}`
+
+- 采用`KIE`
+
+  此时插件将根据**应用配置**，**服务配置**以及**自定义配置**三项数据配置**同时**订阅， 而这三类配置可参考`${path}/sermant-agent-x.x.x/agent/config/config.properties`, 相关配置如下：
+
+    ```properties
+    # 服务app名称
+    service.meta.application=default
+    # 服务版本
+    service.meta.version=1.0.0
+    # serviceComb 命名空间
+    service.meta.project=default
+    # 环境
+    service.meta.environment=development
+    # 自定义标签，按需配置，用于后续的配置订阅
+    service.meta.customLabel=public
+    service.meta.customLabelValue=default
+    ```
+
+  应用配置，服务配置，自定义配置说明参考[CSE配置中心概述](https://support.huaweicloud.com/devg-cse/cse_devg_0020.html)
+  - 应用配置：由`service.meta.application`与`service.meta.environment`组成， 对应的`group`为`app=default&environment=development`
+  - 服务配置：由`service.meta.application`、`service.meta.environment`以及服务名组成，此处服务即`spring.application.name`, 对应的`group`为`app=default&environment=development&service=DynamicConfigDemo`
+  - 自定义配置：由`service.meta.customLabel`与`service.meta.customLabelValue`组成， 对应的`group`为`public=default`
+
+#### 以下介绍配置键key的规则：
 
 流量治理采用流量标记+流控规则的方式对指定的流量进行流控，所谓流量标记，通俗讲为请求信息，例如接口路径、接口方法类型、请求头以及下游服务名。
 
@@ -60,11 +95,11 @@ flow.control.plugin:
 | 系统规则 | servicecomb.system |
 | 系统自适应 | servicecomb.system |
 
-例如流量标记的键需以`servicecomb.MatchGroup`为前缀, 而限流规则则以`servicecomb.rateLimiting`为前缀，以一个具体的例子：
+例如流量标记的键key需以`servicecomb.MatchGroup`为前缀, 而限流规则的键key需以`servicecomb.rateLimiting`为前缀，以一个具体的例子：
 
-> 流量标记配置键为：`servicecomb.MatchGroup.flow`
+> 流量标记配置键key为：`servicecomb.MatchGroup.flow`
 > 
-> 限流规则配置键为：`servicecomb.rateLimiting.flow`
+> 限流规则配置键key为：`servicecomb.rateLimiting.flow`
 > 
 > 如上，`flow`即为业务场景名，仅当两者业务场景名称一致，当请求匹配上流量标记时，限流规则才会生效
 
@@ -172,44 +207,44 @@ flow.control.plugin:
 流控插件在应用启动时，会尝试的从SpringBoot加载的配置源读取流控规则以及对应的流量标记，用户需要在启动之前进行配置。如下为配置示例, 示例配置直接基于`application.yml`进行配置
 
 ```yaml
-servicecomb:
-  matchGroup:
-    demo-fault-null: |
+servicecomb:                            # 流量标记前缀
+  matchGroup:                           # 流量标记前缀
+    demo-fault-null:                    # 错误注入场景
+      matches:                          # 匹配器集合
+        - apiPath:                      # 匹配的api路径
+            exact: "/flow"              # 具体匹配路径
+    demo-retry:                         # 重试场景
+      matches:                          
+        - apiPath:                      
+            prefix: "/retry"            
+          serviceName: rest-provider    
+          method:                       # 支持方法类型
+          - GET                         
+    demo-rateLimiting:                  # 限流场景
       matches:
         - apiPath:
             exact: "/flow"
-    demo-retry: |
-      matches:
-        - apiPath:
-            prefix: "/retry"
-          serviceName: rest-provider
-          method:
-          - GET
-    demo-rateLimiting: |
-      matches:
-        - apiPath:
-            exact: "/flow"
-    demo-circuitBreaker-exception: |
+    demo-circuitBreaker-exception:      # 熔断场景
       matches:
         - apiPath:
             exact: "/exceptionBreaker"
-    demo-bulkhead: |
+    demo-bulkhead:                      # 隔离舱场景
       matches:
         - apiPath:
             exact: "/flowcontrol/bulkhead"
-    demo-system: |
+    demo-system:                        # 系统规则场景
       matched:
         - apiPath:
             prefix: /
-  rateLimiting:
-    demo-rateLimiting: |
+  rateLimiting:                         # 限流规则
+    demo-rateLimiting:
       rate: 1
-  retry:
+  retry:                                # 重试规则
     demo-retry: |
       maxAttempts: 3
       retryOnResponseStatus:
       - 500
-  circuitBreaker:
+  circuitBreaker:                       # 熔断规则
     demo-circuitBreaker-exception: |
       failureRateThreshold: 44
       minimumNumberOfCalls: 2
@@ -217,17 +252,17 @@ servicecomb:
       slidingWindowSize: 10000
       slidingWindowType: time
       waitDurationInOpenState: 5s
-  bulkhead:
+  bulkhead:                             # 隔离规则
     demo-bulkhead: |
       maxConcurrentCalls: 1
       maxWaitDuration: 10
-  faultInjection:
+  faultInjection:                       # 错误注入规则
     demo-fault-null: |
       type: abort
       percentage: 100
       fallbackType: ReturnNull
       forceClosed: false
-  system:
+  system:                               # 系统流控规则
     demo-system: |
       systemLoad: 0.6
       cpuUsage: 0.6
@@ -257,7 +292,7 @@ servicecomb:
 
 ## 操作和结果验证
 
-下面将演示如何使用流控插件。
+下面将演示如何使用流控插件，验证springboot应用采用zookeeper配置中心，设置限流策略场景。
 
 ### 准备工作
 
