@@ -6,7 +6,7 @@ This article describes how to use the [SpringBoot registry plugin](https://githu
 
 This plugin provides service registration and discovery abilities for pure SpringBoot applications. Users can quickly access the registration center(Currently only Zookeeper is supported) without modifying code. In addition, the plugin also provides the service timeout retry ability, achieving high availability of service invocation.
 
-The plugin takes effect based on URL resolution. The plugin parses downstream services based on the URL invoking by the client, selects a preferred instance based on load balancer, and dynamically replaces the URL to complete service invoking.
+The plug-in will resolve the downstream service according to the Url called by the originating client, select the preferred instance according to the load balance, dynamically replace the Url, and complete the service call.
 
 Currently, URL formats are supported.：http://www.domain.com/serviceName/apiPath
 
@@ -19,19 +19,19 @@ SpringBoot Registry plugin requires modification of the plugin configuration fil
 
 ```yaml
 sermant.springboot.registry:
-  enableRegistry: false             # Whether to enable the boot registration capability
-  realmName: www.domain.com        # Match the domain name, the current version only takes effect for the scene where the url is http://${realmName}/serviceName/api/xx
-  enableRequestCount: false        # Whether to enable traffic statistics, after opening, each time the traffic entering the plugin will be printed
-
-sermant.springboot.registry.lb:
-  lbType: RoundRobin               # Load balancing type, currently supports round robin (RoundRobin), random (Random), response time weight (WeightedResponseTime), minimum concurrency (BestAvailable)
-  registryAddress: 127.0.0.1:2181  # Registration center address
-  instanceCacheExpireTime: 0       # Instance expiration time, in seconds, if <=0, it will never expire
-  instanceRefreshInterval: 0       # Instance refresh time, in seconds, must be less than instanceCacheExpireTime
-  refreshTimerInterval: 5          # Instance timing check interval to determine whether the instance is expired, if it is greater than instanceRefreshInterval, then the value is set to instanceRefreshInterval
-  enableSocketReadTimeoutRetry: true # Whether to retry for {@link java.net.SocketTimeoutException}: read timed out, enabled by default
+  enableRegistry: false                 # Whether to enable the boot registration capability
+  realmName: www.domain.com             # Match the domain name, the current version only takes effect for the scene where the url is http://${realmName}/serviceName/api/xx
+  enableRequestCount: false             # Whether to enable traffic statistics, after opening, each time the traffic entering the plugin will be printed
+     
+sermant.springboot.registry.lb:     
+  lbType: RoundRobin                    # Load balancing type, currently supports round robin (RoundRobin), random (Random), response time weight (WeightedResponseTime), minimum concurrency (BestAvailable)
+  registryAddress: 127.0.0.1:2181       # Registration center address
+  instanceCacheExpireTime: 0            # Instance expiration time, in seconds, if <=0, it will never expire
+  instanceRefreshInterval: 0            # Instance refresh time, in seconds, must be less than instanceCacheExpireTime
+  refreshTimerInterval: 5               # Instance timing check interval to determine whether the instance is expired, if it is greater than instanceRefreshInterval, then the value is set to instanceRefreshInterval
+  enableSocketReadTimeoutRetry: true    # Whether to retry for {@link java.net.SocketTimeoutException}: read timed out, enabled by default
   enableSocketConnectTimeoutRetry: true # Same as above, mainly for connect timed out, usually thrown when the connection is not upstream or downstream
-  enableTimeoutExRetry: true       # Retry scenario, for {@link java.util.concurrent.TimeoutException}, whether retry is required, enabled by default, this timeout is mostly used in asynchronous scenarios, such as Future, MinimalHttpAsyncClient
+  enableTimeoutExRetry: true            # Retry scenario, for {@link java.util.concurrent.TimeoutException}, whether retry is required, enabled by default, this timeout is mostly used in asynchronous scenarios, such as Future, MinimalHttpAsyncClient
 ```
 
 The configuration items are described as follows:
@@ -54,16 +54,16 @@ Ensure that the values of` realName` and `registryAddress` are correct. Otherwis
 
 ## Detailed Governance Rules
 
-The SpringBoot registration plug-in needs to judge whether it needs to proxy the request according to the specified service name, and replace the url address. The plugin needs to be released based on the dynamic configuration center for grayscale strategy, publishing configuration can refer to [Configuration Center User's Manual](../../user-guide/configuration-center.md#sermant-dynamic-configuration-center-model).
+The SpringBoot registration plug-in needs to judge whether it needs to proxy the request according to the specified service name, and replace the url address. Plugins need to publish whitelist based on dynamic configuration center, publishing configuration can refer to [Configuration Center User's Manual](docs/en/document/user-guide/configuration-center.md#sermant-dynamic-configuration-center-model).
 
 The key value is **sermant.plugin.registry**.
 
-It is recommended to configure the group to microservice level, i.e. **app=${service.meta.application}&environment=${service.meta.environment}&service={spring.application.name}**, for the configuration of service.meta.application and service.meta.environment, please refer to the [Sermant-agent User Manual](../../user-guide/sermant-agent.md#sermant-agent-parameter-configuration), spring.application.name is the microservice name (i.e. the name of the service configured in the spring application).
+It is recommended to configure the group to microservice level, i.e. **app=${service.meta.application}&environment=${service.meta.environment}&service={spring.application.name}**, for the configuration of service.meta.application and service.meta.environment, please refer to the [Sermant-agent User Manual](docs/en/document/user-guide/sermant-agent.md#sermant-agent-parameter-configuration), spring.application.name is the microservice name (i.e. the name of the service configured in the spring application).
 
-The content is a gray strategy, which is described as follows:
+The content is a white list, which is described as follows:
 
 ```yaml
-strategy: all # Gray strategy , all (all effective)/none (all not effective)/white (white list)
+strategy: all # whitelist type , all (all effective)/none (all not effective)/white (only those configured in the value value take effect)
 value: service-b,service-c # Whitelist service collection, only effective when strategy is configured as white, multiple service names separated by English commas
 ```
 
@@ -93,7 +93,7 @@ Client Supported：
 
 ## Operation and Result Verification
 
-The following is an example of the springboot-registry-demo project to demonstrate how to register to Zookeeper using the springboot registry plugin.
+The following SpringBoot scenario is an example to demonstrate how the SpringBoot project is connected to Zookeeper.
 
 #### Preparations
 
@@ -145,9 +145,11 @@ java -Dserver.port=9999 -Dsermant.springboot.registry.enableRegistry=true -javaa
 > where path needs to be replaced with the actual installation path of Sermant.
 > x.x.x represents a Sermant version number.
 
-### Step 3: Configure gray strategy
+**Note**: At this time, the configured domain name is a fake domain name, which can be called normally only after the white list is configured.
 
-Configure gray strategy, please refer to [Configure gray strategy](#configuring-a-gray-strategy).
+### Step 3: Configure white list
+
+Configure white list, please refer to [Detailed governance rules](#detailed-governance-rules).
 
 The key is **sermant.plugin.registry**, group is **app=default&environment=&service=service-a**，content is **strategy: all**.
 
