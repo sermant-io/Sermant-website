@@ -4,13 +4,13 @@ This article describes how to use the [service registration plugin](https://gith
 
 ## Function
 
-The service registry plugin allows microservices that have been registered with popular registration centers, such as Eureka, Nacos, ZooKeeper, and Consul, to be registered with [ServiceComb](https://github.com/apache/servicecomb-service-center) or [Nacos](https://nacos.io/) in a non-intrusive manner. It also supports Dubbo and SpringCloud frameworks.
+The service registration plug-in can achieve registration migration and dual registration in a non-intrusive way. Microservices originally registered in mainstream registries such as Eureka, Nacos, Zookeeper and Consul can be non-intrusively registered in [ServiceComb](https://github.com/apache/servicecomb-service-center) Or [Nacos](https://nacos.io/) On the, you can also control whether or not to register with the original registration center through the switch.
 
 ## Parameter Configuration
 
 ### Sermant-agent configuration
 
-Service registry plugin requires configuring the service metadata (application, project, version, environment, other metadata) in Sermant-agent, refer to [Sermant-agent User Manual](../../user-guide/sermant-agent.md#sermant-agent-parameter-configuration).
+Service registry plugin requires configuring the service metadata (application, project, version, environment, other metadata) in Sermant-agent, refer to [Sermant-agent User Manual](docs/en/document/user-guide/sermant-agent.md#sermant-agent-parameter-configuration).
 
 - service.meta.application: application/group, service discovery is only possible for microservices that belong to the same application.
 
@@ -28,41 +28,42 @@ Service registry plugin requires modification of the plugin configuration file o
 
 ```yaml
 register.service:
-  registerType: SERVICE_COMB
-  address: http://localhost:30100
+  registerType: SERVICE_ COMB         # The type of new registry, which controls the registration method used for service registration. Different registries have different registration implementations.
+  address:  http://localhost:30100    # New registration center address. Controls where the service is registered when it is registered.
 servicecomb.service:
-  heartbeatInterval: 15
-  openMigration: false
-  enableSpringRegister: false
-  enableDubboRegister: false
-  sslEnabled: false
-  preferIpAddress: false
+  heartbeat interval: 15              # heartbeat sending interval of service instance. Monitor the status of the service instance through the heartbeat.
+  openMigration: false                # Register the migration switch. When enabled, the original registration function of the host service will be blocked and only registered to the new registry.
+  enableSpringRegister: false         # The spring cloud plug-in registration ability switch. After being opened, it will be registered as a Spring Cloud service to the new registry. Cannot be turned on at the same time as the dubbo plug-in registration ability switch.
+  enableDubboRegister: false          # Dubbo plug-in registration ability switch. After being opened, it will be registered as a dubbo service to the new registry. It cannot be turned on at the same time as the Spring plug-in registration ability switch.
+  sslEnabled: false                   # ssl switch. Controls whether SLL security access is enabled.
+  preferIpAddress: false              # Whether to use IP. Controls whether the service instance is registered using IP or domain name.
 nacos.service:
-  username: ""
-  password: ""
-  namespace: ""
-  weight: 1
-  clusterName: DEFAULT
-  ephemeral: true
+  username: ""                        # nacos verifies the account. When the new registration center is nacos, you need to use nacos to verify your account when you register.
+  password: ""                        # nacos verifies the account. When the new registration center is nacos, the password needs to be verified by nacos when registering.
+  namespace: ""                       # ID value of the nacos namespace. Control the namespace to which the nacos is registered when registering, and only microservices belonging to the same namespace can perform service discovery.
+  weight: 1                           # Service instance weight value. Used during service registration. When a service instance is called, the higher the weight, the higher the access frequency.
+  clusterName: DEFAULT                # Cluster name. It is used for service registration and discovery. When the service instance is called, only the instances under the same cluster will be called.
+  ephemeral: true                     # Whether it is a temporary node. Used during service registration. The temporary node is used when the node does not need to exist after the service is offline.
 ```
 
 The configuration items are described as follows:
 
-|Parameter Key|Description|Default Value|Affiliated Registration Center|Required|
-|---|---|---|---|---|
-|register.service.registerType|Registration Center Type, support NACOS/SERVICE_COMB|SERVICE_COMB|common|Yes|
-|register.service.address|Registration center address, service_comb: like http://localhost:30100, nacos: like 127.0.0.1:8848|http://127.0.0.1:30100|common|Yes|
-|servicecomb.service.heartbeatInterval|Interval at which service instance heartbeats are sent (unit: second)|15|SERVICE_COMB|Yes|
-|servicecomb.service.openMigration|Whether to enable the migration function|false|SERVICE_COMB|Yes|
-|servicecomb.service.enableSpringRegister|Whether to enable the Spring Cloud plug-in registration capability. This capability must be enabled for the Spring Cloud framework and disabled for the Dubbo framework|false|common|Yes|
-|servicecomb.service.enableDubboRegister|Whether to enable the dubbo plug-in registration capability. This capability must be enabled for the dubbo framework and disabled for the spring cloud framework|false|common|Yes|
-|servicecomb.service.sslEnabled|Whether to enable SSL|false|SERVICE_COMB|Yes|
-|nacos.service.username|nacos username|-|NACOS|No|
-|nacos.service.password|nacos password|-|NACOS|No|
-|nacos.service.namespace|namespace, nacos setting the id of namespace|-|NACOS|No|
-|nacos.service.weight|service instance weight|1|NACOS|Yes|
-|nacos.service.clusterName|cluster name|DEFAULT|NACOS|Yes|
-|nacos.service.ephemeral|Whether to enable ephemeral endpoint, true for yes，false for no|true|NACOS|Yes|
+| Parameter Key                            | Description                                                                                                                                                                                                                      | Default Value          | Affiliated Registration Center | Required |
+|------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------|--------------------------------|----------|
+| register.service.registerType            | Registration Center Type, support NACOS/SERVICE_COMB                                                                                                                                                                             | SERVICE_COMB           | common                         | Yes      |
+| register.service.address                 | Registration center address, service_comb: like http://localhost:30100, nacos: like 127.0.0.1:8848                                                                                                                               | http://127.0.0.1:30100 | common                         | Yes      |
+| servicecomb.service.heartbeatInterval    | Interval at which service instance heartbeats are sent (unit: second)                                                                                                                                                            | 15                     | SERVICE_COMB                   | Yes      |
+| servicecomb.service.openMigration        | Whether to enable the migration function                                                                                                                                                                                         | false                  | SERVICE_COMB                   | Yes      |
+| servicecomb.service.enableSpringRegister | Whether to enable the Spring Cloud plug-in registration capability. This capability must be enabled for the Spring Cloud framework and disabled for the Dubbo framework.Cannot be opened at the same time as enableDubboRegister | false                  | common                         | Yes      |
+| servicecomb.service.enableDubboRegister  | Whether to enable the dubbo plug-in registration capability. This capability must be enabled for the dubbo framework and disabled for the spring cloud framework.Cannot be opened at the same time as enableSpringRegister       | false                  | common                         | Yes      |
+| servicecomb.service.sslEnabled           | Whether to enable SSL                                                                                                                                                                                                            | false                  | SERVICE_COMB                   | Yes      |
+| servicecomb.service.prefererIpAddress    | Whether to use IP access                                                                                                                                                                                                         | false                  | SERVICE_ COMB                  | Yes      |
+| nacos.service.username                   | nacos username                                                                                                                                                                                                                   | -                      | NACOS                          | No       |
+| nacos.service.password                   | nacos password                                                                                                                                                                                                                   | -                      | NACOS                          | No       |
+| nacos.service.namespace                  | namespace, nacos setting the id of namespace                                                                                                                                                                                     | -                      | NACOS                          | No       |
+| nacos.service.weight                     | service instance weight                                                                                                                                                                                                          | 1                      | NACOS                          | Yes      |
+| nacos.service.clusterName                | cluster name                                                                                                                                                                                                                     | DEFAULT                | NACOS                          | Yes      |
+| nacos.service.ephemeral                  | Whether to enable ephemeral endpoint, true for yes，false for no                                                                                                                                                                  | true                   | NACOS                          | Yes      |
 
 **Notice**:
 
@@ -102,7 +103,7 @@ Note that the address information of **this configuration item is not used**. On
 
 ## Operation and Result Verification
 
-The following is an example of the dubbo-registry-demo project to demonstrate how to register to ServiceComb using the service registry plugin.
+Take the dubbo scenario as an example to demonstrate the dual registration capability of the service registration plug-in.
 
 ### Preparations
 
@@ -110,9 +111,9 @@ The following is an example of the dubbo-registry-demo project to demonstrate ho
 
 - [Download](https://github.com/huaweicloud/Sermant-examples/tree/main/registry-demo/dubbo-registry-demo) dubbo-registry-demo source code
 
-- [Download](https://github.com/apache/servicecomb-service-center) ServiceComb, and start
+- [Download](https://github.com/apache/servicecomb-service-center) ServiceComb (used as a registry), and start
 
-- [Download](https://zookeeper.apache.org/releases.html#download) Zookeeper, and start
+- [Download](https://zookeeper.apache.org/releases.html#download) Zookeeper (used as a registry), and start
 
 ### Step 1: Compile and package the dubbo-registry-demo application
 
@@ -152,7 +153,7 @@ java -Dservicecomb.service.enableDubboRegister=true -javaagent:${path}\sermant-a
 java -Dservicecomb.service.enableDubboRegister=true -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -jar dubbo-registry-provider.jar
 ```
 
-Note: To facilitate the test, the DUBBO registration function is enabled in -Dservicecomb.service.enableDubboRegister=true mode. If the DUBBO registration function is enabled in [other modes](../../user-guide/sermant-agent.md#parameter-configuration-options), you do not need to add this parameter.
+Note: To facilitate the test, the DUBBO registration function is enabled in -Dservicecomb.service.enableDubboRegister=true mode. If the DUBBO registration function is enabled in [other modes](docs/en/document/user-guide/sermant-agent.md#parameter-configuration-options), you do not need to add this parameter.
 
 Replace `${path}` with the Sermant project path, replace x.x.x with the actual Sermant version number, and appName with the application name in the agent startup parameter, which is irrelevant to registration parameters. The directory for running commands must be the JAR package directory of the demo application.
 
@@ -169,11 +170,11 @@ After the preceding two applications are started, log in to the [ServiceComb](ht
 Provides the capability of quickly migrating the registration center to the [ServiceComb](https://github.com/apache/servicecomb-service-center) or [Nacos](https://nacos.io/) based on the dual-registration mode without interrupting online services business. The following original registration centers are supported:
 
 | Original Registration Center | Supported or Not |
-| ------------------- | ---------------- |
-| Eureka              | ✅                |
-| Consul              | ✅                |
-| Nacos               | ✅                |
-| Zookeeper           | ✅                |
+|------------------------------|------------------|
+| Eureka                       | ✅                |
+| Consul                       | ✅                |
+| Nacos                        | ✅                |
+| Zookeeper                    | ✅                |
 
 **Schematic diagram of migration**
 
@@ -197,11 +198,11 @@ servicecomb.service:
 
 The registration center migration plugin provides the method of disabling the heartbeat mechanism of the original registration center based on the dynamic configuration center to prevent continuous error log output.
 
-Please refer to [Dynamic Configuration Center User Manual](../../user-guide/configuration-center.md#sermant-dynamic-configuration-center-model)。
+Please refer to [Dynamic Configuration Center User Manual](docs/en/document/user-guide/configuration-center.md#sermant-dynamic-configuration-center-model)。
 
 The key value is **sermant.agent.registry**.
 
-It is recommended to configure the group to microservice level, i.e. **app=${service.meta.application}&environment=${service.meta.environment}&service={spring.application.name}**, for the configuration of service.meta.application and service.meta.environment, please refer to the [Sermant-agent User Manual](../../user-guide/sermant-agent.md#sermant-agent-parameter-configuration), spring.application.name is the microservice name (i.e. the name of the service configured in the spring application).
+It is recommended to configure the group to microservice level, i.e. **app=${service.meta.application}&environment=${service.meta.environment}&service={spring.application.name}**, for the configuration of service.meta.application and service.meta.environment, please refer to the [Sermant-agent User Manual](docs/en/document/user-guide/sermant-agent.md#sermant-agent-parameter-configuration), spring.application.name is the microservice name (i.e. the name of the service configured in the spring application).
 
 The content is **origin.\_\_registry\_\_.needClose: true**.
 
@@ -219,7 +220,7 @@ Limitations: None
 
 ### Operation and Result Verification
 
-The following is an example of the spring-cloud-registry-demo project to demonstrate how to use the migration functionality of the service registry plugin (The original registry center is Zookeeper and the target registry center is ServiceComb).
+Take the SpringCloug scenario as an example to demonstrate the migration function of the service registration plug-in (from Zookeeper to ServiceComb).
 
 #### Preparations
 
@@ -227,9 +228,9 @@ The following is an example of the spring-cloud-registry-demo project to demonst
 
 - [Download](https://github.com/huaweicloud/Sermant-examples/tree/main/registry-demo/spring-cloud-registry-demo) spring-cloud-registry-demo source code
 
-- [Download](https://github.com/apache/servicecomb-service-center) ServiceComb, and start
+- [Download](https://github.com/apache/servicecomb-service-center) ServiceComb (used as a registry), and start
 
-- [Download](https://zookeeper.apache.org/releases.html#download) Zookeeper, and start
+- [Download](https://zookeeper.apache.org/releases.html#download) Zookeeper (used as a registry), and start
 
 ### Step 1: Compile and package the spring-cloud-registry-demo application
 
@@ -277,7 +278,7 @@ java -Dserver.port=8262 -Dservicecomb.service.openMigration=true -Dservicecomb.s
 java -Dserver.port=8262 -Dservicecomb.service.openMigration=true -Dservicecomb.service.enableSpringRegister=true -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -jar spring-cloud-registry-provider.jar
 ```
 
-Notices: To facilitate the test, the spring migration function is enabled in -Dservicecomb.service.openMigration=true -Dservicecomb.service.enableSpringRegister=true mode. If the spring migration function is enabled in [other modes](../../user-guide/sermant-agent.md#parameter-configuration-options), you do not need to add this parameter. For perspective, the provider port is modified using -Dserver.port=8262.
+Notices: To facilitate the test, the spring migration function is enabled in -Dservicecomb.service.openMigration=true -Dservicecomb.service.enableSpringRegister=true mode. If the spring migration function is enabled in [other modes](docs/en/document/user-guide/sermant-agent.md#parameter-configuration-options), you do not need to add this parameter. For perspective, the provider port is modified using -Dserver.port=8262.
 
 Replace path with the actual Sermant package path**, x.x.x is the actual Sermant version number, and appName with the agent startup parameter, which is irrelevant to registration parameters.
 
@@ -297,7 +298,7 @@ java -Dserver.port=8261 -Dservicecomb.service.openMigration=true -Dservicecomb.s
 java -Dserver.port=8261 -Dservicecomb.service.openMigration=true -Dservicecomb.service.enableSpringRegister=true -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -jar spring-cloud-registry-consumer.jar
 ```
 
-Notices: To facilitate the test, the spring migration function is enabled in -Dservicecomb.service.openMigration=true -Dservicecomb.service.enableSpringRegister=true mode. If the spring migration function is enabled in [other modes](../../user-guide/sermant-agent.md#parameter-configuration-options), you do not need to add this parameter. For perspective, the consumer port is modified using -Dserver.port=8261.
+Notices: To facilitate the test, the spring migration function is enabled in -Dservicecomb.service.openMigration=true -Dservicecomb.service.enableSpringRegister=true mode. If the spring migration function is enabled in [other modes](docs/en/document/user-guide/sermant-agent.md#parameter-configuration-options), you do not need to add this parameter. For perspective, the consumer port is modified using -Dserver.port=8261.
 
 Replace path with the actual Sermant package path**, x.x.x is the actual Sermant version number, and appName with the agent startup parameter, which is irrelevant to registration parameters.
 
@@ -332,9 +333,9 @@ The producer service and consumer service successfully migrate the registry to s
 Provides the capability of quickly migrating the registration center to the [ServiceComb](https://github.com/apache/servicecomb-service-center) or [Nacos](https://nacos.io/) based on the dual-registration mode without interrupting online services business. The following original registration centers are supported:
 
 | Original Registration Center | Support |
-| --------- | -------- |
-| Nacos     | ✅        |
-| Zookeeper | ✅        |
+|------------------------------|---------|
+| Nacos                        | ✅       |
+| Zookeeper                    | ✅       |
 
 **Schematic diagram of migration**
 
@@ -366,7 +367,7 @@ Limitations: None
 
 ### Operation and Result Verification
 
-The following is an example of the dubbo-registry-demo project to demonstrate how to use the migration feature of the service registry plugin (The original registry center is Zookeeper and the target registry center is ServiceComb).
+Take the Dubbo scenario as an example to demonstrate the migration function of the service registration plug-in (from Zookeeper to ServiceComb).
 
 #### Preparations
 
@@ -374,9 +375,9 @@ The following is an example of the dubbo-registry-demo project to demonstrate ho
 
 - [Download](https://github.com/huaweicloud/Sermant-examples/tree/main/registry-demo/dubbo-registry-demo) dubbo-registry-demo source code
 
-- [Download](https://github.com/apache/servicecomb-service-center) ServiceComb, and start
+- [Download](https://github.com/apache/servicecomb-service-center) ServiceComb (used as a registry), and start
 
-- [Download](https://zookeeper.apache.org/releases.html#download) Zookeeper, and start
+- [Download](https://zookeeper.apache.org/releases.html#download) Zookeeper (used as a registry), and start
 
 ### Step 1: Compile and package the dubbo-registry-demo application
 
@@ -406,7 +407,7 @@ java -Dservicecomb.service.openMigration=true -Dservicecomb.service.enableDubboR
 java -Dservicecomb.service.openMigration=true -Dservicecomb.service.enableDubboRegister=true -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -jar dubbo-registry-consumer.jar
 ```
 
-Notices: To facilitate the test, the dubbo migration function is enabled in -Dservicecomb.service.openMigration=true -Dservicecomb.service.enableDubboRegister=true mode. If the dubbo migration function is enabled in [other modes](../../user-guide/sermant-agent.md#parameter-configuration-options), you do not need to add this parameter.
+Notices: To facilitate the test, the dubbo migration function is enabled in -Dservicecomb.service.openMigration=true -Dservicecomb.service.enableDubboRegister=true mode. If the dubbo migration function is enabled in [other modes](docs/en/document/user-guide/sermant-agent.md#parameter-configuration-options), you do not need to add this parameter.
 
 (2) Start the original provider (registered with the Zookeeper).
 
@@ -428,7 +429,7 @@ java -Dservicecomb.service.enableDubboRegister=true -Dserver.port=48021 -Ddubbo.
 java -Dservicecomb.service.enableDubboRegister=true -Dserver.port=48021 -Ddubbo.protocol.port=48821 -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -jar dubbo-registry-provider.jar
 ```
 
-Notice: To facilitate the test, the Dubbo registration function is enabled in -Dservicecomb.service.enableDubboRegister=true mode. If the Dubbo registration function is enabled in [other modes](../../user-guide/sermant-agent.md#parameter-configuration-options), you do not need to add this parameter. In addition, to solve the port conflict problem when two providers are started on the same server, you need to add the -Dserver.port=48021 -Ddubbo.protocol.port=48821 parameter. If the two providers are on different servers, you do not need to add this parameter.
+Notice: To facilitate the test, the Dubbo registration function is enabled in -Dservicecomb.service.enableDubboRegister=true mode. If the Dubbo registration function is enabled in [other modes](docs/en/document/user-guide/sermant-agent.md#parameter-configuration-options), you do not need to add this parameter. In addition, to solve the port conflict problem when two providers are started on the same server, you need to add the -Dserver.port=48021 -Ddubbo.protocol.port=48821 parameter. If the two providers are on different servers, you do not need to add this parameter.
 
 Please replace `${path}` with the Sermant project path, replace x.x.x with the actual Sermant version number, and appName with the application name in the agent startup parameter, which is irrelevant to the registration parameter. The directory for running the command must be the directory where the JAR package of the demo application is located.
 

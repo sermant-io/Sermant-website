@@ -4,7 +4,7 @@ This document is used to introduce the usage of [tag router](https://github.com/
 
 ## Function
 
-In the case of multiple versions and instances of microservices, the routing between services is managed by configuring routing rules to achieve business purposes such as lossless upgrade and application dial test.
+The tag routing plug-in implements the configuration and management of routing rules between microservices in a non-intrusive way. In the case of multiple versions and instances of microservices, the label routing plug-in can manage the routing between services by configuring routing rules to achieve lossless upgrade, application dial test and other business purposes.
 
 ## Parameter Configuration
 
@@ -15,6 +15,38 @@ The routing plugin requires service metadata (version number, other metadata) to
 - service.meta.version: version, used to identify the current version of the microservice.
 
 - service.meta.parameters: other metadata, used to tag the current microservice, like k1:v1,k2:v2.
+
+### Plug-in configuration
+
+The label routing plug-in also needs to configure the routing switch and other information. The configuration file of the plug-in can be found in `${path}/semant-agent-x.x.x/agent/pluginPackage/service-router/config/config.yaml`. The configuration is as follows:
+
+```yaml
+router.plugin:
+  # Dubbo area routing switch configuration. Dubbo area routing configuration is supported when it is true
+  enabled-dubbo-zone-router: false
+  # Spring cloud area routing switch configuration. Support spring cloud area routing configuration when it is true
+  enabled-spring-zone-router: false
+  # Register the regional routing switch configuration of the plug-in (sermant-springboot-registry). If it is true, the host application also supports regional routing configuration if it registers through the registration plug-in.
+  enabled-registry-zone-router: false
+  # Adapt registration plug-in switch configuration. When true, the label routing plug-in supports service instances registered through the registration plug-in.
+  enabled-registry-plugin-adaptation: false
+  # Use request information for routing switch configuration. When it is true, the request information is supported as the routing configuration.
+  use-request-router: false
+  # Tags when using request information for routing. The control label routing plug-in obtains those attributes from the request information as the routing configuration.
+  request-tags: []
+  # The tag of the request header to be parsed. The control label routing plug-in obtains those attributes from the request header information as the routing configuration.
+  parse-header-tag: ''
+```
+
+|                  Parameter key                   |                                                                                                            Description                                                                                                             | Default value | Required |
+|:------------------------------------------------:|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:-------------:|:--------:|
+|     router.plugin.enabled-dubbo-zone-router      |                                                               dubbo zone routing switch configuration. When it is true, it supports dubbo area routing configuration                                                               |     false     |    No    |
+|     router.plugin.enabled-spring-zone-router     |                                                            Spring cloud area routing switch configuration. If true, support the spring cloud area routing configuration                                                            |     false     |    No    |
+|    router.plugin.enabled-registry-zone-router    | Configure the regional routing switch of the registration plug-in (sermant-springboot-registry). If it is true, the host application also supports regional routing configuration if it registers through the registration plug-in |     False     |    No    |
+| router.plugin.enabled-registry-plugin-adaptation |                                 Adapts the registration plug-in switch configuration. When true, the label routing plug-in supports service instances registered through the registration plug-in                                  |     False     |    No    |
+|         router.plugin.se-request-router          |                                          Use the request information for routing switch configuration. When it is true, the request information is supported as the routing configuration                                          |     False     |    No    |
+|            router.plugin.request-tags            |                               Tags when using request information for routing. The control label routing plug-in obtains those attributes from the request information as the routing configuration                                |      []       |    No    |
+|          router.plugin.parse-header-tag          |                              The tag of the request header to be parsed. The control label routing plug-in obtains those attributes from the request header information as the routing configuration.                              |      ''       |    No    |
 
 ## Detailed Routing Rules
 
@@ -33,8 +65,8 @@ The content is the specific routing rule.
 - precedence: 2 # Priority, the higher the number, the higher the priority.
   match: # Request match rule. 0..N, not configured to indicate a match. Only one attachments/headers/args are allowed per match rule.
     attachments: # dubbo attachment matches. If it is an http header match, you need to configure it as headers.
-      id: # If multiple keys are configured, then all key rules must match the request.
-        exact: '1' # Configuration policy, equal to 1, detailed configuration policy refer to the configuration policy table.
+      id: # The attribute name is modified to a specific key when used. If multiple keys are configured, all key rules must match the request.
+        exact: '1' # Configuration policy, The attribute value of key is equal to 1, detailed configuration policy refer to the configuration policy table.
         caseInsensitive: false # false: case-insensitive (default), true: case-sensitive. When configured to false, it will be converted to uppercase uniformly for comparison.
   route: # Routing Rules
     - weight: 20 # Weight
@@ -53,19 +85,32 @@ The content is the specific routing rule.
         group: green # Instance tagging. Instances that meet the tagging criteria are placed in this group.
 ```
 
+| Parameter key |                                                                                                                                                                     Description                                                                                                                                                                     | Default value | Required |
+|:-------------:|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:-------------:|:--------:|
+|   priority    |                                                                                                                                                                      priority                                                                                                                                                                       |     null      |    no    |
+|     match     | Matching rules, support source (source, i.e. the upstream application of the target application)/attachments (attachments parameter of the dubbo application)/headers (request header)/args (dubbo parameter)/path (request path, dubbo is the interface name)/parameters (Http request parameter)/cookies (cookie information of the Http request) |     null      |    no    |
+|     route     |                                                                                                                                                     routing rule, support weight configuration                                                                                                                                                      |     null      |    no    |
+|    weight     |                                                                                                                                                                    weight value                                                                                                                                                                     |     null      |    no    |
+|     tags      |                                                                                                                                Tag information. The instances that meet the tag conditions are placed in this group                                                                                                                                 |     Empty     |    No    |
+|     exact     |                                                                                                             Configuration policy. For detailed configuration policy, refer to [Configuration Policy Table](#configuration-policy-table)                                                                                                             |     Empty     |    No    |
+
+**Label routing rule interpretation**
+
+- 80% of the requests with the id attribute value of 1 in the attachments information will be routed to the service instance with the version number of 1.0.1, and 20% will be routed to the service instance with the version number of 1.0.0. 80% of other requests will be routed to the service instance with the group name green, and 20% will be routed to the service instance with the group name red.
+
 **Note: When adding a new configuration, please remove the comment, otherwise it will cause the addition to fail.**
 
 ### Configuration Policy Table
 
-|Strategy Name|Strategy Value|Matching Rules|
-|---|---|---|
-|Exact Match|exact|The parameter value is equal to the configured value|
-|Regex Match|regex|Parameter values match regex expressions, Since some regex expressions (such as \w and \W, etc.) are case-sensitive, please choose caseInsensitive (case-sensitive or not) carefully when using regex match|
-|Not Equal Match|noEqu|The parameter value is not equal to the configuration value|
-|Not Less Match|noLess|The parameter value is not less than the configured value|
-|Not Greater Match|noGreater|The parameter value is not greater than the configured value|
-|Greater Match|greater|The parameter value is greater than the configured value|
-|Less Match|less|The parameter value is less than the configured value|
+|   Strategy Name    | Strategy Value  |                                                                                                Matching Rules                                                                                                |
+|:------------------:|:---------------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+|    Exact Match     |      exact      |                                                                             The parameter value is equal to the configured value                                                                             |
+|    Regex Match     |      regex      | Parameter values match regex expressions, Since some regex expressions (such as \w and \W, etc.) are case-sensitive, please choose caseInsensitive (case-sensitive or not) carefully when using regex match  |
+|  Not Equal Match   |      noEqu      |                                                                         The parameter value is not equal to the configuration value                                                                          |
+|   Not Less Match   |     noLess      |                                                                          The parameter value is not less than the configured value                                                                           |
+| Not Greater Match  |    noGreater    |                                                                         The parameter value is not greater than the configured value                                                                         |
+|   Greater Match    |     greater     |                                                                           The parameter value is greater than the configured value                                                                           |
+|     Less Match     |      less       |                                                                            The parameter value is less than the configured value                                                                             |
 
 ## Supported Versions and Limitations
 
@@ -81,7 +126,7 @@ Limitations:
 
 ## Operation and Result Verification
 
-The following is an example of the spring-cloud-router-demo project to demonstrate how to use the tag route plugin.
+Take the Spring Cloud scenario as an example to demonstrate the use of label routing plug-ins.
 
 ### Preparations
 
@@ -90,8 +135,6 @@ The following is an example of the spring-cloud-router-demo project to demonstra
 - [Download](https://github.com/huaweicloud/Sermant-examples/tree/main/router-demo/spring-cloud-router-demo) spring-cloud-router-demo source code
 
 - [Download](https://github.com/apache/servicecomb-service-center) ServiceComb, and start
-
-- [Download](https://zookeeper.apache.org/releases.html#download) Zookeeper, and start
 
 ### Step 1: Compile and package the spring-cloud-router-demo application
 
@@ -184,6 +227,10 @@ The key value is **servicecomb.routeRule.spring-cloud-router-provider**, the gro
         version: 1.0.1
       weight: 100
 ```
+
+**Label routing rule interpretation**
+
+- The request with the id attribute value of 1 in the request header information will be routed to the service instance with the group name of gray, and the request with the id attribute value of 2 will be routed to the service instance with the version number of 1.0.1.
 
 ### Verification
 

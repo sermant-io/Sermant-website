@@ -14,7 +14,7 @@ This article mainly introduces the plugins currently supported by Sermant.
 
 [Tag Router Plugin](./router.md) can manage the routing between services by configuring routing rules when there are multiple versions and instances of microservices, so as to achieve business purposes such as non-destructive upgrades and application dialing tests.
 
-[Registry Plugin](./registry/README.md) allows microservices that have been registered with popular registration centers, such as Eureka, Nacos, ZooKeeper, and Consul, to be registered with [ServiceComb](https://github.com/apache/servicecomb-service-center) or [Nacos](https://nacos.io/) in a non-intrusive manner. It also supports Dubbo and SpringCloud frameworks.
+[Registry Plugin](./service-registry.md) allows microservices that have been registered with popular registration centers, such as Eureka, Nacos, ZooKeeper, and Consul, to be registered with [ServiceComb](https://github.com/apache/servicecomb-service-center) or [Nacos](https://nacos.io/) in a non-intrusive manner. It also supports Dubbo and SpringCloud frameworks.
 
 ### Compatibility List
 
@@ -26,6 +26,6 @@ This article mainly introduces the plugins currently supported by Sermant.
 |[Loadbalancer Plugin](./loadbalancer.md)|SpringBoot 1.5.x - 2.6.2 <br/> SpringCloud Edgware.SR2 - 2021.0.0|servicecomb-kie<br/>ZooKeeper|N/A|
 |[Monitor Plugin](./monitor.md)|ALL|N/A|N/A|
 |[Tag Router Plugin](./router.md)|SpringBoot 1.5.x - 2.6.2 <br/>SpringCloud Edgware.SR2 - 2021.0.0<br/>Dubbo 2.6.x-2.7.x|servicecomb-kie|servicecomb-service-center|
-|[Registry Plugin](./registry/README.md)|SpringBoot 1.5.x - 2.6.2 <br> SpringCloud Edgware.SR2 - 2021.0.0<br>Dubbo 2.6.x-2.7.x|N/A|servicecomb-service-center|
-|[SpringBoot Registration Plugin](./registry/springboot-registry.md)|SpringBoot 1.5.10.Release+|servicecomb-kie<br/>ZooKeeper|Zookeeper 3.4.x+|
+|[Registry Plugin](./service-registry.md)|SpringBoot 1.5.x - 2.6.2 <br> SpringCloud Edgware.SR2 - 2021.0.0<br>Dubbo 2.6.x-2.7.x|N/A|servicecomb-service-center|
+|[SpringBoot Registration Plugin](./springboot-registry.md)|SpringBoot 1.5.10.Release+|servicecomb-kie<br/>ZooKeeper|Zookeeper 3.4.x+|
 |[Service visibility Plugin](./visibility.md)|SpringBoot 1.5.10+<br>Dubbo 2.6.x-2.7.x|ZooKeeper|N/A|
