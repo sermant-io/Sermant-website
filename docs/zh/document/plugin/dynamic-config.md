@@ -120,7 +120,7 @@ public class ValueConfig {
 
 ## 操作和结果验证
 
-下面将演示如何使用动态配置插件。
+下面将演示如何使用动态配置插件，验证springboot应用采用zookeeper配置中心使用动态配置插件的场景。
 
 ### 准备工作
 
