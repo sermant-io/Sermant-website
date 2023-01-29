@@ -4,7 +4,7 @@
 
 ## 功能介绍
 
-该插件基于Sermant配置中心能力实现动态配置，可屏蔽原配置中心(zookeeper，nacos)，在运行时通过Sermant框架支持的配置中心(KIE, zookeeper)将配置刷新到宿主应用，其优先级将高于环境变量配置。
+Spring Cloud Config动态配置已广泛应用于企业开发项目，为用户更方便使用配置中心，切换配置中心类型更便捷，动态配置插件基于Sermant动态配置中心的能力实现应用配置的动态更新。该插件可屏蔽应用原配置中心，应用在挂载Sermant运行时，通过动态配置中心对宿主应用的配置进行刷新。
 
 ## 参数配置
 
@@ -25,9 +25,9 @@ dynamic.config.plugin:
 
 | 参数键                     | 说明                                                         | 默认值         | 是否必须 |
 | ------------------------- | ------------------------------------------------------------ | -------------- | ------- |
-| enableCseAdapter          | 是否开启适配CSE; <br> **true**:根据ServiceMeta指定的应用配置,服务配置,自定义标签配置进行配置订阅；<br> **false**:根据服务名进行订阅 | true | 是  |
+| enableCseAdapter          | 是否开启适配CSE; <br> **true**:根据应用配置,服务配置,自定义标签配置进行配置订阅；<br> **false**:根据服务名进行订阅；[见详细治理规则说明](./dynamic-config.md#详细治理规则) | true | 是  |
 | enableDynamicConfig       | 是否开启动态配置插件              | false | 否  |
-| enableOriginConfigCenter | 是否开启原配置中心; <br> **false**:屏蔽原配置中心，只能通过Sermant下发配置; <br> **true**:不屏蔽原配置中心，可通过原配置中心下发配置| false | 否  |
+| enableOriginConfigCenter | 是否开启原配置中心; <br> **false**:屏蔽原配置中心，只能通过Sermant下发配置; <br> **true**:不屏蔽原配置中心，可通过原配置中心下发配置，**注意**：若不屏蔽应用原配置中心可能会影响动态配置中心下发配置| false | 否  |
 
 ## 详细治理规则
 
@@ -37,11 +37,11 @@ dynamic.config.plugin:
 
 - 若关闭适配，即`enableCseAdapter: false`
 
-    此时注册插件将根据宿主应用的服务名进行订阅, 即应用配置的`spring.applicaton.name`, 插件订阅配置的group为`service=${spring.applicaton.name}`
+    此时插件将根据宿主应用的服务名进行订阅, 即应用配置的`spring.applicaton.name`, 插件订阅配置的group为`service=${spring.applicaton.name}`
     
 - 若开启适配, 即`enableCseAdapter: true`
 
-    此时将根据**应用配置**，**服务配置**以及**自定义配置**三项数据进行配置**同时**订阅， 而这三类配置可参考`${path}/sermant-agent-x.x.x/agent/config/config.properties`, 相关配置如下：
+    此时插件将根据**应用配置**，**服务配置**以及**自定义配置**三项数据进行配置**同时**订阅， 而这三类配置可参考`${path}/sermant-agent-x.x.x/agent/config/config.properties`, 相关配置如下：
 
     ```properties
     # 服务app名称
@@ -87,8 +87,8 @@ spring:
 | spring-cloud-starter-zookeeper-config | 1.2.0.RELEASE+ |
 
 ### 限制
-
-需配合注解`@Value, @ConfigurationProperties以及@RefreshScope`使用，以下示范`@Value`注解使用，`@ConfigurationProperties`注解同理
+1. 屏蔽应用原配置中心（目前仅支持**zookeeper**，**nacos**）
+2. 需配合注解`@Value, @ConfigurationProperties以及@RefreshScope`使用，以下示范`@Value`注解使用，`@ConfigurationProperties`注解同理
 
 ```java
 /**
@@ -120,13 +120,12 @@ public class ValueConfig {
 
 ## 操作和结果验证
 
-下面将演示如何使用动态配置插件，验证springboot应用采用zookeeper配置中心使用动态配置插件的场景。
+下面将演示如何使用动态配置插件，验证使用Sermant动态配置中心（zookeeper）更新spring boot应用配置的场景。
 
 ### 准备工作
 
 - [下载](https://github.com/huaweicloud/Sermant-examples/tree/main/flowcontrol-demo/spring-cloud-demo/spring-provider) demo源码
 - [下载](https://github.com/huaweicloud/Sermant/releases) 或编译Sermant包
-- [下载](https://zookeeper.apache.org/releases#download) 并启动zookeeper 
 - [下载](https://github.com/vran-dev/PrettyZoo/releases) PrettyZoo并启动连接zookeeper
 
 ### 步骤一：编译打包demo应用
