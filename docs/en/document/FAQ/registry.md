@@ -80,7 +80,7 @@ As shown in the following figure:
 
 <MyImage src="/docs-img/registry-faq-8.png"/>
 
-Please refer to the [Service Registration Plug-in Document](../plugin/service-registry.md#plugin-configuration) for the configuration of the address of the Dubbo registry.
+Please refer to the description of **newly developed** dubbo application in [Service Registration Plug-in Document](../plugin/service-registry.md#supported-versions-and-limitations) for the configuration of dubbo's own registry address.
 
 ## What Is The Relationship Between Plugin Configuration, enableSpringRegister/enableDubboRegister, And openMigration?
 

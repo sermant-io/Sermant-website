@@ -121,6 +121,8 @@ monitor.config:                       # 监控插件配置。
 - [下载](https://github.com/huaweicloud/Sermant/releases)/编译sermant包
 - [下载](https://github.com/prometheus/prometheus/releases)Prometheus
 
+> 注意：[动态配置中心](../user-guide/configuration-center.md)会在本场景中默认使用，由于非本场景的核心组件，因此在本文中不额外赘述。
+
 ### 步骤一：编译打包demo应用
 在demo应用的根目录执行如下命令对demo应用进行打包:
 

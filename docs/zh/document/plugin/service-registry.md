@@ -4,13 +4,13 @@
 
 ## 功能介绍
 
-服务注册插件通过无侵入方式实现注册迁移以及双注册的能力。可让原本注册于Eureka，Nacos，Zookeeper、Consul等主流注册中心的微服务，无侵入地注册到[ServiceComb](https://github.com/apache/servicecomb-service-center)或[Nacos](https://nacos.io/)上，也可通过开关控制是否依然注册到原先的注册中心。
+服务注册插件通过无侵入方式实现注册迁移的能力。可基于单注册或双注册的模式让原本注册于Eureka，Nacos，Zookeeper、Consul等主流注册中心的微服务，无侵入地注册到[ServiceComb](https://github.com/apache/servicecomb-service-center)或[Nacos](https://nacos.io/)上。
 
 ## 参数配置
 
 ### Sermant-agent配置
 
-注册插件需要在Sermant-agent中配置服务元数据（应用名、命名空间、版本号、环境、其它元数据），参考[Sermant-agent使用手册](docs/zh/document/user-guide/sermant-agent.md#sermant-agent使用参数配置)
+注册插件需要在Sermant-agent中配置服务元数据（应用名、命名空间、版本号、环境、其它元数据），参考[Sermant-agent使用手册](../user-guide/sermant-agent.md#sermant-agent使用参数配置)
 
 - service.meta.application: 应用名/组名，属于同一组的微服务才能进行服务发现。
 
@@ -35,7 +35,7 @@ servicecomb.service:
   openMigration: false               # 注册迁移开关。开启后将拦截宿主服务原有的注册功能，只注册到新注册中心。
   enableSpringRegister: false        # springcloud插件注册能力开关。开启后将作为Spring Cloud服务注册到新的注册中心。不能和dubbo插件注册能力开关同时开启。
   enableDubboRegister: false         # dubbo插件注册能力开关。开启后将作为dubbo服务注册到新的注册中心。不能和Spring插件注册能力开关同时开启。
-  sslEnabled: false                  # ssl开关。控制是否开启SLL安全访问。
+  sslEnabled: false                  # ssl开关。控制是否开启SSL安全访问。
   preferIpAddress: false             # 是否采用IP。 控制服务实例注册时采用IP注册还是采用域名注册。
 nacos.service:
   username: ""                       # nacos验证账户。新的注册中心为nacos时，注册到时需要使用nacos验证账户。
@@ -65,11 +65,9 @@ nacos.service:
 | nacos.service.clusterName                | 集群名称                                                                          | DEFAULT                | NACOS        | 是    |
 | nacos.service.ephemeral                  | 是否是临时节点，true为是，false为否                                                        | true                   | NACOS        | 是    |
 
-**说明**：
-
-- nacos的group通过[Sermant-agent配置](#sermant-agent配置)的service.meta.application设置。
-  
-- nacos参数目前仅展示常用参数，其他参数项见[NACOS配置类](https://github.com/huaweicloud/Sermant/blob/develop/sermant-plugins/sermant-service-registry/registry-common/src/main/java/com/huawei/registry/config/NacosRegisterConfig.java)。
+> 说明：
+> - nacos的group通过[Sermant-agent配置](#sermant-agent配置)的service.meta.application设置。
+> - nacos参数目前仅展示常用参数，其他参数项见[NACOS配置类](https://github.com/huaweicloud/Sermant/blob/develop/sermant-plugins/sermant-service-registry/registry-common/src/main/java/com/huawei/registry/config/NacosRegisterConfig.java)。
 
 ## 支持版本和限制
 
@@ -99,11 +97,11 @@ dubbo:
 
 需要强调的是，这个配置项的地址信息**不会使用**，只使用了协议名称sc（即ip地址不重要，只需要**sc://** 开头即可）。
 
-**注意**：对于**存量**dubbo应用（即原本已经设置过dubbo本身注册中心地址的应用）**无需**进行这一步。
+> 注意：对于**存量**dubbo应用（即原本已经设置过dubbo本身注册中心地址的应用）**无需**进行这一步。
 
 ## 操作和结果验证
 
-下面以dubbo场景为例，演示服务注册插件的双注册能力。
+下面将演示如何使用服务注册插件，验证dubbo应用在单注册模式下的注册迁移功能。
 
 ### 准备工作
 
@@ -113,7 +111,7 @@ dubbo:
 
 - [下载](https://github.com/apache/servicecomb-service-center)ServiceComb（作为注册中心使用），并启动
 
-- [下载](https://zookeeper.apache.org/releases.html#download)Zookeeper（作为注册中心使用），并启动
+> 注意：[动态配置中心](../user-guide/configuration-center.md)会在本场景中默认使用，由于非本场景的核心组件，因此在本文中不额外赘述。
 
 ### 步骤一：编译打包dubbo-registry-demo应用
 
@@ -153,15 +151,19 @@ java -Dservicecomb.service.enableDubboRegister=true -javaagent:${path}\sermant-a
 java -Dservicecomb.service.enableDubboRegister=true -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -jar dubbo-registry-provider.jar
 ```
 
-注：为了便于测试，这里使用了-Dservicecomb.service.enableDubboRegister=true的方式打开了dubbo注册开关，如果使用了[其它的方式](docs/zh/document/user-guide/sermant-agent.md#参数配置方式)打开了dubbo注册开关，则无需添加该参数。
+> 注意：为了便于测试，这里使用了-Dservicecomb.service.enableDubboRegister=true的方式打开了dubbo注册开关，如果使用了其它的[参数配置方式](../user-guide/sermant-agent.md#参数配置方式)打开了dubbo注册开关，则无需添加该参数。
 
-其中${path}需要替换为Sermant包路径，x.x.x需要替换为Sermant实际版本号，appName为agent启动参数中的应用名，与注册参数无关，执行命令的目录需要为demo应用的jar包目录。
+> 说明：其中${path}需要替换为Sermant包路径，x.x.x需要替换为Sermant实际版本号，appName为agent启动参数中的应用名，与注册参数无关，执行命令的目录需要为demo应用的jar包目录。
 
 ### 验证
 
+当启动以上2个应用后，登录ServiceComb后台`http://127.0.0.1:30103/`，查看相关服务实例是否已注册。
+
 <MyImage src="/docs-img/registry-result.png"/>
 
-当启动以上2个应用后，登录[ServiceComb](http://127.0.0.1:30103/)后台，查看相关服务实例是否已注册，并且访问应用接口`http://localhost:28820/hello`，确认接口是否正常返回，若接口成功返回，则说明注册成功。
+访问应用接口`http://localhost:28820/hello`，确认接口是否正常返回，若接口成功返回，则说明注册成功。
+
+<MyImage src="/docs-img/registry-request-result.png"/>
 
 ## SpringCloud的注册迁移
 
@@ -198,13 +200,17 @@ servicecomb.service:
 
 注册中心迁移插件提供基于动态配置中心下发关闭原注册中心心跳机制的方法，以避免源源不断的错误日志输出。
 
-请参考[动态配置中心使用手册](docs/zh/document/user-guide/configuration-center.md#sermant动态配置中心模型)。
+请参考[动态配置中心使用手册](../user-guide/configuration-center.md#sermant动态配置中心模型)，配置内容如下：
 
-其中key值为**sermant.agent.registry**。
+```json
+{
+  "content为": "origin.__registry__.needClose: true",
+  "group": "app=${service.meta.application}&environment=${service.meta.environment}&service={spring.application.name}",
+  "key": "sermant.agent.registry"
+}
+```
 
-group建议配置为微服务级别，即**app=${service.meta.application}&environment=${service.meta.environment}&service={spring.application.name}**，其中service.meta.application、service.meta.environment的配置请参考[Sermant-agent使用手册](docs/zh/document/user-guide/sermant-agent.md#sermant-agent使用参数配置), spring.application.name为微服务名（即spring应用中配置的服务名）。
-
-content为**origin.\_\_registry\_\_.needClose: true**。
+> group建议配置为微服务级别。配置时请将service.meta.application、service.meta.environment、spring.application.nam修改为具体的值，其中service.meta.application、service.meta.environment的配置请参考[Sermant-agent使用手册](../user-guide/sermant-agent.md#sermant-agent使用参数配置), spring.application.name为微服务名（即spring应用中配置的服务名）。
 
 > ***注意 :***
 >
@@ -220,7 +226,7 @@ content为**origin.\_\_registry\_\_.needClose: true**。
 
 ### 操作和结果验证
 
-下面以SpringCloug场景为例，演示服务注册插件的迁移功能（从Zookeeper迁移到ServiceComb）。
+下面将演示如何使用服务注册插件，验证SpringCloug应用在双注册模式下的注册迁移功能（从Zookeeper迁移到ServiceComb）。
 
 #### 准备工作
 
@@ -264,9 +270,9 @@ java -jar spring-cloud-registry-provider.jar
 java -jar spring-cloud-registry-consumer.jar
 ```
 
-<MyImage src="/docs-img/springcloud-migration-1.png"/>
-
 启动成功后，访问消费者接口`http://localhost:8161/hello`，确认接口能够正常返回。
+
+<MyImage src="/docs-img/springcloud-migration-1.png"/>
 
 （2）启动双注册生产者
 
@@ -278,13 +284,15 @@ java -Dserver.port=8262 -Dservicecomb.service.openMigration=true -Dservicecomb.s
 java -Dserver.port=8262 -Dservicecomb.service.openMigration=true -Dservicecomb.service.enableSpringRegister=true -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -jar spring-cloud-registry-provider.jar
 ```
 
-注：为了便于测试，这里使用了-Dservicecomb.service.openMigration=true -Dservicecomb.service.enableSpringRegister=true的方式打开了spring迁移功能，如果使用了[其它的方式](docs/zh/document/user-guide/sermant-agent.md#参数配置方式)打开了spring迁移开关，则无需添加该参数。为了便于观察，使用了-Dserver.port=8262的方式，修改了生产者的端口。
+> 注意：为了便于测试，这里使用了-Dservicecomb.service.openMigration=true -Dservicecomb.service.enableSpringRegister=true的方式打开了spring迁移功能，如果使用了其它[参数配置方式](../user-guide/sermant-agent.md#参数配置方式)打开了spring迁移开关，则无需添加该参数。为了便于观察，使用了-Dserver.port=8262的方式，修改了生产者的端口。
 
-其中${path}需要替换为Sermant实际包路径，x.x.x需要替换为Sermant实际版本号，appName为agent的启动参数，与注册参数无关。
+> 说明：其中${path}需要替换为Sermant实际包路径，x.x.x需要替换为Sermant实际版本号，appName为agent的启动参数，与注册参数无关。
+
+启动成功后，多次访问消费者接口`http://localhost:8161/hello`，确认接口能够访问2个生产者。
 
 <MyImage src="/docs-img/springcloud-migration-2.png"/>
 
-启动成功后，多次访问消费者接口`http://localhost:8161/hello`，确认接口能够访问2个生产者。
+<MyImage src="/docs-img/springcloud-migration-1.png"/>
 
 （3）关闭原生产者
 
@@ -298,13 +306,15 @@ java -Dserver.port=8261 -Dservicecomb.service.openMigration=true -Dservicecomb.s
 java -Dserver.port=8261 -Dservicecomb.service.openMigration=true -Dservicecomb.service.enableSpringRegister=true -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -jar spring-cloud-registry-consumer.jar
 ```
 
-注：为了便于测试，这里使用了-Dservicecomb.service.openMigration=true -Dservicecomb.service.enableSpringRegister=true的方式打开了spring迁移功能，如果使用了[其它的方式](docs/zh/document/user-guide/sermant-agent.md#参数配置方式)打开了spring迁移开关，则无需添加该参数。为了便于观察，使用了-Dserver.port=8261的方式，修改了消费者的端口。
+> 注意：为了便于测试，这里使用了-Dservicecomb.service.openMigration=true -Dservicecomb.service.enableSpringRegister=true的方式打开了spring迁移功能，如果使用了其它的[参数配置方式](../user-guide/sermant-agent.md#参数配置方式)打开了spring迁移开关，则无需添加该参数。为了便于观察，使用了-Dserver.port=8261的方式，修改了消费者的端口。
 
-其中${path}需要替换为Sermant实际包路径，x.x.x需要替换为Sermant实际版本号，appName为agent的启动参数，与注册参数无关。
+> 说明：其中${path}需要替换为Sermant实际包路径，x.x.x需要替换为Sermant实际版本号，appName为agent的启动参数，与注册参数无关。
+
+启动成功后，多次访问消费者接口`http://localhost:8161/hello`和`http://localhost:8261/hello`，确认2个接口能够访问双注册生产者。
 
 <MyImage src="/docs-img/springcloud-migration-3.png"/>
 
-启动成功后，多次访问消费者接口`http://localhost:8161/hello`和`http://localhost:8261/hello`，确认2个接口能够访问双注册生产者。
+<MyImage src="/docs-img/springcloud-migration-4.png"/>
 
 （5）关闭原消费者
 
@@ -322,7 +332,7 @@ java -Dserver.port=8261 -Dservicecomb.service.openMigration=true -Dservicecomb.s
 
 #### 验证
 
-<MyImage src="/docs-img/springcloud-migration-4.png"/>
+<MyImage src="/docs-img/springcloud-migration-5.png"/>
 
 生产者服务与消费者服务成功把注册中心迁移到了servicecomb中，且在注册中心的迁移过程中，生产者始终可以调用消费者，不需要中断服务。
 
@@ -367,7 +377,7 @@ servicecomb.service:
 
 ### 操作和结果验证
 
-下面以Dubbo场景为例，演示服务注册插件的迁移功能（从Zookeeper迁移到ServiceComb）。
+下面将演示如何使用服务注册插件，验证Dubbo应用在双注册模式下的注册迁移功能（从Zookeeper迁移到ServiceComb）。
 
 #### 准备工作
 
@@ -407,7 +417,7 @@ java -Dservicecomb.service.openMigration=true -Dservicecomb.service.enableDubboR
 java -Dservicecomb.service.openMigration=true -Dservicecomb.service.enableDubboRegister=true -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -jar dubbo-registry-consumer.jar
 ```
 
-注：为了便于测试，这里使用了-Dservicecomb.service.openMigration=true -Dservicecomb.service.enableDubboRegister=true的方式打开了dubbo迁移功能，如果使用了[其它的方式](docs/zh/document/user-guide/sermant-agent.md#参数配置方式)打开了dubbo迁移开关，则无需添加该参数。
+> 注意：为了便于测试，这里使用了-Dservicecomb.service.openMigration=true -Dservicecomb.service.enableDubboRegister=true的方式打开了dubbo迁移功能，如果使用了其它的[参数配置方式](../user-guide/sermant-agent.md#参数配置方式)打开了dubbo迁移开关，则无需添加该参数。
 
 （2）启动原生产者（注册到Zookeeper中）
 
@@ -429,12 +439,20 @@ java -Dservicecomb.service.enableDubboRegister=true -Dserver.port=48021 -Ddubbo.
 java -Dservicecomb.service.enableDubboRegister=true -Dserver.port=48021 -Ddubbo.protocol.port=48821 -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -jar dubbo-registry-provider.jar
 ```
 
-注：为了便于测试，这里使用了-Dservicecomb.service.enableDubboRegister=true的方式打开了dubbo注册开关，如果使用了[其它的方式](docs/zh/document/user-guide/sermant-agent.md#参数配置方式)打开了dubbo注册开关，则无需添加该参数；另外为了解决同一台服务器启动2个provider遇到的端口冲突问题，需要增加-Dserver.port=48021 -Ddubbo.protocol.port=48821参数，如果测试时2个provider在不同的服务器，则无需添加该参数。
+> 注意：为了便于测试，这里使用了-Dservicecomb.service.enableDubboRegister=true的方式打开了dubbo注册开关，如果使用了其它的[参数配置方式](../user-guide/sermant-agent.md#参数配置方式)打开了dubbo注册开关，则无需添加该参数；另外为了解决同一台服务器启动2个provider遇到的端口冲突问题，需要增加-Dserver.port=48021 -Ddubbo.protocol.port=48821参数，如果测试时2个provider在不同的服务器，则无需添加该参数。
 
-其中${path}需要替换为Sermant实际包路径，x.x.x需要替换为Sermant实际版本号，appName为agent启动参数中的应用名，与注册参数无关，执行命令的目录需要为demo应用的jar包所在的目录。
+> 说明：其中${path}需要替换为Sermant实际包路径，x.x.x需要替换为Sermant实际版本号，appName为agent启动参数中的应用名，与注册参数无关，执行命令的目录需要为demo应用的jar包所在的目录。
 
 #### 验证
 
-<MyImage src="/docs-img/dubbo-migration.png"/>
+当启动以上3个应用后，登录ServiceComb后台`http://127.0.0.1:30103/`、查看Zookeeper节点数据，均可查看到consumer和provider应用。
 
-当启动以上3个应用后，登录[ServiceComb](http://127.0.0.1:30103/)后台，查看Zookeeper节点数据，均可查看到consumer和provider应用，并且多次访问应用接口`http://localhost:28820/hello`，确认接口是否正常返回，若接口成功返回并可访问2个注册中心的生产者实例，则说明注册并迁移成功。
+<MyImage src="/docs-img/dubbo-migration-1.png"/>
+
+<MyImage src="/docs-img/dubbo-migration-2.png"/>
+
+多次访问应用接口`http://localhost:28820/hello`，确认接口是否正常返回，若接口成功返回并可访问2个注册中心的生产者实例，则说明注册并迁移成功。
+
+<MyImage src="/docs-img/dubbo-migration-3.png"/>
+
+<MyImage src="/docs-img/dubbo-migration-4.png"/>

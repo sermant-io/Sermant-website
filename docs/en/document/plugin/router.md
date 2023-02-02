@@ -16,41 +16,9 @@ The routing plugin requires service metadata (version number, other metadata) to
 
 - service.meta.parameters: other metadata, used to tag the current microservice, like k1:v1,k2:v2.
 
-### Plug-in configuration
-
-The label routing plug-in also needs to configure the routing switch and other information. The configuration file of the plug-in can be found in `${path}/semant-agent-x.x.x/agent/pluginPackage/service-router/config/config.yaml`. The configuration is as follows:
-
-```yaml
-router.plugin:
-  # Dubbo area routing switch configuration. Dubbo area routing configuration is supported when it is true
-  enabled-dubbo-zone-router: false
-  # Spring cloud area routing switch configuration. Support spring cloud area routing configuration when it is true
-  enabled-spring-zone-router: false
-  # Register the regional routing switch configuration of the plug-in (sermant-springboot-registry). If it is true, the host application also supports regional routing configuration if it registers through the registration plug-in.
-  enabled-registry-zone-router: false
-  # Adapt registration plug-in switch configuration. When true, the label routing plug-in supports service instances registered through the registration plug-in.
-  enabled-registry-plugin-adaptation: false
-  # Use request information for routing switch configuration. When it is true, the request information is supported as the routing configuration.
-  use-request-router: false
-  # Tags when using request information for routing. The control label routing plug-in obtains those attributes from the request information as the routing configuration.
-  request-tags: []
-  # The tag of the request header to be parsed. The control label routing plug-in obtains those attributes from the request header information as the routing configuration.
-  parse-header-tag: ''
-```
-
-|                  Parameter key                   |                                                                                                            Description                                                                                                             | Default value | Required |
-|:------------------------------------------------:|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:-------------:|:--------:|
-|     router.plugin.enabled-dubbo-zone-router      |                                                               dubbo zone routing switch configuration. When it is true, it supports dubbo area routing configuration                                                               |     false     |    No    |
-|     router.plugin.enabled-spring-zone-router     |                                                            Spring cloud area routing switch configuration. If true, support the spring cloud area routing configuration                                                            |     false     |    No    |
-|    router.plugin.enabled-registry-zone-router    | Configure the regional routing switch of the registration plug-in (sermant-springboot-registry). If it is true, the host application also supports regional routing configuration if it registers through the registration plug-in |     False     |    No    |
-| router.plugin.enabled-registry-plugin-adaptation |                                 Adapts the registration plug-in switch configuration. When true, the label routing plug-in supports service instances registered through the registration plug-in                                  |     False     |    No    |
-|         router.plugin.se-request-router          |                                          Use the request information for routing switch configuration. When it is true, the request information is supported as the routing configuration                                          |     False     |    No    |
-|            router.plugin.request-tags            |                               Tags when using request information for routing. The control label routing plug-in obtains those attributes from the request information as the routing configuration                                |      []       |    No    |
-|          router.plugin.parse-header-tag          |                              The tag of the request header to be parsed. The control label routing plug-in obtains those attributes from the request header information as the routing configuration.                              |      ''       |    No    |
-
 ## Detailed Routing Rules
 
-Router plugin based on dynamic configuration center for configuration release, configuration release can refer to [Configuration Center User's Manual](../user-guide/configuration-center.md#sermant-dynamic-configuration-center-model).
+Router plugin based on dynamic configuration center for configuration release, configuration release can refer to [Configuration Center User's Manual](../user-guide/configuration-center.md#publish-configuration).
 
 The key value needs to be **servicecomb.routeRule.${yourServiceName}**, ${yourServiceName} is the microservice name (i.e. the value of spring.application.name/dubbo.application.name configuration) of the target application.
 
@@ -85,20 +53,20 @@ The content is the specific routing rule.
         group: green # Instance tagging. Instances that meet the tagging criteria are placed in this group.
 ```
 
-| Parameter key |                                                                                                                                                                     Description                                                                                                                                                                     | Default value | Required |
-|:-------------:|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:-------------:|:--------:|
-|   priority    |                                                                                                                                                                      priority                                                                                                                                                                       |     null      |    no    |
-|     match     | Matching rules, support source (source, i.e. the upstream application of the target application)/attachments (attachments parameter of the dubbo application)/headers (request header)/args (dubbo parameter)/path (request path, dubbo is the interface name)/parameters (Http request parameter)/cookies (cookie information of the Http request) |     null      |    no    |
-|     route     |                                                                                                                                                     routing rule, support weight configuration                                                                                                                                                      |     null      |    no    |
-|    weight     |                                                                                                                                                                    weight value                                                                                                                                                                     |     null      |    no    |
-|     tags      |                                                                                                                                Tag information. The instances that meet the tag conditions are placed in this group                                                                                                                                 |     Empty     |    No    |
-|     exact     |                                                                                                             Configuration policy. For detailed configuration policy, refer to [Configuration Policy Table](#configuration-policy-table)                                                                                                             |     Empty     |    No    |
+| Parameter key |                                                         Description                                                         | Default value | Required |
+|:-------------:|:---------------------------------------------------------------------------------------------------------------------------:|:-------------:|:--------:|
+|   priority    |                                  priority, the higher the number, the higher the priority.                                  |     Empty     |   yes    |
+|     match     |        Matching rules, support attachments (attachments parameter of the dubbo application)/headers (request header)        |     Empty     |    no    |
+|     exact     | Configuration policy. For detailed configuration policy, refer to [Configuration Policy Table](#configuration-policy-table) |     Empty     |    no    |
+|     route     |                      routing rule, Including weight configuration and label information configuration                       |     Empty     |   yes    |
+|    weight     |                                                        weight value                                                         |     Empty     |   yes    |
+|     tags      |                    Tag information. The instances that meet the tag conditions are placed in this group                     |     Empty     |   yes    |
 
 **Label routing rule interpretation**
 
 - 80% of the requests with the id attribute value of 1 in the attachments information will be routed to the service instance with the version number of 1.0.1, and 20% will be routed to the service instance with the version number of 1.0.0. 80% of other requests will be routed to the service instance with the group name green, and 20% will be routed to the service instance with the group name red.
 
-**Note: When adding a new configuration, please remove the comment, otherwise it will cause the addition to fail.**
+> Note: When adding a new configuration, please remove the comment, otherwise it will cause the addition to fail.
 
 ### Configuration Policy Table
 
@@ -135,6 +103,8 @@ Take the Spring Cloud scenario as an example to demonstrate the use of label rou
 - [Download](https://github.com/huaweicloud/Sermant-examples/tree/main/router-demo/spring-cloud-router-demo) spring-cloud-router-demo source code
 
 - [Download](https://github.com/apache/servicecomb-service-center) ServiceComb, and start
+
+- [Download](https://zookeeper.apache.org/releases.html#download) Zookeeper, and start
 
 ### Step 1: Compile and package the spring-cloud-router-demo application
 
@@ -198,9 +168,14 @@ java -Dservicecomb_service_enableSpringRegister=true -Dservice_meta_version=1.0.
 > where path needs to be replaced with the actual installation path of Sermant.
 > x.x.x represents a Sermant version number.
 
-### Step 3: Publish Configuration
+### Step 3: View service registration
+Login [ServiceComb](http://127.0.0.1:30103/) In the background, check whether the service is registered successfully.
 
-Configuring Routing Rules, please refer to [Detailed Routing Rules](#detailed-routing-rules).
+<MyImage src="/docs-img/router-registry.png"/>
+
+### Step 4: Publish configuration
+
+Configure routing rules. Refer to the [Dynamic Configuration Center User Manual](../user-guide/configuration-center.md#publish-configuration) for configuration publishing.
 
 The key value is **servicecomb.routeRule.spring-cloud-router-provider**, the group is **app=default&environment=**, and the content is the specific routing rule, as follows.
 
@@ -231,6 +206,69 @@ The key value is **servicecomb.routeRule.spring-cloud-router-provider**, the gro
 **Label routing rule interpretation**
 
 - The request with the id attribute value of 1 in the request header information will be routed to the service instance with the group name of gray, and the request with the id attribute value of 2 will be routed to the service instance with the version number of 1.0.1.
+
+Take Zookeeper as an example, and use the command line tools provided by Zookeeper for configuration publishing.
+1. Execute the following command in the `${path}/bin/` directory to create the node `/app=default&environment=`
+
+```shell
+# linux mac
+./zkCli.sh -server localhost:2181 create /app=default&environment=
+
+# windows
+zkCli.cmd -server localhost:2181 create /app=default&environment=
+```
+
+> Note: `${path}` is the installation directory of zookeeper
+
+2. Execute the following command in the `${path}/bin/` directory to create the node `/app=default&environment=/servicecomb.routeRule.spring-cloud-router-provider` and set the data.
+
+```shell
+# linux mac
+./zkCli.sh -server localhost:2181 create /app=default&environment=/servicecomb.routeRule.spring-cloud-router-provider "---
+- precedence: 1
+  match:
+    headers:
+      id:
+        exact: '1'
+        caseInsensitive: false
+  route:
+    - tags:
+        group: gray
+      weight: 100
+- precedence: 2
+  match:
+    headers:
+      id:
+        exact: '2'
+        caseInsensitive: false
+  route:
+    - tags:
+        version: 1.0.1
+      weight: 100"
+
+# windows
+zkCli.cmd -server localhost:2181 create /app=default&environment=/servicecomb.routeRule.spring-cloud-router-provider "---
+- precedence: 1
+  match:
+    headers:
+      id:
+        exact: '1'
+        caseInsensitive: false
+  route:
+    - tags:
+        group: gray
+      weight: 100
+- precedence: 2
+  match:
+    headers:
+      id:
+        exact: '2'
+        caseInsensitive: false
+  route:
+    - tags:
+        version: 1.0.1
+      weight: 100"
+```
 
 ### Verification
 
