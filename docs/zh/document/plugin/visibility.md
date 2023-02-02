@@ -117,10 +117,7 @@ java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=prov
 # Run under Windows
 java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=provider -jar dubbo-integration-provider.jar
 ```
-> **说明**：
-> 其中path需要替换为Sermant实际安装路径。
-> x.x.x代表Sermant某个版本号。
-
+> **说明：** ${path}为sermant实际安装路径，x.x.x代表sermant某个版本号。
 
 ### 验证
 

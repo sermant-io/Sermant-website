@@ -79,7 +79,7 @@ mvn clean package
 
 打包成功后可在`${path}/Sermant-examples/grace-demo/spring-grace-nacos-demo/nacos-rest-data/target`得到` nacos-rest-data-2.2.0.RELEASE.jar`包，在`${path}/Sermant-examples/grace-demo/spring-grace-nacos-demo/nacos-rest-consumer/target`得到`nacos-rest-consumer-2.2.0.RELEASE.jar`，在`${path}/Sermant-examples/grace-demo/spring-grace-nacos-demo/nacos-rest-provider/target`得到`nacos-rest-provider-2.2.0.RELEASE.jar`。
 
-> 说明：path为demo应用下载所在路径。
+> **说明：** ${path}为demo应用下载所在路径。
 
 ### 步骤二：部署应用
 
@@ -89,12 +89,12 @@ mvn clean package
 
 其中consumer开启优雅上下线能力，一个provider实例开启预热与优雅下线能力， 另一个provider实例仅开启优雅下线能力。
 
-> 注：下面通过应用启动时的-D参数对优雅上下线插件参数进行配置。
+> **注意：** 下面通过应用启动时的-D参数对优雅上下线插件参数进行配置。
 
 （1）启动data
 
 ```shell
-   java -Dspring.cloud.nacos.discovery.server-addr=localhost:8848 -jar nacos-rest-data-2.2.0.RELEASE.jar
+java -Dspring.cloud.nacos.discovery.server-addr=localhost:8848 -jar nacos-rest-data-2.2.0.RELEASE.jar
 ```
 
 （2）启动第一个provider实例（端口8880, **关闭预热功能**）
@@ -132,10 +132,7 @@ java -Dgrace.rule.enableSpring=true -Dgrace.rule.enableWarmUp=true -Dgrace.rule.
 java -Dgrace.rule.enableSpring=true -Dgrace.rule.enableWarmUp=true -Dgrace.rule.enableGraceShutdown=true -Dgrace.rule.enableOfflineNotify=true -Dspring.cloud.nacos.discovery.server-addr=localhost:8848 -Dserver.port=8800 -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -jar nacos-rest-consumer-2.2.0.RELEASE.jar
 ```
 
-> **说明**：
-> 其中path需要替换为Sermant实际安装路径。
-> x.x.x代表Sermant某个版本号。
-
+> **说明：** ${path}为sermant实际安装路径，x.x.x代表sermant某个版本号。
 
 ### 验证
 

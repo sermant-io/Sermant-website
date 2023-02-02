@@ -1,7 +1,7 @@
 # Introduction
 ## What is Sermant?
 
-**Sermant** (also known as Java-mesh) is a proxyless **ser**vice **m**esh technology based on J**a**va Age**nt** . It leverages the [Java Agent](https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/package-summary.html) to instrument the host application with enhanced service governance function, in order to solve the service governance problem, in the massive micro-service architecture.
+**Sermant** is a proxyless service mesh technology based on Java Agent. It uses Java Agent to provide enhanced service governance functions for host applications to solve the problem of service governance in large-scale microservice scenarios.
 
 ## Architecture
 

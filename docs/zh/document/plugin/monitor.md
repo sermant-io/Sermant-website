@@ -173,10 +173,7 @@ java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=defa
 java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -jar demo-0.0.1-SNAPSHOT.jar
 ```
 
-> **说明**：
-> 其中path需要替换为Sermant实际安装路径。
-> x.x.x代表Sermant某个版本号。
-
+> **说明：** ${path}为sermant实际安装路径，x.x.x代表sermant某个版本号。
 
 - 启动 Prometheus
 
