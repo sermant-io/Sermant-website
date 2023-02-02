@@ -45,13 +45,14 @@ visibility.config:
 
 ## 操作和结果验证
 
-下面将演示如何使用服务可见性插件。
+下面将演示如何使用服务可见性插件，验证采集Dubbo应用的契约和血缘关系信息场景。
 
 ### 准备工作
 
 - [下载](https://github.com/huaweicloud/Sermant/releases)/编译Sermant包
 - [下载](https://github.com/huaweicloud/Sermant/tree/develop/sermant-integration-tests/dubbo-test)dubbo-test源码
-- [下载](https://zookeeper.apache.org/releases.html)zookeeper并启动应用
+
+> 注意：[动态配置中心](../user-guide/configuration-center.md)会在本场景中默认使用，由于非本场景的核心组件，因此在本文中不额外赘述。
 
 ### 步骤一：修改配置
 

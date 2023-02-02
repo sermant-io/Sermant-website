@@ -434,7 +434,7 @@ java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar -Dspring.app
 }
 ```
 
-以zookeeper为例，利用zookeeper提供的命令行工具来发布流量标记策略和流控策略：
+利用zookeeper提供的命令行工具来发布流量标记策略和流控策略：
 
 1. 在`${path}/bin/`目录执行以下命令创建节点`/service=spring-flow-provider`
 
