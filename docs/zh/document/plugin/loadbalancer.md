@@ -97,7 +97,7 @@ mvn clean package
 
 打包成功后可在`${path}/Sermant-examples/sermant-template/demo-register/resttemplate-consumer/target`得到`resttemplate-consumer.jar`包，在`${path}/Sermant-examples/sermant-template/demo-register/resttemplate-provider/target`得到`resttemplate-provider.jar`。
 
-> 说明：path为demo应用下载所在路径。
+> **说明：** ${path}为demo应用下载所在路径。
 
 ### 步骤二：发布流量标记
 参考使用[动态配置中心使用手册](../user-guide/configuration-center.md#发布配置)进行配置发布，发布如下配置
@@ -174,9 +174,7 @@ java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=defa
 # Run under Windows
 java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -Dserver.port=8005 -jar resttemplate-consumer.jar
 ```
-> **说明**：
-> 其中path需要替换为Sermant实际安装路径。
-> x.x.x代表Sermant某个版本号。
+> **说明：** ${path}为sermant实际安装路径，x.x.x代表sermant某个版本号。
 
 ### 验证
 

@@ -139,7 +139,7 @@ mvn clean package
 
 打包成功后，在`${path}/Sermant-examples/flowcontrol-demo/spring-cloud-demo/spring-provider/target`得到`spring-provider.jar`
 
-> **说明**： path为demo应用下载所在路径
+> **说明**： ${path}为demo应用下载所在路径。
 
 ### 步骤二：修改插件配置
 
@@ -151,7 +151,7 @@ dynamic.config.plugin:
   enableOriginConfigCenter: false # 是否开启原配置中心, 默认关闭
 ```
 
-> **说明**： path为sermant所在路径
+> **说明**：${path}为sermant所在路径。
 
 ### 步骤三：启动demo应用
 
@@ -165,9 +165,7 @@ java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar -Dspring.app
 java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar -Dspring.application.name=spring-flow-provider -Dspring.cloud.zookeeper.connectString=127.0.0.1:2181 -jar spring-provider.jar
 ```
 
-> **说明:**
-> 上述命令中的${path}需要替换为Sermant实际安装路径，
-> x.x.x代表Sermant某个版本号。
+> **说明：** ${path}为sermant实际安装路径，x.x.x代表sermant某个版本号。
 
 ### 步骤四：查看原配置
 
@@ -225,10 +223,8 @@ public class FlowController {
 ./zkCli.sh -server localhost:2181 create /service=spring-flow-provider
 
 # windows
-zkCli.sh -server localhost:2181 create /service=spring-flow-provider
+zkCli.cmd -server localhost:2181 create /service=spring-flow-provider
 ```
-
-> 说明：${path}为zookeeper的安装目录
 
 2. 在`${path}/bin/`目录执行以下命令创建创建节点`/service=spring-flow-provider/config`和数据`sermant: sermant1`
 
@@ -237,10 +233,10 @@ zkCli.sh -server localhost:2181 create /service=spring-flow-provider
 ./zkCli.sh -server localhost:2181 create /service=spring-flow-provider/config "sermant: sermant1"
 
 # windows
-zkCli.sh -server localhost:2181 create /service=spring-flow-provider/config "sermant: sermant1"
+zkCli.cmd -server localhost:2181 create /service=spring-flow-provider/config "sermant: sermant1"
 ```
 
-> 说明：${path}为zookeeper的安装目录
+> 说明：${path}为zookeeper的安装目录。
 
 ### 验证
 

@@ -1,6 +1,6 @@
 # 流控
 
-本文介绍如何使用[流控插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-flowcontrol)
+本文介绍如何使用[流控插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-flowcontrol)。
 
 ## 功能介绍
 
@@ -19,7 +19,7 @@
 
 ### Sermant-agent配置
 
-流控插件依赖动态配置中心，需要在Sermant-agent中配置动态配置中心的地址（`dynamic.config.serverAddress`），动态配置中心的类型（`dynamic.config.dynamicConfigType`）,具体参考[Sermant-agent使用手册](../user-guide/sermant-agent.md#sermant-agent使用参数配置)。
+流控插件依赖动态配置中心，需要在Sermant-agent中配置动态配置中心的地址（`dynamic.config.serverAddress`），动态配置中心的类型（`dynamic.config.dynamicConfigType`），具体参考[Sermant-agent使用手册](../user-guide/sermant-agent.md#sermant-agent使用参数配置)。
 
 ### 插件配置
 
@@ -47,13 +47,13 @@ flow.control.plugin:
 
 流控配置主要基于`group`进行配置订阅，该`group`由多个键值对组成。下面详细说明`group`和键值对`key`和`value`的设置规则。
 
-> 关于`group` `key` 的介绍以及配置中心的设置参考[动态配置中心使用手册](../user-guide/configuration-center.md#发布配置)
+> 关于`group` `key` 的介绍以及配置中心的设置参考[动态配置中心使用手册](../user-guide/configuration-center.md#发布配置)。
 
 #### 根据采用配置中心的不同，`group`的值将会有所区别,以下介绍`group`的设置规则：
 
 - 采用`zookeeper`
 
-  此时插件将根据宿主应用的服务名进行订阅, 即应用配置的`spring.applicaton.name`, 插件订阅配置的group为`service=${spring.applicaton.name}`
+  此时插件将根据宿主应用的服务名进行订阅, 即应用配置的`spring.applicaton.name`, 插件订阅配置的group为`service=${spring.applicaton.name}`。
 
 - 采用`KIE`
 
@@ -73,10 +73,10 @@ flow.control.plugin:
     service.meta.customLabelValue=default
     ```
 
-  应用配置，服务配置，自定义配置说明参考[CSE配置中心概述](https://support.huaweicloud.com/devg-cse/cse_devg_0020.html)
-  - 应用配置：由`service.meta.application`与`service.meta.environment`组成， 对应的`group`为`app=default&environment=development`
-  - 服务配置：由`service.meta.application`、`service.meta.environment`以及服务名组成，此处服务即`spring.application.name`, 对应的`group`为`app=default&environment=development&service=DynamicConfigDemo`
-  - 自定义配置：由`service.meta.customLabel`与`service.meta.customLabelValue`组成， 对应的`group`为`public=default`
+  应用配置，服务配置，自定义配置说明参考[CSE配置中心概述](https://support.huaweicloud.com/devg-cse/cse_devg_0020.html)。
+  - 应用配置：由`service.meta.application`与`service.meta.environment`组成， 对应的`group`为`app=default&environment=development`。
+  - 服务配置：由`service.meta.application`、`service.meta.environment`以及服务名组成，此处服务即`spring.application.name`, 对应的`group`为`app=default&environment=development&service=DynamicConfigDemo`。
+  - 自定义配置：由`service.meta.customLabel`与`service.meta.customLabelValue`组成， 对应的`group`为`public=default`。
 
 #### 流控插件根据配置键`key`的前缀进行规则匹配，以下介绍配置键`key`的规则：
 
@@ -86,11 +86,11 @@ flow.control.plugin:
 
 例如流量标记的键key需以`servicecomb.MatchGroup`为前缀, 而限流规则的键key需以`servicecomb.rateLimiting`为前缀，以一个具体的例子：
 
-> 流量标记配置键key为：`servicecomb.MatchGroup.flow`
+> 流量标记配置键key为：`servicecomb.MatchGroup.flow`。
 > 
-> 限流规则配置键key为：`servicecomb.rateLimiting.flow`
+> 限流规则配置键key为：`servicecomb.rateLimiting.flow`。
 > 
-> 如上，`flow`即为业务场景名，仅当两者业务场景名称一致，当请求匹配上流量标记时，限流规则才会生效
+> 如上，`flow`即为业务场景名，仅当两者业务场景名称一致，当请求匹配上流量标记时，限流规则才会生效。
 
 #### 下面介绍流控规则配置键`key`对应值`value`的相关信息：
 
@@ -116,7 +116,7 @@ flow.control.plugin:
 
   - 请求路径为`/degrade`且方法类型为`GET`, 同时满足要求请求头包含`key=value`即匹配成功
 
-    详细配置项可参考[ServiceComb开发文档](http://servicecomb.gitee.io/servicecomb-java-chassis-doc/java-chassis/zh_CN/references-handlers/governance.html#_2) 流量标记部分
+    详细配置项可参考[ServiceComb开发文档](http://servicecomb.gitee.io/servicecomb-java-chassis-doc/java-chassis/zh_CN/references-handlers/governance.html#_2) 流量标记部分。
 
   **流量标记请求路径（apiPath）配置说明**
 
@@ -126,7 +126,7 @@ flow.control.plugin:
 
     该协议依据请求路径进行匹配，例如请求路径为localhost:8080/test/flow, 则实际拿到的路径为`/test/flow`，因此若需设置匹配规则，需依据该路径进行配置。
 
-    值得注意的是，如果用户配置了contextPath, 则需要加上contextPath前缀才可生效，即流量标记中请求路径为`${contextPath}/test/flow`
+    值得注意的是，如果用户配置了contextPath, 则需要加上contextPath前缀才可生效，即流量标记中请求路径为`${contextPath}/test/flow`。
 
   - Rpc协议（Dubbo）
 
@@ -134,9 +134,9 @@ flow.control.plugin:
 
 - **限流**
 
-  **限流规则配置键前缀:** `servicecomb.rateLimiting`
+  **限流规则配置键前缀：** `servicecomb.rateLimiting`
 
-  **限流规则：**：
+  **限流规则：**
   
   | 配置项             | 说明                                                         | 默认值 | 是否必须 |
   | ------------------ | ------------------------------------------------------------ | ---- | ---- |
@@ -149,7 +149,7 @@ flow.control.plugin:
   imitRefreshPeriod: 1000
   rate: 2
   ```
-  **上述限流规则解释：** 若1秒内超过2个请求，即触发流控效果
+  **上述限流规则解释：** 若1秒内超过2个请求，即触发流控效果。
 
 - **熔断**
 
@@ -181,7 +181,7 @@ flow.control.plugin:
   waitDurationInOpenState: 10s
   ```
   
-  **上述熔断规则解释：** 10秒内，若流量标记的接口请求次数超过3次，且错误率超过90%或者慢请求占比超过80%则触发熔断
+  **上述熔断规则解释：** 10秒内，若流量标记的接口请求次数超过3次，且错误率超过90%或者慢请求占比超过80%则触发熔断。
 
 - **隔离**
 
@@ -203,7 +203,7 @@ flow.control.plugin:
   name: "隔离仓"
   ```
   
-  **上述隔离规则解释：** 针对流量标记的接口, 若最大并发数超过5，且新的请求等待10S，还未获取资源，则触发隔离仓异常
+  **上述隔离规则解释：** 针对流量标记的接口, 若最大并发数超过5，且新的请求等待10S，还未获取资源，则触发隔离仓异常。
 
 - **重试**
 
@@ -228,7 +228,7 @@ flow.control.plugin:
     - 500
   ```
   
-  **上述重试规则解释：** 针对流量标记的接口, 当请求抛出500异常时进行重试，直到重试成功或者达到最大重试次数
+  **上述重试规则解释：** 针对流量标记的接口, 当请求抛出500异常时进行重试，直到重试成功或者达到最大重试次数。
 
 - **错误注入**
 
@@ -254,7 +254,7 @@ flow.control.plugin:
   errorCode: 503
   ```
   
-  **上述错误注入规则解释：** 当请求流量标记的接口时，100%将返回空
+  **上述错误注入规则解释：** 当请求流量标记的接口时，100%将返回空。
 
 - **系统规则**
 
@@ -279,7 +279,7 @@ flow.control.plugin:
   ```
   
   **上述系统规则解释：** 
-    - 针对使用流控插件的应用示例来说，当系统负载超过5，或者cpu使用率超过0.6，或者qps超过1000，或者请求响应时间小鱼100ms，或者并发线程数大于200时，即触发限流，返回对应异常信息 
+    - 针对使用流控插件的应用示例来说，当系统负载超过5，或者cpu使用率超过0.6，或者qps超过1000，或者请求响应时间小鱼100ms，或者并发线程数大于200时，即触发限流，返回对应异常信息。 
     - 若开启系统自适应开关，则当系统负载大于5时，若当前并发线程数大于系统容量（系统容量由qps * minRt计算得出），则触发限流。
 
 ### 基于配置文件设置规则
@@ -355,7 +355,7 @@ servicecomb:                            # 流量标记前缀
 
 ### 基于Sermant动态配置中心发布规则
 
-基于Sermant动态配置中心发布规则，可以参考[动态配置中心使用手册](../user-guide/configuration-center.md)
+基于Sermant动态配置中心发布规则，可以参考[动态配置中心使用手册](../user-guide/configuration-center.md)。
 
 ## 支持版本与限制
 
@@ -369,8 +369,8 @@ servicecomb:                            # 流量标记前缀
 
 ### 限制
 
-- 系统规则与系统自适应规则中`systemLoad`配置仅限于**linux**
-- 上述[基于配置文件设置配置](#基于配置文件设置配置) 仅限于**Springboot**应用
+- 系统规则与系统自适应规则中`systemLoad`配置仅限于**Linux**。
+- 上述[基于配置文件设置配置](#基于配置文件设置配置) 仅限于**Springboot**应用。
 
 ## 操作和结果验证
 
@@ -391,9 +391,9 @@ servicecomb:                            # 流量标记前缀
 mvn clean package
 ```
 
-打包成功后，在`${path}/Sermant-examples/flowcontrol-demo/spring-cloud-demo/spring-provider/target`得到`spring-provider.jar`
+打包成功后，在`${path}/Sermant-examples/flowcontrol-demo/spring-cloud-demo/spring-provider/target`得到`spring-provider.jar`。
 
-> **说明**： path为demo应用下载所在路径
+> **说明**： ${path}为demo应用下载所在路径。
 
 ### 步骤二：修改插件配置
 
@@ -406,7 +406,7 @@ flow.control.plugin:
   enable-system-rule: false # 是否开启系统规则流控
 ```
 
-> **说明**： path为sermant所在路径
+> **说明**： ${path}为sermant所在路径。
 
 ### 步骤三：启动demo应用
 
@@ -420,9 +420,7 @@ java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar -Dspring.app
 java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar -Dspring.application.name=spring-flow-provider -Dspring.cloud.zookeeper.connectString=127.0.0.1:2181 -jar spring-provider.jar
 ```
 
-> **说明:**
-> 上述命令中的${path}需要替换为Sermant实际路径，
-> x.x.x代表Sermant某个版本号。
+> **说明：** ${path}为sermant实际安装路径，x.x.x代表sermant某个版本号。
 
 ### 步骤四：发布流量标记
 
@@ -448,8 +446,6 @@ java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar -Dspring.app
 zkCli.cmd -server localhost:2181 create /service=spring-flow-provider
 ```
 
-> 说明：${path}为zookeeper的安装目录
-
 2. 在`${path}/bin/`目录执行以下命令创建节点`/service=spring-flow-provider/servicecomb.matchGroup.sceneFlow`和数据`"alias: scene\nmatches:\n- apiPath:\n    exact: /flow\n  headers: {}\n  method:\n  - GET\n  name: flow\n"`
 
 ```shell
@@ -474,8 +470,6 @@ matches:
   name: flow"
 ```
 
-> 说明：${path}为zookeeper的安装目录
-
 3. 在`${path}/bin/`目录执行以下命令创建节点`/service=spring-flow-provider/servicecomb.rateLimiting.sceneFlow`和数据`"limitRefreshPeriod: \"2S\"\nname: flow\nrate: \"4\"\n"`
 
 ```shell
@@ -490,7 +484,7 @@ name: flow
 rate: 4"
 ```
 
-> 说明：${path}为zookeeper的安装目录
+> 说明：${path}为zookeeper的安装目录。
 
 ### 验证
 
