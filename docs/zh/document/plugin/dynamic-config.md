@@ -126,7 +126,7 @@ public class ValueConfig {
 
 - [下载](https://github.com/huaweicloud/Sermant-examples/tree/main/flowcontrol-demo/spring-cloud-demo/spring-provider) demo源码
 - [下载](https://github.com/huaweicloud/Sermant/releases) 或编译Sermant包
-- [下载](https://github.com/vran-dev/PrettyZoo/releases) PrettyZoo并启动连接zookeeper
+- [下载](https://zookeeper.apache.org/releases#download) 并启动zookeeper
 
 ### 步骤一：编译打包demo应用
 
@@ -151,6 +151,8 @@ dynamic.config.plugin:
   enableOriginConfigCenter: false # 是否开启原配置中心, 默认关闭
 ```
 
+> **说明**： path为sermant所在路径
+
 ### 步骤三：启动demo应用
 
 参考如下命令启动demo应用
@@ -163,8 +165,8 @@ java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar -Dspring.app
 java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar -Dspring.application.name=spring-flow-provider -Dspring.cloud.zookeeper.connectString=127.0.0.1:2181 -jar spring-provider.jar
 ```
 
-> **说明**：
-> 上述命令中的${path}需要替换为Sermant实际安装路径。
+> **说明:**
+> 上述命令中的${path}需要替换为Sermant实际安装路径，
 > x.x.x代表Sermant某个版本号。
 
 ### 步骤四：查看原配置
@@ -214,15 +216,31 @@ public class FlowController {
 
 参考使用[动态配置中心使用手册](../user-guide/configuration-center.md#发布配置) 进行配置发布
 
-以zookeeper为例，利用PrettyZoo工具来发布动态配置：
+以zookeeper为例，利用zookeeper提供的命令行工具来来发布动态配置：
 
-1. 创建节点`/service=spring-flow-provider`
+1. 在`${path}/bin/`目录执行以下命令创建节点`/service=spring-flow-provider`
 
-<MyImage src="/docs-img/dynamic-config-create-node-1.jpg"/>
+```shell
+# linux mac
+./zkCli.sh -server localhost:2181 create /service=spring-flow-provider
 
-2. 创建节点`/service=spring-flow-provider/config`和数据`sermant: sermant1`
+# windows
+zkCli.sh -server localhost:2181 create /service=spring-flow-provider
+```
 
-<MyImage src="/docs-img/dynamic-config-create-node-2.jpg"/>
+> 说明：${path}为zookeeper的安装目录
+
+2. 在`${path}/bin/`目录执行以下命令创建创建节点`/service=spring-flow-provider/config`和数据`sermant: sermant1`
+
+```shell
+# linux mac
+./zkCli.sh -server localhost:2181 create /service=spring-flow-provider/config "sermant: sermant1"
+
+# windows
+zkCli.sh -server localhost:2181 create /service=spring-flow-provider/config "sermant: sermant1"
+```
+
+> 说明：${path}为zookeeper的安装目录
 
 ### 验证
 
