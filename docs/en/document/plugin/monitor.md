@@ -126,6 +126,8 @@ The following will demonstrate how to use the monitoring plug-in.
 
 - [Download](https://github.com/prometheus/prometheus/releases) Prometheus
 
+> Note: [Dynamic Configuration Center](../user-guide/configuration-center.md) will be used by default in this scenario. Since it is not the core component of this scenario, it will not be described in this article.
+
 ### Step 1: Compile and package the demo application
 
 Execute the following command in the root directory of the demo application to package the demo application:

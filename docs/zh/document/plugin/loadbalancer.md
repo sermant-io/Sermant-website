@@ -85,7 +85,6 @@ rule: Random
 - [下载](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/demo-register)demo源码
 - [下载](https://github.com/huaweicloud/Sermant/releases)/编译sermant包
 - [下载](https://zookeeper.apache.org/releases.html#download)并启动zookeeper
-- [下载](https://github.com/vran-dev/PrettyZoo/releases)PrettyZoo并启动连接zookeeper
 
 ### 步骤一：编译打包demo应用
 
@@ -110,15 +109,33 @@ mvn clean package
 }
 ```
 
-以zookeeper为例，利用PrettyZoo工具来发布流量标记策略：
+以zookeeper为例，利用zookeeper提供的命令行工具进行配置发布。
 
-1. 创建节点`/app=default&environment=&service=zk-rest-consumer`
+1、在`${path}/bin/`目录执行以下命令创建节点`/app=default&environment=&service=zk-rest-consumer`
 
-<MyImage src="/docs-img/loadbalancer_node.png"/>
+```shell
+# linux mac
+./zkCli.sh -server localhost:2181 create /app=default&environment=&service=zk-rest-consumer
 
-2. 创建节点`/app=default&environment=&service=zk-rest-consumer/servicecomb.matchGroup.testLb`和数据`alias: loadbalancer-rule\n matches:\n- serviceName: zk-rest-provider`
+# windows
+zkCli.cmd -server localhost:2181 create /app=default&environment=&service=zk-rest-consumer
+```
 
-<MyImage src="/docs-img/loadbalance_matchgroup.png"/>
+> 说明：`${path}`为zookeeper的安装目录
+
+2、在`${path}/bin/`目录执行以下命令创建节点`/app=default&environment=&service=zk-rest-consumer/servicecomb.matchGroup.testLb`和数据`alias: loadbalancer-rule\n matches:\n- serviceName: zk-rest-provider`。
+
+```shell
+# linux mac
+./zkCli.sh -server localhost:2181 create /app=default&environment=&service=zk-rest-consumer/servicecomb.matchGroup.testLb "alias: loadbalancer-rule
+matches:
+- serviceName: zk-rest-provider"
+
+# windows
+zkCli.cmd -server localhost:2181 create /app=default&environment=&service=zk-rest-consumer/servicecomb.matchGroup.testLb "alias: loadbalancer-rule
+matches:
+- serviceName: zk-rest-provider"
+```
 
 ### 步骤三：发布匹配的负载均衡规则（以Random为例）
 参考使用[动态配置中心使用手册](../user-guide/configuration-center.md#发布配置)进行配置发布， 发布如下配置
@@ -131,11 +148,17 @@ mvn clean package
 }
 ```
 
-以zookeeper为例，利用PrettyZoo工具来发布负载均衡策略：
+以zookeeper为例，利用zookeeper提供的命令行工具进行配置发布。
 
-1. 创建节点`/app=default&environment=&service=zk-rest-consumer/servicecomb.loadbalance.testLb`和数据`rule: Random`
+1、在`${path}/bin/`目录执行以下命令创建节点`/app=default&environment=&service=zk-rest-consumer/servicecomb.loadbalance.testLb`和数据`rule: Random`
 
-<MyImage src="/docs-img/loadbalance_lb.png"/>
+```shell
+# linux mac
+./zkCli.sh -server localhost:2181 create /app=default&environment=&service=zk-rest-consumer/servicecomb.loadbalance.testLb "rule: Random"
+
+# windows
+zkCli.cmd -server localhost:2181 create /app=default&environment=&service=zk-rest-consumer/servicecomb.loadbalance.testLb "rule: Random"
+```
 
 ### 步骤四：启动demo应用
 

@@ -16,41 +16,9 @@
 
 - service.meta.parameters: 其它元数据，用来给当前微服务打标签，形如k1:v1,k2:v2。
 
-### 插件配置
-
-标签路由插件还需要配置路由开关等信息，可在`${path}/sermant-agent-x.x.x/agent/pluginPackage/service-router/config/config.yaml`找到该插件的配置文件，配置如下所示：
-```yaml
-router.plugin:
-  # dubbo区域路由开关配置。为ture时支持dubbo区域路由配置
-  enabled-dubbo-zone-router: false
-  # spring cloud区域路由开关配置。为ture时支持spring cloud区域路由配置
-  enabled-spring-zone-router: false
-  # 注册插件（sermant-springboot-registry）区域路由开关配置。为true时如果宿主应用通过注册插件进行注册也支持区域路由配置。
-  enabled-registry-zone-router: false
-  # 适配注册插件开关配置。为true时标签路由插件支持通过注册插件进行注册的服务实例。
-  enabled-registry-plugin-adaptation: false
-  # 使用请求信息做路由的开关配置。为true时支持使用请求信息作为路由配置。
-  use-request-router: false
-  # 使用请求信息做路由时的tags。控制标签路由插件从请求信息中获取那些属性作为路由配置。
-  request-tags: []
-  # 需要解析的请求头的tag。控制标签路由插件从请求头信息中获取那些属性作为路由配置。
-  parse-header-tag: ''
-```
-
-|                       参数键                        |                                     说明                                     |  默认值  | 是否必须 |
-|:------------------------------------------------:|:--------------------------------------------------------------------------:|:-----:|:----:|
-|     router.plugin.enabled-dubbo-zone-router      |                     dubbo区域路由开关配置。为ture时支持dubbo区域路由配置                      | false |  否   |
-|     router.plugin.enabled-spring-zone-router     |              spring cloud区域路由开关配置。为ture时支持spring cloud区域路由配置               | false |  否   |
-|    router.plugin.enabled-registry-zone-router    | 注册插件（sermant-springboot-registry）区域路由开关配置。为true时如果宿主应用通过注册插件进行注册也支持区域路由配置。 | false |  否   |
-| router.plugin.enabled-registry-plugin-adaptation |                 适配注册插件开关配置。为true时标签路由插件支持通过注册插件进行注册的服务实例。                  | false |  否   |
-|         router.plugin.se-request-router          |                    使用请求信息做路由的开关配置。为true时支持使用请求信息作为路由配置。                    | false |  否   |
-|            router.plugin.request-tags            |                使用请求信息做路由时的tags。控制标签路由插件从请求信息中获取那些属性作为路由配置。                 |  []   |  否   |
-|          router.plugin.parse-header-tag          |                 需要解析的请求头的tag。控制标签路由插件从请求头信息中获取那些属性作为路由配置。                  |  ''   |  否   |
-
-
 ## 详细路由规则
 
-标签路由插件基于动态配置中心进行配置发布，配置发布可以参考[动态配置中心使用手册](../user-guide/configuration-center.md#sermant动态配置中心模型)。
+标签路由插件基于动态配置中心进行配置发布，配置发布可以参考[动态配置中心使用手册](../user-guide/configuration-center.md#发布配置)。
 
 其中key值为**servicecomb.routeRule.${yourServiceName}**，${yourServiceName}为目标应用的微服务名称（即spring.application.name/dubbo.application.name配置的值）。
 
@@ -85,21 +53,21 @@ content为具体的路由规则。
         group: green # 实例标记。满足标记条件的实例放到这一组。
 ```
 
-|    参数键     |                                                                             说明                                                                              | 默认值 | 是否必须 |
-|:----------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------:|:---:|:----:|
-| precedence |                                                                             优先级                                                                             |  空  |  否   |
-|   match    | 匹配规则，支持source（来源，即目标应用的上游应用）/attachments（dubbo应用的attachents参数）/headers（请求头）/args（dubbo参数）/path（请求路径，dubbo为接口名）/parameters（Http请求参数）/cookie（Http请求的cookie信息） |  空  |  否   |
-|   route    |                                                                         路由规则，支持权重配置                                                                         |  空  |  否   |
-|   weight   |                                                                             权重值                                                                             |  空  |  否   |
-|    tags    |                                                                     标签信息，满足标记条件的实例放到这一组                                                                     |  空  |  否   |
-|   exact    |                                                               配置策略， 详细配置策略参考[配置策略表](#配置策略列表)                                                                |  空  |  否   |
+|    参数键     |                          说明                           | 默认值 | 是否必须 |
+|:----------:|:-----------------------------------------------------:|:---:|:----:|
+| precedence |                    优先级，数字越大，优先级越高                     |  空  |  是   |
+|   match    | 匹配规则，支持attachments（dubbo应用的attachents参数）/headers（请求头） |  空  |  否   |
+|   exact    |            配置策略， 详细配置策略参考[配置策略表](#配置策略列表)             |  空  |  否   |
+|   route    |                  路由规则，包括权重配置以及标签信息配置                  |  空  |  是   |
+|   weight   |                          权重值                          |  空  |  是   |
+|    tags    |                  标签信息，满足标记条件的实例放到这一组                  |  空  |  是   |
 
 
 **标签路由规则解释**
 
 - attachments信息中id属性值为1的请求80%会路由到版本号为1.0.1的服务实例，20%会路由到版本号为1.0.0的服务实例。其他请求80%会路由到组名为green的服务实例，20%会路由到组名为red的服务实例。
 
-**注意：新增配置时，请去掉注释，否则会导致新增失败。**
+> 注意：新增配置时，请去掉注释，否则会导致新增失败。
 
 ### 配置策略列表
 
@@ -136,6 +104,8 @@ content为具体的路由规则。
 - [下载](https://github.com/huaweicloud/Sermant-examples/tree/main/router-demo/spring-cloud-router-demo)spring-cloud-router-demo源码
 
 - [下载](https://github.com/apache/servicecomb-service-center)ServiceComb，并启动
+
+- [下载](https://zookeeper.apache.org/releases.html#download)Zookeeper，并启动
 
 ### 步骤一：编译打包spring-cloud-router-demo应用
 
@@ -199,9 +169,15 @@ java -Dservicecomb_service_enableSpringRegister=true -Dservice_meta_version=1.0.
 > 其中path需要替换为Sermant实际安装路径。
 > x.x.x代表Sermant某个版本号。
 
-### 步骤三：发布配置
+### 步骤三：查看服务注册情况
 
-配置路由规则，请参考[详细路由规则](#详细路由规则)。
+登录[ServiceComb](http://127.0.0.1:30103/)后台，查看服务是否注册成功。
+
+<MyImage src="/docs-img/router-registry.png"/>
+
+### 步骤四：发布配置
+
+配置路由规则。参考[动态配置中心使用手册](../user-guide/configuration-center.md#发布配置)进行配置发布。
 
 其中key值为**servicecomb.routeRule.spring-cloud-router-provider**，group为**app=default&environment=**，content为具体的路由规则，如下所示：
 
@@ -231,6 +207,70 @@ java -Dservicecomb_service_enableSpringRegister=true -Dservice_meta_version=1.0.
 **标签路由规则解释**
 
 - 请求头信息中id属性值为1的请求会路由到组名为gray的服务实例，id属性值为2的请求会路由到版本号为1.0.1的服务实例。
+
+以zookeeper为例，利用zookeeper提供的命令行工具进行配置发布。
+
+1、在`${path}/bin/`目录执行以下命令创建节点`/app=default&environment=`
+
+```shell
+# linux mac
+./zkCli.sh -server localhost:2181 create /app=default&environment=
+
+# windows
+zkCli.cmd -server localhost:2181 create /app=default&environment=
+```
+
+> 说明：`${path}`为zookeeper的安装目录
+
+2、在`${path}/bin/`目录执行以下命令创建节点`/app=default&environment=/servicecomb.routeRule.spring-cloud-router-provider`并设置数据。
+
+```shell
+# linux mac
+./zkCli.sh -server localhost:2181 create /app=default&environment=/servicecomb.routeRule.spring-cloud-router-provider "---
+- precedence: 1
+  match:
+    headers:
+      id:
+        exact: '1'
+        caseInsensitive: false
+  route:
+    - tags:
+        group: gray
+      weight: 100
+- precedence: 2
+  match:
+    headers:
+      id:
+        exact: '2'
+        caseInsensitive: false
+  route:
+    - tags:
+        version: 1.0.1
+      weight: 100"
+
+# windows
+zkCli.cmd -server localhost:2181 create /app=default&environment=/servicecomb.routeRule.spring-cloud-router-provider "---
+- precedence: 1
+  match:
+    headers:
+      id:
+        exact: '1'
+        caseInsensitive: false
+  route:
+    - tags:
+        group: gray
+      weight: 100
+- precedence: 2
+  match:
+    headers:
+      id:
+        exact: '2'
+        caseInsensitive: false
+  route:
+    - tags:
+        version: 1.0.1
+      weight: 100"
+```
 
 ### 验证
 
