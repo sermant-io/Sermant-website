@@ -4,13 +4,11 @@
 
 ## 功能介绍
 
-该插件为纯SpringBoot应用提供服务注册发现能力，方便用户在不修改代码的前提下快速接入注册中心（目前只支持Zookeeper），同时提供服务超时重试的能力，实现服务调用的高可用。
+该插件为纯SpringBoot应用提供服务注册发现能力，方便用户在不修改代码的前提下快速接入注册中心（目前只支持**Zookeeper**），同时提供超时重试的能力，实现服务调用的高可用。
 
-插件会根据发起客户端调用Url解析下游服务，并根据负载均衡选择优选实例，动态替换Url， 完成服务调用。
+插件会根据发起客户端调用Url解析下游服务，并根据负载均衡策略选择优选实例，动态替换Url， 完成服务调用。
 
-目前Url支持的格式：http://${domainName}/${serviceName}/${apiPath}
-
-其中`domainName`为实际调用的域名，`serviceName`为下游的服务名，`apiPath`则为下游请求接口路径。
+目前Url支持的格式：http://${domainName}/${serviceName}/${apiPath}，其中`domainName`为实际调用的域名，`serviceName`为下游的服务名，`apiPath`则为下游请求接口路径。
 
 ## 参数配置
 
@@ -20,12 +18,12 @@ SpringBoot注册插件需要按需修改插件配置文件，可在`${path}/serm
 
 ```yaml
 sermant.springboot.registry:
-  enableRegistry: false                 # 是否开启boot注册能力
+  enableRegistry: false                 # 是否开启springboot注册能力
   realmName: www.domain.com             # 匹配域名, 当前版本仅针对url为http://${realmName}/serviceName/api/xx场景生效
   enableRequestCount: false             # 是否开启流量统计, 开启后每次进入插件的流量将都会统计
      
 sermant.springboot.registry.lb:     
-  lbType: RoundRobin                    # 负载均衡类型, 当前支持轮询(RoundRobin)、随机(Random)、响应时间权重(WeightedResponseTime)、最低并发数(BestAvailable)
+  lbType: RoundRobin                    # 负载均衡策略, 当前支持轮询(RoundRobin)、随机(Random)、响应时间权重(WeightedResponseTime)、最低并发数(BestAvailable)
   registryAddress: 127.0.0.1:2181       # 注册中心地址
   instanceCacheExpireTime: 0            # 实例过期时间, 单位秒, 若<=0则永不过期
   instanceRefreshInterval: 0            # 实例刷新时间, 单位秒, 必须小于instanceCacheExpireTime
@@ -57,7 +55,9 @@ SpringBoot注册插件需根据指定服务名判断是否需要为请求进行�
 
 其中key值为**sermant.plugin.registry**。
 
-group建议配置为微服务级别，即**app=${service.meta.application}&environment=${service.meta.environment}&service={spring.application.name}**，其中service.meta.application、service.meta.environment的配置请参考[Sermant-agent使用手册](../user-guide/sermant-agent.md#sermant-agent使用参数配置), spring.application.name为微服务名（即spring应用中配置的服务名）。
+group为 **app=${service.meta.application}&environment=${service.meta.environment}&service={spring.application.name}** 即服务配置，其中service.meta.application、service.meta.environment的配置请参考[Sermant-agent使用手册](../user-guide/sermant-agent.md#sermant-agent使用参数配置), spring.application.name为微服务名（即spring应用中配置的服务名）。
+
+> **说明：** 服务配置说明参考[CSE配置中心概述](https://support.huaweicloud.com/devg-cse/cse_devg_0020.html)。
 
 content为白名单的具体配置内容，详细说明如下：
 
@@ -66,7 +66,7 @@ strategy: all # 白名单类型，all（全部生效）/none（全不生效）/w
 value: service-b,service-c # 白名单服务集合，仅当strategy配置为white时生效，多个服务名用英文逗号分隔
 ```
 
-> 注意：新增配置时，请去掉注释，否则会导致新增失败。
+> **注意：** 新增配置时，请去掉注释，否则会导致新增失败。
 
 ## 支持版本和限制
 
@@ -92,7 +92,7 @@ value: service-b,service-c # 白名单服务集合，仅当strategy配置为whit
 
 ## 操作和结果验证
 
-下面SpringBoot场景为例，演示SpringBoot项目如何接入到Zookeeper中。
+下面将演示如何使用SpringBoot注册插件，验证纯SpringBoot应用快速接入注册中心（Zookeeper）场景。
 
 ### 准备工作
 
@@ -100,7 +100,7 @@ value: service-b,service-c # 白名单服务集合，仅当strategy配置为whit
 
 - [下载](https://github.com/huaweicloud/Sermant-examples/tree/main/registry-demo/springboot-registry-demo)springboot-registry-demo源码
 
-- [下载](https://zookeeper.apache.org/releases.html#download)Zookeeper，并启动
+- [下载](https://zookeeper.apache.org/releases.html#download)Zookeeper（动态配置中心&注册中心），并启动
 
 ### 步骤一：编译打包springboot-registry-demo应用
 
@@ -116,7 +116,7 @@ mvn clean package
 
 打包成功后可在`${path}/Sermant-examples/registry-demo/springboot-registry-demo/service-a/target`得到` service-a.jar`包，在`${path}/Sermant-examples/registry-demo/springboot-registry-demo/service-b/target`得到`service-b.jar`包。
 
-> 说明：path为springboot-registry-demo应用下载所在路径。
+> **说明：** path为springboot-registry-demo应用下载所在路径。
 
 ### 步骤二：部署应用
 
@@ -140,11 +140,9 @@ java -Dserver.port=9999 -Dsermant.springboot.registry.enableRegistry=true -javaa
 java -Dserver.port=9999 -Dsermant.springboot.registry.enableRegistry=true -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -jar service-b.jar
 ```
 
-> 说明：
-> - path需要替换为Sermant实际安装路径。
-> - x.x.x代表Sermant某个版本号。
+> **说明：** ${path}为sermant实际安装路径，x.x.x代表sermant某个版本号。
 
-> 注意：此时配置的域名(www.domain.com)不是真实域名，配置白名单之后才能正常调用。
+> **注意：** 此时配置的域名(www.domain.com)不是真实域名，配置白名单之后才能正常调用。
 
 ### 步骤三：配置白名单
 
@@ -152,7 +150,7 @@ java -Dserver.port=9999 -Dsermant.springboot.registry.enableRegistry=true -javaa
 
 其中key值为**sermant.plugin.registry**，group为**app=default&environment=&service=service-a**，content为**strategy: all**。
 
-以zookeeper为例，利用zookeeper提供的命令行工具进行配置发布。
+利用zookeeper提供的命令行工具进行配置发布。
 
 1、在`${path}/bin/`目录执行以下命令创建节点`/app=default&environment=`
 
@@ -164,7 +162,7 @@ java -Dserver.port=9999 -Dsermant.springboot.registry.enableRegistry=true -javaa
 zkCli.cmd -server localhost:2181 create /app=default&environment=&service=service-a
 ```
 
-> 说明：`${path}`为zookeeper的安装目录
+> **说明：** `${path}`为zookeeper的安装目录
 
 2、在`${path}/bin/`目录执行以下命令创建节点`/app=default&environment=&service=service-a/sermant.plugin.registry`和数据`strategy: all`。
 
@@ -180,10 +178,6 @@ zkCli.cmd -server localhost:2181 create /app=default&environment=&service=servic
 
 调用接口`localhost:8989/httpClientGet`，判断接口是否成功返回，若成功返回则说明插件已成功生效。
 
-成功效果图：
+**效果图如下图所示：**
 
 <MyImage src="/docs-img/springboot-registry.png"/>
-
-失败效果图：
-
-<MyImage src="/docs-img/springboot-registry-error.png"/>
