@@ -4,20 +4,20 @@
 
 ## 功能介绍
 
-注册迁移插件通过无侵入方式实现注册中心迁移的能力。可基于单注册或双注册的模式让原本注册于Eureka，Nacos，Zookeeper、Consul等主流注册中心的微服务，无侵入地注册到[ServiceComb](https://github.com/apache/servicecomb-service-center)或[Nacos](https://nacos.io/)上。
+对于绝大多数企业客户来说，比较关心注册中心迁移过程的平滑性以及业务的连续性。注册迁移插件通过无侵入方式实现注册中心迁移的能力。可基于单注册或双注册的模式让原本注册于Eureka，Nacos，Zookeeper、Consul等主流注册中心的微服务，无侵入地注册到[ServiceComb](https://github.com/apache/servicecomb-service-center)或[Nacos](https://nacos.io/)上。
 
 
 双注册模式能让线上应用在线上业务不停机的前提下将旧注册中心快速迁移到新注册中心，**搬迁示意图：**
 
 <MyImage src="/docs-img/sermant-register-migration.png"/>
 
-> **说明：** 单注册模式是指应用挂载了注册迁移插件**屏蔽了原注册中心**，将信息注册至新注册中心上。 
+> **说明：** 单注册模式是指应用挂载了注册迁移插件，屏蔽了应用注册到原注册中心的逻辑，而将信息注册至新注册中心上。 
 
 ## 参数配置
 
 ### Sermant-agent配置
 
-注册插件需要在Sermant-agent中配置服务元数据（应用名、命名空间、版本号、环境、其它元数据），参考[Sermant-agent使用手册](../user-guide/sermant-agent.md#sermant-agent使用参数配置)。
+注册迁移插件需要在Sermant-agent中配置服务元数据（应用名、命名空间、版本号、环境、其它元数据），参考[Sermant-agent使用手册](../user-guide/sermant-agent.md#sermant-agent使用参数配置)。
 
 - service.meta.application: 应用名/组名，属于同一组的微服务才能进行服务发现。
 
@@ -31,7 +31,7 @@
 
 ### 插件配置
 
-注册插件需要按需修改插件配置文件，可在路径`${path}/sermant-agent-x.x.x/agent/pluginPackage/service-registry/config/config.yaml`找到该插件的配置文件，配置文件如下所示：
+注册迁移插件需要按需修改插件配置文件，可在路径`${path}/sermant-agent-x.x.x/agent/pluginPackage/service-registry/config/config.yaml`找到该插件的配置文件，配置文件如下所示：
 
 ```yaml
 register.service:
@@ -73,7 +73,7 @@ nacos.service:
 | nacos.service.ephemeral                  | 是否是临时节点，true为是，false为否。服务注册时使用，服务下线后节点不需要存在时采用临时节点。                                                        | true                   | NACOS        | 是    |
 
 > **说明：**
-> - nacos的group通过[Sermant-agent配置](#sermant-agent配置)的service.meta.application设置。
+> - nacos的group通过[Sermant-agent配置](../user-guide/sermant-agent.md#sermant-agent使用参数配置)的service.meta.application设置。
 > - nacos参数目前仅展示常用参数，其他参数项见[NACOS配置类](https://github.com/huaweicloud/Sermant/blob/develop/sermant-plugins/sermant-service-registry/registry-common/src/main/java/com/huawei/registry/config/NacosRegisterConfig.java)。
 
 ## 关闭原注册中心心跳规则
@@ -90,7 +90,7 @@ nacos.service:
 }
 ```
 
-> **说明：** group为服务配置。配置时请将service.meta.application、service.meta.environment、spring.application.nam修改为具体的值，其中service.meta.application、service.meta.environment的配置请参考[Sermant-agent使用手册](../user-guide/sermant-agent.md#sermant-agent使用参数配置), spring.application.name为微服务名（即spring应用中配置的服务名）。服务配置说明参考[CSE配置中心概述](https://support.huaweicloud.com/devg-cse/cse_devg_0020.html)。
+> **说明：** group为服务配置。配置时请将service.meta.application、service.meta.environment、spring.application.name修改为具体的值，其中service.meta.application、service.meta.environment的配置请参考[Sermant-agent使用手册](../user-guide/sermant-agent.md#sermant-agent使用参数配置), spring.application.name为微服务名（即spring应用中配置的服务名）。服务配置说明参考[CSE配置中心概述](https://support.huaweicloud.com/devg-cse/cse_devg_0020.html)。
 
 > **注意 :** 该操作为一次性操作，关闭注册中心心跳后，将无法开启，仅当应用实例重启才可恢复。
 
@@ -136,7 +136,7 @@ nacos.service:
 
 - 关闭原注册中心心跳规则仅支持SpringCloud应用
 
-- 对应springcloud单注册场景，注册插件会屏蔽掉所有原注册中心相关的bean，所以，请不要在业务代码中注入原注册中心相关的bean，否则会导致服务启动失败。
+- 对应springcloud单注册场景，注册迁移插件会屏蔽掉所有原注册中心相关的bean，所以，请不要在业务代码中注入原注册中心相关的bean，否则会导致服务启动失败。
 
 - 对于**新开发**的dubbo应用，还需要设置dubbo本身注册中心地址的配置。这个配置项一般在dubbo应用的配置文件中，比如“dubbo/provider.xml”文件中：
 
