@@ -1,6 +1,6 @@
 # 优雅上下线
 
-本文介绍如何使用优雅上下线插件，目前优雅上下线功能当前集成在[注册插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-registry) 中, 可独立使用。
+本文介绍如何使用优雅上下线插件，目前优雅上下线功能当前集成在[注册迁移插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-registry) 中, 可独立使用。
 
 ## 功能介绍
 
@@ -24,28 +24,95 @@
 ```yaml
 grace.rule:
   enableSpring: false # springCloud优雅上下线开关
-  startDelayTime: 0  # 优雅上下线启动延迟时间, 单位S。上线延迟为避免实例未准备就绪就注册导致上游服务调用时无法提供服务。下线延迟为避免实例停止后，上游服务发现实例列表未刷新，依然调用该实例导致流量丢失。
+  startDelayTime: 0  # 优雅上线启动延迟时间, 单位S。上线延迟为避免实例未准备就绪就注册导致上游服务调用时无法提供服务。
   enableWarmUp: false # 是否开启预热。针对新实例，为避免实例初始化时涌入大量流量而导致请求响应超时、阻塞、资源耗尽等造成新实例宕机，可开启预热在初始化时分配少量流量。
   warmUpTime: 120    # 预热时间, 单位S。预热过程的持续时间。
   enableGraceShutdown: false # 是否开启优雅下线
   shutdownWaitTime: 30  # 关闭前相关流量检测的最大等待时间, 单位S. 需开启enabledGraceShutdown才会生效。在优雅下线前，Agent会定期检查当前实例是否完成全部请求处理，通过此配置指定检查的持续时间。
   enableOfflineNotify: false # 是否开启下线主动通知
-  httpServerPort: 16688 # 开启下线主动通知时的httpServer端口。接收下游下线主动通知的http服务端口。
+  httpServerPort: 16688 # 提供的httpServer端口，用于应用就绪检查以及接收下游应用下线主动的通知。
   upstreamAddressMaxSize: 500 # 缓存上游地址的默认大小。上游实例接收主动通知的地址会被下游缓存，此处设置地址最多的缓存个数。
   upstreamAddressExpiredTime: 60 # 缓存上游地址的过期时间, 单位S。上游实例接收主动通知的地址会被下游缓存，此处设置地址的失效时间。
 ```
 
 | 参数键                               | 说明                                                                     | 默认值        | 是否必须 |
 | :----------------------------------- | :---------------------------------------------------------------------- | :------------| :------- |
-| grace.rule.enableSpring              | springCloud优雅上下线开关                                                | false         | 是    |
-| grace.rule.startDelayTime            | 优雅上下线启动延迟时间, 单位S                                             | 0             | 是    |
-| grace.rule.enableWarmUp              | 是否开启预热                                                             | false         | 是    |
+| grace.rule.enableSpring              | springCloud优雅上下线开关。                                                | false         | 是    |
+| grace.rule.startDelayTime            | 优雅上线启动延迟时间, 单位S。上线延迟为避免实例未准备就绪就注册导致上游服务调用时无法提供服务。                                            | 0             | 是    |
+| grace.rule.enableWarmUp              | 是否开启预热。针对新实例，为避免实例初始化时涌入大量流量而导致请求响应超时、阻塞、资源耗尽等造成新实例宕机，可开启预热在初始化时分配少量流量。                                                             | false         | 是    |
 | grace.rule.enableGraceShutdown       | 是否开启优雅下线                                                          | false         | 是    |
-| grace.rule.shutdownWaitTime          | 关闭前相关流量检测的最大等待时间, 单位S. 需开启enabledGraceShutdown才会生效  | 30            | 是    |
+| grace.rule.shutdownWaitTime          | 关闭前相关流量检测的最大等待时间, 单位S. 需开启enabledGraceShutdown才会生效。在优雅下线前，Agent会定期检查当前实例是否完成全部请求处理，通过此配置指定检查的持续时间。  | 30            | 是    |
 | grace.rule.enableOfflineNotify       | 是否开启下线主动通知                                                      | false         | 是    |
-| grace.rule.httpServerPort            | 开启下线主动通知时的httpServer端口                                        | 16688          | 是    |
-| grace.rule.upstreamAddressMaxSize    | 缓存上游地址的默认大小                                                    | 5000           | 是    |
-| grace.rule.upstreamAddressExpiredTime| 缓存上游地址的过期时间, 单位S                                              | 60            | 是    |
+| grace.rule.httpServerPort            | 提供的httpServer端口，用于应用就绪检查以及接收下游应用下线主动的通知。                                 | 16688          | 是    |
+| grace.rule.upstreamAddressMaxSize    | 缓存上游地址的默认大小。上游实例接收主动通知的地址会被下游缓存，此处设置地址最多的缓存个数。                                                    | 5000           | 是    |
+| grace.rule.upstreamAddressExpiredTime| 缓存上游地址的过期时间, 单位S。上游实例接收主动通知的地址会被下游缓存，此处设置地址的失效时间。                                              | 60            | 是    |
+
+## 微服务就绪检查和优雅关闭
+
+**就绪检查：** 为确保应用在对外提供服务之前应用以及完全启动就绪。优雅上下线插件提供了相应的就绪检查API接口：
+
+```api
+/$$sermant$$/healthCheck
+```
+
+**优雅关闭：** 应用自身需要实现优雅关闭处理逻辑，如延迟下线时需及时通知到上游应用（减少应用下线后消费者应用未及时感知到，仍继续调用已下线应用导致的请求错误）。优雅上下线插件提供了相应的优雅关闭API接口：
+
+```api
+/$$sermant$$/shutdown
+```
+
+Kubernetes提供了相关[探针技术](https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)以及Pod相关[回调钩子](https://kubernetes.io/zh-cn/docs/concepts/containers/container-lifecycle-hooks/)。
+
+以容器化服务为例（Sermant容器化部署依赖[injector组件](../user-guide/injector.md)）：给SpringCloud应用配置了就绪检查探针以及preStop钩子。
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: spring-cloud-xxx
+  name: spring-cloud-xxx
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: spring-cloud-xxx
+  template:
+    metadata:
+      labels:
+        app: spring-cloud-xxx
+    spec:
+      containers:
+      - env:
+        - name: JAVA_HOME
+          value: /xxx
+        image: xxx
+        imagePullPolicy: Always
+        readinessProbe:
+          httpGet:
+            port: 16688  # 优雅上下线插件配置中的httpServerPort
+            path: /$$sermant$$/healthCheck
+          initialDelaySeconds: 1
+          periodSeconds: 3
+        name: spring-cloud-xxx
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        resources:
+          requests:
+            cpu: 250m
+            memory: 512Mi
+        lifecycle:
+            preStop:
+              exec:
+                command:
+                  - /bin/sh
+                  - '-c'
+                  - >-
+                    wget http://127.0.0.1:16688/$$sermant$$/shutdown 2>/tmp/null;sleep
+                    30;exit 0
+                    # 在POD停止前通知实例进行下线，其中16688为下线通知端口，优雅上下线插件配置中的httpServerPort
+```
 
 ## 支持版本和限制
 
@@ -61,13 +128,15 @@ grace.rule:
 
 ## 操作和结果验证
 
-下面演示如何使用优雅上下线插件。
+下面演示如何使用优雅上下线插件，验证SpringCloud应用的预热和延迟下线场景。
 
 ### 准备工作
 
 - [下载](https://github.com/huaweicloud/Sermant/releases)/编译sermant包
 - [下载](https://github.com/huaweicloud/Sermant-examples/tree/main/grace-demo/spring-grace-nacos-demo)Demo源码
-- [下载](https://github.com/alibaba/nacos/releases)nacos，并启动
+- [下载](https://github.com/alibaba/nacos/releases)Nacos，并启动
+
+> **注意：** [动态配置中心](../user-guide/configuration-center.md)会在本场景中默认使用，由于非本场景的核心组件，因此在本文中不额外赘述。
 
 ### 步骤一：编译打包demo应用
 
@@ -83,7 +152,7 @@ mvn clean package
 
 ### 步骤二：部署应用
 
-我们将部署一个consumer实例，2个provider实例， 一个data实例。如下:
+我们将部署一个consumer实例，2个provider实例， 一个data实例。三个服务之间的依赖关系如下:
 
 `consumer  ----------->  provider(两实例)  ------------->  data`
 
@@ -143,8 +212,8 @@ java -Dgrace.rule.enableSpring=true -Dgrace.rule.enableWarmUp=true -Dgrace.rule.
 访问接口`localhost:8800/graceHot`, 根据接口返回的ip与port判断预热是否生效。若预热时间段内（默认120s）访问偏向端口为`8880`的provider，随时间推移流量逐渐**平均**，则说明预热生效。
 
 
-#### 优雅下线验证
+#### 延迟下线验证
 
 <MyImage src="/docs-img/springcloud-grace-graceful-offline.png"/>
 
-持续访问接口`localhost:8800/graceDownOpen`, 此时下线其中一个provider实例，观察请求是否出现错误，若未出现错误，则优雅下线能力验证成功。
+持续访问接口`localhost:8800/graceDownOpen`, 此时下线其中一个provider实例，观察请求是否出现错误，若未出现错误，则延迟下线能力验证成功。
