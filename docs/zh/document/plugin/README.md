@@ -14,7 +14,9 @@
 
 [标签路由插件](./router.md)：在微服务存在多个版本、多个实例的情况下，通过配置路由规则管理服务之间的路由，达到无损升级、应用拨测等业务目的。
 
-[注册插件](./service-registry.md)：提供代码无侵入方式，可让原本注册于Eureka，Nacos，Zookeeper、Consul等主流注册中心的微服务，无侵入地注册到[ServiceComb](https://github.com/apache/servicecomb-service-center)或[Nacos](https://nacos.io/)上, 同时支持Dubbo与SpringCloud框架。
+[注册迁移插件](./register-migration.md)：提供代码无侵入方式，可让原本注册于Eureka，Nacos，Zookeeper、Consul等主流注册中心的微服务，无侵入地注册到[ServiceComb](https://github.com/apache/servicecomb-service-center)或[Nacos](https://nacos.io/)上, 同时支持Dubbo与SpringCloud框架。
+
+[SpringBoot注册插件](./springboot-registry.md)：纯SpringBoot应用提供服务注册发现能力，方便用户在不修改代码的前提下快速接入注册中心（目前只支持**Zookeeper**），同时提供超时重试的能力，实现服务调用的高可用。
 
 [服务可见性插件](./visibility.md)：为Spring Cloud和Dubbo应用提供契约信息和血缘关系采集展示的功能，方便用户在不修改代码的前提下可以通过backend查看所有服务对外提供的接口信息以及服务之间的调用关系信息。
 
@@ -28,6 +30,6 @@
 |         [负载均衡插件](./loadbalancer.md)         | SpringBoot 1.5.x - 2.6.2 <br/> SpringCloud Edgware.SR2 - 2021.0.0                                                                            | servicecomb-kie<br/>ZooKeeper | N/A                        |
 |            [监控插件](./monitor.md)             | ALL                                                                                                                                          | N/A                           | N/A                        |
 |            [标签路由插件](./router.md)            | SpringBoot 1.5.x - 2.6.2 <br/>SpringCloud Edgware.SR2 - 2021.0.0<br/>Dubbo 2.6.x-2.7.x                                                       | servicecomb-kie               | servicecomb-service-center |不支持异步调用<br>不支持混合框架（Dubbo调SpringCloud或者SpringCloud调Dubbo）做路由|
-|        [注册插件](./service-registry.md)        | SpringBoot 1.5.x - 2.6.2 <br> SpringCloud Edgware.SR2 - 2021.0.0<br>Dubbo 2.6.x-2.7.x                                                        | N/A                           | servicecomb-service-center |
+|        [注册迁移插件](./register-migration.md)        | SpringBoot 1.5.x - 2.6.2 <br> SpringCloud Edgware.SR2 - 2021.0.0<br>Dubbo 2.6.x-2.7.x                                                        | N/A                           | servicecomb-service-center |
 | [SpringBoot 注册插件](./springboot-registry.md) | SpringBoot 1.5.10.Release+                                                                                                                   | servicecomb-kie<br/>ZooKeeper | Zookeeper 3.4.x+           |
 |         [服务可见性插件](./visibility.md)          | SpringBoot 1.5.10.Release及以上<br>Dubbo 2.6.x-2.7.x                                                                                            | ZooKeeper                     | N/A                        |
