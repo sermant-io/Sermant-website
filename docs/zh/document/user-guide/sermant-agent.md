@@ -213,6 +213,20 @@ BACKEND-NETTY-IP=127.0.0.1
 
 sermant-agent将从上至下依次检索各项配置值是否通过启动参数、环境变量、-D参数来配置。
 
+> **注意：** 通过容器场景的env修改配置，请将点（.）可用下划线（_）替代！！！
+> 
+> 原因：因为一些OS镜像无法识别带 . 的env
+
+举个例子：如需想通过pod的env修改配置文件中的`backend.nettyIp=127.0.0.1`则
+
+``` yaml
+  env:
+  - name: "backend_nettyIp"
+    value: "127.0.0.2"
+``` 
+
+
+
 ## 支持版本
 
 ### sermant-agent 支持的版本
