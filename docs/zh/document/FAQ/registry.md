@@ -80,7 +80,7 @@ dubbo:
 
 <MyImage src="/docs-img/registry-faq-8.png"/>
 
-需要设置dubbo本身注册中心地址的配置，请参考[服务注册插件文档](../plugin/registry/README.md#按需修改插件配置文件)中，关于**新开发**dubbo应用的说明。
+需要设置dubbo本身注册中心地址的配置，请参考[服务注册插件文档](../plugin/service-registry.md#支持版本和限制)中，关于**新开发**的dubbo应用的说明。
 
 ## 插件配置中，enableSpringRegister/enableDubboRegister与openMigration之间的关系是什么？
 

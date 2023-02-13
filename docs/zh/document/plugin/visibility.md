@@ -7,12 +7,12 @@
 | 术语     | 说明                                     |
 |--------|----------------------------------------|
 | 契约信息   | 服务对外提供的接口信息，包括接口所属类、请求路径、方法名、参数列表、返回类型 |
-| 血缘关系信息 | 服务之间的调用关系信息，包括服务提供者和服务消费者的IP、端口信息     |
+| 调用依赖关系信息 | 服务之间的调用关系信息，包括服务提供者和服务消费者的IP、端口信息     |
 
 
 ## 功能介绍
 
-服务可见性插件可以采集Spring Cloud和Dubbo应用的契约信息和血缘关系，在不修改代码的前提下可以通过Backend查看所有服务对外提供的接口信息以及服务之间的调用关系信息。
+服务可见性插件可以采集Spring Cloud和Dubbo应用的契约信息和调用依赖关系，在不修改代码的前提下可以通过Backend查看所有服务对外提供的接口信息以及服务之间的调用关系信息。
 
 本插件基于Spring Cloud和Dubbo应用的服务注册、服务订阅等功能完成服务注册的接口信息以及服务订阅时的提供者信息的采集，以便于用户统一管理。
 
@@ -45,13 +45,14 @@ visibility.config:
 
 ## 操作和结果验证
 
-下面将演示如何使用服务可见性插件。
+下面将演示如何使用服务可见性插件，验证采集Dubbo应用的契约和调用依赖关系信息场景。
 
 ### 准备工作
 
 - [下载](https://github.com/huaweicloud/Sermant/releases)/编译Sermant包
 - [下载](https://github.com/huaweicloud/Sermant/tree/develop/sermant-integration-tests/dubbo-test)dubbo-test源码
-- [下载](https://zookeeper.apache.org/releases.html)zookeeper并启动应用
+
+> 注意：[动态配置中心](../user-guide/configuration-center.md)会在本场景中默认使用，由于非本场景的核心组件，因此在本文中不额外赘述。
 
 ### 步骤一：修改配置
 
@@ -117,10 +118,7 @@ java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=prov
 # Run under Windows
 java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=provider -jar dubbo-integration-provider.jar
 ```
-> **说明**：
-> 其中path需要替换为Sermant实际安装路径。
-> x.x.x代表Sermant某个版本号。
-
+> **说明：** ${path}为sermant实际安装路径，x.x.x代表sermant某个版本号。
 
 ### 验证
 
@@ -131,5 +129,5 @@ java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=prov
 - 契约信息展示效果图
 <MyImage src="/docs-img/visibility-contarct.png"/>
 
-- 血缘关系信息展示效果图
+- 调用依赖关系信息展示效果图
 <MyImage src="/docs-img/visibility-consanguinity.png"/>

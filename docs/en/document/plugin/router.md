@@ -4,7 +4,7 @@ This document is used to introduce the usage of [tag router](https://github.com/
 
 ## Function
 
-In the case of multiple versions and instances of microservices, the routing between services is managed by configuring routing rules to achieve business purposes such as lossless upgrade and application dial test.
+The tag routing plug-in implements the configuration and management of routing rules between microservices in a non-intrusive way. In the case of multiple versions and instances of microservices, the label routing plug-in can manage the routing between services by configuring routing rules to achieve lossless upgrade, application dial test and other business purposes.
 
 ## Parameter Configuration
 
@@ -18,7 +18,7 @@ The routing plugin requires service metadata (version number, other metadata) to
 
 ## Detailed Routing Rules
 
-Router plugin based on dynamic configuration center for configuration release, configuration release can refer to [Configuration Center User's Manual](../user-guide/configuration-center.md#sermant-dynamic-configuration-center-model).
+Router plugin based on dynamic configuration center for configuration release, configuration release can refer to [Configuration Center User's Manual](../user-guide/configuration-center.md#publish-configuration).
 
 The key value needs to be **servicecomb.routeRule.${yourServiceName}**, ${yourServiceName} is the microservice name (i.e. the value of spring.application.name/dubbo.application.name configuration) of the target application.
 
@@ -33,8 +33,8 @@ The content is the specific routing rule.
 - precedence: 2 # Priority, the higher the number, the higher the priority.
   match: # Request match rule. 0..N, not configured to indicate a match. Only one attachments/headers/args are allowed per match rule.
     attachments: # dubbo attachment matches. If it is an http header match, you need to configure it as headers.
-      id: # If multiple keys are configured, then all key rules must match the request.
-        exact: '1' # Configuration policy, equal to 1, detailed configuration policy refer to the configuration policy table.
+      id: # The attribute name is modified to a specific key when used. If multiple keys are configured, all key rules must match the request.
+        exact: '1' # Configuration policy, The attribute value of key is equal to 1, detailed configuration policy refer to the configuration policy table.
         caseInsensitive: false # false: case-insensitive (default), true: case-sensitive. When configured to false, it will be converted to uppercase uniformly for comparison.
   route: # Routing Rules
     - weight: 20 # Weight
@@ -53,19 +53,32 @@ The content is the specific routing rule.
         group: green # Instance tagging. Instances that meet the tagging criteria are placed in this group.
 ```
 
-**Note: When adding a new configuration, please remove the comment, otherwise it will cause the addition to fail.**
+| Parameter key |                                                         Description                                                         | Default value | Required |
+|:-------------:|:---------------------------------------------------------------------------------------------------------------------------:|:-------------:|:--------:|
+|   priority    |                                  priority, the higher the number, the higher the priority.                                  |     Empty     |   yes    |
+|     match     |        Matching rules, support attachments (attachments parameter of the dubbo application)/headers (request header)        |     Empty     |    no    |
+|     exact     | Configuration policy. For detailed configuration policy, refer to [Configuration Policy Table](#configuration-policy-table) |     Empty     |    no    |
+|     route     |                      routing rule, Including weight configuration and label information configuration                       |     Empty     |   yes    |
+|    weight     |                                                        weight value                                                         |     Empty     |   yes    |
+|     tags      |                    Tag information. The instances that meet the tag conditions are placed in this group                     |     Empty     |   yes    |
+
+**Label routing rule interpretation**
+
+- 80% of the requests with the id attribute value of 1 in the attachments information will be routed to the service instance with the version number of 1.0.1, and 20% will be routed to the service instance with the version number of 1.0.0. 80% of other requests will be routed to the service instance with the group name green, and 20% will be routed to the service instance with the group name red.
+
+> Note: When adding a new configuration, please remove the comment, otherwise it will cause the addition to fail.
 
 ### Configuration Policy Table
 
-|Strategy Name|Strategy Value|Matching Rules|
-|---|---|---|
-|Exact Match|exact|The parameter value is equal to the configured value|
-|Regex Match|regex|Parameter values match regex expressions, Since some regex expressions (such as \w and \W, etc.) are case-sensitive, please choose caseInsensitive (case-sensitive or not) carefully when using regex match|
-|Not Equal Match|noEqu|The parameter value is not equal to the configuration value|
-|Not Less Match|noLess|The parameter value is not less than the configured value|
-|Not Greater Match|noGreater|The parameter value is not greater than the configured value|
-|Greater Match|greater|The parameter value is greater than the configured value|
-|Less Match|less|The parameter value is less than the configured value|
+|   Strategy Name    | Strategy Value  |                                                                                                Matching Rules                                                                                                |
+|:------------------:|:---------------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+|    Exact Match     |      exact      |                                                                             The parameter value is equal to the configured value                                                                             |
+|    Regex Match     |      regex      | Parameter values match regex expressions, Since some regex expressions (such as \w and \W, etc.) are case-sensitive, please choose caseInsensitive (case-sensitive or not) carefully when using regex match  |
+|  Not Equal Match   |      noEqu      |                                                                         The parameter value is not equal to the configuration value                                                                          |
+|   Not Less Match   |     noLess      |                                                                          The parameter value is not less than the configured value                                                                           |
+| Not Greater Match  |    noGreater    |                                                                         The parameter value is not greater than the configured value                                                                         |
+|   Greater Match    |     greater     |                                                                           The parameter value is greater than the configured value                                                                           |
+|     Less Match     |      less       |                                                                            The parameter value is less than the configured value                                                                             |
 
 ## Supported Versions and Limitations
 
@@ -81,7 +94,7 @@ Limitations:
 
 ## Operation and Result Verification
 
-The following is an example of the spring-cloud-router-demo project to demonstrate how to use the tag route plugin.
+Take the Spring Cloud scenario as an example to demonstrate the use of label routing plug-ins.
 
 ### Preparations
 
@@ -155,9 +168,14 @@ java -Dservicecomb_service_enableSpringRegister=true -Dservice_meta_version=1.0.
 > where path needs to be replaced with the actual installation path of Sermant.
 > x.x.x represents a Sermant version number.
 
-### Step 3: Publish Configuration
+### Step 3: View service registration
+Login [ServiceComb](http://127.0.0.1:30103/) In the background, check whether the service is registered successfully.
 
-Configuring Routing Rules, please refer to [Detailed Routing Rules](#detailed-routing-rules).
+<MyImage src="/docs-img/router-registry.png"/>
+
+### Step 4: Publish configuration
+
+Configure routing rules. Refer to the [Dynamic Configuration Center User Manual](../user-guide/configuration-center.md#publish-configuration) for configuration publishing.
 
 The key value is **servicecomb.routeRule.spring-cloud-router-provider**, the group is **app=default&environment=**, and the content is the specific routing rule, as follows.
 
@@ -183,6 +201,73 @@ The key value is **servicecomb.routeRule.spring-cloud-router-provider**, the gro
     - tags:
         version: 1.0.1
       weight: 100
+```
+
+**Label routing rule interpretation**
+
+- The request with the id attribute value of 1 in the request header information will be routed to the service instance with the group name of gray, and the request with the id attribute value of 2 will be routed to the service instance with the version number of 1.0.1.
+
+Take Zookeeper as an example, and use the command line tools provided by Zookeeper for configuration publishing.
+1. Execute the following command in the `${path}/bin/` directory to create the node `/app=default&environment=`
+
+```shell
+# linux mac
+./zkCli.sh -server localhost:2181 create /app=default&environment=
+
+# windows
+zkCli.cmd -server localhost:2181 create /app=default&environment=
+```
+
+> Note: `${path}` is the installation directory of zookeeper
+
+2. Execute the following command in the `${path}/bin/` directory to create the node `/app=default&environment=/servicecomb.routeRule.spring-cloud-router-provider` and set the data.
+
+```shell
+# linux mac
+./zkCli.sh -server localhost:2181 create /app=default&environment=/servicecomb.routeRule.spring-cloud-router-provider "---
+- precedence: 1
+  match:
+    headers:
+      id:
+        exact: '1'
+        caseInsensitive: false
+  route:
+    - tags:
+        group: gray
+      weight: 100
+- precedence: 2
+  match:
+    headers:
+      id:
+        exact: '2'
+        caseInsensitive: false
+  route:
+    - tags:
+        version: 1.0.1
+      weight: 100"
+
+# windows
+zkCli.cmd -server localhost:2181 create /app=default&environment=/servicecomb.routeRule.spring-cloud-router-provider "---
+- precedence: 1
+  match:
+    headers:
+      id:
+        exact: '1'
+        caseInsensitive: false
+  route:
+    - tags:
+        group: gray
+      weight: 100
+- precedence: 2
+  match:
+    headers:
+      id:
+        exact: '2'
+        caseInsensitive: false
+  route:
+    - tags:
+        version: 1.0.1
+      weight: 100"
 ```
 
 ### Verification

@@ -78,14 +78,13 @@ rule: Random
 
 ## 操作和结果验证
 
-下面将演示如何使用负载均衡插件。
+下面将演示如何使用负载均衡插件，验证springboot应用采用zookeeper配置中心，动态更新宿主应用的负载均衡策略场景。
 
 ### 准备工作
 
 - [下载](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/demo-register)demo源码
 - [下载](https://github.com/huaweicloud/Sermant/releases)/编译sermant包
 - [下载](https://zookeeper.apache.org/releases.html#download)并启动zookeeper
-- [下载](https://github.com/vran-dev/PrettyZoo/releases)PrettyZoo并启动连接zookeeper
 
 ### 步骤一：编译打包demo应用
 
@@ -97,7 +96,7 @@ mvn clean package
 
 打包成功后可在`${path}/Sermant-examples/sermant-template/demo-register/resttemplate-consumer/target`得到`resttemplate-consumer.jar`包，在`${path}/Sermant-examples/sermant-template/demo-register/resttemplate-provider/target`得到`resttemplate-provider.jar`。
 
-> 说明：path为demo应用下载所在路径。
+> **说明：** ${path}为demo应用下载所在路径。
 
 ### 步骤二：发布流量标记
 参考使用[动态配置中心使用手册](../user-guide/configuration-center.md#发布配置)进行配置发布，发布如下配置
@@ -110,15 +109,33 @@ mvn clean package
 }
 ```
 
-以zookeeper为例，利用PrettyZoo工具来发布流量标记策略：
+以zookeeper为例，利用zookeeper提供的命令行工具进行配置发布。
 
-1. 创建节点`/app=default&environment=&service=zk-rest-consumer`
+1、在`${path}/bin/`目录执行以下命令创建节点`/app=default&environment=&service=zk-rest-consumer`
 
-<MyImage src="/docs-img/loadbalancer_node.png"/>
+```shell
+# linux mac
+./zkCli.sh -server localhost:2181 create /app=default&environment=&service=zk-rest-consumer
 
-2. 创建节点`/app=default&environment=&service=zk-rest-consumer/servicecomb.matchGroup.testLb`和数据`alias: loadbalancer-rule\n matches:\n- serviceName: zk-rest-provider`
+# windows
+zkCli.cmd -server localhost:2181 create /app=default&environment=&service=zk-rest-consumer
+```
 
-<MyImage src="/docs-img/loadbalance_matchgroup.png"/>
+> 说明：`${path}`为zookeeper的安装目录
+
+2、在`${path}/bin/`目录执行以下命令创建节点`/app=default&environment=&service=zk-rest-consumer/servicecomb.matchGroup.testLb`和数据`alias: loadbalancer-rule\n matches:\n- serviceName: zk-rest-provider`。
+
+```shell
+# linux mac
+./zkCli.sh -server localhost:2181 create /app=default&environment=&service=zk-rest-consumer/servicecomb.matchGroup.testLb "alias: loadbalancer-rule
+matches:
+- serviceName: zk-rest-provider"
+
+# windows
+zkCli.cmd -server localhost:2181 create /app=default&environment=&service=zk-rest-consumer/servicecomb.matchGroup.testLb "alias: loadbalancer-rule
+matches:
+- serviceName: zk-rest-provider"
+```
 
 ### 步骤三：发布匹配的负载均衡规则（以Random为例）
 参考使用[动态配置中心使用手册](../user-guide/configuration-center.md#发布配置)进行配置发布， 发布如下配置
@@ -131,11 +148,17 @@ mvn clean package
 }
 ```
 
-以zookeeper为例，利用PrettyZoo工具来发布负载均衡策略：
+以zookeeper为例，利用zookeeper提供的命令行工具进行配置发布。
 
-1. 创建节点`/app=default&environment=&service=zk-rest-consumer/servicecomb.loadbalance.testLb`和数据`rule: Random`
+1、在`${path}/bin/`目录执行以下命令创建节点`/app=default&environment=&service=zk-rest-consumer/servicecomb.loadbalance.testLb`和数据`rule: Random`
 
-<MyImage src="/docs-img/loadbalance_lb.png"/>
+```shell
+# linux mac
+./zkCli.sh -server localhost:2181 create /app=default&environment=&service=zk-rest-consumer/servicecomb.loadbalance.testLb "rule: Random"
+
+# windows
+zkCli.cmd -server localhost:2181 create /app=default&environment=&service=zk-rest-consumer/servicecomb.loadbalance.testLb "rule: Random"
+```
 
 ### 步骤四：启动demo应用
 
@@ -174,9 +197,7 @@ java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=defa
 # Run under Windows
 java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -Dserver.port=8005 -jar resttemplate-consumer.jar
 ```
-> **说明**：
-> 其中path需要替换为Sermant实际安装路径。
-> x.x.x代表Sermant某个版本号。
+> **说明：** ${path}为sermant实际安装路径，x.x.x代表sermant某个版本号。
 
 ### 验证
 

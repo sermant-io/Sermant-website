@@ -8,5 +8,5 @@ This document mainly explains common problems encountered when using the Sermant
 
 ## **What kind of service governance plugins does Sermant provide?**
 
-- Sermant is extensible. Besides the service governance plugin provided by the framework itself ([Introduction to FlowControl](../plugin/flowcontrol.md), [Introduction to Service Registration](../plugin/registry/README.md)), developers can develop plugins including (data collection, link collection, etc.) according to business requirements.
+- Sermant is extensible. Besides the service governance plugin provided by the framework itself ([Introduction to FlowControl](../plugin/flowcontrol.md), [Introduction to Service Registration](../plugin/service-registry.md)), developers can develop plugins including (data collection, link collection, etc.) according to business requirements.
 

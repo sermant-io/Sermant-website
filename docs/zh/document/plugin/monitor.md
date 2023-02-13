@@ -113,13 +113,15 @@ monitor.config:                       # 监控插件配置。
 
 ## 操作和结果验证
 
-下面将演示如何使用监控插件。
+下面将演示如何使用监控插件，验证springboot应用挂载监控插件对接Prometheus场景。
 
 ### 准备工作
 
 - [下载](https://start.spring.io/#!type=maven-project&language=java&platformVersion=2.7.7&packaging=jar&jvmVersion=1.8&groupId=com.example&artifactId=demo&name=demo&description=Demo%20project%20for%20Spring%20Boot&packageName=com.example.demo&dependencies=web)demo应用
 - [下载](https://github.com/huaweicloud/Sermant/releases)/编译sermant包
 - [下载](https://github.com/prometheus/prometheus/releases)Prometheus
+
+> 注意：[动态配置中心](../user-guide/configuration-center.md)会在本场景中默认使用，由于非本场景的核心组件，因此在本文中不额外赘述。
 
 ### 步骤一：编译打包demo应用
 在demo应用的根目录执行如下命令对demo应用进行打包:
@@ -173,10 +175,7 @@ java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=defa
 java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -jar demo-0.0.1-SNAPSHOT.jar
 ```
 
-> **说明**：
-> 其中path需要替换为Sermant实际安装路径。
-> x.x.x代表Sermant某个版本号。
-
+> **说明：** ${path}为sermant实际安装路径，x.x.x代表sermant某个版本号。
 
 - 启动 Prometheus
 

@@ -88,8 +88,6 @@ The following will demonstrate how to use the load balancing plug-in.
 
 - [Download](https://zookeeper.apache.org/releases.html#download) And start zookeeper
 
-- [Download](https://github.com/vran-dev/PrettyZoo/releases) PrettyZoo and start connecting to zookeeper
-
 ### Step 1: Compile and package the demo application
 
 Execute the following command in the `${path}/Sermant-examples/sermant-template/demo-register` directory:
@@ -113,17 +111,33 @@ Refer to the [Dynamic Configuration Center User Manual](../user-guide/configurat
     "key": "servicecomb.matchGroup.testLb"
 }
 ```
+Take Zookeeper as an example, and use the command line tools provided by Zookeeper for configuration publishing.
 
-Taking zookeeper as an example, use the PrettyZoo tool to publish the traffic marking strategy:
+1. Execute the following command in the `${path}/bin/` directory to create the node `/app=default&environment=&service=zk-rest-consumer`
 
-1. Create node `/app=default&environment=&service=zk-rest-consumer`
+```shell
+# linux mac
+./zkCli.sh -server localhost:2181 create /app=default&environment=&service=zk-rest-consumer
 
-<MyImage src="/docs-img/loadbalancer_node.png"/>
+# windows
+zkCli.cmd -server localhost:2181 create /app=default&environment=&service=zk-rest-consumer
+```
 
-2. Create node `/app=default&environment=&service=zk-rest-consumer/servicecomb.matchGroup.testLb` and data `alias: loadbalancer-rule\n matches:\n- serviceName: zk-rest-provider`
+> Note: `${path}` is the installation directory of zookeeper
 
-<MyImage src="/docs-img/loadbalance_matchgroup.png"/>
+2. Execute the following command in the `${path}/bin/` directory to create nodes `/app=default&environment=&service=zk-rest-consumer/servicecomb.matchGroup.testLb` and data `alias: loadbalancer-rule\n matches:\n- serviceName: zk-rest-provider`.
 
+```shell
+# linux mac
+./zkCli.sh -server localhost:2181 create /app=default&environment=/servicecomb.routeRule.spring-cloud-router-provider "alias: loadbalancer-rule
+matches:
+- serviceName: zk-rest-provider"
+
+# windows
+zkCli.cmd -server localhost:2181 create /app=default&environment=/servicecomb.routeRule.spring-cloud-router-provider "alias: loadbalancer-rule
+matches:
+- serviceName: zk-rest-provider"
+```
 
 ### Step 3: Publish matching load balancing rules (take Random as an example)
 
@@ -139,10 +153,17 @@ Refer to the [Dynamic Configuration Center User Manual](../user-guide/configurat
 
 Taking zookeeper as an example, use the PrettyZoo tool to publish the load balancing strategy:
 
-1. Create node `/app=default&environment=&service=zk-rest-consumer/servicecomb.loadbalance.testLb` and data `rule: Random`
+Take Zookeeper as an example, and use the command line tools provided by Zookeeper for configuration publishing.
 
-<MyImage src="/docs-img/loadbalance_lb.png"/>
+1. Execute the following command in the `${path}/bin/` directory to create nodes `/app=default&environment=&service=zk-rest-consumer/servicecomb.loadbalance.testLb` and data `rule: Random`
 
+```shell
+# linux mac
+./zkCli.sh -server localhost:2181 create /app=default&environment=&service=zk-rest-consumer/servicecomb.loadbalance.testLb "rule: Random"
+
+# windows
+zkCli.cmd -server localhost:2181 create /app=default&environment=&service=zk-rest-consumer/servicecomb.loadbalance.testLb "rule: Random"
+```
 
 ### Step 4: Start the demo application
 
