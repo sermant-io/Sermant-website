@@ -1,51 +1,229 @@
-# 动态配置
+# 动态配置功能
 
-本文主要介绍如何在插件开发中如何使用动态配置的能力，**动态配置**允许Sermant从动态配置中心获取配置以实现丰富多样的服务治理能力。在**Sermant**场景中如何使用动态配置中心可参考[Sermant动态配置中心使用手册](../user-guide/configuration-center.md)。 
+本文介绍如何在开发中使用Sermant提供的动态配置功能。
 
-## 动态配置服务API
+## 功能介绍
 
-**动态配置功能**的服务功能`API`由[DynamicConfigService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java)抽象类提供，其实现三个接口，见于[API](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api)目录中，具体接口如下所示：
+**动态配置功能**允许Sermant对动态配置中心下发的配置进行配置管理和监听等操作，以实现丰富多样的服务治理能力。
 
-| 接口                                                         | 方法                                                         | 解析                                                       |
-| :----------------------------------------------------------- | :----------------------------------------------------------- | :--------------------------------------------------------- |
-| [KeyService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyService.java) | String getConfig(String)                                     | 获取某个键的配置值(默认组)                                 |
-| [KeyService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyService.java) | boolean publishConfig(String, String)                        | 设置某个键的配置值(默认组)                                 |
-| [KeyService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyService.java) | boolean removeConfig(String)                                 | 移除某个键的配置值(默认组)                                 |
-| [KeyService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyService.java) | List\<String> listKeys()                                     | 获取所有键(默认组)                                         |
-| [KeyService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyService.java) | boolean addConfigListener(String, [DynamicConfigListener](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java)) | 为某个键添加监听器(默认组)                                 |
-| [KeyService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyService.java) | boolean removeConfigListener(String)                         | 移除某个键的监听器(默认组)                                 |
-| [KeyGroupService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyGroupService.java) | String getConfig(String, String)                             | 获取组下某个键的配置值                                     |
-| [KeyGroupService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyGroupService.java) | boolean publishConfig(String, String, String)                | 设置组下某个键的配置值                                     |
-| [KeyGroupService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyGroupService.java) | boolean removeConfig(String, String)                         | 移除组下某个键的配置值                                     |
-| [KeyGroupService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyGroupService.java) | boolean addConfigListener(String, String, [DynamicConfigListener](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java)) | 为组下某个键添加监听器                                     |
-| [KeyGroupService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyGroupService.java) | boolean removeConfigListener(String, String)                 | 移除组下某个键的监听器                                     |
-| [GroupService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/GroupService.java) | List\<String> listKeysFromGroup(String)                      | 获取组中所有键                                             |
-| [GroupService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/GroupService.java) | boolean addGroupListener(String, [DynamicConfigListener](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java)) | 为组下所有的键添加监听器                                   |
-| [GroupService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/GroupService.java) | boolean removeGroupListener(String)                          | 移除组下所有键的监听器                                     |
-| [DynamicConfigService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java) | boolean addConfigListener(String, [DynamicConfigListener](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java), boolean) | 为某个键添加监听器(默认组)，根据入参决定是否触发初始化事件 |
-| [DynamicConfigService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java) | boolean addConfigListener(String, String, [DynamicConfigListener](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java), boolean) | 为组下某个键添加监听器，根据入参决定是否触发初始化事件     |
-| [DynamicConfigService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java) | boolean addGroupListener(String, [DynamicConfigListener](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java), boolean) | 为组下所有的键添加监听器，根据入参决定是否触发初始化事件   |
+> 说明：如何部署动态配置中心以及使用动态配置功能可参考[Sermant动态配置中心使用手册](../user-guide/configuration-center.md)。 
 
-以上，需要明确两个概念：
+## 开发示例
 
-- `Key`，单指某个动态配置的键
-- `Group`，指一系列动态配置的分组，通常用于区分使用者
+本开发示例基于[创建首个插件](README.md)文档中创建的工程，以动态配置的获取来演示开发过程：
 
-通过观察可以发现，以上的`API`主要分为数据的增删查改操作，以及监听器的[DynamicConfigListener](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java)增删操作，其中后者的事件回调是**动态配置服务**得以实现功能中至关重要的一环，也是插件中使用**动态配置服务**的主要功能。
+1. 在工程中`template\template-plugin`下的`com.huaweicloud.sermant.template.TemplateDeclarer` 类中新增变量`dynamicConfigService`获取Sermant框架提供的动态配置服务，用于实现动态配置的监听器的创建、配置的获取等：
 
-另外，在[KeyService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyService.java)接口中定义的所有`API`都是不带`Group`的`API`，它们在[DynamicConfigService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java)中其实都会使用默认`Group`修正为[KeyGroupService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyGroupService.java)的`API`，这点需要注意。默认`Group`可以通过**统一配置文件**`config.properties`的`dynamic.config.defaultGroup`修改。
+   ```java
+   DynamicConfigService dynamicConfigService = ServiceManager.getService(DynamicConfigService.class);
+   ```
+
+2. 获取服务实例之后，可以调用`DynamicConfigService`提供的API进行相应的动作。本示例以动态配置的直接获取为例，可通过如下代码来实现：
+
+   ```java
+   @Override
+   public ExecuteContext before(ExecuteContext context) throws Exception {
+     System.out.println("Good morning!");
+     // test_group为用户分组，test_key为监听的键，对zookeeper来说，配置获取的路径相当于: /test_group/test_key
+     System.out.println(dynamicConfigService.getConfig("test_key", "test_group"));
+     return context;
+   }
+   ```
+
+   开发完成后，可参照创建首个插件时的[打包构建](README.md#打包构建)流程，在工程根目录下执行 **mvn package**后生成构建产物。
+
+4. 以Zookeeper部署为动态配置中心为例，相关参数配置请参考[Sermant动态配置中心使用手册](../user-guide/configuration-center.md)。在Zookeeper的`/test_group/test_key`节点中下发示例配置:
+
+   ```shell
+   create /test_group/test_key "This is a dynamic config!"
+   ```
+
+5. 执行完成后在项目的根目录执行 `cd agent/`，并在其中携带**Sermant**运行测试应用，执行如下命令 **java -javaagent:sermant-agent.jar -jar Application.jar**
+
+   ```shell
+   $ java -javaagent:sermant-agent.jar -jar Application.jar
+   [INFO] Loading core library... 
+   [INFO] Building argument map... 
+   [INFO] Loading sermant agent... 
+   [INFO] Load sermant done. 
+   Good morning!
+   This is a dynamic config!
+   Good afternoon!
+   Good night!
+   ```
+
+可以看到在动态配置中心下发的配置可以通过`getConfig`函数获取得到，并在步骤2中输出到控制台。
+
+其他接口的使用示例此处不一一列出，可参考下文的API描述。
+
+## API&配置
+
+### API
+
+**动态配置功能**的服务功能`API`由[DynamicConfigService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java)抽象类提供，其实现三个接口，见于[API](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api)目录中。
+
+#### 获取动态配置服务
+
+- 获取动态配置服务，用于实现动态配置的监听器的创建、配置的获取等
+
+```java
+DynamicConfigService dynamicConfigService = ServiceManager.getService(DynamicConfigService.class);
+```
+
+下面介绍的API接口需要明确三个概念：
+
+- `key`，单指某个动态配置的键
+- `group`，指一系列动态配置的分组，通常用于区分使用者
+- `content`，指动态配置的具体内容
+
+> 说明：下列API示例中的参数中统一将`key` 配置为`test_key`，`group`配置为`test_group`， `content`配置为`test_content`。
+>
+
+#### 对某个配置键的相关操作
+
+- 获取动态配置中心某个键的配置值
+
+    ```java
+    dynamicConfigService.getConfig("test_key")
+    ```
+
+- 设置动态配置中心某个键的配置值
+
+  ```java
+  dynamicConfigService.publishConfig("test_key", "test_content")
+  ```
+
+- 移除动态配置中心某个键的配置值
+
+  ```java
+  dynamicConfigService.removeConfig("test_key")
+  ```
+
+- 获取动态配置中心所有配置值
+
+  ```java
+  dynamicConfigService.listKeys();
+  ```
+
+- 为动态配置中心某个键添加监听器，监听器`process`函数可在监听到事件后执行自定义操作
+
+  ```java
+  dynamicConfigService.addConfigListener("test_key", new DynamicConfigListener() {
+    @Override
+    public void process(DynamicConfigEvent dynamicConfigEvent) {
+      // do something
+    }
+  });
+  ```
+
+- 为动态配置中心某个键添加监听器，根据第三个入参`ifNotify`决定是否触发添加监听器后的初始化事件，监听器`process`函数可在监听后对初始化事件和后续其他事件执行自定义操作
+
+  ```java
+  dynamicConfigService.addConfigListener("test_key", new DynamicConfigListener() {
+    @Override
+    public void process(DynamicConfigEvent dynamicConfigEvent) {
+      // do something
+    }
+  }, true);
+  ```
+
+- 移除动态配置中心某个键的监听器
+
+  ```java
+  dynamicConfigService.removeConfigListener("test_key");
+  ```
+
+#### 对某个分组下的所有配置键的相关操作
+
+- 获取动态配置中心某个组中所有键
+
+  ```java
+  dynamicConfigService.listKeysFromGroup("test_group")
+  ```
+
+- 为动态配置中心某个组下的所有键添加监听器，监听器`process`函数可在监听到事件后执行自定义操作
+
+  ```java
+  dynamicConfigService.addGroupListener("test_group", new DynamicConfigListener() {
+    @Override
+    public void process(DynamicConfigEvent dynamicConfigEvent) {
+      // do something
+    }
+  });
+  ```
+
+- 为动态配置中心某个组下的所有键添加监听器，根据第三个入参`ifNotify`决定是否触发添加监听器后的初始化事件，监听器`process`函数可在监听后对初始化事件和后续其他事件执行自定义操作
+
+  ```java
+  dynamicConfigService.addGroupListener("test_group", new DynamicConfigListener() {
+    @Override
+    public void process(DynamicConfigEvent dynamicConfigEvent) {
+      // do something
+    }
+  }, true);
+  ```
+
+- 移除动态配置中心某个组下所有键的监听器
+
+  ```java
+  dynamicConfigService.removeConfigListener("test_group");
+  ```
+
+#### 对某个分组下的某个配置键的相关操作
+
+- 获取动态配置中心某个分组下的某个键的配置值
+
+  ```java
+  dynamicConfigService.getConfig("test_key", "test_group")
+  ```
+
+- 设置动态配置中心某个分组下的某个键的配置值
+
+  ```java
+  dynamicConfigService.publishConfig("test_key", "test_group", "test_content")
+  ```
+
+- 移除动态配置中心某个分组下的某个键的配置值
+
+  ```java
+  dynamicConfigService.removeConfig("test_key", "test_group")
+  ```
+
+- 为动态配置中心某个分组下的某个键添加监听器，监听器`process`函数可在监听到事件后执行自定义操作
+
+  ```java
+  dynamicConfigService.addConfigListener("test_key", "test_group", new DynamicConfigListener() {
+    @Override
+    public void process(DynamicConfigEvent dynamicConfigEvent) {
+      // do something
+    }
+  });
+  ```
+
+- 为动态配置中心某个分组下的某个键添加监听器，根据第三个入参`ifNotify`决定是否触发添加监听器后的初始化事件，监听器`process`函数可在监听后对初始化事件和后续其他事件执行自定义操作
+
+  ```java
+  dynamicConfigService.addConfigListener("test_key", "test_group", new DynamicConfigListener() {
+    @Override
+    public void process(DynamicConfigEvent dynamicConfigEvent) {
+      // do something
+    }
+  }, true);
+  ```
+
+- 移除动态配置中心某个分组下的某个键的监听器
+
+  ```java
+  dynamicConfigService.removeConfigListener("test_key", "test_group");
+  ```
+
+#### 说明
+
+以上的`API`主要分为数据的增删查改操作，以及监听器的[DynamicConfigListener](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java)增删操作，其中后者的事件回调是**动态配置服务**得以实现功能中至关重要的一环，也是插件中使用**动态配置服务**的主要功能。
+
+另外，对**某个配置键的相关操作**的所有`API`都是不带`Group`的`API`，它们在[DynamicConfigService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java)中其实都会使用默认`Group`，这点需要注意。默认`Group`可以通过sermant-agent的**配置文件**`/config/config.properties`的`dynamic.config.defaultGroup`修改，参数说明可参考[Sermant-agent使用手册](../user-guide/sermant-agent.md#动态配置中心相关参数)。
 
 最后，除了以上的服务接口以外，开发者还需要关注一些其他接口、配置或实体：
-
-**动态配置服务**的静态配置[DynamicConfig](https://github.com/huaweicloud/Sermant/blob/0.9.x/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/config/DynamicConfig.java)，其参数配置可参考[Sermant动态配置中心使用手册](https://sermant.io/zh/document/user-guide/configuration-center.html)。
-
-**动态配置服务**实现类型[DynamicConfigServiceType](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigServiceType.java)，含以下几种类型：
-
-- | 枚举值    | 解析                |
-  | :-------- | :------------------ |
-  | ZOOKEEPER | ZooKeeper实现       |
-  | KIE       | ServiceComb Kie实现 |
-  | NOP       | 无实现              |
 
 - 动态配置监听器[DynamicConfigListener](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java)，其中包含的接口方法如下：
 
@@ -66,31 +244,11 @@
 
   | 枚举值 | 解析                     |
   | :----- | :----------------------- |
-  | INIT   | 添加监听器时的初始化响应 |
-  | CREATE | 配置新增事件             |
-  | MODIFY | 配置信息修改事件         |
-  | DELETE | 配置删除事件             |
+  | INIT   | 添加监听器时的初始化事件 |
+  | CREATE | 新增配置的事件           |
+  | MODIFY | 修改配置内容的事件       |
+  | DELETE | 删除配置的事件           |
 
-## 动态配置功能开发示例
+### 配置
 
-动态配置功能的`DynamicConfigService`实例可以通过以下代码获取：
-
-```java
-DynamicConfigService service = ServiceManager.getService(DynamicConfigService.class);
-```
-
-获取服务实例之后，可以调用上文表格中列出的API进行相应的动作。例如，若需注册一个动态配置的监听器，可通过以下方法来实现：
-```java
-// ${group}为用户分组，${key}为监听的键，对zookeeper来说，监听的路径相当于: / + ${group} + ${key}
-// 如果不传${group}，则会默认设置为统一配置中dynamicconfig.default_group对应的值
-service.addConfigListener("${key}", "${group}", new DynamicConfigListener() {
-  @Override
-  public void process(ConfigChangedEvent event) {
-    // do something
-  }
-});
-```
-
-注册监听器之后，当服务器对应节点发生创建、删除、修改、添加子节点等事件时，就会触发`process`函数。
-
-其他接口的使用示例此处不一一列出，可参考上文的API描述。
+动态配置功能相关的配置可参考[Sermant动态配置中心使用手册](../user-guide/configuration-center.md#参数配置)参数配置相关章节。
