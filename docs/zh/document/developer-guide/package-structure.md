@@ -5,7 +5,7 @@
 - `插件主模块(plugin)`，该模块主要用于声明字节码增强逻辑及插件服务接口定义
 - `插件服务模块(service)`，该模块用于为插件包提供插件服务接口实现
 
-开始之前，需要明确约定，为避免类冲突问题，在`插件主模块(plugin)`中，开发者只能使用Java原生API和[**Sermant**核心功能模块](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core)中的API，不能依赖或使用任何除`byte-buddy`以外的第三方依赖。如果应业务要求，需要使用其他第三方依赖的话，只能在`插件主模块(plugin)`中定义功能接口，并在`插件服务模块(service)`中编写接口实现，在开发中遵循上述约定，才可以更好的利用到**Sermant**提供的[类隔离](#类隔离)能力。
+开始之前，需要明确约定，为避免类冲突问题，在`插件主模块(plugin)`中，开发者只能使用Java原生API和[**Sermant**核心功能模块](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core)中的API，不能依赖或使用任何除`byte-buddy`以外的第三方依赖。如果应业务要求，需要使用其他第三方依赖的话，只能在`插件主模块(plugin)`中定义功能接口，并在`插件服务模块(service)`中编写接口实现，在开发中遵循上述约定，才可以更好的利用到**Sermant**提供的类隔离能力。
 
 ## 插件主模块
 
@@ -19,13 +19,13 @@
 - 允许自由添加需要的第三方依赖，打包构建的时候需要构建带依赖jar包。
 - 需以`provided`形式在其pom中引入其对应的[插件主模块](#插件主模块)。
 
-## 开发插件服务
+## 插件服务
 
 **插件服务**主要分为两部分：
 
 **服务接口定义**在[插件主模块](#插件主模块)中用于描述该服务提供的能力，在定义插件的插件服务时，需要继承插件服务基础接口[com.huaweicloud.sermant.core.PluginService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/service/PluginService.java)，该接口提供`start()`方法会在**Sermant**启动时被调用，`stop()`方法会在JVM停止时被调用。
 
-**服务接口实现**在[插件服务模块](#插件服务模块)中，在[插件主模块](#插件主模块)中可以通过*SPI*机制加载并使用服务的接口实现
+**服务接口实现**在[插件服务模块](#插件服务模块)中，在[插件主模块](#插件主模块)中可以通过**SPI**机制加载并使用插件服务的接口实现。
 
 ### 开发示例
 
@@ -36,7 +36,7 @@
 在开发插件服务时，首先需要在[插件主模块](#插件主模块)中定义插件服务的接口，这是使用插件服务时的索引，在工程中`template\template-plugin`下创建`com.huaweicloud.sermant.template.EchoService`接口，并在其中定义`echo`接口方法：
 
 ```java
-public interface TemplatePluginService extends PluginService {
+public interface EchoService extends PluginService {
     void echo(String string);
 }
 ```
