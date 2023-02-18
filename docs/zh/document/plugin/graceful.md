@@ -1,22 +1,14 @@
-# 优雅上下线
+# 无损上下线
 
-本文介绍如何使用优雅上下线插件，目前优雅上下线功能当前集成在[注册迁移插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-registry) 中, 可独立使用。
+本文介绍如何使用无损上下线插件，目前无损上下线功能当前集成在[注册迁移插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-registry) 中, 可独立使用。
 
 ## 功能介绍
 
-试想一个场景，系统中运行着一个消费者（客户端）和两个服务提供者（服务端），消费者可负载均衡调用服务提供者。假设某个服务提供者因业务更新或其他场景需要滚动升级，若此时存在大量并发流量，便会出现以下问题：
+注册中心是微服务架构非常重要的一个组件，可以说是微服务架构中的“通讯录”，它记录了服务和服务地址的影射关系。服务消费者在感知到服务提供者后，发起调用，完成业务功能。在应用上下线发布过程中，如何做到流量的无损上/下线，是一个系统能保证SLA的关键。如果上下线不平滑，就会出现短时间的服务调用报错，比如连接被拒绝、请求超时、没有实例和请求异常等问题。
+- 在应用上线发布过程中，由于过早暴露服务，实例可能仍处在JVM JIT编译或者中间件的加载过程，若此时大量流量进入，可能会瞬间压垮新起的服务实例。
+- 在应用下线过程中，服务消费者感知服务提供者下线有延迟，在一段时间内，被路由到已下线服务提供者实例的请求都抛连接被拒绝异常。其次服务实例在接收到停止服务信号时，会立即关闭，但是这时候可能在请求队列中存在一部分请求还在处理，如果立即关闭这些请求都会损失掉。
 
-- 大量TCP连接因服务提供者升级下线操作，导致大量请求错误。
-- 由于消费者（客户端）存在注册表延迟刷新的问题，后续流量依旧会分配到已经下线的提供者，导致大量请求错误。
-
-以上便是一个典型的“不优雅”场景。于是，为了规避诸如此类的问题，服务优雅上下线应运而生，主要针对服务的重启、上线、下线等操作提供保护。
-
-**服务运维常见问题：**
-
-- 服务自身存在大量懒加载机制（例如负载均衡初始化），在服务刚上线时，因并发流量请求涌入，导致大量请求同时进行懒加载，以至于请求响应慢，线程阻塞，甚至最终导致服务崩溃。
-- 服务无法做到优雅下线，比如服务端下线而客户端服务无法及时感知，导致流量流入已下线的实例，从而丢失大量流量。
-
-针对以上两个问题，插件提供预热和延迟下线机制，为服务提供优雅上线和优雅下线的能力。预热是优雅上线的核心机制，延迟下线时优雅下线的核心机制，而且为了优雅上线，还做了延迟注册机制。
+针对应用上下线发布过程中的问题，插件提供预热和延迟下线机制，为应用提供无损上下线的能力。预热是无损上线的核心机制，延迟下线时无损下线的核心机制，而且为了无损上线，还做了延迟注册机制。
 
 <MyImage src="/docs-img/elegant-online.png"/>
 
@@ -34,16 +26,16 @@
 
 ### 插件配置
 
-优雅上下线插件需要打开优雅上下线开关（`grace.rule.enableSpring`）、配置启动延迟时间（`grace.rule.startDelayTime`）、开启预热（`grace.rule.enableWarmUp`）等配置，可在`${path}/sermant-agent-x.x.x/agent/pluginPackge/service-registry/config/config.yaml`找到该插件的配置文件，配置如下所示：
+无损上下线插件需要打开无损上下线开关（`grace.rule.enableSpring`）、配置启动延迟时间（`grace.rule.startDelayTime`）、开启预热（`grace.rule.enableWarmUp`）等配置，可在`${path}/sermant-agent-x.x.x/agent/pluginPackge/service-registry/config/config.yaml`找到该插件的配置文件，配置如下所示：
 
 ```yaml
 grace.rule:
-  enableSpring: false # springCloud优雅上下线开关。
-  startDelayTime: 0  # 优雅上线启动延迟时间, 单位S。上线延迟为避免实例未准备就绪就注册导致上游服务调用时无法提供服务。
+  enableSpring: false # springCloud无损上下线开关。
+  startDelayTime: 0  # 无损上线启动延迟时间, 单位S。上线延迟为避免实例未准备就绪就注册导致上游服务调用时无法提供服务。
   enableWarmUp: false # 是否开启预热。针对新实例，为避免实例初始化时涌入大量流量而导致请求响应超时、阻塞、资源耗尽等造成新实例宕机，可开启预热在初始化时分配少量流量。
   warmUpTime: 120    # 预热时间, 单位S。预热过程的持续时间。
-  enableGraceShutdown: false # 是否开启优雅下线。
-  shutdownWaitTime: 30  # 关闭前相关流量检测的最大等待时间, 单位S。 需开启enabledGraceShutdown才会生效。在优雅下线前，Agent会定期检查当前实例是否完成全部请求处理，通过此配置指定检查的持续时间。
+  enableGraceShutdown: false # 是否开启无损下线。
+  shutdownWaitTime: 30  # 关闭前相关流量检测的最大等待时间, 单位S。 需开启enabledGraceShutdown才会生效。在无损下线前，Agent会定期检查当前实例是否完成全部请求处理，通过此配置指定检查的持续时间。
   enableOfflineNotify: false # 是否开启下线主动通知。
   httpServerPort: 16688 # 提供的httpServer端口，用于应用就绪检查以及接收下游应用下线主动的通知。
   upstreamAddressMaxSize: 500 # 缓存上游地址的默认大小。上游实例接收主动通知的地址会被下游缓存，此处设置地址最多的缓存个数。
@@ -52,25 +44,25 @@ grace.rule:
 
 | 参数键                               | 说明                                                                     | 默认值        | 是否必须 |
 | :----------------------------------- | :---------------------------------------------------------------------- | :------------| :------- |
-| grace.rule.enableSpring              | springCloud优雅上下线开关。                                                | false         | 是    |
-| grace.rule.startDelayTime            | 优雅上线启动延迟时间, 单位S。上线延迟为避免实例未准备就绪就注册导致上游服务调用时无法提供服务。                                            | 0             | 是    |
+| grace.rule.enableSpring              | springCloud无损上下线开关。                                                | false         | 是    |
+| grace.rule.startDelayTime            | 无损上线启动延迟时间, 单位S。上线延迟为避免实例未准备就绪就注册导致上游服务调用时无法提供服务。                                            | 0             | 是    |
 | grace.rule.enableWarmUp              | 是否开启预热。针对新实例，为避免实例初始化时涌入大量流量而导致请求响应超时、阻塞、资源耗尽等造成新实例宕机，可开启预热在初始化时分配少量流量。                                                             | false         | 是    |
-| grace.rule.enableGraceShutdown       | 是否开启优雅下线。                                                          | false         | 是    |
-| grace.rule.shutdownWaitTime          | 关闭前相关流量检测的最大等待时间, 单位S。需开启enabledGraceShutdown才会生效。在优雅下线前，Agent会定期检查当前实例是否完成全部请求处理，通过此配置指定检查的持续时间。  | 30            | 是    |
+| grace.rule.enableGraceShutdown       | 是否开启无损下线。                                                          | false         | 是    |
+| grace.rule.shutdownWaitTime          | 关闭前相关流量检测的最大等待时间, 单位S。需开启enabledGraceShutdown才会生效。在无损下线前，Agent会定期检查当前实例是否完成全部请求处理，通过此配置指定检查的持续时间。  | 30            | 是    |
 | grace.rule.enableOfflineNotify       | 是否开启下线主动通知。                                                      | false         | 是    |
 | grace.rule.httpServerPort            | 提供的httpServer端口，用于应用就绪检查以及接收下游应用下线主动的通知。                                 | 16688          | 是    |
 | grace.rule.upstreamAddressMaxSize    | 缓存上游地址的默认大小。上游实例接收主动通知的地址会被下游缓存，此处设置地址最多的缓存个数。                                                    | 5000           | 是    |
 | grace.rule.upstreamAddressExpiredTime| 缓存上游地址的过期时间, 单位S。上游实例接收主动通知的地址会被下游缓存，此处设置地址的失效时间。                                              | 60            | 是    |
 
-## 微服务优雅关闭
+## 微服务延迟下线
 
-**优雅关闭：** 服务自身需要实现优雅关闭处理逻辑，如服务下线时需及时通知到上游应用（减少服务下线后消费者服务未及时感知到，仍继续调用已下线服务导致的请求错误）。优雅上下线插件提供了相应的优雅关闭API接口：
+为了保证每次微服务下线过程中，服务消费者能尽早感知服务提供者实例下线的行为，同时服务提供者需保证处理中请求被处理完后再进行服务下线。无损上下线插件提供了相应的延迟下线API接口：
 
 ```api
 /$$sermant$$/shutdown
 ```
 
-以容器化服务为例（Sermant容器化部署依赖[injector组件](../user-guide/injector.md)）：给SpringCloud应用配置了preStop钩子。
+K8s提供了Pod优雅退出机制（preStop配置），允许Pod在退出前完成一些清理工作。preStop会先执行完，然后K8s才会给Pod发送TERM信号。在容器场景利用K8s提供的preStop机制，配合延迟下线API使用，这样就能保证流量的无损下线。以容器化服务为例（Sermant容器化部署依赖[injector组件](../user-guide/injector.md)）：给SpringCloud应用配置了preStop钩子。
 
 > **注意：** 延迟下线能力依赖k8s的preStop机制，若您的编排文件已配置preStop，sermant-injector将无法自动配置，需要您在编排文件位置“spec > containers > lifecycle > preStop > exec > command”添加如下命令：
 
@@ -121,7 +113,7 @@ spec:
                   - '-c'
                   - '>- curl -XPOST http://127.0.0.1:16688/\$\$sermant\$\$/shutdown 2>/tmp/null;sleep
                     30;exit 0'
-                    # 在POD停止前通知实例进行下线，其中16688为下线通知端口，优雅上下线插件配置中的httpServerPort
+                    # 在Pod停止前通知实例进行下线，其中16688为下线通知端口，无损上下线插件配置中的httpServerPort
 ```
 
 ## 支持版本和限制
@@ -133,12 +125,12 @@ spec:
 
 限制：
 
-- 优雅上下线能力基于SpringCloud的默认负载均衡能力开发，若您实现了自定义负载均衡能力，该能力将不再适用
+- 无损上下线能力基于SpringCloud的默认负载均衡能力开发，若您实现了自定义负载均衡能力，该能力将不再适用
 
 
 ## 操作和结果验证
 
-下面演示如何使用优雅上下线插件，在容器场景下，验证SpringCloud应用的延迟注册、预热和延迟下线场景。
+下面演示如何使用无损上下线插件，在容器场景下，验证SpringCloud应用的延迟注册、预热和延迟下线场景。
 
 ### 准备工作
 
@@ -191,7 +183,7 @@ docker push ${imageName}:{imageVerison}
 
 `consumer  ----------->  provider(两实例)  ------------->  data`
 
-其中consumer开启优雅上下线能力，一个provider实例开启延迟注册、预热与延迟下线能力， 另一个provider实例仅开启延迟下线能力，data服务接受到请求后会返回自身服务名+IP地址信息。
+其中consumer开启无损上下线能力，一个provider实例开启延迟注册、预热与延迟下线能力， 另一个provider实例仅开启延迟下线能力，data服务接受到请求后会返回自身服务名+IP地址信息。
 
 （1）部署data（端口8008）
 
