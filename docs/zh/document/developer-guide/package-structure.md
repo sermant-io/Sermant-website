@@ -5,7 +5,11 @@
 - `插件主模块(plugin)`，该模块主要用于声明字节码增强逻辑及插件服务接口定义
 - `插件服务模块(service)`，该模块用于为插件包提供插件服务接口实现
 
-开始之前，需要明确约定，为避免类冲突问题，在`插件主模块(plugin)`中，开发者只能使用Java原生API和[**Sermant**核心功能模块](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core)中的API，不能依赖或使用任何除`byte-buddy`以外的第三方依赖。如果应业务要求，需要使用其他第三方依赖的话，只能在`插件主模块(plugin)`中定义功能接口，并在`插件服务模块(service)`中编写接口实现，在开发中遵循上述约定，才可以更好的利用到**Sermant**提供的类隔离能力。
+开始之前，需要明确约定，为避免类冲突问题，在`插件主模块(plugin)`中，开发者只能使用Java原生API和[sermant-agentcore模块](#sermant-agentcore模块)中的API，不能依赖或使用任何除`byte-buddy`以外的第三方依赖。如果应业务要求，需要使用其他第三方依赖的话，只能在`插件主模块(plugin)`中定义功能接口，并在`插件服务模块(service)`中编写接口实现，在开发中遵循上述约定，才可以更好的利用到**Sermant**提供的类隔离能力。
+
+#### sermant-agentcore模块
+
+> [sermant-agentcore模块]((https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core))是Sermant Agent的核心模块，其中提供了字节码增强能力、类隔离能力、插件化能力、服务治理的基础服务等核心能力的封装。
 
 ## 插件主模块
 
