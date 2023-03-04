@@ -56,13 +56,9 @@ grace.rule:
 
 ## 微服务延迟下线
 
-为了保证每次微服务下线过程中，服务消费者能尽早感知服务提供者实例下线的行为，同时服务提供者需保证处理中请求被处理完后再进行服务下线。无损上下线插件提供了相应的延迟下线API接口：
+为了保证每次微服务下线过程中，服务消费者能尽早感知服务提供者实例下线的行为，同时服务提供者需保证处理中请求被处理完后再进行服务下线。
 
-```api
-/$$sermant$$/shutdown
-```
-
-K8s提供了Pod优雅退出机制（preStop配置），允许Pod在退出前完成一些清理工作。preStop会先执行完，然后K8s才会给Pod发送TERM信号。在容器场景利用K8s提供的preStop机制，配合延迟下线API使用，这样就能保证流量的无损下线。以容器化服务为例（Sermant容器化部署依赖[injector组件](../user-guide/injector.md)）：给SpringCloud应用配置了preStop钩子。
+容器场景：K8s提供了Pod优雅退出机制，允许Pod在退出前完成一些清理工作。preStop会先执行完，然后K8s才会给Pod发送TERM信号。在容器场景利用K8s提供的preStop机制，配合延迟下线API使用，这样就能保证流量的无损下线。以容器化服务为例（Sermant容器化部署依赖[injector组件](../user-guide/injector.md)）：给SpringCloud应用配置了preStop。
 
 > **注意：** 延迟下线能力依赖k8s的preStop机制，若您的编排文件已配置preStop，sermant-injector将无法自动配置，需要您在编排文件位置“spec > containers > lifecycle > preStop > exec > command”添加如下命令：
 
@@ -70,7 +66,7 @@ K8s提供了Pod优雅退出机制（preStop配置），允许Pod在退出前完�
 curl -XPOST http://127.0.0.1:16688/\$\$sermant\$\$/shutdown 2>/tmp/null;sleep 30;exit 0
 ```
 
-> 添加该命令会在Pod停止前通知实例进行下线。其中16688为下线通知端口，默认为该值，可通过环境变量“grace_rule_httpServerPort”进行指定。
+> **说明：** 添加该命令会在Pod停止前通知实例进行下线。其中16688为下线通知端口，默认为该值，可通过环境变量“grace_rule_httpServerPort”进行指定。
 
 ```yaml
 apiVersion: apps/v1
@@ -115,6 +111,32 @@ spec:
                     30;exit 0'
                     # 在Pod停止前通知实例进行下线，其中16688为下线通知端口，无损上下线插件配置中的httpServerPort
 ```
+
+虚拟机场景：无需配置preStop机制，因为无损上下线插件会对Spring的ContextClosedEvent事件进行监听，当监听到ContextClosedEvent事件，会主动通知实例进行下线。
+
+> **说明：** Spring的核心是ApplicationContext，它负责管理beans的完整生命周期。当关闭ApplicationContext时，ContextClosedEvent事件会被触发。
+
+```java
+    /**
+     * ContextClosedEvent事件监听器
+     */
+    @EventListener(value = ContextClosedEvent.class)
+    public void listener() {
+        if (!isEnableGraceDown() || graceService == null) {
+            return;
+        }
+        graceService.shutdown();
+    }
+```
+
+> **注意：** 虚机关闭应用服务建议执行kill -15 PID ，给目标进程一个清理善后工作的机会。
+> 
+> kill -15，系统向应用发送SIGTERM（15）信号，该信号是可以被执行、阻塞和忽略的，应用程序接收到信号后，可以做很多事情，甚至可以决定不终止；
+>
+>kill -9， 系统会发出SIGKILL（9）信号，由操作系统内核完成杀进程操作，该信号不允许忽略和阻塞，所以应用程序会立即终止； 
+
+**那为什么容器应用（K8s环境）要配置preStop？**
+> 因为pod存在可能捕捉`SIGTERM`信号就直接退出了，通过preStop设置hook操作，在停止前通知实例进行下线，加了一层防护，保证Pod优雅的结束。
 
 ## 支持版本和限制
 
