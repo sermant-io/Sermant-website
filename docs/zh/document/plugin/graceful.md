@@ -133,10 +133,62 @@ spec:
 > 
 > kill -15，系统向应用发送SIGTERM（15）信号，该信号是可以被执行、阻塞和忽略的，应用程序接收到信号后，可以做很多事情，甚至可以决定不终止；
 >
->kill -9， 系统会发出SIGKILL（9）信号，由操作系统内核完成杀进程操作，该信号不允许忽略和阻塞，所以应用程序会立即终止； 
+> kill -9， 系统会发出SIGKILL（9）信号，由操作系统内核完成杀进程操作，该信号不允许忽略和阻塞，所以应用程序会立即终止； 
 
 **那为什么容器应用（K8s环境）要配置preStop？**
-> 因为pod存在可能捕捉`SIGTERM`信号就直接退出了，通过preStop设置hook操作，在停止前通知实例进行下线，加了一层防护，保证Pod优雅的结束。
+
+#### 一、首先要介绍一下Pod的终止过程：
+
+<MyImage src="/docs-img/pod-terminate.png"/>
+
+1) 用户发送删除 Pod 对象的命令。
+
+2) API 服务器中的 Pod 对象会随着时间的推移而更新，在宽限期内（默认为30秒），Pod被视为“dead”。
+
+3) 将 Pod 标记为 “Terminating” 状态。
+
+4) （与第3步同时运行）kubelet 在监控到 Pod 对象转为 “Terminating” 状态的同时启动 Pod 关闭程序。
+
+5) （与第3步同时运行）端点控制器监控到 Pod 对象的关闭行为时将其从所有匹配到此端点的 Service 资源的端点列表中移除。
+
+6) Pod 对象中的容器进程收到 TERM 信号。
+
+7) 如果当前当前 Pod 对象定义了 preStop 钩子处理器，则在其标记为 “terminating” 后即会以同步的方式启动执行；如若宽限期结束后，preStop 仍未执行结束，则第2步会被重新执行并额外获取一个时长为2秒的小宽限期。
+
+8) 宽限期结束后，若存在任何一个仍在运行的进程，那么 Pod 对象即会收到 SIGKILL 信号。
+
+9) kubelet 请求 API Server 将此 Pod 资源的宽限期设置为0从而完成删除操作，它变得对用户不在可见。
+
+默认情况下，所有删除操作的宽限期都是30秒，不过，kubectl delete 命令可以使用“--grace-period=”选项自定义其时长，若使用0值则表示直接强制删除指定的资源，不过，此时需要同时为命令使用 “--force” 选项。
+
+> **参考：** https://kubernetes.renkeju.com/chapter_4/4.5.5.pod_termination_process.html
+
+**从上述Pod终止过程的时序图可知，关闭Pod流程（关注红色框），给Pod内的进程发送TERM信号(即kill, kill -15)，如果配置了preStop钩子也会同时处理，最后宽限期结束后，若存在任何一个仍在运行的进程，那么Pod对象即会收到SIGKILL（kill-9）信号**。
+
+#### 二、存在这样一种情况Pod中的业务进程接受不到`SIGTERM`信号
+
+存在这样一种情况Pod中的业务进程接受不到`SIGTERM`信号（而且没有配置preStop钩子），等待一段时间业务进程直接被SIGKILL强制杀死了。
+
+**为什么业务进程接受不到`SIGTERM`信号？**
+
+> 踩过坑！
+
+通常都是因为容器启动入口使用了 shell，比如使用了类似 `/bin/sh -c my-app` 或 `/docker-entrypoint.sh` 这样的 ENTRYPOINT 或 CMD，这就可能就会导致容器内的业务进程收不到SIGTERM信号，原因是:
+
+1. 容器主进程是shell，业务进程是在shell中启动的，成为了shell进程的子进程。
+2. shell 进程默认不会处理 SIGTERM 信号，自己不会退出，也不会将信号传递给子进程，导致业务进程不会触发停止逻辑。
+3. 当等到 K8S 优雅停止超时时间 (terminationGracePeriodSeconds，默认30s)，发送SIGKILL强制杀死shell及其子进程。
+
+> **参考:** https://imroc.cc/k8s/faq/why-cannot-receive-sigterm/
+
+#### 三、如何解决上述Pod中的业务进程接受不到`SIGTERM`信号问题
+
+1. 配置preStop钩子（K8s场景），处理退出前完成一些清理工作，比如使用无损上下线插件的应用服务需在停止前通知实例进行下线。
+2. 如果可以的话，尽量不使用 shell 启动业务进程。
+3. 如果一定要通过 shell 启动，比如在启动前需要用 shell 进程一些判断和处理，或者需要启动多个进程，那么就需要在 shell 中传递下 SIGTERM 信号了，解决方案请[参考 Kubernetes 实用技巧: 在 SHELL 中传递信号](https://imroc.cc/k8s/trick/propagating-signals-in-shell/) 。
+
+**所以容器应用（K8s环境）要配置preStop，在停止前通知实例进行下线，加了一层防护，保证Pod中的业务能优雅的结束。**
+
 
 ## 支持版本和限制
 
