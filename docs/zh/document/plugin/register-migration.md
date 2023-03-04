@@ -4,12 +4,13 @@
 
 ## 功能介绍
 
-对于绝大多数企业客户来说，比较关心注册中心迁移过程的平滑性以及业务的连续性。注册迁移插件通过无侵入方式实现注册中心迁移的能力。可基于单注册或双注册的模式让原本注册于Eureka，Nacos，Zookeeper、Consul等主流注册中心的微服务，无侵入地注册到[ServiceComb](https://github.com/apache/servicecomb-service-center)或[Nacos](https://nacos.io/)上。
+对于绝大多数企业客户来说，比较关心注册中心迁移过程的平滑性以及业务的连续性。注册迁移插件通过无侵入方式实现注册中心迁移的能力。让原本注册于Eureka、Nacos、Zookeeper、Consul等主流注册中心的微服务，无侵入地注册到[ServiceComb](https://github.com/apache/servicecomb-service-center)或[Nacos](https://nacos.io/)上。
 
+**搬迁示意图：**
 
-双注册模式能让线上应用在线上业务不停机的前提下将旧注册中心快速迁移到新注册中心，**搬迁示意图：**
+<MyImage src="/docs-img/registration-migration.png"/>
 
-<MyImage src="/docs-img/sermant-register-migration.png"/>
+双注册模式能让线上应用在线上业务不停机的前提下将旧注册中心快速迁移到新注册中心。
 
 > **说明：** 单注册模式是指应用挂载了注册迁移插件，屏蔽了应用注册到原注册中心的逻辑，而将信息注册至新注册中心上。 
 
