@@ -4,14 +4,13 @@
 
 ## 功能介绍
 
-对于绝大多数企业客户来说，比较关心注册中心迁移过程的平滑性以及业务的连续性。注册迁移插件通过无侵入方式实现注册中心迁移的能力。可基于单注册或双注册的模式让原本注册于Eureka，Nacos，Zookeeper、Consul等主流注册中心的微服务，无侵入地注册到[ServiceComb](https://github.com/apache/servicecomb-service-center)或[Nacos](https://nacos.io/)上。
+对于绝大多数企业客户来说，比较关心注册中心迁移过程的平滑性以及业务的连续性。注册迁移插件通过无侵入方式实现注册中心迁移的能力，让原本注册于Eureka、Nacos、Zookeeper、Consul等主流注册中心的微服务，无侵入地注册到[ServiceComb](https://github.com/apache/servicecomb-service-center)或[Nacos](https://nacos.io/)上。
 
+**搬迁示意图：**
 
-双注册模式能让线上应用在线上业务不停机的前提下将旧注册中心快速迁移到新注册中心，**搬迁示意图：**
+<MyImage src="/docs-img/registration-migration.png"/>
 
-<MyImage src="/docs-img/sermant-register-migration.png"/>
-
-> **说明：** 单注册模式是指应用挂载了注册迁移插件，屏蔽了应用注册到原注册中心的逻辑，而将信息注册至新注册中心上。 
+从上述搬迁示意图可知，搬迁的应用服务挂载了Sermant通过**双注册**的方式将业务从旧注册中心快速迁移到新注册中心上。后续新开发的应用服务也可通过挂Sermant通过**单注册**的方式注册到新的注册中心（注册逻辑不在新开发应用服务的SDK中而且通过注册迁移插件实现）。
 
 ## 参数配置
 
@@ -37,11 +36,11 @@
 register.service:
   registerType: SERVICE_COMB         # 新注册中心的类型，控制服务注册时采用哪种注册方式，不同注册中心有不同的注册实现。
   address: http://localhost:30100    # 新注册中心地址。控制服务注册时注册到哪里。
-servicecomb.service:
-  heartbeatInterval: 15              # 服务实例心跳发送间隔。通过心跳监听服务实例的状态。
-  openMigration: false               # 注册迁移开关。开启后将拦截宿主服务原有的注册功能，只注册到新注册中心。
   enableSpringRegister: false        # springcloud插件注册能力开关。开启后将作为Spring Cloud服务注册到新的注册中心。不能和dubbo插件注册能力开关同时开启。
   enableDubboRegister: false         # dubbo插件注册能力开关。开启后将作为dubbo服务注册到新的注册中心。不能和Spring插件注册能力开关同时开启。
+  openMigration: false               # 注册迁移开关。开启后将拦截宿主服务原有的注册功能，只注册到新注册中心。
+servicecomb.service:
+  heartbeatInterval: 15              # 服务实例心跳发送间隔。通过心跳监听服务实例的状态。
   sslEnabled: false                  # ssl开关。控制是否开启SSL安全访问。
   preferIpAddress: false             # 是否采用IP。 控制服务实例注册时采用IP注册还是采用域名注册。
 nacos.service:
@@ -55,22 +54,22 @@ nacos.service:
 
 配置项说明如下:
 
-| 参数键                                      | 说明                                                                            | 默认值                    | 所属注册中心       | 是否必须 |
+| 参数键                                      | 参数类型（所属注册中心）         |说明                                                                            | 默认值                    | 是否必须 |
 |------------------------------------------|-------------------------------------------------------------------------------|------------------------|--------------|------|
-| register.service.registerType            | 新注册中心类型，目前支持NACOS/SERVICE_COMB。                                           | SERVICE_COMB           | 通用           | 是    |
-| register.service.address                 | 注册服务地址，SERVICE_COMB：形如http://localhost:30100；NACOS：形如127.0.0.1:8848。           | http://127.0.0.1:30100 | 通用           | 是    |
-| servicecomb.service.heartbeatInterval    | 服务实例心跳发送间隔（单位：秒）。                                                | 15                     | SERVICE_COMB | 是    |
-| servicecomb.service.openMigration        | 是否开启迁移功能，开启后将拦截宿主服务原有的注册功能，只注册到新注册中心。                                                                    | false                  | SERVICE_COMB | 是    |
-| servicecomb.service.enableSpringRegister | 是否开启springcloud插件注册能力，springcloud框架需开启，dubbo框架需关闭。不能和enableDubboRegister同时开启。 | false                  | 通用           | 是    |
-| servicecomb.service.enableDubboRegister  | 是否开启dubbo插件注册能力，dubbo框架需开启，springcloud框架需关闭。不能和enableSpringRegister同时开启。      | false                  | 通用           | 是    |
-| servicecomb.service.sslEnabled           | 是否开启ssl安全访问。                                                                       | false                  | SERVICE_COMB | 是    |
-| servicecomb.service.preferIpAddress      | 是否采用IP访问，控制服务实例注册时采用IP注册还是采用域名注册。                                                                      | false                  | SERVICE_COMB | 是    |
-| nacos.service.username                   | nacos验证账户，新的注册中心为nacos时，注册到时需要使用nacos验证账户。                                                                     | <空>                    | NACOS        | 否    |
-| nacos.service.password                   | nacos的验证密码，新的注册中心为nacos时，注册时需要使用nacos验证密码。                                                                    | <空>                    | NACOS        | 否    |
-| nacos.service.namespace                  | 命名空间，nacos配置创建命名空间的id值。控制nacos注册时注册到那个命名空间下，属于同一命名空间的微服务才能进行服务发现。                                                        | <空>                    | NACOS        | 否    |
-| nacos.service.weight                     | 服务实例权重值。服务注册时使用。服务实例调用时，权重越高访问频率越高。                                                                       | 1                      | NACOS        | 是    |
-| nacos.service.clusterName                | 集群名称。服务注册、发现时使用，服务实例调用时只会调用调用同一个集群下的实例。                                                                          | DEFAULT                | NACOS        | 是    |
-| nacos.service.ephemeral                  | 是否是临时节点，true为是，false为否。服务注册时使用，服务下线后节点不需要存在时采用临时节点。                                                        | true                   | NACOS        | 是    |
+| register.service.registerType            | 通用               |新注册中心类型，目前支持NACOS/SERVICE_COMB。                                           | SERVICE_COMB           | 是    |
+| register.service.address                 | 通用               |注册服务地址，SERVICE_COMB：形如http://localhost:30100；NACOS：形如127.0.0.1:8848。           | http://127.0.0.1:30100 | 是    |
+| register.service.enableSpringRegister | 通用               |是否开启springcloud插件注册能力，springcloud框架需开启，dubbo框架需关闭。不能和enableDubboRegister同时开启。 | false                          | 是    |
+| register.service.enableDubboRegister  | 通用                 |是否开启dubbo插件注册能力，dubbo框架需开启，springcloud框架需关闭。不能和enableSpringRegister同时开启。      | false                  | 是    |
+| register.service.openMigration        | 通用                 |是否开启迁移功能，开启后将拦截宿主服务原有的注册功能，只注册到新注册中心。                                                                    | false                  | SERVICE_COMB | 是    |
+| servicecomb.service.heartbeatInterval    | SERVICE_COMB |服务实例心跳发送间隔（单位：秒）。                                                | 15                     | 是    |
+| servicecomb.service.sslEnabled           | SERVICE_COMB |是否开启ssl安全访问。                                                                       | false                  |  是    |
+| servicecomb.service.preferIpAddress      | SERVICE_COMB |是否采用IP访问，控制服务实例注册时采用IP注册还是采用域名注册。                                                                      | false                  | 是    |
+| nacos.service.username                   | NACOS        |nacos验证账户，新的注册中心为nacos时，注册到时需要使用nacos验证账户。                                                                     | <空>                    |  否    |
+| nacos.service.password                   | NACOS        | nacos的验证密码，新的注册中心为nacos时，注册时需要使用nacos验证密码。                                                                    | <空>                    | 否    |
+| nacos.service.namespace                  | NACOS        |命名空间，nacos配置创建命名空间的id值。控制nacos注册时注册到那个命名空间下，属于同一命名空间的微服务才能进行服务发现。                                                        | <空>                    | 否    |
+| nacos.service.weight                     | NACOS        |服务实例权重值。服务注册时使用。服务实例调用时，权重越高访问频率越高。                                                                       | 1                      | 是    |
+| nacos.service.clusterName                | NACOS        |集群名称。服务注册、发现时使用，服务实例调用时只会调用调用同一个集群下的实例。                                                                          | DEFAULT                | 是    |
+| nacos.service.ephemeral                  | NACOS        |是否是临时节点，true为是，false为否。服务注册时使用，服务下线后节点不需要存在时采用临时节点。                                                        | true                   | 是    |
 
 > **说明：**
 > - nacos的group通过[Sermant-agent配置](../user-guide/sermant-agent.md#sermant-agent使用参数配置)的service.meta.application设置。
@@ -78,7 +77,9 @@ nacos.service:
 
 ## 关闭原注册中心心跳规则
 
-注册迁移插件提供基于动态配置中心下发关闭原注册中心心跳机制的方法，以避免源源不断的错误日志输出。
+<MyImage src="/docs-img/offline-old-registration.png"/>
+
+如上图所示，双注册上线稳定后需下线旧注册中心，注册迁移插件提供基于动态配置中心下发关闭原注册中心心跳机制的方法，以避免源源不断的错误日志输出。
 
 请参考[动态配置中心使用手册](../user-guide/configuration-center.md#sermant动态配置中心模型)，配置内容如下：
 
@@ -96,37 +97,35 @@ nacos.service:
 
 ## 支持版本和限制
 
-框架支持：
+### SpringCloud框架
 
-- SpringCloud Edgware.SR2 - 2021.0.0
+**版本支持**：Edgware.SR2 - 2021.0.0
 
-- Dubbo 2.6.x - 2.7.x
-
-注册中心迁移支持类型：
+**注册中心迁移支持类型**：
 
 <table>     
-<tr>         <th>原注册中心</th><th>微服务框架</th><th>目标注册中心</th><th>是否支持</th>   </tr>  
-<tr>         <td rowspan="2">Eureka</td><td rowspan="2">SpringCloud</td><td>ServiceComb</td> <td>✅</td>    
+<tr>         <th>原注册中心</th><th>目标注册中心</th><th>是否支持</th>   </tr>  
+<tr>         <td rowspan="2">Eureka</td><td>ServiceComb</td> <td>✅</td>    
 </tr> 
 <tr>         <td>Nacos</td> <td>✅</td>    
 </tr>  
-<tr>         <td rowspan="2">Consul</td><td rowspan="2">SpringCloud</td><td>ServiceComb</td> <td>✅</td>    
+<tr>         <td rowspan="2">Consul</td><td>ServiceComb</td> <td>✅</td>    
 </tr> 
 <tr>         <td>Nacos</td> <td>✅</td>    
 </tr>
-<tr>         <td rowspan="4">Nacos</td><td rowspan="2">SpringCloud</td><td>ServiceComb</td> <td>✅</td>    
+<tr>         <td rowspan="4">Nacos</td><td>ServiceComb</td> <td>✅</td>    
 </tr> 
 <tr>         <td>Nacos</td> <td>✅</td>    
 </tr> 
-<tr>         <td rowspan="2">Dubbo</td><td>ServiceComb</td> <td>✅</td>    
+<tr>         <td>ServiceComb</td> <td>✅</td>    
 </tr> 
 <tr>         <td>Nacos</td> <td>✅</td>    
 </tr> 
-<tr>         <td rowspan="4">Zookeeper</td><td rowspan="2">SpringCloud</td><td>ServiceComb</td> <td>✅</td>    
+<tr>         <td rowspan="4">Zookeeper</td><td>ServiceComb</td> <td>✅</td>    
 </tr> 
 <tr>         <td>Nacos</td> <td>✅</td>    
 </tr> 
-<tr>         <td rowspan="2">Dubbo</td><td>ServiceComb</td> <td>✅</td>    
+<tr>         <td>ServiceComb</td> <td>✅</td>    
 </tr> 
 <tr>         <td>Nacos</td> <td>✅</td>    
 </tr> 
@@ -134,11 +133,48 @@ nacos.service:
 
 限制：
 
-- 关闭原注册中心心跳规则仅支持SpringCloud应用
+- **关闭原注册中心心跳规则仅支持SpringCloud应用**
 
-- 对应springcloud单注册场景，注册迁移插件会屏蔽掉所有原注册中心相关的bean，所以，请不要在业务代码中注入原注册中心相关的bean，否则会导致服务启动失败。
+- 对应SpringCloud单注册场景，注册迁移插件会屏蔽掉所有原注册中心相关的bean，所以，请不要在业务代码中注入原注册中心相关的bean，否则会导致服务启动失败。
 
-- 对于**新开发**的dubbo应用，还需要设置dubbo本身注册中心地址的配置。这个配置项一般在dubbo应用的配置文件中，比如“dubbo/provider.xml”文件中：
+### Dubbo框架
+
+
+**框架支持**：2.6.x - 2.7.x
+
+**注册中心迁移支持类型**：
+
+<table>     
+<tr>         <th>原注册中心</th><th>目标注册中心</th><th>是否支持</th>   </tr>  
+<tr>         <td rowspan="2">Eureka</td><td>ServiceComb</td> <td>✅</td>    
+</tr> 
+<tr>         <td>Nacos</td> <td>✅</td>    
+</tr>  
+<tr>         <td rowspan="2">Consul</td><td>ServiceComb</td> <td>✅</td>    
+</tr> 
+<tr>         <td>Nacos</td> <td>✅</td>    
+</tr>
+<tr>         <td rowspan="4">Nacos</td><td>ServiceComb</td> <td>✅</td>    
+</tr> 
+<tr>         <td>Nacos</td> <td>✅</td>    
+</tr> 
+<tr>         <td>ServiceComb</td> <td>✅</td>    
+</tr> 
+<tr>         <td>Nacos</td> <td>✅</td>    
+</tr> 
+<tr>         <td rowspan="4">Zookeeper</td><td>ServiceComb</td> <td>✅</td>    
+</tr> 
+<tr>         <td>Nacos</td> <td>✅</td>    
+</tr> 
+<tr>         <td>ServiceComb</td> <td>✅</td>    
+</tr> 
+<tr>         <td>Nacos</td> <td>✅</td>    
+</tr> 
+</table>
+
+**限制**：
+
+- 对于**新开发**的dubbo应用（单注册场景），还需要设置dubbo本身注册中心地址的配置。这个配置项一般在dubbo应用的配置文件中，比如“dubbo/provider.xml”文件中：
 
 ```xml
 <dubbo:registry address="sc://127.0.0.1:30100"/>
