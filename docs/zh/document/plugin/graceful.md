@@ -60,7 +60,7 @@ grace.rule:
 
 容器场景：K8s提供了Pod优雅退出机制，允许Pod在退出前完成一些清理工作。preStop会先执行完，然后K8s才会给Pod发送TERM信号。在容器场景利用K8s提供的preStop机制，配合延迟下线API使用，这样就能保证流量的无损下线。以容器化服务为例（Sermant容器化部署依赖[injector组件](../user-guide/injector.md)）：给SpringCloud应用配置了preStop。
 
-> **注意：** 延迟下线能力依赖k8s的preStop机制，若您的编排文件已配置preStop，sermant-injector将无法自动配置，需要您在编排文件位置“spec > containers > lifecycle > preStop > exec > command”添加如下命令：
+> **注意：** 延迟下线能力依赖k8s的preStop机制，若您的编排文件已配置preStop，需要您在编排文件位置“spec > containers > lifecycle > preStop > exec > command”添加如下命令：
 
 ```shell
 curl -XPOST http://127.0.0.1:16688/\$\$sermant\$\$/shutdown 2>/tmp/null;sleep 30;exit 0
@@ -195,11 +195,12 @@ spec:
 框架支持：
 
 - **仅支持SpringCloud应用**，需确保SpringCloud版本在`Edgware.SR2`及以上
-- 注册中心支持：Zookeeper、Consul、Naocs、Eureka、ServiceCenter
+- 注册中心支持：Zookeeper、Consul、Naocs、Eureka、ServiceComb
 
 限制：
 
 - 无损上下线能力基于SpringCloud的默认负载均衡能力开发，若您实现了自定义负载均衡能力，该能力将不再适用
+- 容器场景镜像需要支持curl命令
 
 
 ## 操作和结果验证
