@@ -109,7 +109,7 @@ Sermant-injector currently supports Kubernetes 1.15+ and deploys with Helm v3 fo
 
 - [Kubernetes 1.15+](https://kubernetes.io/)
 
-- [Helm v3](https://helm.sh/)
+- [Helm v3.1+](https://helm.sh/)
 
 ## Startup and Result Validation
 
