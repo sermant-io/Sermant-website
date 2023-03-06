@@ -8,7 +8,7 @@
 
 **搬迁示意图：**
 
-<MyImage src="/docs-img/registration-migration.png"/>
+<MyImage src="/docs-img/registration-migration.jpg"/>
 
 从上述搬迁示意图可知，搬迁的应用服务挂载了Sermant通过**双注册**的方式将业务从旧注册中心快速迁移到新注册中心上。后续新开发的应用服务也可通过挂Sermant通过**单注册**的方式注册到新的注册中心（注册逻辑不在新开发应用服务的SDK中而且通过注册迁移插件实现）。
 
@@ -123,6 +123,13 @@ nacos.service:
 </tr> 
 </table>
 
+**目标注册中心版本支持**：
+
+- ServiceComb：2.x
+- Nacos：2.x
+
+> **说明**：原注册中心版本和自身应用服务需使用的版本相关。
+
 限制：
 
 - **关闭原注册中心心跳规则仅支持SpringCloud应用**
@@ -148,6 +155,13 @@ nacos.service:
 <tr>         <td>Nacos</td> <td>✅</td>    
 </tr> 
 </table>
+
+**目标注册中心版本支持**：
+
+- ServiceComb：2.x
+- Nacos：2.x
+
+> **说明**：原注册中心版本和自身应用服务需使用的版本相关。
 
 **限制**：
 
