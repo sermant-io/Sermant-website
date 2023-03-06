@@ -113,19 +113,11 @@ nacos.service:
 </tr> 
 <tr>         <td>Nacos</td> <td>✅</td>    
 </tr>
-<tr>         <td rowspan="4">Nacos</td><td>ServiceComb</td> <td>✅</td>    
+<tr>         <td rowspan="2">Nacos</td><td>ServiceComb</td> <td>✅</td>    
 </tr> 
 <tr>         <td>Nacos</td> <td>✅</td>    
 </tr> 
-<tr>         <td>ServiceComb</td> <td>✅</td>    
-</tr> 
-<tr>         <td>Nacos</td> <td>✅</td>    
-</tr> 
-<tr>         <td rowspan="4">Zookeeper</td><td>ServiceComb</td> <td>✅</td>    
-</tr> 
-<tr>         <td>Nacos</td> <td>✅</td>    
-</tr> 
-<tr>         <td>ServiceComb</td> <td>✅</td>    
+<tr>         <td rowspan="2">Zookeeper</td><td>ServiceComb</td> <td>✅</td>    
 </tr> 
 <tr>         <td>Nacos</td> <td>✅</td>    
 </tr> 
@@ -146,27 +138,12 @@ nacos.service:
 
 <table>     
 <tr>         <th>原注册中心</th><th>目标注册中心</th><th>是否支持</th>   </tr>  
-<tr>         <td rowspan="2">Eureka</td><td>ServiceComb</td> <td>✅</td>    
+<tr>         <td rowspan="2">Nacos</td><td>ServiceComb</td> <td>✅</td>    
 </tr> 
 <tr>         <td>Nacos</td> <td>✅</td>    
 </tr>  
-<tr>         <td rowspan="2">Consul</td><td>ServiceComb</td> <td>✅</td>    
 </tr> 
-<tr>         <td>Nacos</td> <td>✅</td>    
-</tr>
-<tr>         <td rowspan="4">Nacos</td><td>ServiceComb</td> <td>✅</td>    
-</tr> 
-<tr>         <td>Nacos</td> <td>✅</td>    
-</tr> 
-<tr>         <td>ServiceComb</td> <td>✅</td>    
-</tr> 
-<tr>         <td>Nacos</td> <td>✅</td>    
-</tr> 
-<tr>         <td rowspan="4">Zookeeper</td><td>ServiceComb</td> <td>✅</td>    
-</tr> 
-<tr>         <td>Nacos</td> <td>✅</td>    
-</tr> 
-<tr>         <td>ServiceComb</td> <td>✅</td>    
+<tr>         <td rowspan="2">Zookeeper</td><td>ServiceComb</td> <td>✅</td>    
 </tr> 
 <tr>         <td>Nacos</td> <td>✅</td>    
 </tr> 
@@ -174,7 +151,7 @@ nacos.service:
 
 **限制**：
 
-- 对于**新开发**的dubbo应用（单注册场景），还需要设置dubbo本身注册中心地址的配置。这个配置项一般在dubbo应用的配置文件中，比如“dubbo/provider.xml”文件中：
+- 对于**新开发**的dubbo应用（**单注册场景**），还需要设置dubbo本身注册中心地址的配置。这个配置项一般在dubbo应用的配置文件中，比如“dubbo/provider.xml”文件中：
 
 ```xml
 <dubbo:registry address="sc://127.0.0.1:30100"/>
@@ -263,7 +240,7 @@ java -Dservicecomb.service.enableDubboRegister=true -javaagent:${path}/sermant-a
 
 ### 双注册模式
 
-下面将演示如何使用注册迁移插件，验证SpringCloug应用在双注册模式下的从旧注册中心（Zookeeper）迁移到新注册中心（ServiceComb）场景。
+下面将演示如何使用注册迁移插件，验证SpringCloud应用在双注册模式下的从旧注册中心（Zookeeper）迁移到新注册中心（ServiceComb）场景。
 
 #### 准备工作
 
