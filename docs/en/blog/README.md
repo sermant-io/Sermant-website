@@ -3,6 +3,14 @@ layout: Blog
 name: 'Blog'
 goTo: 'GoTo'
 blogArr:
+    - name: Java Agent Scenario Performance Test Analysis and Optimization Experience Sharing
+      writer: 栾文飞
+      date: 2023/03/03
+      description: 'How to perform better performance test optimization in the Java Agent scenario and the performance pitfalls that need to be paid attention to under the Java Agent.'
+      path: 'https://my.oschina.net/u/6410005/blog/8392949'
+      tags:
+      - Java Agent
+      - Performance Test Optimization
     - name: The Evolution Road of Cloud Native Microservice Governance Technology to Agentless Architecture
       writer: 杨奕
       date: 2022/11/29
