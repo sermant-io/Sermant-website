@@ -1,6 +1,7 @@
 ---
 layout: HomePage
 quickStart: '快速开始'
+blogs: '近期博文'
 ---
 ::: slot feature1
 ## 无侵入

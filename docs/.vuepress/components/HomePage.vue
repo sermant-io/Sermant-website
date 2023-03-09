@@ -15,8 +15,18 @@
               @click="goToDocument"
               icon="el-icon-reading"
               round
+              style="width:140px"
             >
               {{ quickStart }}
+            </el-button>
+            <el-button
+              type="blogs"
+              @click="goToBlogs"
+              icon="el-icon-document"
+              style="width:140px"
+              round
+            >
+              {{ blogs }}
             </el-button>
             <div class="github-box" @click="goToGithub">
               <div class="img-box">
@@ -99,12 +109,14 @@
   display: flex;
   align-items: center;
   justify-content: space-around;
-  width: 24rem;
+  width: 35rem;
   margin: 0.8rem auto;
 }
 
+.button-box > button{margin-left:0px !important;}
+
 .github-box {
-  width: 120px;
+  width: 140px;
   height: 40px;
   display: flex;
   align-items: center;
@@ -144,6 +156,8 @@ svg {
 .feature-box > div {
   margin: 0 45px 20px;
 }
+
+.el-button--blogs,.el-button--blogs:focus,.el-button--blogs.is-active, .el-button--blogs:active{background: #505e86; color: #FFFFFF}
 
 @media (max-width: 1100px) {
   .feature-box {
@@ -189,6 +203,9 @@ export default {
     quickStart() {
       return this.$frontmatter.quickStart;
     },
+    blogs() {
+      return this.$frontmatter.blogs;
+    },
   },
   methods: {
     goToDocument() {
@@ -196,6 +213,13 @@ export default {
         this.$router.push("/zh/document/");
       } else {
         this.$router.push("/en/document/");
+      }
+    },
+    goToBlogs() {
+      if (this.$router.currentRoute.path.indexOf("/zh/") !== -1) {
+        this.$router.push("/zh/blog/");
+      } else {
+        this.$router.push("/en/blog/");
       }
     },
     goToGithub() {
