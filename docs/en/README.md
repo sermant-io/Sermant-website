@@ -1,6 +1,7 @@
 ---
 layout: HomePage
 quickStart: 'Quick Start'
+blogs: 'Blogs'
 ---
 ::: slot feature1
 ## Non-intrusive

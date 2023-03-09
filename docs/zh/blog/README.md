@@ -3,15 +3,7 @@ layout: Blog
 name: '博客'
 goTo: '直接前往'
 blogArr:
-    - name: Java Agent 场景性能测试分析优化经验分享
-      writer: 栾文飞
-      date: 2023/03/03
-      description: '在 Java Agent 场景如何进行更好的性能测试优化及在 Java Agent 下需要着重注意的性能陷阱。'
-      path: 'https://my.oschina.net/u/6410005/blog/8392949'
-      tags:
-      - Java Agent
-      - 性能测试优化
-    - name: 云原生微服务治理技术朝无代理架构的演进之路
+    - name: 【置顶】云原生微服务治理技术朝无代理架构的演进之路
       writer: 杨奕
       date: 2022/11/29
       description: '一种新的基于Javaagent技术的新一代无代理架构的服务治理技术。'
@@ -20,6 +12,14 @@ blogArr:
       - 云原生
       - 微服务治理
       - 无代理架构
+    - name: Java Agent 场景性能测试分析优化经验分享
+      writer: 栾文飞
+      date: 2023/03/03
+      description: '在 Java Agent 场景如何进行更好的性能测试优化及在 Java Agent 下需要着重注意的性能陷阱。'
+      path: 'https://my.oschina.net/u/6410005/blog/8392949'
+      tags:
+      - Java Agent
+      - 性能测试优化
     - name: 记一次多个JavaAgent同时使用的类增强冲突问题及分析
       writer: 李来
       date: 2022/11/10 
