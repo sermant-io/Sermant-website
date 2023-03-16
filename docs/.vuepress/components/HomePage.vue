@@ -4,7 +4,7 @@
       <div class="home-page">
         <div class="content-box">
           <div :class="{ 'logo-box': true, move }">
-            <img :src="$withBase('/img/sermant-logo.png')" alt="Sermant"/>
+            <img :src="$withBase('/img/sermant-logo.png')" alt="Sermant" width=500px height=100px />
           </div>
           <div class="content">
             <p>{{ $description }}</p>
