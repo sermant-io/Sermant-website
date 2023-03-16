@@ -16,6 +16,21 @@ blogs: '近期博文'
 广泛采用类隔离技术，框架、插件、宿主类之间无类冲突问题，开发者无感知。
 :::
 
+::: slot Contact
+## 联系我们
+扫描下方二维码加入Sermant社区进行交流
+:::
+
+::: slot Disclaimer
+## 声明
+Sermant是华为云基于Apache License 2.0协议的开源项目。
+:::
+
+::: slot Vision
+## 愿景
+Sermant的愿景是利用JavaAgent为宿主应用程序提供增强的服务治理功能，以解决大规模微服务体系结构中的服务治理问题，并且构建插件开发生态系统，以帮助开发人员更容易地开发服务治理功能，同时不干扰业务代码。
+:::
+
 ::: slot footer
 Apache-2.0 Licensed | Copyright © 2021-present A Huawei Cloud Project
 :::
