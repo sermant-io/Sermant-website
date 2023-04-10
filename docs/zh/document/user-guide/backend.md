@@ -27,6 +27,11 @@ Backend参数可在编译打包前通过`sermant-backend-lite/src/main/resources
 | netty.wait.time    | Netty的读等待时间，单位：s           | 60         | 否           |
 | max.effective.time | 判断应用心跳存活的有效时间，单位：ms | 60000      | 否           |
 | max.cache.time     | 应用心跳在缓存中的有效时间，单位：ms | 600000     | 否           |
+| database.type     | 事件存储类型，当前支持redis数据库和内存 | MEMORY     | 否           |
+| database.address     | redis数据库地址 | 127.0.0.1:6379     | 否           |
+| database.user     | redis数据库用户名 | default     | 否           |
+| database.password     | redis数据库密码 | null     | 否           |
+| database.event.expire     | 事件过期时间，单位：天 | 7     | 否           |
 
 ## 支持版本
 
@@ -41,7 +46,7 @@ Backend使用JDK 1.8版本开发，因此运行环境需JDK 1.8及以上版本�
 Backend的Jar包位于sermant-agent产品包agent/server目录下，通过执行以下命令来运行Backend：
 
 ```shell
-java -jar sermant-backend-lite.jar
+java -jar sermant-backend-1.0.0.jar
 ```
 
 ### 宿主应用挂载sermant-agent启动
@@ -50,6 +55,10 @@ java -jar sermant-backend-lite.jar
 
 ### 结果验证
 
-通过浏览器访问地址http://127.0.0.1:8900/ 可查看前端展示页面，若页面中如下展示sermant-agent实例的心跳信息，则说明部署验证成功。
+通过浏览器访问地址http://127.0.0.1:8900/ 可查看前端展示页面，若页面中如下展示sermant-agent实例的心跳信息，则验证心跳成功。
 
-<MyImage src="/docs-img/backend.png"></MyImage>
+<MyImage src="/docs-img/backend-instance.jpeg"></MyImage>
+
+通过点击事件管理标签中的观测按钮，可查看agent上报的事件信息，若页面中如下展示sermant-agent实例上报的事件信息，则验证事件上报成功。
+
+<MyImage src="/docs-img/backend-event.jpeg"></MyImage>
