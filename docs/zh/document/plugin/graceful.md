@@ -1,22 +1,14 @@
-# 优雅上下线
+# 无损上下线
 
-本文介绍如何使用优雅上下线插件，目前优雅上下线功能当前集成在[注册迁移插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-registry) 中, 可独立使用。
+本文介绍如何使用无损上下线插件，目前无损上下线功能当前集成在[注册迁移插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-registry) 中, 可独立使用。
 
 ## 功能介绍
 
-试想一个场景，系统中运行着一个消费者（客户端）和两个服务提供者（服务端），消费者可负载均衡调用服务提供者。假设某个服务提供者因业务更新或其他场景需要滚动升级，若此时存在大量并发流量，便会出现以下问题：
+在应用上下线发布过程中，如何做到流量的无损上/下线，是一个系统能保证SLA的关键。如果应用上下线不平滑，就会出现短时间的服务调用报错，比如连接被拒绝、请求超时、没有实例和请求异常等问题。
+- 在应用上线发布过程中，由于过早暴露服务，实例可能仍处在JVM JIT编译或者使用的中间件还在加载，若此时大量流量进入，可能会瞬间压垮新起的服务实例。
+- 在应用下线过程中，服务消费者感知服务提供者下线有延迟，在一段时间内，被路由到已下线服务提供者实例的请求都抛连接被拒绝异常。其次服务实例在接收到停止服务信号时，会立即关闭，但是这时候可能在请求队列中存在一部分请求还在处理，如果立即关闭这些请求都会损失掉。
 
-- 大量TCP连接因服务提供者升级下线操作，导致大量请求错误。
-- 由于消费者（客户端）存在注册表延迟刷新的问题，后续流量依旧会分配到已经下线的提供者，导致大量请求错误。
-
-以上便是一个典型的“不优雅”场景。于是，为了规避诸如此类的问题，服务优雅上下线应运而生，主要针对服务的重启、上线、下线等操作提供保护。
-
-**服务运维常见问题：**
-
-- 服务自身存在大量懒加载机制（例如负载均衡初始化），在服务刚上线时，因并发流量请求涌入，导致大量请求同时进行懒加载，以至于请求响应慢，线程阻塞，甚至最终导致服务崩溃。
-- 服务无法做到优雅下线，比如服务端下线而客户端服务无法及时感知，导致流量流入已下线的实例，从而丢失大量流量。
-
-针对以上两个问题，插件提供预热和延迟下线机制，为服务提供优雅上线和优雅下线的能力。预热是优雅上线的核心机制，延迟下线时优雅下线的核心机制，而且为了优雅上线，还做了延迟注册机制。
+针对应用上下线发布过程中的问题，插件提供预热和延迟下线机制，为应用提供无损上下线的能力。预热是无损上线的核心机制，延迟下线时无损下线的核心机制，而且为了无损上线，还做了延迟注册机制。
 
 <MyImage src="/docs-img/elegant-online.png"/>
 
@@ -34,16 +26,16 @@
 
 ### 插件配置
 
-优雅上下线插件需要打开优雅上下线开关（`grace.rule.enableSpring`）、配置启动延迟时间（`grace.rule.startDelayTime`）、开启预热（`grace.rule.enableWarmUp`）等配置，可在`${path}/sermant-agent-x.x.x/agent/pluginPackge/service-registry/config/config.yaml`找到该插件的配置文件，配置如下所示：
+无损上下线插件需要打开无损上下线开关（`grace.rule.enableSpring`）、配置启动延迟时间（`grace.rule.startDelayTime`）、开启预热（`grace.rule.enableWarmUp`）等配置，可在`${path}/sermant-agent-x.x.x/agent/pluginPackge/service-registry/config/config.yaml`找到该插件的配置文件，配置如下所示：
 
 ```yaml
 grace.rule:
-  enableSpring: false # springCloud优雅上下线开关。
-  startDelayTime: 0  # 优雅上线启动延迟时间, 单位S。上线延迟为避免实例未准备就绪就注册导致上游服务调用时无法提供服务。
+  enableSpring: false # springCloud无损上下线开关。
+  startDelayTime: 0  # 无损上线启动延迟时间, 单位S。上线延迟为避免实例未准备就绪就注册导致上游服务调用时无法提供服务。
   enableWarmUp: false # 是否开启预热。针对新实例，为避免实例初始化时涌入大量流量而导致请求响应超时、阻塞、资源耗尽等造成新实例宕机，可开启预热在初始化时分配少量流量。
   warmUpTime: 120    # 预热时间, 单位S。预热过程的持续时间。
-  enableGraceShutdown: false # 是否开启优雅下线。
-  shutdownWaitTime: 30  # 关闭前相关流量检测的最大等待时间, 单位S。 需开启enabledGraceShutdown才会生效。在优雅下线前，Agent会定期检查当前实例是否完成全部请求处理，通过此配置指定检查的持续时间。
+  enableGraceShutdown: false # 是否开启无损下线。
+  shutdownWaitTime: 30  # 关闭前相关流量检测的最大等待时间, 单位S。 需开启enabledGraceShutdown才会生效。在无损下线前，Agent会定期检查当前实例是否完成全部请求处理，通过此配置指定检查的持续时间。
   enableOfflineNotify: false # 是否开启下线主动通知。
   httpServerPort: 16688 # 提供的httpServer端口，用于应用就绪检查以及接收下游应用下线主动的通知。
   upstreamAddressMaxSize: 500 # 缓存上游地址的默认大小。上游实例接收主动通知的地址会被下游缓存，此处设置地址最多的缓存个数。
@@ -52,33 +44,29 @@ grace.rule:
 
 | 参数键                               | 说明                                                                     | 默认值        | 是否必须 |
 | :----------------------------------- | :---------------------------------------------------------------------- | :------------| :------- |
-| grace.rule.enableSpring              | springCloud优雅上下线开关。                                                | false         | 是    |
-| grace.rule.startDelayTime            | 优雅上线启动延迟时间, 单位S。上线延迟为避免实例未准备就绪就注册导致上游服务调用时无法提供服务。                                            | 0             | 是    |
+| grace.rule.enableSpring              | springCloud无损上下线开关。                                                | false         | 是    |
+| grace.rule.startDelayTime            | 无损上线启动延迟时间, 单位S。上线延迟为避免实例未准备就绪就注册导致上游服务调用时无法提供服务。                                            | 0             | 是    |
 | grace.rule.enableWarmUp              | 是否开启预热。针对新实例，为避免实例初始化时涌入大量流量而导致请求响应超时、阻塞、资源耗尽等造成新实例宕机，可开启预热在初始化时分配少量流量。                                                             | false         | 是    |
-| grace.rule.enableGraceShutdown       | 是否开启优雅下线。                                                          | false         | 是    |
-| grace.rule.shutdownWaitTime          | 关闭前相关流量检测的最大等待时间, 单位S。需开启enabledGraceShutdown才会生效。在优雅下线前，Agent会定期检查当前实例是否完成全部请求处理，通过此配置指定检查的持续时间。  | 30            | 是    |
+| grace.rule.enableGraceShutdown       | 是否开启无损下线。                                                          | false         | 是    |
+| grace.rule.shutdownWaitTime          | 关闭前相关流量检测的最大等待时间, 单位S。需开启enabledGraceShutdown才会生效。在无损下线前，Agent会定期检查当前实例是否完成全部请求处理，通过此配置指定检查的持续时间。  | 30            | 是    |
 | grace.rule.enableOfflineNotify       | 是否开启下线主动通知。                                                      | false         | 是    |
 | grace.rule.httpServerPort            | 提供的httpServer端口，用于应用就绪检查以及接收下游应用下线主动的通知。                                 | 16688          | 是    |
 | grace.rule.upstreamAddressMaxSize    | 缓存上游地址的默认大小。上游实例接收主动通知的地址会被下游缓存，此处设置地址最多的缓存个数。                                                    | 5000           | 是    |
 | grace.rule.upstreamAddressExpiredTime| 缓存上游地址的过期时间, 单位S。上游实例接收主动通知的地址会被下游缓存，此处设置地址的失效时间。                                              | 60            | 是    |
 
-## 微服务优雅关闭
+## 微服务延迟下线
 
-**优雅关闭：** 服务自身需要实现优雅关闭处理逻辑，如服务下线时需及时通知到上游应用（减少服务下线后消费者服务未及时感知到，仍继续调用已下线服务导致的请求错误）。优雅上下线插件提供了相应的优雅关闭API接口：
+为了保证每次微服务下线过程中，服务消费者能尽早感知服务提供者实例下线的行为，同时服务提供者需保证处理中请求被处理完后再进行服务下线。
 
-```api
-/$$sermant$$/shutdown
-```
+容器场景：K8s提供了Pod优雅退出机制，允许Pod在退出前完成一些清理工作。preStop会先执行完，然后K8s才会给Pod发送TERM信号。在容器场景利用K8s提供的preStop机制，配合延迟下线API使用，这样就能保证流量的无损下线。以容器化服务为例（Sermant容器化部署依赖[injector组件](../user-guide/injector.md)）：给SpringCloud应用配置了preStop。
 
-以容器化服务为例（Sermant容器化部署依赖[injector组件](../user-guide/injector.md)）：给SpringCloud应用配置了preStop钩子。
-
-> **注意：** 延迟下线能力依赖k8s的preStop机制，若您的编排文件已配置preStop，sermant-injector将无法自动配置，需要您在编排文件位置“spec > containers > lifecycle > preStop > exec > command”添加如下命令：
+> **注意：** 延迟下线能力依赖k8s的preStop机制，若您的编排文件已配置preStop，需要您在编排文件位置“spec > containers > lifecycle > preStop > exec > command”添加如下命令：
 
 ```shell
 curl -XPOST http://127.0.0.1:16688/\$\$sermant\$\$/shutdown 2>/tmp/null;sleep 30;exit 0
 ```
 
-> 添加该命令会在POD停止前通知实例进行下线。其中16688为下线通知端口，默认为该值，可通过环境变量“grace_rule_httpServerPort”进行指定。
+> **说明：** 添加该命令会在Pod停止前通知实例进行下线。其中16688为下线通知端口，默认为该值，可通过环境变量“grace_rule_httpServerPort”进行指定。
 
 ```yaml
 apiVersion: apps/v1
@@ -121,24 +109,103 @@ spec:
                   - '-c'
                   - '>- curl -XPOST http://127.0.0.1:16688/\$\$sermant\$\$/shutdown 2>/tmp/null;sleep
                     30;exit 0'
-                    # 在POD停止前通知实例进行下线，其中16688为下线通知端口，优雅上下线插件配置中的httpServerPort
+                    # 在Pod停止前通知实例进行下线，其中16688为下线通知端口，无损上下线插件配置中的httpServerPort
 ```
+
+虚拟机场景：无需配置preStop机制，因为无损上下线插件会对Spring的ContextClosedEvent事件进行监听，当监听到ContextClosedEvent事件，会主动通知实例进行下线。
+
+> **说明：** Spring的核心是ApplicationContext，它负责管理beans的完整生命周期。当关闭ApplicationContext时，ContextClosedEvent事件会被触发。
+
+```java
+    /**
+     * ContextClosedEvent事件监听器
+     */
+    @EventListener(value = ContextClosedEvent.class)
+    public void listener() {
+        if (!isEnableGraceDown() || graceService == null) {
+            return;
+        }
+        graceService.shutdown();
+    }
+```
+
+> **注意：** 虚机关闭应用服务建议执行kill -15 PID ，给目标进程一个清理善后工作的机会。
+> 
+> kill -15，系统向应用发送SIGTERM（15）信号，该信号是可以被执行、阻塞和忽略的，应用程序接收到信号后，可以做很多事情，甚至可以决定不终止；
+>
+> kill -9， 系统会发出SIGKILL（9）信号，由操作系统内核完成杀进程操作，该信号不允许忽略和阻塞，所以应用程序会立即终止； 
+
+**那为什么容器应用（K8s环境）要配置preStop？**
+
+#### 一、首先要介绍一下Pod的终止过程：
+
+<MyImage src="/docs-img/pod-terminate.png"/>
+
+1) 用户发送删除 Pod 对象的命令。
+
+2) API 服务器中的 Pod 对象会随着时间的推移而更新，在宽限期内（默认为30秒），Pod被视为“dead”。
+
+3) 将 Pod 标记为 “Terminating” 状态。
+
+4) （与第3步同时运行）kubelet 在监控到 Pod 对象转为 “Terminating” 状态的同时启动 Pod 关闭程序。
+
+5) （与第3步同时运行）端点控制器监控到 Pod 对象的关闭行为时将其从所有匹配到此端点的 Service 资源的端点列表中移除。
+
+6) Pod 对象中的容器进程收到 TERM 信号。
+
+7) 如果当前当前 Pod 对象定义了 preStop 钩子处理器，则在其标记为 “terminating” 后即会以同步的方式启动执行；如若宽限期结束后，preStop 仍未执行结束，则第2步会被重新执行并额外获取一个时长为2秒的小宽限期。
+
+8) 宽限期结束后，若存在任何一个仍在运行的进程，那么 Pod 对象即会收到 SIGKILL 信号。
+
+9) kubelet 请求 API Server 将此 Pod 资源的宽限期设置为0从而完成删除操作，它变得对用户不在可见。
+
+默认情况下，所有删除操作的宽限期都是30秒，不过，kubectl delete 命令可以使用“--grace-period=”选项自定义其时长，若使用0值则表示直接强制删除指定的资源，不过，此时需要同时为命令使用 “--force” 选项。
+
+> **参考：** https://kubernetes.renkeju.com/chapter_4/4.5.5.pod_termination_process.html
+
+**从上述Pod终止过程的时序图可知，关闭Pod流程（关注红色框），给Pod内的进程发送TERM信号(即kill, kill -15)，如果配置了preStop钩子也会同时处理，最后宽限期结束后，若存在任何一个仍在运行的进程，那么Pod对象即会收到SIGKILL（kill-9）信号**。
+
+#### 二、存在这样一种情况Pod中的业务进程接受不到`SIGTERM`信号
+
+存在这样一种情况Pod中的业务进程接受不到`SIGTERM`信号（而且没有配置preStop钩子），等待一段时间业务进程直接被SIGKILL强制杀死了。
+
+**为什么业务进程接受不到`SIGTERM`信号？**
+
+> 踩过坑！
+
+通常都是因为容器启动入口使用了 shell，比如使用了类似 `/bin/sh -c my-app` 或 `/docker-entrypoint.sh` 这样的 ENTRYPOINT 或 CMD，这就可能就会导致容器内的业务进程收不到SIGTERM信号，原因是:
+
+1. 容器主进程是shell，业务进程是在shell中启动的，成为了shell进程的子进程。
+2. shell 进程默认不会处理 SIGTERM 信号，自己不会退出，也不会将信号传递给子进程，导致业务进程不会触发停止逻辑。
+3. 当等到 K8S 优雅停止超时时间 (terminationGracePeriodSeconds，默认30s)，发送SIGKILL强制杀死shell及其子进程。
+
+> **参考:** https://imroc.cc/k8s/faq/why-cannot-receive-sigterm/
+
+#### 三、如何解决上述Pod中的业务进程接受不到`SIGTERM`信号问题
+
+1. 配置preStop钩子（K8s场景），处理退出前完成一些清理工作，比如使用无损上下线插件的应用服务需在停止前通知实例进行下线。
+2. 如果可以的话，尽量不使用 shell 启动业务进程。
+3. 如果一定要通过 shell 启动，比如在启动前需要用 shell 进程一些判断和处理，或者需要启动多个进程，那么就需要在 shell 中传递下 SIGTERM 信号了，解决方案请[参考 Kubernetes 实用技巧: 在 SHELL 中传递信号](https://imroc.cc/k8s/trick/propagating-signals-in-shell/) 。
+
+**所以容器应用（K8s环境）要配置preStop，在停止前通知实例进行下线，加了一层防护，保证Pod中的业务能优雅的结束。**
+
 
 ## 支持版本和限制
 
 框架支持：
 
 - **仅支持SpringCloud应用**，需确保SpringCloud版本在`Edgware.SR2`及以上
-- 注册中心支持：Zookeeper、Consul、Naocs、Eureka、ServiceCenter
+- 注册中心支持：Zookeeper、Consul、Naocs、Eureka、ServiceComb
 
 限制：
 
-- 优雅上下线能力基于SpringCloud的默认负载均衡能力开发，若您实现了自定义负载均衡能力，该能力将不再适用
+- 无损上下线能力基于SpringCloud的默认负载均衡能力开发，若您实现了自定义负载均衡能力，该能力将不再适用
+- 容器场景镜像需要支持curl命令
 
 
 ## 操作和结果验证
 
-下面演示如何使用优雅上下线插件，在容器场景下，验证SpringCloud应用的延迟注册、预热和延迟下线场景。
+下面演示如何使用无损上下线插件，在容器场景下，验证SpringCloud应用的延迟注册、预热和延迟下线场景。
 
 ### 准备工作
 
@@ -191,7 +258,7 @@ docker push ${imageName}:{imageVerison}
 
 `consumer  ----------->  provider(两实例)  ------------->  data`
 
-其中consumer开启优雅上下线能力，一个provider实例开启延迟注册、预热与延迟下线能力， 另一个provider实例仅开启延迟下线能力，data服务接受到请求后会返回自身服务名+IP地址信息。
+其中consumer开启无损上下线能力，一个provider实例开启延迟注册、预热与延迟下线能力， 另一个provider实例仅开启延迟下线能力，data服务接受到请求后会返回自身服务名+IP地址信息。
 
 （1）部署data（端口8008）
 
