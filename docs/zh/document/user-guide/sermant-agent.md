@@ -2,7 +2,7 @@
 
 sermant-agent为Sermant必要核心组件，包含[sermant-agentcore](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore)、[sermant-plugins](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins)、[sermant-common](https://github.com/huaweicloud/Sermant/tree/develop/sermant-common)等字节码增强逻辑的实现主体。[Sermant使用介绍](readme.md)中描述的产品目录`sermant-agent-x.x.x/agent`目录下内容即为sermant-agent组件的各模块。本文介绍如何使用sermant-agent。
 
-sermant-agent的框架主体为Sermant提供了字节码增强的实现逻辑，同时支持心跳功能、动态配置功能、日志功能等公共核心能力。sermant-agent插件包中则由各扩展插件提供了标签路由、限流降级、双注册等服务治理能力。
+sermant-agent的框架主体为Sermant提供了字节码增强的实现逻辑，同时支持心跳功能、动态配置功能、日志功能、事件上报等公共核心能力。sermant-agent插件包中则由各扩展插件提供了标签路由、限流降级、双注册等服务治理能力。
 
 ## 参数配置
 
@@ -44,10 +44,26 @@ agent.config.isEnhanceBootStrapEnable=false
 agent.config.ignoredPrefixes=com.huawei.sermant,com.huaweicloud.sermant
 agent.config.ignoredInterfaces=org.springframework.cglib.proxy.Factory
 agent.config.combineStrategy=ALL
-agent.config.serviceBlackList=com.huaweicloud.sermant.implement.service.heartbeat.HeartbeatServiceImpl,com.huaweicloud.sermant.implement.service.send.NettyGatewayClient,com.huaweicloud.sermant.implement.service.tracing.TracingServiceImpl
-agent.config.serviceInjectList=com.huawei.discovery.service.lb.filter.NopInstanceFilter,com.huawei.discovery.service.lb.DiscoveryManager
-agent.config.isShowEnhanceLogEnable=false
-agent.config.enhancedClassOutputPath=
+agent.config.serviceInjectList=com.huawei.discovery.service.lb.filter.NopInstanceFilter,com.huawei.discovery.service.lb.DiscoveryManager,com.huawei.discovery.service.util.ApplyUtil,com.huawei.discovery.service.lb.cache.InstanceCacheManager
+agent.config.isOutputEnhancedClasses=false
+agent.config.enhancedClassesOutputPath=
+agent.config.isShowEnhanceLog=false
+
+# agent service config
+agent.service.heartbeat.enable=false
+agent.service.gateway.enable=false
+agent.service.tracing.enable=false
+agent.service.visibility.enable=false
+agent.service.inject.enable=true
+agent.service.monitor.enable=false
+agent.service.dynamic.config.enable=true
+
+# event config
+event.enable=false
+event.offerWarnLog=false
+event.offerErrorLog=false
+event.sendInterval=30000
+event.offerInterval=300000
 
 # dynamic config
 dynamic.config.timeoutValue=30000
@@ -64,9 +80,11 @@ dynamic.config.enableAuth=false
 # heartbeat config
 heartbeat.interval=30000
 
-# backend config
-backend.nettyIp=127.0.0.1
-backend.nettyPort=6888
+# gateway config
+gateway.nettyIp=127.0.0.1
+gateway.nettyPort=6888
+gateway.nettyConnectTimeout=5000
+gateway.nettyWriteAndReadWaitTime=60000
 
 # service meta config
 service.meta.application=default
@@ -74,10 +92,6 @@ service.meta.version=1.0.0
 service.meta.project=default
 service.meta.environment=
 service.meta.zone=
-service.meta.parameters=
-
-# service visibility config
-visibility.service.enableStart=false
 ```
 
 其中涉及的参数与sermant-agent、Backend、动态配置中心等有关联，具体参数配置参考下面说明。
@@ -90,10 +104,33 @@ visibility.service.enableStart=false
 | agent.config.ignoredPrefixes                                 | 增强忽略集，该集合中定义的全限定名前缀用于排除增强过程中被忽略的类 | agent参数                                                    | com.huawei.sermant,com.huaweicloud.sermant                   |    否    |
 | agent.config.ignoredInterfaces                               | 增强忽略接口集，该集合中定义的接口用于排除增强过程中被忽略的类 | agent参数                                                    | org.springframework.cglib.proxy.Factory                      |    否    |
 | agent.config.combineStrategy                                 | 插件声明器的合并策略：NONE，不合并；BY_NAME，通过匹配的类名合并；ALL，所有都合并 | agent参数                                                    | ALL                                                          |    否    |
-| agent.config.serviceBlackList                                |       sermant-agent核心功能黑名单，添加后禁用相关服务        | agent参数                                                    | com.huaweicloud.sermant.implement.service.heartbeat.HeartbeatServiceImpl<br>,com.huaweicloud.sermant.implement.service.send.NettyGatewayClient<br>,com.huaweicloud.sermant.implement.service.tracing.TracingServiceImpl |    否    |
 | agent.config.serviceInjectList                               |                       拦截插件服务名单                       | agent参数                                                    | com.huawei.discovery.service.lb.filter.NopInstanceFilter<br>,com.huawei.discovery.service.lb.DiscoveryManager |    否    |
 | agent.config.isShowEnhanceLogEnable                          |                 是否在增强过程中输出检索日志                 | agent参数                                                    | false                                                        |    否    |
 | agent.config.enhancedClassOutputPath                         |            被增强类的输出路径，如果为空，则不输出            | agent参数                                                    | -                                                            |    否    |
+| agent.config.isOutputEnhancedClasses                         |            是否输出被增强的类的字节码文件            | agent参数                                                    | false                                                            |    否    |
+
+#### 核心服务相关参数
+
+| **参数键**         | **说明**               | **参数类别** | **默认值** | **是否必须** |
+| ------------------ | ---------------------- | ------------ | ---------- | :----------: |
+| agent.service.heartbeat.enable | 心跳开关 | 核心服务参数  | false      |      否      |
+| agent.service.gateway.enable    | 网关开关    | 核心服务参数  | false  |      否      |
+| agent.service.tracing.enable  | 链路开关    | 核心服务参数  | false       |      否      |
+| agent.service.visibility.enable | 服务可见性开关 | 核心服务参数  | false      |      否      |
+| agent.service.inject.enable    |  spring类注入开关   | 核心服务参数  | true  |      否      |
+| agent.service.monitor.enable  | 监控开关    | 核心服务参数  | false       |      否      |
+| agent.service.dynamic.config.enable  | 动态配置开关    | 核心服务参数  | true       |      否      |
+
+
+#### 事件上报相关参数
+
+| **参数键**         | **说明**               | **参数类别** | **默认值** | **是否必须** |
+| ------------------ | ---------------------- | ------------ | ---------- | :----------: |
+| event.enable | 事件开关 | 事件上报参数  | false      |      否      |
+| event.offerWarnLog    | 上报Warn日志开关    | 事件上报参数  | false  |      否      |
+| event.offerErrorLog  | 上报Error日志开关    | 事件上报参数  | false       |      否      |
+| event.sendInterval    | 事件发送时间间隔(ms)    | 事件上报参数  | 30000  |      否      |
+| event.offerInterval  | 事件记录时间间隔(ms),在一定时间内重复事件压缩    | 事件上报参数  |   300000     |      否      |
 
 #### 动态配置中心相关参数
 
@@ -110,13 +147,20 @@ visibility.service.enableStart=false
 | dynamic.config.privateKey | 动态配置中心ZOOKEEPER：用于对密码加解密的密钥 | 动态配置中心参数 | - | 否 |
 | dynamic.config.enableAuth | 动态配置中心ZOOKEEPER：是否开启配置中心授权，开启后需验证用户名密码 | 动态配置中心参数 | false | 否 |
 
-#### Backend相关参数
+#### 心跳相关参数
 
 | **参数键**         | **说明**               | **参数类别** | **默认值** | **是否必须** |
 | ------------------ | ---------------------- | ------------ | ---------- | :----------: |
-| heartbeat.interval | 心跳发送间隔，单位：ms | Backend参数  | 30000      |      否      |
-| backend.nettyIp    | Backend消息接收地址    | Backend参数  | 127.0.0.1  |      否      |
-| backend.nettyPort  | Backend消息接收端口    | Backend参数  | 6888       |      否      |
+| heartbeat.interval | 心跳发送间隔，单位：ms | Heartbeat参数  | 30000      |      否      |
+
+#### 网关相关参数
+
+| **参数键**         | **说明**               | **参数类别** | **默认值** | **是否必须** |
+| ------------------ | ---------------------- | ------------ | ---------- | :----------: |
+| gateway.nettyIp    | Gateway消息接收地址    | Gateway参数  | 127.0.0.1  |      否      |
+| gateway.nettyPort  | Gateway消息接收端口    | Gateway参数  | 6888       |      否      |
+| gateway.nettyConnectTimeout    | Gateway连接超时时间    | Gateway参数  | 5000  |      否      |
+| gateway.nettyWriteAndReadWaitTime  | Gateway读/写超时时间    | Gateway参数  | 60000       |      否      |
 
 #### 服务元数据相关参数
 
@@ -182,33 +226,33 @@ Sermant插件的加载顺序如下：
 
 ### 参数配置方式
 
-Sermant项目sermant-agent的properties配置文件和各插件的中yaml配置文件都支持下列几种参数配置方式，以配置文件中的`backend.nettyIp=127.0.0.1`为例：
+Sermant项目sermant-agent的properties配置文件和各插件的中yaml配置文件都支持下列几种参数配置方式，以配置文件中的`gateway.nettyIp=127.0.0.1`为例：
 
-1. 直接修改配置文件，即在配置文件中修改`backend.nettyIp=127.0.0.1`
-2. 通过应用启动时的-D参数配置，即`-Dbackend.nettyIp=127.0.0.1`
-3. 通过环境变量配置，即在环境变量中新增`backend.nettyIp=127.0.0.1`
-4. 通过sermant-agent启动参数配置，即`-javaagent:sermant-agent.jar=backend.nettyIp=127.0.0.1`
+1. 直接修改配置文件，即在配置文件中修改`gateway.nettyIp=127.0.0.1`
+2. 通过应用启动时的-D参数配置，即`-Dgateway.nettyIp=127.0.0.1`
+3. 通过环境变量配置，即在环境变量中新增`gateway.nettyIp=127.0.0.1`
+4. 通过sermant-agent启动参数配置，即`-javaagent:sermant-agent.jar=gateway.nettyIp=127.0.0.1`
 
 以上四种方式，配置生效的优先级从高到低排列为：4 > 3 > 2 > 1。
 
-其中，后三种参数配置值的获取方式支持多种格式，以配置文件中的`backend.nettyIp=127.0.0.1`为例，下列配置格式都可识别：
+其中，后三种参数配置值的获取方式支持多种格式，以配置文件中的`gateway.nettyIp=127.0.0.1`为例，下列配置格式都可识别：
 
 ```txt
-backend.nettyIp=127.0.0.1
-backend_nettyIp=127.0.0.1
-backend-nettyIp=127.0.0.1
-BACKEND.NETTYIP=127.0.0.1
-BACKEND_NETTYIP=127.0.0.1
-BACKEND-NETTYIP=127.0.0.1
-backend.nettyip=127.0.0.1
-backend_nettyip=127.0.0.1
-backend-nettyip=127.0.0.1
-backend.netty.ip=127.0.0.1
-backend_netty_ip=127.0.0.1
-backend-netty-ip=127.0.0.1
-BACKEND.NETTY.IP=127.0.0.1
-BACKEND_NETTY_IP=127.0.0.1
-BACKEND-NETTY-IP=127.0.0.1
+gateway.nettyIp=127.0.0.1
+gateway_nettyIp=127.0.0.1
+gateway-nettyIp=127.0.0.1
+GATEWAY.NETTYIP=127.0.0.1
+GATEWAY_NETTYIP=127.0.0.1
+GATEWAY-NETTYIP=127.0.0.1
+gateway.nettyip=127.0.0.1
+gateway_nettyip=127.0.0.1
+gateway-nettyip=127.0.0.1
+gateway.netty.ip=127.0.0.1
+gateway_netty_ip=127.0.0.1
+gateway-netty-ip=127.0.0.1
+GATEWAY.NETTY.IP=127.0.0.1
+GATEWAY_NETTY_IP=127.0.0.1
+GATEWAY-NETTY-IP=127.0.0.1
 ```
 
 sermant-agent将从上至下依次检索各项配置值是否通过启动参数、环境变量、-D参数来配置。
@@ -217,11 +261,11 @@ sermant-agent将从上至下依次检索各项配置值是否通过启动参数�
 > 
 > 原因：因为一些OS镜像无法识别带 . 的env
 
-举个例子：如需想通过pod的env修改配置文件中的`backend.nettyIp=127.0.0.1`则
+举个例子：如需想通过pod的env修改配置文件中的`gateway.nettyIp=127.0.0.1`则
 
 ``` yaml
   env:
-  - name: "backend_nettyIp"
+  - name: "gateway_nettyIp"
     value: "127.0.0.2"
 ``` 
 
