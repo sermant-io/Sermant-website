@@ -69,6 +69,66 @@ content值为具体的路由规则。
 |   weight   |                          权重值                          |  空  |  是   |
 |    tags    |                  标签信息，满足标记条件的实例放到这一组                  |  空  |  是   |
 
+- ***流量染色规则***
+  
+  流量染色规则，可以将符合一定规则的请求流量进行染色标记，并且将标记跟随着链路一直传递下去。结合流量路由与流量染色能力，可以实现全链路灰度、多环境隔离等场景。
+
+```yaml
+---
+- kind: route.sermant.io/lane # 路由规则为染色规则的类型
+  description: lane  # 规则描述
+  rules:
+    - precedence: 2 # 规则的优先级，数字越大，优先级越高，匹配成功后不再匹配低优先级规则
+      match: # 请求匹配规则。0..N个，不配置表示匹配
+        method: getFoo # dubbo接口方法名，不配置表示匹配
+        path: "com.huaweicloud.bar" # dubbo接口名，不配置表示匹配
+        protocol: dubbo # 流量入口为dubbo协议，dubbo协议只会匹配attachments/args
+        attachments: # dubbo attachments匹配，不配置表示匹配
+          id: # 属性名，使用时修改为具体的属性，如果配置了多个属性，那么所有的属性规则都必须和请求匹配
+            exact: '1' # 配置策略，id等于1，详细配置策略参考配置策略表
+            caseInsensitive: false # false:不区分大小写（默认）,true:区分大小写。配置为false时，将统一转为小写进行比较
+        args: # dubbo args匹配，不配置表示匹配
+          args0: # dubbo接口的第0个参数
+            type: .name # 取值类型，dubbo args匹配特有字段，第0个参数为实体，调用getName()方法，详细取值类型参考取值类型表
+            exact: 'foo' # 配置策略，等于foo，详细配置策略参考配置策略表
+      route:
+        - tag-inject: # 染色标记
+            x-sermant-flag2: gray2 # 发起对下游调用时，将该标记传递到http headers/dubbo attachments中
+          weight: 100 # 染色权重
+    - precedence: 1
+      match:
+        method: get # http请求方式，不配置表示匹配
+        path: "/foo" # http请求路径，不配置表示匹配
+        protocol: http # 流量入口为http协议，http协议只会匹配headers/parameters
+        headers: # http headers匹配，不配置表示匹配
+          id:
+            exact: '1'
+        parameters: # http url parameters匹配，不配置表示匹配
+          name:
+            exact: 'foo'
+      route:
+        - tag-inject:
+            x-sermant-flag1: gray1
+          weight: 60
+```
+
+> **注意：** 新增配置时，请去掉注释，否则会导致新增失败。
+
+**上述染色规则解释：** 首先匹配流量入口为dubbo协议的请求，如果请求接口为com.huaweicloud.bar，请求方法为getFoo，attachments中id等于1，对方法中的第0个参数调用getName()方法的返回值等于foo，就对满足条件的100%流量打上【x-sermant-flag2: gray2】的标记，并在调用下游时进行传递，如果不匹配，则匹配流量入口为http协议的请求，如果请求接口为/foo，请求方式为get，headers中id等于1，url parameters中name等于foo，就对满足条件的60%流量打上【x-sermant-flag1: gray1】的标记，并在调用下游时进行传递。
+
+|   参数键    |                      说明                       | 默认值 | 是否必须 |
+|:----------:|:----------------------------------------------:|:---:|:----:|
+| precedence |              优先级，数字越大，优先级越高            |  空  |  是   |
+|   match    | 匹配规则，支持attachments/args/headers/parameters |  空  |  否   |
+|   method   |              dubbo接口方法名/http请求方式          |  空  |  否   |
+|    path    |              dubbo接口名/http请求路径             |  空  |  否   |
+|  protocol  |              流量入口协议，dubbo/http             |  空  |  match存在时必填  |
+|   exact    |   配置策略，详细配置策略参考[配置策略表](#配置策略列表)  |  空  |  否   |
+|    type    |   取值类型，详细取值类型参考[取值类型表](#取值类型表)    |  空  |  否   |
+|   route    |   染色规则，包括权重配置以及染色标记配置               |  空  |  是   |
+|   weight   |                     权重值                       |  空  |  是   |
+| tag-inject |                     染色标记                     |  空  |  是   |
+
 ### 配置策略列表
 
 |  策略名  |    策略值     |                                    匹配规则                                     |
@@ -81,6 +141,17 @@ content值为具体的路由规则。
 |  大于   |  greater   |                                  参数值大于配置值                                   |
 |  小于   |    less    |                                  参数值小于配置值                                   |
 
+### 取值类型表
+
+|类型|取值方式|适用参数类型|
+|---|---|---|
+|留空|表示直接取当前参数的值|适用普通参数类型，例如String、int、long等|
+|.name|表示取参数的name属性，相当于ARG0.getName()|适用于对象类型|
+|.isEnabled()|表示取参数的enabled属性，相当于ARG0.isEnabled()|适用于对象类型|
+|[0]|取数组的第一个值，相当于ARG0[0]|适用于普通类型的数组，例如String[]、int[]|
+|.get(0)|取List的第一个值，相当于ARG0.get(0)|适用于普通类型的列表，例如List\<String>、List\<Integer>|
+|.get("key")|获取key对应的值，相当于ARG0.get("key")|适用于普通类型的map，例如Map<String, String>|
+
 ## 支持版本和限制
 
 框架支持：
@@ -92,6 +163,8 @@ content值为具体的路由规则。
 限制：
 
 - 不支持异步调用
+
+- http客户端目前只支持Feign、RestTemplate
 
 ## 操作和结果验证
 
