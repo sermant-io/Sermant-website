@@ -1,4 +1,5 @@
 module.exports = {
+  base: `${process.env.VERSIONS_PATH}`,
   head: [
       [
         'link', { rel: 'icon', href: '/img/logo.svg'}

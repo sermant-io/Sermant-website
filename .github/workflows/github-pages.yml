@@ -1,0 +1,36 @@
+name: Build and Deploy
+on:
+  push:
+    branches:
+      - main
+      - 'v[0-9].[0-9].[0-9x]'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: set latest version path
+        if: github.ref_name == 'main'
+        run: echo VERSIONS_PATH=/ >> $GITHUB_ENV
+      - name: set old versions path
+        if: github.ref_name != 'main'
+        run: echo VERSIONS_PATH=/versions/${GITHUB_REF_NAME#v}/ >> $GITHUB_ENV
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install and Build
+        env:
+          NODE_OPTIONS: '--openssl-legacy-provider'
+        run: |
+          cd docs
+          npm install
+          npm run build
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          token: ${{ secrets.PAGES_ACCESS_TOKEN }}
+          branch: gh-pages
+          folder: docs/.vuepress/dist
+          target-folder: ${{ env.VERSIONS_PATH }}
+          clean: true
+          clean-exclude: |
+            versions
