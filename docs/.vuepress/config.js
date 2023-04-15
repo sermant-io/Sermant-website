@@ -71,6 +71,7 @@ module.exports = {
                 "plugin/register-migration",
                 "plugin/springboot-registry",
                 "plugin/visibility",
+                "plugin/removal",
               ],
             },
             {
@@ -165,6 +166,7 @@ module.exports = {
                 "plugin/register-migration",
                 "plugin/springboot-registry",
                 "plugin/visibility",
+                "plugin/removal",
               ],
             },
             {
