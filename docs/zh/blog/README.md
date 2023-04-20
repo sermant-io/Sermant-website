@@ -12,6 +12,15 @@ blogArr:
       - 云原生
       - 微服务治理
       - 无代理架构
+    - name: 分布式政企应用如何快速实现云原生的微服务架构改造
+      writer: 杨奕
+      date: 2023/04/06
+      description: 'SOA/ESB架构在Java语言场景下，如何朝云原生ServiceMesh架构演进。'
+      path: 'https://my.oschina.net/u/6410005/blog/8626906'
+      tags:
+      - 云原生
+      - 微服务改造
+      - 无代理架构
     - name: Java Agent 场景性能测试分析优化经验分享
       writer: 栾文飞
       date: 2023/03/03
