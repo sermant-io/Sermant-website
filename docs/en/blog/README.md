@@ -11,7 +11,16 @@ blogArr:
       tags:
       - Cloud Native
       - Microservice Governance
-      - Agentless Architecture
+      - Proxyless Architecture
+    - name: How to Quickly Implement Cloud-native Microservice Architecture Transformation for Distributed Government and Enterprise Applications
+      writer: 杨奕
+      date: 2023/04/06
+      description: 'How to evolve SOA/ESB architecture to cloud-native ServiceMesh architecture in Java language scenario.'
+      path: 'https://my.oschina.net/u/6410005/blog/8626906'
+      tags:
+      - Cloud Native
+      - Microservice Transformation
+      - Proxyless Architecture
     - name: Java Agent Scenario Performance Test Analysis and Optimization Experience Sharing
       writer: 栾文飞
       date: 2023/03/03
