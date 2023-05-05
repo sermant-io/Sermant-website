@@ -8,5 +8,5 @@ This document mainly explains common problems encountered when using Sermant.
 
 [Flow Control FAQs](./flowcontrol.md): Frequently asked questions about the use of flow control plugins.
 
-
+[Common Issues in Plugin Development] (./plugin.md): Records common issues during the plugin development process.
 
