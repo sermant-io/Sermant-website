@@ -1,7 +1,7 @@
 module.exports = {
   head: [
       [
-        'link', { rel: 'icon', href: '/img/logo.svg'}
+        'link', { rel: 'icon', href: '/img/logo.png'}
       ]
   ],
   extend: "@vuepress/theme-default",
