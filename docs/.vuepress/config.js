@@ -1,10 +1,11 @@
 module.exports = {
-  base: `${process.env.VERSIONS_PATH}`,
+  base: `/`,
   head: [
       [
-        'link', { rel: 'icon', href: '/img/logo.svg'}
+        "link", { rel: "icon", href: "/img/logo.svg" }  
       ]
   ],
+  plugins: ["@vuepress/back-to-top"],
   extend: "@vuepress/theme-default",
   locales: {
     "/zh/": {
@@ -23,7 +24,6 @@ module.exports = {
     displayAllHeaders: false,
     smoothScroll: true,
     sidebarDepth: 1,
-    plugins: ["@vuepress/back-to-top"],
     locales: {
       "/zh/": {
         selectText: "选择语言",
@@ -32,6 +32,7 @@ module.exports = {
         nav: [
           { text: "文档", link: "/zh/document/" },
           { text: "博客", link: "/zh/blog/" },
+          { text: "版本", items: [{ text: "latest", link: "/zh/" },{ text: "1.0.x", link: "/versions/v1.0.x" }]},
           { text: "Github", link: "https://github.com/huaweicloud/Sermant" },
         ],
         sidebar: {
@@ -126,6 +127,7 @@ module.exports = {
         nav: [
           { text: "Document", link: "/en/document/" },
           { text: "Blog", link: "/en/blog/" },
+          { text: "versions", items: [{ text: "latest", link: "/en/" },{ text: "1.0.x", link: "/versions/v1.0.x" }]},
           { text: "Github", link: "https://github.com/huaweicloud/Sermant" },
         ],
         sidebar: {
