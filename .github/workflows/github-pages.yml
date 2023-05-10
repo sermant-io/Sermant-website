@@ -28,7 +28,7 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           token: ${{ secrets.PAGES_ACCESS_TOKEN }}
-          branch: gh-pages
+          branch: deploy
           folder: docs/.vuepress/dist
           target-folder: ${{ env.VERSIONS_PATH }}
           clean: true
