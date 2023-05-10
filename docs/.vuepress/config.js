@@ -32,7 +32,7 @@ module.exports = {
         nav: [
           { text: "文档", link: "/zh/document/" },
           { text: "博客", link: "/zh/blog/" },
-          { text: "版本", items: [{ text: "latest", link: "/zh/" },{ text: "1.0.x", link: "../versions/v1.0.x/zh/" }]},
+          { text: "版本", items: [{ text: "latest", link: "/zh/" },{ text: "1.0.x", link: "/versions/1.0.x/zh/" }]},
           { text: "Github", link: "https://github.com/huaweicloud/Sermant" },
         ],
         sidebar: {
