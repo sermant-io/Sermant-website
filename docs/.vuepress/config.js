@@ -1,9 +1,9 @@
 module.exports = {
-  base: `${process.env.VERSIONS_PATH}`,
+  base: `/`,
   head: [
-      [
-        'link', { rel: 'icon', href: '/img/logo.svg'}
-      ]
+    [
+      'link', { rel: 'icon', href: '/img/logo.svg'}
+    ]
   ],
   plugins: ["@vuepress/back-to-top"],
   extend: "@vuepress/theme-default",

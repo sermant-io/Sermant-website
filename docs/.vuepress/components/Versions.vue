@@ -10,7 +10,6 @@
 </template>
 
 <script>
-import Axios from 'axios';
 export default {
   data() {
     return {
@@ -18,33 +17,31 @@ export default {
       options: []
     };
   },
-  created: async function() {
-    try {
-      let response = await Axios.get(
+  mounted: function() {
+    this.$axios.get(
         'https://api.github.com/repos/huaweicloud/Sermant-website/git/trees/version-support',
-      );
-      const versionsNode = response.data.tree.find(e => {
-        return e.path == 'versions.json';
-      });
-      response = await Axios.get(versionsNode.url);
-      this.options = eval("(" + window.atob(response.data.content) + ")").versions.map(v => {
-        return {value: v, text: v};
-      });
-      if (this.options.length == 0) {
-        return;
-      }
-      this.options.unshift({value: 'latest', text: 'latest'});
-      const path = window.location.pathname;
-      if (path.startsWith('/versions/')) {
-        const start = 10;
-        const end = path.indexOf('/', start);
-        this.selected = path.substring(start, end);
-      } else {
-        this.selected = 'latest';
-      }
-    } catch (e) {
-      console.log(e);
-    }
+    ).then((response)=>{
+      const versionNode = response.data.tree.find(e => {
+        return e.path === 'versions.json';
+      })
+      this.$axios.get(versionNode.url).then((res) => {
+        this.options = eval("(" + window.atob(res.data.content) + ")").versions.map(v => {
+          return {value: v, text: v};
+        })
+        if (this.options.length === 0) {
+          return;
+        }
+        this.options.unshift({value: 'latest', text: 'latest'});
+        const path = window.location.pathname;
+        if (path.startsWith('/versions/')) {
+          const start = 10;
+          const end = path.indexOf('/', start);
+          this.selected = path.substring(start, end);
+        } else {
+          this.selected = 'latest';
+        }
+      }).catch(err=>console.error(err));
+    }).catch(err=>console.error(err));
   },
   methods: {
     onChange(event) {
@@ -52,7 +49,7 @@ export default {
       const versionIdx = path.indexOf('/versions/');
       const startIdx = versionIdx >= 0 ? versionIdx + 10 : 0;
       const endIdx = path.indexOf('/', startIdx);
-      const versionPath = this.selected == 'latest' ? '' : `/versions/${this.selected}`;
+      const versionPath = this.selected === 'latest' ? '' : `/versions/${this.selected}`;
       window.location.pathname = versionPath + path.substring(endIdx);
     }
   }
