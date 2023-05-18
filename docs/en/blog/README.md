@@ -12,6 +12,17 @@ blogArr:
       - Cloud Native
       - Microservice Governance
       - Proxyless Architecture
+
+    - name: How Can Applications Go Online And Offline Gracefully In Virtual Machines And Container Scenarios
+      writer: 罗健文 李来
+      date: 2023/05/09
+      description: 'How to achieve flow lossless when applications are changed offline and online due to business upgrades in virtual machine and container scenarios.'
+      path: 'https://my.oschina.net/u/6410005/blog/8726285'
+      tags:
+      - Container
+      - Flow Lossless
+      - Go Online And Offline Gracefully
+
     - name: How to Quickly Implement Cloud-native Microservice Architecture Transformation for Distributed Government and Enterprise Applications
       writer: 杨奕
       date: 2023/04/06
