@@ -1,6 +1,6 @@
 # Introduction to the use of Sermant
 
-Sermant is a bytecode enhancement technology based on Java Agent. It uses Java Agent to enhance the host application in a non-intrusive way to solve the microservice governance problem of Java applications. The original intention of Sermant is to establish a solution ecosystem for micro-service governance that is non-intrusive to the development state, reduce the difficulty of service governance development and use, and achieve the effect of simplified development and plug-and-play by means of abstract interface, function integration and plugin isolation. This article introduces the components currently included in Sermant and the compilation and packaging of Sermant.
+Sermant is a bytecode enhancement technology based on JavaAgent. It uses JavaAgent to enhance the host application in a non-intrusive way to solve the microservice governance problem of Java applications. The original intention of Sermant is to establish a solution ecosystem for micro-service governance that is non-intrusive to the development state, reduce the difficulty of service governance development and use, and achieve the effect of simplified development and plug-and-play by means of abstract interface, function integration and plugin isolation. This article introduces the components currently included in Sermant and the compilation and packaging of Sermant.
 
 ## Architecture Introduction
 
@@ -12,7 +12,7 @@ The overall architecture of Sermant includes sermant-agent, Backend, Dynamic Con
 
 Sermant-agent is the essential core component of Sermant, which contains bytecode enhancements of [sermant-agentcore](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore), [sermant-plugins](https://gIthub.com/huaweicloud/Sermant/tree/develop/sermant-plugins), [sermant-common](https://github.com/huaweicloud/Sermant/tree/develop/sermant-common). Sermant-agent takes effect when the host application is launched by specifying the `sermant-agent.jar'` package via the `-javaagent` argument. 
 
-Sermant-agent is based on Java Agent technology and supports JDK 1.6 and above.  
+Sermant-agent is based on JavaAgent technology and supports JDK 1.6 and above.  
 
 Please refer to the [Sermant-agent User Manual](sermant-agent.md) for more instructions on how to use sermant-agent.
 

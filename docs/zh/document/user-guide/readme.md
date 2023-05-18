@@ -1,6 +1,7 @@
 # Sermant使用介绍
 
-Sermant 是基于Java Agent的字节码增强技术，通过 Java Agent 对宿主应用进行非侵入式增强，以解决Java应用的微服务治理问题。Sermant的初衷是建立一个面向微服务治理的对开发态无侵入的解决方案生态，降低服务治理开发和使用的难度，通过抽象接口、功能整合、插件隔离等手段，达到简化开发、功能即插即用的效果。本文介绍Sermant目前包含的组件以及Sermant的编译打包。
+Sermant 是基于JavaAgent的字节码增强技术，通过 JavaAgent 
+对宿主应用进行非侵入式增强，以解决Java应用的微服务治理问题。Sermant的初衷是建立一个面向微服务治理的对开发态非侵入的解决方案生态，降低服务治理开发和使用的难度，通过抽象接口、功能整合、插件隔离等手段，达到简化开发、功能即插即用的效果。本文介绍Sermant目前包含的组件以及Sermant的编译打包。
 
 ## 架构简介
 
@@ -12,7 +13,7 @@ Sermant整体架构包括sermant-agent、Backend、动态配置中心、sermant-
 
 sermant-agent为Sermant必要核心组件，其包含[sermant-agentcore](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore)、[sermant-plugins](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins)、[sermant-common](https://github.com/huaweicloud/Sermant/tree/develop/sermant-common)等字节码增强逻辑的实现主体，在宿主应用启动时通过`-javaagent`参数指定`sermant-agent.jar`包来挂载生效。
 
-sermant-agent基于Java Agent技术，支持JDK 1.6及以上版本。
+sermant-agent基于JavaAgent技术，支持JDK 1.6及以上版本。
 
 更多sermant-agent使用指南请参考[sermant-agent使用手册](sermant-agent.md)。
 

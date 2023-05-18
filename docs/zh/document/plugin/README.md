@@ -4,7 +4,7 @@
 
 [动态配置插件](./dynamic-config.md)：基于Sermant配置中心能力实现动态配置，可在运行时将配置刷新到宿主应用，其优先级将高于环境变量配置。
 
-[流控插件](./flowcontrol.md): 基于resilience4j框架，以"流量"切入点，实现"无侵入式"流量控制；当前支持限流、熔断、隔离仓、错误注入与重试能力，并且支持配置中心动态配置规则，实时生效。
+[流控插件](./flowcontrol.md): 基于resilience4j框架，以"流量"切入点，实现"非侵入式"流量控制；当前支持限流、熔断、隔离仓、错误注入与重试能力，并且支持配置中心动态配置规则，实时生效。
 
 [无损上下线插件](./graceful.md)：针对应用上下线发布过程中的问题，插件提供预热和延迟下线机制，为服务提供无损上下线的能力。
 
@@ -14,7 +14,8 @@
 
 [标签路由插件](./router.md)：在微服务存在多个版本、多个实例的情况下，通过配置路由规则管理服务之间的路由，达到无损升级、应用拨测等业务目的。
 
-[注册迁移插件](./register-migration.md)：提供代码无侵入方式，可让原本注册于Eureka，Nacos，Zookeeper、Consul等主流注册中心的微服务，无侵入地注册到[ServiceComb](https://github.com/apache/servicecomb-service-center)或[Nacos](https://nacos.io/)上, 同时支持Dubbo与SpringCloud框架。
+[注册迁移插件](./register-migration.md)：提供代码非侵入方式，可让原本注册于Eureka，Nacos，Zookeeper、Consul等主流注册中心的微服务，非侵入地注册到[ServiceComb]
+(https://github.com/apache/servicecomb-service-center)或[Nacos](https://nacos.io/)上, 同时支持Dubbo与SpringCloud框架。
 
 [SpringBoot注册插件](./springboot-registry.md)：纯SpringBoot应用提供服务注册发现能力，方便用户在不修改代码的前提下快速接入注册中心（目前只支持**Zookeeper**），同时提供超时重试的能力，实现服务调用的高可用。
 

@@ -32,18 +32,18 @@ blogArr:
       - Cloud Native
       - Microservice Transformation
       - Proxyless Architecture
-    - name: Java Agent Scenario Performance Test Analysis and Optimization Experience Sharing
+    - name: JavaAgent Scenario Performance Test Analysis and Optimization Experience Sharing
       writer: 栾文飞
       date: 2023/03/03
-      description: 'How to perform better performance test optimization in the Java Agent scenario and the performance pitfalls that need to be paid attention to under the Java Agent.'
+      description: 'How to perform better performance test optimization in the JavaAgent scenario and the performance pitfalls that need to be paid attention to under the JavaAgent.'
       path: 'https://my.oschina.net/u/6410005/blog/8392949'
       tags:
-      - Java Agent
+      - JavaAgent
       - Performance Test Optimization
     - name: Remember the class enhancement conflict problem and analysis of multiple JavaAgents used at the same time
       writer: 李来
       date: 2022/11/10 
-      description: 'Java Agent technology is often used to intercept and modify bytecodes before loading class files, so as to achieve non-intrusive enhancements to Java applications.'
+      description: 'JavaAgent technology is often used to intercept and modify bytecodes before loading class files, so as to achieve non-intrusive enhancements to Java applications.'
       path: 'https://zhuanlan.zhihu.com/p/582106446'
       tags:
       - JavaAgent
