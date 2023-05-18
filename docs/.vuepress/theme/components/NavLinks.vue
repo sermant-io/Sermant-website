@@ -130,6 +130,11 @@ export default {
       return 'Source'
     }
   },
+  watch: {
+    $route() {
+      this.setVersions();
+    }
+  },
   mounted() {
     this.setVersions();
   },
@@ -146,16 +151,16 @@ export default {
           return;
         }
       }
-      const currentPath = this.$page.path;
+      const currentPath = window.location.pathname;
       let versionText = 'Versions';
       const versionKey = '/versions';
       let startIndex = currentPath.indexOf(versionKey);
       if (startIndex === -1) {
         versionText = 'latest';
       } else {
-        const numStartIndex = startIndex + versionKey.length;
-        let temPath = currentPath.substr(numStartIndex);
-        let temVersion = temPath.substring(0, temPath.indexOf('/'));
+        const numStartIndex = startIndex + versionKey.length + 1;
+        const numEndIndex = currentPath.indexOf('/', numStartIndex);
+        let temVersion = currentPath.substring(numStartIndex, numEndIndex);
         if (versions.some(version => version === temVersion)) {
           versionText = temVersion
         }
@@ -168,12 +173,12 @@ export default {
         ariaLabel: 'Select version',
         items: tmpVersionArr.map((version) => {
           let text = version;
-          let link;
-          if (version === 'latest') {
-            link = '/';
-          } else {
-            link = `/versions/${version}`
-          }
+          const path = window.location.pathname;
+          const versionIdx = path.indexOf('/versions/');
+          const startIdx = versionIdx >= 0 ? versionIdx + 10 : 0;
+          const endIdx = path.indexOf('/', startIdx);
+          const versionPath = version === 'latest' ? '' : `/versions/${version}`;
+          let link = versionPath + path.substring(endIdx);
           return {text, link, isOutLink: true}
         })
       };
