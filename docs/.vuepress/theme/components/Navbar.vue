@@ -3,26 +3,26 @@
     <SidebarButton @toggle-sidebar="$emit('toggle-sidebar')" />
 
     <RouterLink
-      :to="$localePath"
-      class="home-link"
+        :to="$localePath"
+        class="home-link"
     >
       <img
-        v-if="$site.themeConfig.logo"
-        class="logo"
-        :src="$withBase($site.themeConfig.logo)"
-        :alt="$siteTitle"
+          v-if="$site.themeConfig.logo"
+          class="logo"
+          :src="$withBase($site.themeConfig.logo)"
+          :alt="$siteTitle"
       >
     </RouterLink>
 
     <div
-      class="links"
-      :style="linksWrapMaxWidth ? {
+        class="links"
+        :style="linksWrapMaxWidth ? {
         'max-width': linksWrapMaxWidth + 'px'
       } : {}"
     >
       <AlgoliaSearchBox
-        v-if="isAlgoliaSearch"
-        :options="algolia"
+          v-if="isAlgoliaSearch"
+          :options="algolia"
       />
       <SearchBox v-else-if="$site.themeConfig.search !== false && $page.frontmatter.search !== false" />
       <NavLinks class="can-hide" />
@@ -70,7 +70,7 @@ export default {
         this.linksWrapMaxWidth = null
       } else {
         this.linksWrapMaxWidth = this.$el.offsetWidth - NAVBAR_VERTICAL_PADDING
-          - (this.$refs.siteName && this.$refs.siteName.offsetWidth || 0)
+            - (this.$refs.siteName && this.$refs.siteName.offsetWidth || 0)
       }
     }
     handleLinksWrapWidth()

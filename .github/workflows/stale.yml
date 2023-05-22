@@ -2,7 +2,7 @@ name: Auto Close Stale Issues and PRs
 
 on:
   schedule:
-    # UTC/GMT+08:00 -> ±±¾©Ê±¼äÁè³¿4µãÖ´ĞĞ
+    # UTC/GMT+08:00 -> åŒ—äº¬æ—¶é—´å‡Œæ™¨4ç‚¹æ‰§è¡Œ
     - cron: "0 20 * * *"
 
 jobs:
@@ -12,31 +12,31 @@ jobs:
       - uses: actions/stale@v4.1.0
         name: Auto Close Stale Issues and PRs
         with:
-          # Îª²»»îÔ¾µÄissueÌí¼ÓµÄ±êÇ©
+          # ä¸ºä¸æ´»è·ƒçš„issueæ·»åŠ çš„æ ‡ç­¾
           stale-issue-label: Stale
-          # issueµÄ²»»îÔ¾¾¯¸æÆÀÂÛ
+          # issueçš„ä¸æ´»è·ƒè­¦å‘Šè¯„è®º
           stale-issue-message: >
             This issue seems to be **Stale**. We will close it in a few days.
-          # issueµÄ¹Ø±ÕÆÀÂÛ
+          # issueçš„å…³é—­è¯„è®º
           close-issue-message: >
             We close this issue because it hasn't been updated in a while. Remove **Stale** label if you want to reopen it.
-          # issue²»»îÔ¾ÅĞ¶¨Ê±¼ä£¬µ¥Î»£ºÌì
+          # issueä¸æ´»è·ƒåˆ¤å®šæ—¶é—´ï¼Œå•ä½ï¼šå¤©
           days-before-issue-stale: 29
-          # issue×îÖÕ¹Ø±Õ¼ä¸ôÊ±¼ä£¬µ¥Î»£ºÌì
+          # issueæœ€ç»ˆå…³é—­é—´éš”æ—¶é—´ï¼Œå•ä½ï¼šå¤©
           days-before-issue-close: 1
 
-          # Îª²»»îÔ¾µÄprÌí¼ÓµÄ±êÇ©
+          # ä¸ºä¸æ´»è·ƒçš„præ·»åŠ çš„æ ‡ç­¾
           stale-pr-label: Stale
-          # prµÄ²»»îÔ¾¾¯¸æÆÀÂÛ
+          # prçš„ä¸æ´»è·ƒè­¦å‘Šè¯„è®º
           stale-pr-message: >
             This PR seems to be **Stale**. We will close it in a few days.
-          # prµÄ¹Ø±ÕÆÀÂÛ
+          # prçš„å…³é—­è¯„è®º
           close-pr-message: >
             We close this PR because it hasn't been updated in a while. Remove **Stale** label if you want to reopen it.
-          # pr²»»îÔ¾ÅĞ¶¨Ê±¼ä£¬µ¥Î»£ºÌì
+          # prä¸æ´»è·ƒåˆ¤å®šæ—¶é—´ï¼Œå•ä½ï¼šå¤©
           days-before-pr-stale: 14
-          # pr×îÖÕ¹Ø±Õ¼ä¸ôÊ±¼ä£¬µ¥Î»£ºÌì
+          # præœ€ç»ˆå…³é—­é—´éš”æ—¶é—´ï¼Œå•ä½ï¼šå¤©
           days-before-pr-close: 1
 
-          # Ã¿´ÎÔËĞĞ´¦ÀíissueºÍPRÌõÊı£¬Èç¹û´ı´¦ÀíµÄÊıÁ¿¹ı¶à£¬¿ÉĞŞ¸Ä¸ÃÖµ
+          # æ¯æ¬¡è¿è¡Œå¤„ç†issueå’ŒPRæ¡æ•°ï¼Œå¦‚æœå¾…å¤„ç†çš„æ•°é‡è¿‡å¤šï¼Œå¯ä¿®æ”¹è¯¥å€¼
           operations-per-run: 100

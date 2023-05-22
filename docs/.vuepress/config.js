@@ -1,9 +1,11 @@
 module.exports = {
+  base: `${process.env.VERSIONS_PATH}`,
   head: [
-      [
-        'link', { rel: 'icon', href: '/img/logo.svg'}
-      ]
+    [
+      'link', { rel: 'icon', href: '/img/logo.svg'}
+    ]
   ],
+  plugins: ["@vuepress/back-to-top"],
   extend: "@vuepress/theme-default",
   locales: {
     "/zh/": {
@@ -22,7 +24,6 @@ module.exports = {
     displayAllHeaders: false,
     smoothScroll: true,
     sidebarDepth: 1,
-    plugins: ["@vuepress/back-to-top"],
     locales: {
       "/zh/": {
         selectText: "选择语言",
@@ -107,10 +108,10 @@ module.exports = {
               collapsable: true,
               sidebarDepth: 1,
               children: [
-                "FAQ/",
-                "FAQ/framework",
-                "FAQ/registry",
-                "FAQ/flowcontrol",
+                "faq/",
+                "faq/framework",
+                "faq/registry",
+                "faq/flowcontrol",
               ],
             },
           ],
@@ -207,10 +208,10 @@ module.exports = {
               collapsable: true,
               sidebarDepth: 1,
               children: [
-                "FAQ/",
-                "FAQ/framework",
-                "FAQ/registry",
-                "FAQ/flowcontrol",
+                "faq/",
+                "faq/framework",
+                "faq/registry",
+                "faq/flowcontrol",
               ],
             },
           ],
