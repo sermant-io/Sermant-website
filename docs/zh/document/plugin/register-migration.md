@@ -4,7 +4,8 @@
 
 ## 功能介绍
 
-对于绝大多数企业客户来说，比较关心注册中心迁移过程的平滑性以及业务的连续性。注册迁移插件通过无侵入方式实现注册中心迁移的能力，让原本注册于Eureka、Nacos、Zookeeper、Consul等主流注册中心的微服务，无侵入地注册到[ServiceComb](https://github.com/apache/servicecomb-service-center)或[Nacos](https://nacos.io/)上。
+对于绝大多数企业客户来说，比较关心注册中心迁移过程的平滑性以及业务的连续性。注册迁移插件通过非侵入方式实现注册中心迁移的能力，让原本注册于Eureka、Nacos、Zookeeper、Consul等主流注册中心的微服务，非侵入地注册到
+[ServiceComb](https://github.com/apache/servicecomb-service-center)或[Nacos](https://nacos.io/)上。
 
 **搬迁示意图：**
 

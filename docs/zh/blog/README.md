@@ -32,18 +32,18 @@ blogArr:
       - 云原生
       - 微服务改造
       - 无代理架构
-    - name: Java Agent 场景性能测试分析优化经验分享
+    - name: JavaAgent 场景性能测试分析优化经验分享
       writer: 栾文飞
       date: 2023/03/03
-      description: '在 Java Agent 场景如何进行更好的性能测试优化及在 Java Agent 下需要着重注意的性能陷阱。'
+      description: '在 JavaAgent 场景如何进行更好的性能测试优化及在 JavaAgent 下需要着重注意的性能陷阱。'
       path: 'https://my.oschina.net/u/6410005/blog/8392949'
       tags:
-      - Java Agent
+      - JavaAgent
       - 性能测试优化
     - name: 记一次多个JavaAgent同时使用的类增强冲突问题及分析
       writer: 李来
       date: 2022/11/10 
-      description: 'Java Agent技术常被用于加载class文件之前进行拦截并修改字节码，以实现对Java应用的无侵入式增强。'
+      description: 'JavaAgent技术常被用于加载class文件之前进行拦截并修改字节码，以实现对Java应用的非侵入式增强。'
       path: 'https://zhuanlan.zhihu.com/p/582106446'
       tags:
       - JavaAgent
