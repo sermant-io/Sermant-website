@@ -16,6 +16,12 @@ blogs: '近期博文'
 无代理架构，无需跨进程通信，大幅降低请求时延和资源占用。
 :::
 
+::: slot video
+## 三分钟了解Sermant推进云原生微服务治理技术演进
+<iframe src="https:////player.bilibili.com/player.html?aid=529220274&bvid=BV1Uu411s7gf&cid=1146652666&page=1" 
+scrolling="yes" border="0" frameborder="no" framespacing="0" allowfullscreen="true" id="sermant-video"> </iframe>
+:::
+
 ::: slot Contact
 ## 联系我们
 扫描下方二维码加入Sermant社区进行交流

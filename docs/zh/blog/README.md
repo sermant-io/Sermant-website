@@ -13,6 +13,16 @@ blogArr:
       - 微服务治理
       - 无代理架构
 
+    - name: 【置顶】GOTC 2023 Sermant快闪演讲视频回顾
+      writer: 李来
+      date: 2023/05/30
+      description: 'Sermant受邀参与2023年GOTC全球开源技术峰会快闪演讲并分享云原生微服务治理技术的探索'
+      path: 'https://www.bilibili.com/video/BV1Gh4y1Z7eN/?vd_source=f7eed9246d1cf38f26214743df518b2d'
+      tags:
+      - 云原生
+      - 微服务治理
+      - 无代理架构
+
     - name: 应用在虚机和容器场景下如何优雅上下线
       writer: 罗健文 李来
       date: 2023/05/09

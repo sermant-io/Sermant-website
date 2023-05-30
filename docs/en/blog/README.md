@@ -13,6 +13,16 @@ blogArr:
       - Microservice Governance
       - Proxyless Architecture
 
+    - name: 【TOP】Video of GOTC 2023 Sermant Flash Speach
+      writer: 李来
+      date: 2023/05/30
+      description: 'Sermant was invited to participate in the 2023 Global Open-source Technology Conference and share the exploration of cloud-native microservice governance technology'
+      path: 'https://www.bilibili.com/video/BV1Gh4y1Z7eN/?vd_source=f7eed9246d1cf38f26214743df518b2d'
+      tags:
+      - 云原生
+      - 微服务治理
+      - 无代理架构
+
     - name: How Can Applications Go Online And Offline Gracefully In Virtual Machines And Container Scenarios
       writer: 罗健文 李来
       date: 2023/05/09
