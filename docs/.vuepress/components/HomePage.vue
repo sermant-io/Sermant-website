@@ -55,6 +55,9 @@
             <Content slot-key="feature2"></Content>
             <Content slot-key="feature3"></Content>
           </div>
+          <div class = "video-box">
+            <Content slot-key="video"></Content>
+          </div>
         </div>
         <div class="footer">
           <div style="background: #EEEEEE">
@@ -195,6 +198,18 @@ svg {
   margin: 0 45px 20px;
 }
 
+.video-box {
+  justify-content: space-between;
+  margin: auto;
+  text-align: center;
+  height: 500px;
+  width: 60%;
+}
+
+.video-box > div {
+  margin: 0 45px 20px;
+}
+
 .contact-box {
   display: flex;
   justify-content: space-around;
@@ -246,6 +261,17 @@ svg {
 }
 
 @media (max-width: 719px) {
+  .video-box {
+    margin: auto;
+    text-align: left;
+    height: 350px;
+    width: 100%
+  }
+
+  .video-box > div {
+    margin: 0 45px 20px;
+  }
+
   .logo-box {
     width: 19.84rem;
     height: 4.28rem;
