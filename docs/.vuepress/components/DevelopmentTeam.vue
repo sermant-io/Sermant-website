@@ -10,10 +10,7 @@
           <el-card v-for="(item, index) in members" :key="index" class="card">
             <div class="members">
               <div style="padding-top: 0.5rem">
-                <el-avatar
-                  size="large"
-                  :src="$withBase(item.avatar)"
-                ></el-avatar>
+                <el-avatar size="large" :src="$withBase(item.avatar)"></el-avatar>
               </div>
               <div class="member-description">
                 <div>
