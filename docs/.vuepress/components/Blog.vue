@@ -6,16 +6,19 @@
       </dir>
       <div class="content">
         <el-card
-            class="story-card"
-            v-for="(item, index) in currentBlogArr"
-            :key="index"
-            shadow="hover"
-            @click.native="goToDetail(item.path)"
+          class="story-card"
+          v-for="(item, index) in currentBlogArr"
+          :key="index"
+          shadow="hover"
+          @click.native="goToDetail(item.path)"
         >
           <div class="card-content">
             <div class="description">
               <div class="name">{{ item.name }}</div>
-              <div class="writer-box"><span>{{ item.writer }}</span><span>{{ item.date }}</span></div>
+              <div class="writer-box">
+                <span>{{ item.writer }}</span
+                ><span>{{ item.date }}</span>
+              </div>
               <p>{{ item.description }}</p>
             </div>
             <div class="tags">
@@ -27,12 +30,12 @@
         </el-card>
         <div class="block">
           <el-pagination
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-              :current-page.sync="currentPage"
-              :page-size="10"
-              layout="total, prev, pager, next, jumper"
-              :total="total"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page.sync="currentPage"
+            :page-size="10"
+            layout="total, prev, pager, next, jumper"
+            :total="total"
           >
           </el-pagination>
         </div>
@@ -130,8 +133,7 @@ export default {
       return this.$frontmatter.goTo;
     },
   },
-  created() {
-  },
+  created() {},
   mounted() {
     this.total = Array.isArray(this.blog) ? this.blog.length : 0;
     this.loadBlog();
@@ -143,7 +145,7 @@ export default {
     },
     $route() {
       this.$router.go(0);
-    }
+    },
   },
   methods: {
     goToDetail(name) {
@@ -165,8 +167,8 @@ export default {
     },
     loadBlog() {
       this.currentBlogArr = this.blog.slice(
-          (this.currentPage - 1) * 10,
-          this.currentPage * 10
+        (this.currentPage - 1) * 10,
+        this.currentPage * 10
       );
     },
   },
