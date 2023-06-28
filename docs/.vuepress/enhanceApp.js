@@ -34,7 +34,7 @@ export default ({
       locale.use(zh);
     }
     if (to.path.indexOf("/en") === -1 && to.path.indexOf("/zh") === -1) {
-      next("/zh/");
+      next(`${to.path}zh/`);
     } else {
       next();
     }

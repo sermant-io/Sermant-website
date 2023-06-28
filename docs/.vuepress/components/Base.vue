@@ -9,7 +9,7 @@
     <slot name="content"></slot>
   </div>
 </template>
-<style  scoped>
+<style scoped>
 @media (max-width: 719px) {
   .base.sidebar-open .sidebar {
     transform: translateX(0);
@@ -38,9 +38,7 @@ export default {
       sidebarIsOpen: false,
     };
   },
-  computed: {
-    
-  },
+  computed: {},
   mounted() {
     const navbar = document.getElementById("navbar");
     const sidebar = document.getElementById("sidebar");
