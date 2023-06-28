@@ -89,7 +89,7 @@ export default {
     goToDetail(name) {
       if (this.$router.currentRoute.path.indexOf("/zh/") !== -1) {
         this.$router.push(`/zh/story/${name}/`);
-      }else{
+      } else {
         this.$router.push(`/en/story/${name}/`);
       }
     },
