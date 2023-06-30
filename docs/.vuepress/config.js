@@ -1,5 +1,5 @@
 module.exports = {
-  base: `${process.env.VERSIONS_PATH}`,
+  base: `/`,
   head: [
     [
       'link', { rel: 'icon', href: '/img/logo.svg' }
@@ -71,7 +71,6 @@ module.exports = {
                 "plugin/router",
                 "plugin/register-migration",
                 "plugin/springboot-registry",
-                "plugin/visibility",
               ],
             },
             {
@@ -165,7 +164,6 @@ module.exports = {
                 "plugin/router",
                 "plugin/register-migration",
                 "plugin/springboot-registry",
-                "plugin/visibility",
               ],
             },
             {
