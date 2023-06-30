@@ -11,22 +11,28 @@ This document mainly explains common problems encountered when using the Sermant
 - Sermant is extensible. Besides the service governance plugin provided by the framework itself ([Introduction to FlowControl](../plugin/flowcontrol.md), [Introduction to Service Registration](../plugin/service-registry.md)), developers can develop plugins including (data collection, link collection, etc.) according to business requirements.
 
 
-## **What should I do if I want to mount multiple Sermants simultaneously?
+## **How to mount multiple Sermants simultaneously??
 
 - If the host application needs to mount multiple Sermants, please follow the following steps to handle other Sermants.
 
 > Note: It is not recommended to mount multiple Sermants unless necessary
 
 
-### Step 1: Modify the pom.xml files for sermant agentcore core, sermant agentcore implementation, sermant agentcore premain, and sermant common. Use the Shade plugin for class redirection during packaging. The specific modifications are shown in the following figure (please specify the prefix for path resetting backward based on your project).
+### Step 1: Use the hade plugin to redirect the class path
+
+- Modify the pom.xml files for sermant agentcore core, sermant agentcore implementation, sermant agentcore premain, and sermant common. Use the Shade plugin for class redirection during packaging. Please refer to the following figure for specific modifications (please specify the prefix for path resetting backward based on your project)
 
 <MyImage src="/docs-img/package.png"/>
 
-### Step 2: Modify the AgentPremain path in the pom.xml file of the sermant agentcore premain. (Please keep the path prefix consistent with the first step to prevent missing the AgentPremain class)
+### Step 2: Modify the Premain-Class path
+
+- Modify the AgentPremain path in the pom.xml file of the sermant agentcore premain. (Please keep the path prefix consistent with the first step to prevent missing the AgentPremain class)
 
 <MyImage src="/docs-img/premain-classpath.png"/>
 
-### Step 3: Modify the method parameters for obtaining log Logger instances from different Servants to prevent them from using the same Logger instance.
+### Step 3: Modify the Logger instance.
+
+- Modify the method parameters for obtaining log Logger instances in the AgentPremain class to prevent different Servants from using the same Logger instance
 
 <MyImage src="/docs-img/sermant-log.png"/>
 
