@@ -202,6 +202,53 @@
 |   weight   |                     权重值                       |  空  |  是   |
 | tag-inject |                     染色标记                     |  空  |  是   |
 
+上述基于流量和基于标签匹配的路由规则同时配置时，将先筛选满足基于流量的路由规则的实例，然后再筛选满足基于标签匹配的路由规则的实例，也即取二者交集。
+
+- **同标签匹配优先的路由规则**
+同标签优先路由，是指在应用调用服务时，优先调用同标签的服务provider。同标签匹配优先的路由规则是基于标签匹配的路由规则的一个特例。
+
+其规则示例如下：
+
+```yaml
+  ---
+  - kind: routematcher.sermant.io/tag      # kind类型为基于的标签匹配的路由规则
+    description: sameTag                   # description用于描述规则
+    rules:
+      - precedence: 1                      # 规则的优先级，数字越大，优先级越高，匹配成功后不再匹配低优先级规则
+        match:                             
+          tags:                            # tags固定键，表示需匹配消费端实例自身的标签
+            zone:                          # 表示需要匹配的消费端的标签名为zone，该键按照实际标签名进行配置
+              exact: 'hangzhou'            # 配置策略，zone的属性值等于hangzhou，详细配置策略参考配置策略表
+              caseInsensitive: false       # false:不区分大小写（默认）,true:区分大小写。配置为false时，将统一转为大写进行比较
+          policy:
+            triggerThreshold: 20           # 比例阈值（表示20%），同标签provider可用服务实例数占总可用provider数，大于等于该数字则同标签优先
+            minAllInstances: 3             # 全部实例最小可用阈值，全部实例最小可用阈值大于全部provider可用实例数，则同标签优先 
+        route:
+          - tags:
+              zone: CONSUMER_TAG           # 该行key表示被调用服务实例的标签名为zone，CONSUMER_TAG为保留字段，表示路由到zone的值相同的服务实例，即被调用服务实例的zone标签需等于'hangzhou'。该配置方式用于同AZ优先路由等场景
+  ```
+
+  **上述路由规则解释：** zone标签配置为hangzhou的消费端实例在调用下游服务时，根据下发的策略，匹配调用下游实例。
+  1. 若下游无zone标签为hangzhou的实例，则consumer则会在下游的所有实例根据负载均衡策略调用。
+  2. 若下游总实例数为2时（其中只有一个实例带有zone的标签为hangzhou）， 则优先调用zone标签为hangzhou的下游实例（因为全部实例最小可用阈值大于全部provider可用实例数）。
+  3. 若下游总实例数为4时（其中只有一个实例带有zone的标签为hangzhou）， 则优先调用zone标签为hangzhou的下游实例（因为同标签provider可用服务实例数占总可用provider数大于比例阈值）。
+  4. 若下游总实例数为6时（其中只有一个实例带有zone的标签为hangzhou）， 则consumer则会在下游的所有实例根据负载均衡策略调用（因为同标签provider可用服务实例数占总可用provider数小于比例阈值）。
+
+
+  **注意：** 新增配置时，请去掉注释，否则会导致新增失败。
+
+  |    参数键     |                             说明                             | 默认值 | 是否必须 |
+  | :-----------: | :----------------------------------------------------------: | :----: | :------: |
+  |  precedence   |                 优先级，数字越大，优先级越高                 |   空   |    是    |
+  |     match     |                     匹配规则，只支持tags                     |   空   |    否    |
+  | tags(match中) |         match中的tags表示需匹配消费端实例自身的标签          |   空   |    是    |
+  |     exact     |    配置策略， 详细配置策略参考[配置策略表](#配置策略列表)    |   空   |    否    |
+  |     triggerThreshold（policy中）   |    比例阈值，若同标签provider可用服务实例数占总可用provider数大于等于比例阈值，则同标签优先    |   空   |    否    |
+  |     minAllInstances（policy中）     |    全部实例最小可用阈值，全部实例最小可用阈值大于全部provider可用实例数，则同标签优先    |   空   |    否    | 
+  |     route     |            路由规则，包括权重配置以及标签信息配置            |   空   |    是    |
+  | tags(route中) | route中的tags表示下游的标签信息，满足match条件的实例路由到该标签的下游实例 |   空   |    是    |
+
+
 ### 配置策略列表
 
 |  策略名  |  策略值   |                           匹配规则                           |
