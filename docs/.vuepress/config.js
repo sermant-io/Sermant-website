@@ -112,6 +112,7 @@ module.exports = {
                 "faq/framework",
                 "faq/registry",
                 "faq/flowcontrol",
+                "faq/upgrade",
               ],
             },
           ],
