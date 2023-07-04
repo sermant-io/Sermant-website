@@ -19,11 +19,10 @@
 ## 参数配置
 
 ### Sermant-agent配置
-服务可见性插件需要在Sermant-agent中配置黑名单（`agent.config.serviceBlackList`）、配置服务元数据（`service.meta.*`）以及开启服务可见性重连开关(`visibility.service.enableStart`)，具体参考[Sermant-agent使用手册](../user-guide/sermant-agent.md#sermant-agent使用参数配置)。
+服务可见性插件需要在Sermant-agent中配置（`agent.service.visibility.enable=true`）、配置服务元数据（`service.meta.*`），具体参考[Sermant-agent使用手册](../user-guide/sermant-agent.md#sermant-agent使用参数配置)。
 
-- agent.config.serviceBlackList：黑名单配置，控制基础功能是否开启。可见性插件依赖于消息发送功能（插件通过消息发送功能将采集到的信息发送给Backend进行展示）和心跳功能（监听服务是否下线，服务下线时不展示该服务的信息），因此需要删除HeartbeatServiceImpl和NettyGatewayClient，保证插件正常生效。
+- agent.service.visibility.enable：控制服务可见性能力的开关
 - service.meta.*：服务元数据信息。例如：组名、版本号、区域等。服务可见性插件采集元数据信息用于页面展示。
-- visibility.service.enableStart：服务可见性重连开关配置。防止Backend重启后数据丢失。开关为true时，Backend如果重连，会重新给Backend发送当前服务的信息，保证数据完整性。
 
 ### 插件配置
 服务可见性插件需要开启采集开关，可在`${path}/sermant-agent-x.x.x/agent/pluginPackage/service-visibility/config/config.yaml`找到该插件的配置文件，配置如下所示：
@@ -60,8 +59,7 @@ visibility.config:
 在`${path}/sermant-agent-x.x.x/agent/config/config.properties`找到该配置文件，修改的配置项如下所示：
 
 ```yaml
-agent.config.serviceBlackList=              # 黑名单配置，删除配置的HeartbeatServiceImpl和NettyGatewayClient。
-visibility.service.flag=true                # 服务可见性重连开关（用于backend重连时将全部信息发送给backend，防止backend重启后数据丢失）。
+agent.service.visibility.enable=true # 控制服务可见性能力的开关
 ```
 
 - 修改服务可见性插件配置

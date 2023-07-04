@@ -27,7 +27,7 @@ The following architecture diagram illustrates the principle of the architecture
 
 For configuration of the dynamic configuration center, see the corresponding open source dynamic configuration center([ZooKeeper](https://zookeeper.apache.org/releases.html) , [ServiceComb Kie](). We will not go into details in this paper.
 
-First, when configure `agent.config.serviceBlackList` in [Parameters Related to Agent Framework of Sermant-agent User Manual](sermant-agent.md#parameters-related-to-agent-framework) to decide which core services are forbidden to start, it is necessary to remove `com.huaweicloud.sermant.implement.service.dynamicconfig.BufferedDynamicConfigService` to **enable dynamic configuration service**.
+First, configure `agent.service.dynamic.config.enable=true` in [Parameters Related to Agent Framework of Sermant-agent User Manual](sermant-agent.md#parameters-related-to-agent-framework) to **enable dynamic configuration service**.
 
 Second, you can configure parameters for dynamic configuration center of sermant-agent in `agent/config/config.properties` of sermant-agent product package. For specific parameters, please refer to [Parameters Related to Dynamic Configuration Center of Sermant-agent User Manual](sermant-agent.md#parameters-related-to-dynamic-configuration-center).
 

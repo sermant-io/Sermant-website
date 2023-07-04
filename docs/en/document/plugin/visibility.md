@@ -20,11 +20,10 @@ This plug-in completes the collection of interface information of service regist
 
 ### Sermant-agent configuration
 
-The service visibility plug-in needs to configure the blacklist (`agent.config.serviceBlackList`), configure the service metadata (`service.meta.*`) and turn on the service visibility reconnection switch (`visibility.service.flag`) in the Sermant-agent. For details, refer to the [Sermant-agent User Manual](../user-guide/sermant-agent.md#sermant-agent-parameter-configuration)
+The service visibility plug-in needs to configure (`agent.service.visibility.enable=true`), configure the service metadata (`service.meta.*`) in the Sermant-agent. For details, refer to the [Sermant-agent User Manual](../user-guide/sermant-agent.md#sermant-agent-parameter-configuration)
 
-- agent.config.serviceBlackList: blacklist configuration, which controls whether basic functions are enabled. The visibility plug-in depends on the message sending function (the plug-in sends the collected information to the backend for display through the message sending function) and the heartbeat function (monitors whether the service is offline, and does not display the information of the service when the service is offline). Therefore, it is necessary to delete HeartbeatServiceImpl and NettyGatewayClient to ensure that the plug-in takes effect normally.
-- service.meta.*: service metadata information. For example: group name, version number, region, etc. The service visibility plug-in collects metadata information for page display.
-- visibility.service.flag: service visibility reconnection switch configuration. Prevent data loss after backend restart. When the switch is true, if backend reconnects, it will resend the current service information to backend to ensure data integrity.
+- agent.service.visibility.enable: Choose the enable status for visibility service.
+- service.meta.*: Service metadata information. For example: group name, version number, region, etc. The service visibility plug-in collects metadata information for page display.
 
 ### Plug-in configuration
 
@@ -63,8 +62,7 @@ The following will demonstrate how to use the service visibility plug-in.
 Find the configuration file in the `${path}/sermant-agent-x.x.x/agent/config/config.properties`. The modified configuration items are as follows:
 
 ```properties
-agent.config.serviceBlackList=    # Blacklist configuration, delete the configured HeartbeatServiceImpl and NettyGatewayClient.
-visibility.service.flag=true      # Service visibility reconnection switch (used to send all information to backend when backend reconnects to prevent data loss after backend restarts).
+agent.service.visibility.enable=true # Enable status for visibility service.
 ```
 
 - Modify service visibility plug-in configuration
