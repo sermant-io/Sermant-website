@@ -28,7 +28,7 @@
 
 动态配置中心的配置，请参见对应的开源动态配置中心 (如[ZooKeeper](https://zookeeper.apache.org/releases.html) 、[ServiceComb Kie](https://servicecomb.apache.org/cn/release/kie-downloads/)) 。本文中不作详细赘述。
 
-首先，在[Sermant-agent使用手册agent框架相关参数配置](sermant-agent.md#agent框架相关参数)中`agent.config.serviceBlackList` 配置禁止启动的核心服务时，需去除`com.huaweicloud.sermant.implement.service.dynamicconfig.BufferedDynamicConfigService`以**启用动态配置服务**。
+首先，在[Sermant-agent使用手册agent框架相关参数配置](sermant-agent.md#agent框架相关参数)中配置`agent.service.dynamic.config.enable=true`，将**启用动态配置服务**开启。
 
 其次，sermant-agent中对应的动态配置中心参数，对应在sermant-agent的产品包`agent/config/config.properties`中进行配置，具体配置说明请参考[Sermant-agent使用手册动态配置中心相关参数配置](sermant-agent.md#动态配置中心相关参数)。
 

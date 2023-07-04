@@ -27,8 +27,8 @@ public static void premain(String agentArgs, Instrumentation inst);
 |参数键|说明|默认值|是否必须|
 |:-:|:-:|:-:|:-:|
 |appName|应用名称，可用于实例心跳发送等|default|否|
-|instanceName|实例名称，可用于实例心跳发送等|default|否|
-|appType|应用类型，可用于实例心跳发送等|0|否|
+|appType|应用类型，可用于实例心跳发送等|default|否|
+|serviceName|微服务名称，可用于实例心跳发送等|default|否|
 
 入参`agentArgs`中也可以为**启动参数**配置自定义的值。
 
@@ -85,6 +85,9 @@ gateway.nettyIp=127.0.0.1
 gateway.nettyPort=6888
 gateway.nettyConnectTimeout=5000
 gateway.nettyWriteAndReadWaitTime=60000
+gateway.sendInternalTime=10
+gateway.initReconnectInternalTime=5
+gateway.maxReconnectInternalTime=180
 
 # service meta config
 service.meta.application=default
@@ -98,16 +101,16 @@ service.meta.zone=
 
 #### agent框架相关参数
 
-| <span style="display:inline-block;width:100px">参数键</span> |  <span style="display:inline-block;width:200px">说明</span>  | <span style="display:inline-block;width:70px">参数类别</span> | 默认值                                                       | 是否必须 |
-| ------------------------------------------------------------ | :----------------------------------------------------------: | ------------------------------------------------------------ | ------------------------------------------------------------ | :------: |
-| agent.config.isEnhanceBootStrapEnable                        |                增强启动类加载器加载的类的开关                | agent参数                                                    | false                                                        |    否    |
+| <span style="display:inline-block;width:100px">参数键</span> | <span style="display:inline-block;width:200px">说明</span>   | <span style="display:inline-block;width:70px">参数类别</span> | 默认值                                                       | 是否必须 |
+| ------------------------------------------------------------ | :----------------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | :------: |
+| agent.config.isEnhanceBootStrapEnable                        | 增强启动类加载器加载的类的开关                               | agent参数                                                    | false                                                        |    否    |
 | agent.config.ignoredPrefixes                                 | 增强忽略集，该集合中定义的全限定名前缀用于排除增强过程中被忽略的类 | agent参数                                                    | com.huawei.sermant,com.huaweicloud.sermant                   |    否    |
 | agent.config.ignoredInterfaces                               | 增强忽略接口集，该集合中定义的接口用于排除增强过程中被忽略的类 | agent参数                                                    | org.springframework.cglib.proxy.Factory                      |    否    |
 | agent.config.combineStrategy                                 | 插件声明器的合并策略：NONE，不合并；BY_NAME，通过匹配的类名合并；ALL，所有都合并 | agent参数                                                    | ALL                                                          |    否    |
-| agent.config.serviceInjectList                               |                       拦截插件服务名单                       | agent参数                                                    | com.huawei.discovery.service.lb.filter.NopInstanceFilter<br>,com.huawei.discovery.service.lb.DiscoveryManager |    否    |
-| agent.config.isShowEnhanceLogEnable                          |                 是否在增强过程中输出检索日志                 | agent参数                                                    | false                                                        |    否    |
-| agent.config.enhancedClassOutputPath                         |            被增强类的输出路径，如果为空，则不输出            | agent参数                                                    | -                                                            |    否    |
-| agent.config.isOutputEnhancedClasses                         |            是否输出被增强的类的字节码文件            | agent参数                                                    | false                                                            |    否    |
+| agent.config.serviceInjectList                               | 拦截插件服务名单                                             | agent参数                                                    | com.huawei.discovery.service.lb.filter.NopInstanceFilter<br>,com.huawei.discovery.service.lb.DiscoveryManager |    否    |
+| agent.config.isShowEnhanceLogEnable                          | 是否在增强过程中输出检索日志                                 | agent参数                                                    | false                                                        |    否    |
+| agent.config.enhancedClassOutputPath                         | 被增强类的输出路径，如果为空，则不输出                       | agent参数                                                    | -                                                            |    否    |
+| agent.config.isOutputEnhancedClasses                         | 是否输出被增强的类的字节码文件                               | agent参数                                                    | false                                                        |    否    |
 
 #### 核心服务相关参数
 
@@ -135,7 +138,7 @@ service.meta.zone=
 #### 动态配置中心相关参数
 
 | <span style="display:inline-block;width:100px">参数键</span> |<span style="display:inline-block;width:200px">说明</span>|参数类别|                            默认值                            | 是否必须 |
-| :----------------------------------------------------------: | :----------------------------------------------------------: | :------: | -------- | :------: |
+| :----------------------------------------------------------- | :----------------------------------------------------------- | :------: | -------- | :------: |
 | dynamic.config.timeoutValue | 配置中心服务器连接超时时间，单位：ms | 动态配置中心参数 | 30000 | 是 |
 | dynamic.config.defaultGroup | 动态配置默认分组 | 动态配置中心参数 | sermant | 是 |
 | dynamic.config.serverAddress | 配置中心服务器地址，必须形如：{@code host:port[(,host:port)...]} | 动态配置中心参数 | 127.0.0.1:2181 | 是 |
@@ -158,24 +161,27 @@ service.meta.zone=
 | **参数键**         | **说明**               | **参数类别** | **默认值** | **是否必须** |
 | ------------------ | ---------------------- | ------------ | ---------- | :----------: |
 | gateway.nettyIp    | Gateway消息接收地址    | Gateway参数  | 127.0.0.1  |      否      |
-| gateway.nettyPort  | Gateway消息接收端口    | Gateway参数  | 6888       |      否      |
-| gateway.nettyConnectTimeout    | Gateway连接超时时间    | Gateway参数  | 5000  |      否      |
-| gateway.nettyWriteAndReadWaitTime  | Gateway读/写超时时间    | Gateway参数  | 60000       |      否      |
+| gateway.nettyPort  | Gateway消息接收端口    | Gateway参数  | 6888 |      否      |
+| gateway.nettyConnectTimeout    | Gateway连接超时时间    | Gateway参数  | 5000（ms） |      否      |
+| gateway.nettyWriteAndReadWaitTime  | Gateway读/写超时时间    | Gateway参数  | 60000（ms）   |      否      |
+| gateway.sendInternalTime=10 | Gateway消息发送时间间隔 | Gateway参数 | 10（s） | 否 |
+| gateway.initReconnectInternalTime=5 | Gateway重连退避算法初始连接间隔 | Gateway参数 | 5（s） | 否 |
+| gateway.maxReconnectInternalTime=180 | Gateway重连退避算法最大连接间隔 | Gateway参数 | 180（s） | 否 |
 
 #### 服务元数据相关参数
 
-| <span style="display:inline-block;width:100px">参数键</span> |  <span style="display:inline-block;width:200px">说明</span>  |    参数类别    | 默认值  | 是否必须 |
-| :----------------------------------------------------------: | :----------------------------------------------------------: | :------------: | ------- | :------: |
-|                   service.meta.application                   |             应用名称，用于服务注册等服务治理场景             | 服务元数据参数 | default |    否    |
-|                     service.meta.version                     |        服务版本，用于服务注册、标签路由等服务治理场景        | 服务元数据参数 | 1.0.0   |    否    |
-|                     service.meta.project                     |           服务命名空间，用于服务注册等服务治理场景           | 服务元数据参数 | default |    否    |
-|                   service.meta.environment                   |           服务所在环境，用于服务注册等服务治理场景           | 服务元数据参数 | -       |    否    |
-|                      service.meta.zone                       |       服务所在az，用于服务注册、标签路由等服务治理场景       | 服务元数据参数 | -       |    否    |
-|                   service.meta.parameters                    | 服务额外参数信息，以key:value形式配置，逗号分隔多个键值对，用于服务注册、标签路由等服务治理场景 | 服务元数据参数 | -       |    否    |
+| <span style="display:inline-block;width:100px">参数键</span> | <span style="display:inline-block;width:200px">说明</span>   |    参数类别    | 默认值  | 是否必须 |
+| :----------------------------------------------------------- | :----------------------------------------------------------- | :------------: | ------- | :------: |
+| service.meta.application                                     | 应用名称，用于服务注册等服务治理场景                         | 服务元数据参数 | default |    否    |
+| service.meta.version                                         | 服务版本，用于服务注册、标签路由等服务治理场景               | 服务元数据参数 | 1.0.0   |    否    |
+| service.meta.project                                         | 服务命名空间，用于服务注册等服务治理场景                     | 服务元数据参数 | default |    否    |
+| service.meta.environment                                     | 服务所在环境，用于服务注册等服务治理场景                     | 服务元数据参数 | -       |    否    |
+| service.meta.zone                                            | 服务所在az，用于服务注册、标签路由等服务治理场景             | 服务元数据参数 | -       |    否    |
+| service.meta.parameters                                      | 服务额外参数信息，以key:value形式配置，逗号分隔多个键值对，用于服务注册、标签路由等服务治理场景 | 服务元数据参数 | -       |    否    |
 
 #### 插件相关参数
 | <span style="display:inline-block;width:100px">参数键</span> |  <span style="display:inline-block;width:200px">说明</span>  |    参数类别    | 默认值  | 是否必须 |
-| :----------------------------------------------------------: | :----------------------------------------------------------: | :------------: | ------- | :------: |
+| :----------------------------------------------------------- | :----------------------------------------------------------- | :------------- | :------ | :------- |
 |                visibility.service.enableStart                |     服务可见性信息重推开关，当agentCore与Netty重连后会推送全量服务可见性数据 | 插件参数 | false |    否    |
 
 ### Sermant-agent挂载插件配置
@@ -192,6 +198,8 @@ plugins:                 # 可自定义配置默认挂载的插件名称
   - monitor
   - springboot-registry
   - mq-consume-deny
+  - service-removal
+  - service-visibility
 profiles:                # profiles自定义不同场景需配置挂载的插件列表
   cse:
     - flowcontrol
@@ -267,7 +275,7 @@ sermant-agent将从上至下依次检索各项配置值是否通过启动参数�
   env:
   - name: "gateway_nettyIp"
     value: "127.0.0.2"
-``` 
+```
 
 
 
@@ -275,7 +283,7 @@ sermant-agent将从上至下依次检索各项配置值是否通过启动参数�
 
 ### sermant-agent 支持的版本
 
-sermant-agent支持Linux、Windows、Aix操作系统,支持JDK 1.6及以上版本，建议使用JDK 1.8版本。
+sermant-agent支持Linux、Windows，基于JDK 1.8开发，建议使用JDK 1.8版本及以上版本。
 
 - [HuaweiJDK 1.8](https://gitee.com/openeuler/bishengjdk-8) / [OpenJDK 1.8](https://github.com/openjdk/jdk) / [OracleJDK 1.8](https://www.oracle.com/java/technologies/downloads/)
 
@@ -299,7 +307,7 @@ java -javaagent:sermant-agent-x.x.x/agent/sermant-agent.jar=appName=test -jar de
 
 查看demo-application的日志文件开头是否包含以下内容：
 
-```
+```shell
 [INFO] Loading core library... 
 [INFO] Building argument map... 
 [INFO] Loading sermant agent... 
