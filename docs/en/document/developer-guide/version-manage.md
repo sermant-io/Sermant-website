@@ -1,37 +1,34 @@
 # Version Management
 
-This document is about **Version Management of Sermant**.
+This document is about versioning **Sermant**.
 
-**Sermant** manages versions via [versions-maven-plugin](https://github.com/mojohaus/versions-maven-plugin). Common commands are as follows:
+**Sermant** directly use [versions-maven-plugin](https://github.com/mojohaus/versions-maven-plugin) do version management , commonly used commands are as follows:
 
-- Update current version to `${version}`：
+- The updated version number is `${version}`：
   ```shell
   mvn versions:set -DnewVersion=${version}
   ```
-  This command keeps the original `pom` file backup by default.
-  
-- Rollback the version:
+  By default, this command keeps the original `pom` file backup.
+- Rollback version number:
   ```shell
   mvn versions:revert
   ```
-  
-- Commit the new version updated (delete the original `pom` file backup):
+- Commit the new version update, i.e. delete the original `pom` file backup:
   ```shell
   mvn versions:commit
   ```
-  
-- Update current version to `${version}` and commit:
+- Update version to `${version}` and commit:
   ```shell
   mvn versions:set -DnewVersion=${version} -DgenerateBackupPoms=false
   ```
-  This command will not back up the original `pom` file, be careful not to write the wrong version number when executing it.
+  This command will not back up the original `pom` file, be careful not to write the version number wrong when using it.
 
-After executing the above update commands, only the modules with the same version as the top-level module in the project will be modified. If you need to update a module separately, you can specify it with `-pl`, for example:
+In the above update command, only the modules that have the same version as the top-level module in the project will be modified. If you need to update a module separately, you can use the `-pl` flag, for example:
 ```shell
 mvn versions:set -DnewVersion=${version} -DgenerateBackupPoms=false -pl ${module}
 ```
-Where `${module}` can be `${groupId}:${artifactId}`. Or you can input relative path of the module. In the case of multiple modules, please use `','`.
+Where `${module}` can pass `${groupId}:${artifactId}`, can also pass relative path. In the case of multiple modules, use the `','` sign.
 
-For more information on setting versions with the `versions:set` command, refer to [Versions Maven Plugin versions:set](http://www.mojohaus.org/versions-maven-plugin/set-mojo.html).
+More information about the `versions:set` command can be found here [Versions Maven Plugin versions:set](http://www.mojohaus.org/versions-maven-plugin/set-mojo.html)。
 
-Refer to [Versions Maven Plugin Introduction](http://www.mojohaus.org/versions-maven-plugin/index.html) for more `versions-maven-plugin` commands.
+More `versions-maven-plugin` commands can be found in [Versions Maven Plugin Introduction](http://www.mojohaus.org/versions-maven-plugin/index.html)。
