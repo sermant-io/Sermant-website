@@ -31,7 +31,7 @@ public ExecuteContext before(ExecuteContext context) throws Exception {
 }
 ```
 
-After the development is complete, you can follow the [Packaged build](README.md#Packaged build) process when creating the first plug-in, execute the `mvn package` under the project root directory, refer to [Sermant Agent Parameter Configuration](../user-guide/sermant-agent.Md#Parameter Configuration) modification file `agent/config/config.properties`, and refer to [Backend User Manual](../user-guide/backend.md) Starts backend.
+After the development is complete, you can follow the [Packaged build](README.md#Packaged-build) process when creating the first plug-in, execute the `mvn package` under the project root directory, refer to [Sermant Agent Parameter Configuration](../user-guide/sermant-agent.md#Parameter-Configuration) modification file `agent/config/config.properties`, and refer to [Backend User Manual](../user-guide/backend.md) Starts backend.
 
 Finally, access `http://localhost:8900` to view Backend.
 
@@ -39,13 +39,13 @@ Finally, access `http://localhost:8900` to view Backend.
 
 As you can see from the figure, there is currently one instance carrying **Sermant Agent**, and it is running properly, and it carries version `0.0.1` of the `template` plugin.
 
-> **Sermant Agent** sends heartbeats to ** Backend** on a regular basis. **Backend** will renew the heartbeats received from each **Sermant Agent**, and if they exceed the valid time ( can be modified by [Backend Parameter Configuration](../user-guide/backend.md#Backend Parameter Configuration). If a heartbeat has not been reported from a node, the node is set to be lost.
+> **Sermant Agent** sends heartbeats to **Backend** on a regular basis. **Backend** will renew the heartbeats received from each **Sermant Agent**, and if they exceed the valid time ( can be modified by [Backend Parameter Configuration](../user-guide/backend.md#Backend-Parameter-Configuration). If a heartbeat has not been reported from a node, the node is set to be lost.
 
 ## API & Configuration
 
 ### API
 
-** Get The Heartbeat Service **
+**Get The Heartbeat Service**
 
 Get the heartbeat service object, which is used to add additional information to the plug-in heartbeat data. This service is initialized by the framework and can be directly accessed by the plug-in.
 
@@ -53,7 +53,7 @@ Get the heartbeat service object, which is used to add additional information to
 HeartbeatService heartbeatService = ServiceManager.getService(HeartbeatService.class);
 ```
 
-** Add Additional Information About Heartbeat **
+**Add Additional Information About Heartbeat**
 
 Developers can add additional information about the heartbeat to the plugin as follows:
 
@@ -63,7 +63,7 @@ heartbeatService.setExtInfo(() -> Collections.singletonMap("key", "value"));
 
 ### Configuration
 
-Based on the [Project structure](README.md#Project structure) created in the first plugin, the heartbeat configuration is set by modifying the `config/config.properties` file.
+Based on the [Project structure](README.md#Project-structure) created in the first plugin, the heartbeat configuration is set by modifying the `config/config.properties` file.
 
 |Configuration Items|Description|Example Configuration|
 |---|---|---|

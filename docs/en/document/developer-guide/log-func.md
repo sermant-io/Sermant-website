@@ -35,7 +35,7 @@ public ExecuteContext after(ExecuteContext context) throws Exception {
     return context;
 }
 ```
-Once the development is complete, follow the [Packaged build](README.md#Packaged build) process used to create the first plugin, run **mvn package** in the root directory of the project, and run `cd agent/` in it with **Sermant** to run the test app. Run **java -javaagent:sermant-agent.jar -jar Application.jar**
+Once the development is complete, follow the [Packaged build](README.md#Packaged-build) process used to create the first plugin, run **mvn package** in the root directory of the project, and run `cd agent/` in it with **Sermant** to run the test app. Run **java -javaagent:sermant-agent.jar -jar Application.jar**
 
 
 ```shell
@@ -112,7 +112,7 @@ LOGGER.severe("ERROR MESSAGE");
 
 ### Configuration
 
-The logging system provided by **Sermant** is based on the logback logging engine and follows logback's logging configuration style, based on the [Project structure](README.md#Project structure) created in the first plugin, by modifying the `config/logback.xml` to customize the logging logic.
+The logging system provided by **Sermant** is based on the logback logging engine and follows logback's logging configuration style, based on the [Project structure](README.md#Project-structure) created in the first plugin, by modifying the `config/logback.xml` to customize the logging logic.
 
 #### Log Output Configuration
 
@@ -126,7 +126,7 @@ The logging system provided by **Sermant** is based on the logback logging engin
 | log.totalSize  | Used to specify the maximum total capacity of the log file.                               | `${sermant_log_total_size:-20GB}`                            |
 | log.pattern    | Used to specify the format of the output log.                                    | `%d{yyyy-MM-dd HH:mm:ss.SSS} [%le] [%C] [%M:%L] [%thread] %m%n` |
 
-> Note: All configuration values support reading the configuration from an environment variable, simply configure it as `${environment variable name:-default value}`. The format of the output log is configured in [Log Format Configuration](#Log Format Configuration).
+> Note: All configuration values support reading the configuration from an environment variable, simply configure it as `${environment variable name:-default value}`. The format of the output log is configured in [Log Format Configuration](#Log-Format-Configuration).
 
 #### Log Format Configuration
 

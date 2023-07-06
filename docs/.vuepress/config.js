@@ -176,10 +176,6 @@ module.exports = {
               sidebarDepth: 1,
               children: [
                 "developer-guide/",
-                "developer-guide/bytecode-enhancement",
-                "developer-guide/package-structure",
-                "developer-guide/plugin-configuration",
-                "developer-guide/dynamic-config-func",
                 "developer-guide/heartbeat-func",
                 "developer-guide/trace-tracking-func",
                 "developer-guide/log-func",

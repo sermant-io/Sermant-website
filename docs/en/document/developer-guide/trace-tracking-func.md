@@ -151,7 +151,7 @@ public ExecuteContext onThrow(ExecuteContext context) throws Exception {
 
 > `handleConsume` in `SimulateProvider` is the service provider execution unit of the `SimulateServer` node in the distributed system. So here use TracingService: : onProviderSpanStart to mark the execution unit, and through ExtractService defines the ability to link information extracted from communication carrier.
 
-Once the development is complete, follow the [Packaged build](README.md#Packaged build) process used to create the first plugin, run **mvn package** in the root directory of the project, and run `cd agent/` in it with **Sermant** to run the test app. Run **java -javaagent:sermant-agent.jar -jar Application.jar**
+Once the development is complete, follow the [Packaged build](README.md#Packaged-build) process used to create the first plugin, run **mvn package** in the root directory of the project, and run `cd agent/` in it with **Sermant** to run the test app. Run **java -javaagent:sermant-agent.jar -jar Application.jar**
 
 ```shell
 $ java -javaagent:sermant-agent.jar -jar Application.jar
@@ -274,11 +274,11 @@ The `SpanId` is a very important data in the link tag data, which indicates the 
 
 <MyImage src="/docs-img/span-rule.png"></MyImage>
 
-Service A is the entry point of the link with a `SpanId` of 0, where a `TraceId` of the link is generated. Focusing on the `SpanId` of service B and service C, the most important thing is the ** last two values ** :
+Service A is the entry point of the link with a `SpanId` of 0, where a `TraceId` of the link is generated. Focusing on the `SpanId` of service B and service C, the most important thing is the **last two values** :
 
-- The last two bits of service B are 0-0, where the first one indicates that service B was the ** first ** invocation of service A, and the second one indicates that this information belongs to the first execution unit in service B.
+- The last two bits of service B are 0-0, where the first one indicates that service B was the **first** invocation of service A, and the second one indicates that this information belongs to the first execution unit in service B.
 
-- The last two bits of the C service are 1-0, where the first one indicates that the C service is the ** second ** invocation of the A service, and the second one indicates that the information belongs to the first execution unit in the C service.
+- The last two bits of the C service are 1-0, where the first one indicates that the C service is the **second** invocation of the A service, and the second one indicates that the information belongs to the first execution unit in the C service.
 
 Except for the link information of the execution unit at the entrance of the distributed system, which does not have `ParentSpanId`, the link information of other execution units is available, and the user can clearly know who his upstream execution unit is. Through this relationship, the complete link information can be connected in series eventually.
 
