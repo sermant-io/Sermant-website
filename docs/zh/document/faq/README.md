@@ -2,6 +2,8 @@
 
 本文档主要说明在使用Sermant时遇到的常见问题。
 
+[Sermant性能基准测试](./performance.md): 提供了Sermant性能基准测试结果(持续更新)。
+
 [框架常见问题](./framework.md)：记录了框架使用的常见问题。
 
 [服务注册常见问题](./registry.md)：记录了服务注册插件使用的常见问题。
