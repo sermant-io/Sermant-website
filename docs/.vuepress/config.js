@@ -109,6 +109,7 @@ module.exports = {
               sidebarDepth: 1,
               children: [
                 "faq/",
+                "faq/performance",
                 "faq/framework",
                 "faq/registry",
                 "faq/flowcontrol",
