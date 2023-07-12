@@ -3,7 +3,8 @@
 This document addresses the copyright of **third party** source code or binary packages involved in the development process
 
 > **Note:**
-> Sermant currently used protocol for the Apache 2.0 License (http://www.apache.org/licenses/LICENSE-2.0.html), the License has the following requirements:
+> Sermant currently used protocol for the [Apache 2.0 License](http://www.apache.org/licenses/LICENSE-2.0.html), the License has the following requirements:
+>
 > 1. An Apache Licence is required for users of the code.
 > 2. If you make a change to the code, you need to explain it in the file that was changed.
 > 3. Extensions (modifications and code derived from source code) are required to include licenses, trademarks, patent claims, and other aspects of the original code as specified by the original author.

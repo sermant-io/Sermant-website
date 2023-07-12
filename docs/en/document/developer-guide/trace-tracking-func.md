@@ -21,9 +21,9 @@ This development example is based on the project created in the [Create your fir
 
 In order to mark the link completely, it is necessary to mark the key execution units in the distributed system. In this example, two types are mainly involved:
 
--Link marking of the service provider execution unit: the entry point of each node of the distributed system, where the context information of the current link needs to be extracted through the communication carrier in the distributed system. If there is no link context information, it is marked as a new link.
+- Link marking of the service provider execution unit: the entry point of each node of the distributed system, where the context information of the current link needs to be extracted through the communication carrier in the distributed system. If there is no link context information, it is marked as a new link.
 
--Link marking of the service consumer execution unit: the exit of each node of the distributed system, here it is necessary to put the tag of the link data into the communication carrier of the distributed system to maintain the continuity of the link.
+- Link marking of the service consumer execution unit: the exit of each node of the distributed system, here it is necessary to put the tag of the link data into the communication carrier of the distributed system to maintain the continuity of the link.
 
 Based on the above basis, we mark the links for the service invocation process in the project:
 

@@ -14,7 +14,7 @@ The **Sermant** reports the metadata of the service instance to **Backend** thro
 
 The development based on heartbeat capability is mainly used to allow plug-in developers to report a small amount of very important information of plug-ins through heartbeat, and can be observed in the monitoring panel. This development example is based on the project created in the documentation for [Create your first plugin](README.md).
 
-In engineering `template\template-plugin` module under `com.Huaweicloud.Sermant.Template.TemplateDeclarer` class add variable `heartbeatService` framework for the heart service, This parameter is used to set additional heartbeat information：
+In engineering `template\template-plugin` module under `com.huaweicloud.sermant.template.TemplateDeclarer` class add variable `heartbeatService` framework for the heart service, This parameter is used to set additional heartbeat information：
 
 ```java
 HeartbeatService heartbeatService = ServiceManager.getService(HeartbeatService.class);
@@ -39,7 +39,7 @@ Finally, access `http://localhost:8900` to view Backend.
 
 As you can see from the figure, there is currently one instance carrying **Sermant Agent**, and it is running properly, and it carries version `0.0.1` of the `template` plugin.
 
-> **Sermant Agent** sends heartbeats to **Backend** on a regular basis. **Backend** will renew the heartbeats received from each **Sermant Agent**, and if they exceed the valid time ( can be modified by [Backend Parameter Configuration](../user-guide/backend.md#Backend-Parameter-Configuration). If a heartbeat has not been reported from a node, the node is set to be lost.
+> **Sermant Agent** sends heartbeats to **Backend** on a regular basis. **Backend** will renew the heartbeats received from each **Sermant Agent**, and if they exceed the valid time (can be modified by [Backend Parameter Configuration](../user-guide/backend.md#Backend-Parameter-Configuration)). If a heartbeat has not been reported from a node, the node is set to be lost.
 
 ## API & Configuration
 
