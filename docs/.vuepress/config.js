@@ -1,5 +1,5 @@
 module.exports = {
-  base: `${process.env.VERSIONS_PATH}`,
+  base: `${process.env.VERSIONS_PATH || "/"}`,
   head: [
     [
       'link', { rel: 'icon', href: '/img/logo.svg' }
@@ -72,6 +72,7 @@ module.exports = {
                 "plugin/register-migration",
                 "plugin/springboot-registry",
                 "plugin/visibility",
+                "plugin/removal",
               ],
             },
             {
@@ -109,6 +110,7 @@ module.exports = {
               sidebarDepth: 1,
               children: [
                 "faq/",
+                "faq/performance",
                 "faq/framework",
                 "faq/registry",
                 "faq/flowcontrol",
@@ -167,6 +169,7 @@ module.exports = {
                 "plugin/register-migration",
                 "plugin/springboot-registry",
                 "plugin/visibility",
+                "plugin/removal",
               ],
             },
             {
@@ -176,21 +179,10 @@ module.exports = {
               sidebarDepth: 1,
               children: [
                 "developer-guide/",
-                {
-                  title: "Plugin development",
-                  path: "",
-                  collapsable: true,
-                  sidebarDepth: 1,
-                  children: [
-                    "developer-guide/plugin/",
-                    "developer-guide/plugin/log-func",
-                    "developer-guide/plugin/dynamic-config-func",
-                    "developer-guide/plugin/heartbeat-func",
-                    "developer-guide/plugin/trace-tracking-func",
-                  ]
-                },
-                "developer-guide/third-party-copyright",
-                "developer-guide/version-manage",
+                "developer-guide/bytecode-enhancement",
+                "developer-guide/package-structure",
+                "developer-guide/plugin-configuration",
+                "developer-guide/dynamic-config-func",
               ],
             },
             {
