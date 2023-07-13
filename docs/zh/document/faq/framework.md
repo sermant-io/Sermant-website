@@ -4,7 +4,7 @@
 
 ## 启动参数appName是什么参数?
 
-- `appName`表示宿主应用的名称，多个实例`appName`可以相同，`实例id`不同。
+- `appName`表示宿主应用的名称，多个实例`appName`可以相同，`实例id`不同。(`appName`不再为必填参数)
 
 ## Sermant提供哪些方面的服务治理插件?
 
