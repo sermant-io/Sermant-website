@@ -27,8 +27,11 @@ public static void premain(String agentArgs, Instrumentation inst);
 |参数键|说明|默认值|是否必须|
 |:-:|:-:|:-:|:-:|
 |appName|应用名称，可用于实例心跳发送等|default|否|
-|appType|应用类型，可用于实例心跳发送等|default|否|
 |serviceName|微服务名称，可用于实例心跳发送等|default|否|
+
+> 应用：完成某项完整业务场景的软件系统。应用一般由多个微服务组成，应用里面的微服务能够相互发现和调用。
+>
+> 微服务：微服务是业务概念，即提供某种服务的某个进程。每一个服务都具有自主运行的业务功能，对外开放不受语言限制的API (最常用的是HTTP)。
 
 入参`agentArgs`中也可以为**启动参数**配置自定义的值。
 
@@ -99,43 +102,48 @@ service.meta.zone=
 
 其中涉及的参数与sermant-agent、Backend、动态配置中心等有关联，具体参数配置参考下面说明。
 
-#### agent框架相关参数
+#### 字节码增强参数
 
 | <span style="display:inline-block;width:100px">参数键</span> | <span style="display:inline-block;width:200px">说明</span>   | <span style="display:inline-block;width:70px">参数类别</span> | 默认值                                                       | 是否必须 |
 | ------------------------------------------------------------ | :----------------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | :------: |
-| agent.config.isEnhanceBootStrapEnable                        | 增强启动类加载器加载的类的开关                               | agent参数                                                    | false                                                        |    否    |
-| agent.config.ignoredPrefixes                                 | 增强忽略集，该集合中定义的全限定名前缀用于排除增强过程中被忽略的类 | agent参数                                                    | com.huawei.sermant,com.huaweicloud.sermant                   |    否    |
-| agent.config.ignoredInterfaces                               | 增强忽略接口集，该集合中定义的接口用于排除增强过程中被忽略的类 | agent参数                                                    | org.springframework.cglib.proxy.Factory                      |    否    |
+| agent.config.isEnhanceBootStrapEnable                        | 用于控制字节码增强的重转换开关，配置为true则可支持重转换     | agent参数                                                    | false                                                        |    否    |
+| agent.config.ignoredPrefixes                                 | 以集合中元素为前缀的类，不会被字节码增强                     | agent参数                                                    | com.huawei.sermant,com.huaweicloud.sermant                   |    否    |
+| agent.config.ignoredInterfaces                               | 该集合中定义的接口实现，不会被字节码增强                     | agent参数                                                    | org.springframework.cglib.proxy.Factory                      |    否    |
 | agent.config.combineStrategy                                 | 插件声明器的合并策略：NONE，不合并；BY_NAME，通过匹配的类名合并；ALL，所有都合并 | agent参数                                                    | ALL                                                          |    否    |
-| agent.config.serviceInjectList                               | 拦截插件服务名单                                             | agent参数                                                    | com.huawei.discovery.service.lb.filter.NopInstanceFilter<br>,com.huawei.discovery.service.lb.DiscoveryManager |    否    |
-| agent.config.isShowEnhanceLogEnable                          | 是否在增强过程中输出检索日志                                 | agent参数                                                    | false                                                        |    否    |
-| agent.config.enhancedClassOutputPath                         | 被增强类的输出路径，如果为空，则不输出                       | agent参数                                                    | -                                                            |    否    |
-| agent.config.isOutputEnhancedClasses                         | 是否输出被增强的类的字节码文件                               | agent参数                                                    | false                                                        |    否    |
+| agent.config.serviceInjectList                               | 指定插件服务中允许被字节码增强的类（插件服务中的类默认不允许被字节码增强）                       | agent参数                                                    | com.huawei.discovery.service.lb.filter.NopInstanceFilter<br>,com.huawei.discovery.service.lb.DiscoveryManager |    否    |
+| agent.config.isShowEnhanceLogEnable                          | 用于控制Byte-Buddy日志输出的开关                             | agent参数                                                    | false                                                        |    否    |
+| agent.config.enhancedClassOutputPath                         | 指定被增强类的字节码的输出路径                               | agent参数                                                    | -                                                            |    否    |
+| agent.config.isOutputEnhancedClasses                         | 用于控制被增强的类的字节码文件输出的开关                     | agent参数                                                    | false                                                        |    否    |
 
-#### 核心服务相关参数
+#### 核心服务开关
+
+下述配置用于控制框架提供的各核心服务的开启和关闭：
 
 | **参数键**         | **说明**               | **参数类别** | **默认值** | **是否必须** |
 | ------------------ | ---------------------- | ------------ | ---------- | :----------: |
-| agent.service.heartbeat.enable | 心跳开关 | 核心服务参数  | false      |      否      |
-| agent.service.gateway.enable    | 网关开关    | 核心服务参数  | false  |      否      |
-| agent.service.tracing.enable  | 链路开关    | 核心服务参数  | false       |      否      |
+| agent.service.heartbeat.enable | 心跳服务开关 | 核心服务参数  | false      |      否      |
+| agent.service.gateway.enable    | 网关服务开关  | 核心服务参数  | false  |      否      |
+| agent.service.tracing.enable  | 链路服务开关  | 核心服务参数  | false       |      否      |
 | agent.service.visibility.enable | 服务可见性开关 | 核心服务参数  | false      |      否      |
 | agent.service.inject.enable    |  spring类注入开关   | 核心服务参数  | true  |      否      |
 | agent.service.monitor.enable  | 监控开关    | 核心服务参数  | false       |      否      |
-| agent.service.dynamic.config.enable  | 动态配置开关    | 核心服务参数  | true       |      否      |
+| agent.service.dynamic.config.enable  | 动态配置服务开关  | 核心服务参数  | true       |      否      |
 
+#### 事件上报参数
 
-#### 事件上报相关参数
+下述配置用于控制框架提供的事件系统：
 
 | **参数键**         | **说明**               | **参数类别** | **默认值** | **是否必须** |
 | ------------------ | ---------------------- | ------------ | ---------- | :----------: |
-| event.enable | 事件开关 | 事件上报参数  | false      |      否      |
+| event.enable | 事件控制开关，开启后事件将会上报至[Backend](backend.md) | 事件上报参数  | false      |      否      |
 | event.offerWarnLog    | 上报Warn日志开关    | 事件上报参数  | false  |      否      |
 | event.offerErrorLog  | 上报Error日志开关    | 事件上报参数  | false       |      否      |
 | event.sendInterval    | 事件发送时间间隔(ms)    | 事件上报参数  | 30000  |      否      |
 | event.offerInterval  | 事件记录时间间隔(ms),在一定时间内重复事件压缩    | 事件上报参数  |   300000     |      否      |
 
-#### 动态配置中心相关参数
+#### 动态配置中心参数
+
+下述配置为控制与动态配置中心连接时的可自定义属性：
 
 | <span style="display:inline-block;width:100px">参数键</span> |<span style="display:inline-block;width:200px">说明</span>|参数类别|                            默认值                            | 是否必须 |
 | :----------------------------------------------------------- | :----------------------------------------------------------- | :------: | -------- | :------: |
@@ -150,13 +158,15 @@ service.meta.zone=
 | dynamic.config.privateKey | 动态配置中心ZOOKEEPER：用于对密码加解密的密钥 | 动态配置中心参数 | - | 否 |
 | dynamic.config.enableAuth | 动态配置中心ZOOKEEPER：是否开启配置中心授权，开启后需验证用户名密码 | 动态配置中心参数 | false | 否 |
 
-#### 心跳相关参数
+#### 心跳服务参数
 
 | **参数键**         | **说明**               | **参数类别** | **默认值** | **是否必须** |
 | ------------------ | ---------------------- | ------------ | ---------- | :----------: |
 | heartbeat.interval | 心跳发送间隔，单位：ms | Heartbeat参数  | 30000      |      否      |
 
-#### 网关相关参数
+#### 网关服务参数
+
+下述配置用于控制在通过网关服务和Backend交互时的可自定义属性：
 
 | **参数键**         | **说明**               | **参数类别** | **默认值** | **是否必须** |
 | ------------------ | ---------------------- | ------------ | ---------- | :----------: |
@@ -168,7 +178,7 @@ service.meta.zone=
 | gateway.initReconnectInternalTime=5 | Gateway重连退避算法初始连接间隔 | Gateway参数 | 5（s） | 否 |
 | gateway.maxReconnectInternalTime=180 | Gateway重连退避算法最大连接间隔 | Gateway参数 | 180（s） | 否 |
 
-#### 服务元数据相关参数
+#### 服务元数据参数
 
 | <span style="display:inline-block;width:100px">参数键</span> | <span style="display:inline-block;width:200px">说明</span>   |    参数类别    | 默认值  | 是否必须 |
 | :----------------------------------------------------------- | :----------------------------------------------------------- | :------------: | ------- | :------: |
@@ -178,11 +188,6 @@ service.meta.zone=
 | service.meta.environment                                     | 服务所在环境，用于服务注册等服务治理场景                     | 服务元数据参数 | -       |    否    |
 | service.meta.zone                                            | 服务所在az，用于服务注册、标签路由等服务治理场景             | 服务元数据参数 | -       |    否    |
 | service.meta.parameters                                      | 服务额外参数信息，以key:value形式配置，逗号分隔多个键值对，用于服务注册、标签路由等服务治理场景 | 服务元数据参数 | -       |    否    |
-
-#### 插件相关参数
-| <span style="display:inline-block;width:100px">参数键</span> |  <span style="display:inline-block;width:200px">说明</span>  |    参数类别    | 默认值  | 是否必须 |
-| :----------------------------------------------------------- | :----------------------------------------------------------- | :------------- | :------ | :------- |
-|                visibility.service.enableStart                |     服务可见性信息重推开关，当agentCore与Netty重连后会推送全量服务可见性数据 | 插件参数 | false |    否    |
 
 ### Sermant-agent挂载插件配置
 

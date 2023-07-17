@@ -7,20 +7,6 @@ Backend与Sermant配合使用。Sermant挂载在宿主应用启动后作为数�
 > 注：Backend为**非必要组件**，用户可按需部署。
 
 ## 参数配置
-
-### sermant-agent参数配置
-
-参考[Sermant-agent使用手册](sermant-agent.md)，设置以下内容：
-- 参考[核心服务相关参数配置](sermant-agent.md#核心服务相关参数)说明，开启以下服务：
-  - 设置`agent.service.heartbeat.enable`值为`true`**开启心跳服务**
-  - 设置`agent.service.gateway.enable`值为`true`**开启网关服务**
-- 参考[事件上报相关参数](sermant-agent.md#事件上报相关参数)，设置以下参数：
-  - 设置`event.enable`值为`true`**开启事件上报**
-  - 设置`event.offerWarnLog`值为`true`**上报warn级别日志**
-  - 设置`event.offerErrorLog`值为`true`**上报error级别日志**
-- 参考[心跳相关参数配置](sermant-agent.md#心跳相关参数)，根据需要设置心跳发送间隔
-- 参考[Gateway相关参数配置](sermant-agent.md#网关相关参数)，根据实际环境设置Gateway参数
-
 ### Backend参数配置
 
 Backend参数可在编译打包前通过`sermant-backend/src/main/resources/application.properties`配置文件进行修改，同时也支持在jar包启动前通过-D参数或环境变量的方式进行配置。
@@ -38,6 +24,24 @@ Backend参数可在编译打包前通过`sermant-backend/src/main/resources/appl
 | database.password     | redis数据库密码 | null     | 否           |
 | database.event.expire     | 事件过期时间，单位：天 | 7     | 否           |
 | webhook.eventpush.level     | webhook事件推送级别，支持EMERGENCY,IMPORTANT,NORMAL三种级别;支持飞书和钉钉两种webhook | EMERGENCY     | 否           |
+
+
+### sermant-agent参数配置
+
+Backend提供的能力，需要依赖sermant-agent上报的数据，所以在使用Backend时，需要先配置sermant-agent中用于连接Backend、开启数据上报的相关参数：
+
+参考[Sermant-agent使用手册](sermant-agent.md)，设置以下内容：
+- 参考[核心服务相关参数配置](sermant-agent.md#核心服务相关参数)说明，开启以下服务：
+  - 设置`agent.service.heartbeat.enable`值为`true`**开启心跳服务**
+  - 设置`agent.service.gateway.enable`值为`true`**开启网关服务**
+- 参考[事件上报相关参数](sermant-agent.md#事件上报相关参数)，设置以下参数：
+  - 设置`event.enable`值为`true`**开启事件上报**
+  - 设置`event.offerWarnLog`值为`true`**上报warn级别日志**
+  - 设置`event.offerErrorLog`值为`true`**上报error级别日志**
+- 参考[心跳相关参数配置](sermant-agent.md#心跳相关参数)，根据需要设置心跳发送间隔
+- 参考[Gateway相关参数配置](sermant-agent.md#网关相关参数)，根据实际环境设置Gateway参数
+
+
 
 ## 支持版本
 
@@ -145,6 +149,6 @@ java -Dwebhook.eventpush.level=NORMAL -jar sermant-backend-1.0.0.jar
 
 - **事件自动刷新**
   
-  在**事件管理 -> 监测**页面，点击下图红色方框自动刷新按钮，开启事件自动刷新
+  在**事件管理 -> 监测**页面，点击下图红色方框自动刷新按钮，开启事件自动刷新（开启后将会定时自动获取最新事件，再次点击按钮关闭，或在查看事件列表时自动关闭）
 
   <MyImage src="/docs-img/backend/backend-event-auto.png"></MyImage>
