@@ -13,15 +13,24 @@ blogArr:
       - Microservice Governance
       - Proxyless Architecture
 
-    - name: 【TOP】Video of GOTC 2023 Sermant Flash Speach
-      writer: 李来
-      date: 2023/05/30
-      description: 'Sermant was invited to participate in the 2023 Global Open-source Technology Conference and share the exploration of cloud-native microservice governance technology'
-      path: 'https://www.bilibili.com/video/BV1Gh4y1Z7eN/?vd_source=f7eed9246d1cf38f26214743df518b2d'
+    - name: 【TOP】Video of Sermant's Speach in Cloud Native Summit of OAGS 2023 
+      writer: 杨奕
+      date: 2023/06/13
+      description: 'Sermant was invited to participate in Cloud Native Summit of 2023 OAGS and share the exploration of cloud-native microservice governance technology'
+      path: 'https://www.bilibili.com/video/BV1Dj411S7v3'
       tags:
-      - 云原生
-      - 微服务治理
-      - 无代理架构
+      - Cloud Native
+      - Microservice Governance
+      - Proxyless Architecture
+
+    - name: Bytecode Enhancement Frequently Asked Questions Series (2) | Compatibility Dilemma: How to make different bytecode enhancement frameworks coexist harmoniously?
+      writer: 张豪鹏
+      date: 2023/08/03
+      description: 'How to reduce mutual influence when using different bytecode enhanced frameworks at the same time'
+      path: 'https://my.oschina.net/u/6410005/blog/10092734'
+      tags:
+      - Bytecode Enhancement
+      - JavaAgent
 
     - name: How Can Applications Go Online And Offline Gracefully In Virtual Machines And Container Scenarios
       writer: 罗健文 李来
@@ -50,7 +59,7 @@ blogArr:
       tags:
       - JavaAgent
       - Performance Test Optimization
-    - name: Remember the class enhancement conflict problem and analysis of multiple JavaAgents used at the same time
+    - name: Bytecode Enhancement Frequently Asked Questions Series (1) | A summary of the class enhancement conflict problem and analysis of multiple JavaAgents used at the same time
       writer: 李来
       date: 2022/11/10 
       description: 'JavaAgent technology is often used to intercept and modify bytecodes before loading class files, so as to achieve non-intrusive enhancements to Java applications.'

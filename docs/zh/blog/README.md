@@ -13,15 +13,24 @@ blogArr:
       - 微服务治理
       - 无代理架构
 
-    - name: 【置顶】GOTC 2023 Sermant快闪演讲视频回顾
-      writer: 李来
-      date: 2023/05/30
-      description: 'Sermant受邀参与2023年GOTC全球开源技术峰会快闪演讲并分享云原生微服务治理技术的探索'
-      path: 'https://www.bilibili.com/video/BV1Gh4y1Z7eN/?vd_source=f7eed9246d1cf38f26214743df518b2d'
+    - name: 【置顶】2023年OAGS云原生分论坛Sermant演讲视频回顾
+      writer: 杨奕
+      date: 2023/06/13
+      description: 'Sermant受邀参与2023年OAGS开放原子全球开源峰会云原生分论坛分享云原生微服务治理技术的探索'
+      path: 'https://www.bilibili.com/video/BV1Dj411S7v3'
       tags:
       - 云原生
       - 微服务治理
       - 无代理架构
+
+    - name: 字节码增强常见问题系列（二）| 兼容性难题：如何让不同字节码增强框架和谐共存？
+      writer: 张豪鹏
+      date: 2023/08/03
+      description: '如何在同时使用不同字节码的增强框架时减少互相之间的影响'
+      path: 'https://my.oschina.net/u/6410005/blog/10092734'
+      tags:
+      - 字节码增强
+      - JavaAgent
 
     - name: 应用在虚机和容器场景下如何优雅上下线
       writer: 罗健文 李来
@@ -50,7 +59,7 @@ blogArr:
       tags:
       - JavaAgent
       - 性能测试优化
-    - name: 记一次多个JavaAgent同时使用的类增强冲突问题及分析
+    - name: 字节码增强常见问题系列（一）| 记一次多个JavaAgent同时使用的类增强冲突问题及分析
       writer: 李来
       date: 2022/11/10 
       description: 'JavaAgent技术常被用于加载class文件之前进行拦截并修改字节码，以实现对Java应用的非侵入式增强。'
