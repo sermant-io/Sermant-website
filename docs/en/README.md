@@ -34,7 +34,7 @@ Sermant is an open-source project from Huawei Cloud under Apache License 2.0.
 
 ::: slot Vision
 ## Vision
-Sermant's vision is to leverage JavaAgent to provide enhanced service governance capabilities to host applications to address service governance issues in large-scale microservice architectures, and to build a plugin development ecosystem to help developers more easily develop service governance capabilities without interfering with business code.
+Sermant (also known as Java-mesh) is a proxyless service mesh based on Java bytecode enhancement technology. It utilizes Java bytecode enhancement to provide service governance capabilities to applications, addressing service governance issues in large-scale microservices architectures. Sermant's vision also includes building a plugin development ecosystem to assist developers in more easily creating service governance functionalities without interfering with the application's source code.
 :::
 
 ::: slot footer
