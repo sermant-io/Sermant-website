@@ -3,16 +3,6 @@ layout: Blog
 name: '博客'
 goTo: '直接前往'
 blogArr:
-    - name: 【置顶】云原生微服务治理技术朝无代理架构的演进之路
-      writer: 杨奕
-      date: 2022/11/29
-      description: '一种新的基于Javaagent技术的新一代无代理架构的服务治理技术。'
-      path: 'https://bbs.huaweicloud.com/blogs/384776'
-      tags:
-      - 云原生
-      - 微服务治理
-      - 无代理架构
-
     - name: 【置顶】2023年OAGS云原生分论坛Sermant演讲视频回顾
       writer: 杨奕
       date: 2023/06/13

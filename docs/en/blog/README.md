@@ -3,16 +3,6 @@ layout: Blog
 name: 'Blog'
 goTo: 'GoTo'
 blogArr:
-    - name: 【TOP】The Evolution Road of Cloud Native Microservice Governance Technology to Agentless Architecture
-      writer: 杨奕
-      date: 2022/11/29
-      description: 'A new generation of agentless architecture service governance technology based on Javaagent technology.'
-      path: 'https://bbs.huaweicloud.com/blogs/384776'
-      tags:
-      - Cloud Native
-      - Microservice Governance
-      - Proxyless Architecture
-
     - name: 【TOP】Video of Sermant's Speach in Cloud Native Summit of OAGS 2023 
       writer: 杨奕
       date: 2023/06/13
