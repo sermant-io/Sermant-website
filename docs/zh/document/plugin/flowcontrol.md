@@ -146,7 +146,7 @@ flow.control.plugin:
   以zookeeper为例，当使用`zookeeper`配置中心设置限流规则时，结合上述`group`和`key`的说明，需要在`zookeeper`中创建节点`/service=${spring.applicaton.name}/servicecomb.rateLimiting.${sceneName}`,节点内容为限流规则，如下述yaml内容：
   
   ```yaml
-  imitRefreshPeriod: 1000
+  limitRefreshPeriod: 1000
   rate: 2
   ```
   **上述限流规则解释：** 若1秒内超过2个请求，即触发流控效果。
