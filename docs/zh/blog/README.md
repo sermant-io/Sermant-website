@@ -13,11 +13,20 @@ blogArr:
       - 微服务治理
       - 无代理架构
 
+    - name: Sermant类隔离架构解析——解决JavaAgent场景类冲突的实践
+      writer: 栾文飞
+      date: 2023/09/07
+      description: 'Sermant设计了全面的类隔离架构以避免类冲突问题'
+      path: 'https://bbs.huaweicloud.com/blogs/410414'
+      tags:
+      - 类隔离
+      - JavaAgent
+
     - name: 字节码增强常见问题系列（二）| 兼容性难题：如何让不同字节码增强框架和谐共存？
       writer: 张豪鹏
       date: 2023/08/03
       description: '如何在同时使用不同字节码的增强框架时减少互相之间的影响'
-      path: 'https://my.oschina.net/u/6410005/blog/10092734'
+      path: 'https://bbs.huaweicloud.com/blogs/407641'
       tags:
       - 字节码增强
       - JavaAgent
@@ -41,22 +50,35 @@ blogArr:
       - 云原生
       - 微服务改造
       - 无代理架构
+
     - name: JavaAgent 场景性能测试分析优化经验分享
       writer: 栾文飞
       date: 2023/03/03
       description: '在 JavaAgent 场景如何进行更好的性能测试优化及在 JavaAgent 下需要着重注意的性能陷阱。'
-      path: 'https://my.oschina.net/u/6410005/blog/8392949'
+      path: 'https://bbs.huaweicloud.com/blogs/393889'
       tags:
       - JavaAgent
       - 性能测试优化
+
+    - name: 云原生微服务治理技术朝无代理架构的演进之路
+      writer: 杨奕
+      date: 2022/11/29
+      description: '一种新的基于Javaagent技术的新一代无代理架构的服务治理技术。'
+      path: 'https://bbs.huaweicloud.com/blogs/384776'
+      tags:
+      - 云原生
+      - 微服务治理
+      - 无代理架构
+
     - name: 字节码增强常见问题系列（一）| 记一次多个JavaAgent同时使用的类增强冲突问题及分析
       writer: 李来
       date: 2022/11/10 
       description: 'JavaAgent技术常被用于加载class文件之前进行拦截并修改字节码，以实现对Java应用的非侵入式增强。'
-      path: 'https://zhuanlan.zhihu.com/p/582106446'
+      path: 'https://bbs.huaweicloud.com/blogs/382800'
       tags:
       - JavaAgent
       - 类增强
+
     - name: 零代码修改，教你Spring Cloud应用轻松接入CSE
       writer: 彭煜熠
       date: 2022/07/27
@@ -65,11 +87,12 @@ blogArr:
       tags:
       - SpringCloud
       - CSE
+
     - name: 看到这个应用上下线方式，不禁感叹：优雅，太优雅了！
       writer: 周升升
       date: 2022/08/08
       description: '本文讲述基于Sermant Agent接入的SpringCloud应用实现优雅上下线功能。'
-      path: 'https://zhuanlan.zhihu.com/p/551093949'
+      path: 'https://bbs.huaweicloud.com/blogs/368257'
       tags:
       - 优雅上线
       - 优雅下线

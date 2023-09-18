@@ -13,11 +13,20 @@ blogArr:
       - Microservice Governance
       - Proxyless Architecture
 
+    - name: Analysis of Sermant class isolation architecture ｜ Practice of Resolving JavaAgent Class Conflicts
+      writer: 栾文飞
+      date: 2023/09/07
+      description: 'Sermant designed a comprehensive class isolation architecture to avoid class conflict problems'
+      path: 'https://bbs.huaweicloud.com/blogs/410414'
+      tags:
+      - Class Isolation
+      - JavaAgent
+
     - name: Bytecode Enhancement Frequently Asked Questions Series (2) | Compatibility Dilemma： How to make different bytecode enhancement frameworks coexist harmoniously?
       writer: 张豪鹏
       date: 2023/08/03
       description: 'How to reduce mutual influence when using different bytecode enhanced frameworks at the same time'
-      path: 'https://my.oschina.net/u/6410005/blog/10092734'
+      path: 'https://bbs.huaweicloud.com/blogs/407641'
       tags:
       - Bytecode Enhancement
       - JavaAgent
@@ -41,22 +50,35 @@ blogArr:
       - Cloud Native
       - Microservice Transformation
       - Proxyless Architecture
+
     - name: JavaAgent Scenario Performance Test Analysis and Optimization Experience Sharing
       writer: 栾文飞
       date: 2023/03/03
       description: 'How to perform better performance test optimization in the JavaAgent scenario and the performance pitfalls that need to be paid attention to under the JavaAgent.'
-      path: 'https://my.oschina.net/u/6410005/blog/8392949'
+      path: 'https://bbs.huaweicloud.com/blogs/393889'
       tags:
       - JavaAgent
       - Performance Test Optimization
+
+    - name: The Evolution Road of Cloud Native Microservice Governance Technology to Agentless Architecture
+      writer: 杨奕
+      date: 2022/11/29
+      description: 'A new generation of agentless architecture service governance technology based on Javaagent technology.'
+      path: 'https://bbs.huaweicloud.com/blogs/384776'
+      tags:
+      - Cloud Native
+      - Microservice Governance
+      - Proxyless Architecture
+
     - name: Bytecode Enhancement Frequently Asked Questions Series (1) | A summary of the class enhancement conflict problem and analysis of multiple JavaAgents used at the same time
       writer: 李来
       date: 2022/11/10 
       description: 'JavaAgent technology is often used to intercept and modify bytecodes before loading class files, so as to achieve non-intrusive enhancements to Java applications.'
-      path: 'https://zhuanlan.zhihu.com/p/582106446'
+      path: 'https://bbs.huaweicloud.com/blogs/382800'
       tags:
       - JavaAgent
       - Class Enhancement
+
     - name: Zero code modification, teach you Spring Cloud application to easily access CSE
       writer: 彭煜熠
       date: 2022/07/27
@@ -65,11 +87,12 @@ blogArr:
       tags:
       - SpringCloud
       - CSE
+
     - name: Seeing the way this app goes offline, I can't help but sigh elegant, so elegant!
       writer: 周升升
       date: 2022/08/08
       description: 'This article describes the elegant online and offline functions of Spring Cloud applications based on Sermant Agent access.'
-      path: 'https://zhuanlan.zhihu.com/p/551093949'
+      path: 'https://bbs.huaweicloud.com/blogs/368257'
       tags:
       - Elegant Online
       - Elegant Offline
