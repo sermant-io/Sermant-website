@@ -14,6 +14,8 @@
 
 [标签路由插件](./router.md)：在微服务存在多个版本、多个实例的情况下，通过配置路由规则管理服务之间的路由，达到无损升级、应用拨测等业务目的。
 
+[流量标签透传](./tag-transmission.md): 为流量标签提供全链路透传的能力，以满足流量治理的需求。
+
 [注册迁移插件](./register-migration.md)：提供代码非侵入方式，可让原本注册于Eureka，Nacos，Zookeeper、Consul等主流注册中心的微服务，非侵入地注册到[ServiceComb]
 (https://github.com/apache/servicecomb-service-center)或[Nacos](https://nacos.io/)上, 同时支持Dubbo与SpringCloud框架。
 
