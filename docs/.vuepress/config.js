@@ -69,6 +69,7 @@ module.exports = {
                 "plugin/loadbalancer",
                 "plugin/monitor",
                 "plugin/router",
+                "plugin/tag-transmission",
                 "plugin/register-migration",
                 "plugin/springboot-registry",
                 "plugin/visibility",
