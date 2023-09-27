@@ -1,40 +1,62 @@
 # Quick Start
 
-## Download or Compile
+Below is a simple demo that guides new users to use Sermant in just 4 steps.
 
-Click [here](https://github.com/huaweicloud/Sermant/releases) to download **Sermant** binary package. If you will to compile the project yourself, please follow the following steps.
+## Preparation
 
-Execute *maven* command to package the **Sermant** project's [demo module](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template).
+- [Download](https://github.com/huaweicloud/Sermant/releases/download/v1.1.0/sermant-1.1.0.tar.gz) Sermant package (The current version recommended is 1.1.0)
+- [Download](https://github.com/huaweicloud/Sermant-examples/tree/main/flowcontrol-demo/spring-cloud-demo/spring-provider) demo application
+- [Download](https://zookeeper.apache.org/releases#download) and start zookeeper
 
-```shell
-mvn clean package -Dmaven.test.skip
-```
+### Compile demo application
 
-## Start Sermant
-
-**Prepare and start zookeeper in advance**, start **Sermant** demo project: 
+Execute the following command in the `${path}/Sermant-examples/flowcontrol-demo/spring-cloud-demo/spring-provider/` directory:
 
 ```shell
-# Run under Linux
-java -cp sermant-template/demo-application/target/demo-application.jar \
-  -javaagent:sermant-agent-x.x.x/agent/sermant-agent.jar=appName=test \
-  com.huawei.example.demo.DemoApplication
+# windows linux mac
+mvn clean package
 ```
+
+After successful packaging，GET `spring-provider.jar` in `${path}/Sermant-examples/flowcontrol-demo/spring-cloud-demo/spring-provider/target`
+
+> Note: path is the path where the demo application is downloaded
+
+## Modify the Sermant configuration
+
+Modify the `agent.service.heartbeat.enable` and `agent.service.gateway.enable` configuration in the `${path}/sermant-agent-x.x.x/agent/config/config.properties` file to be true, which is to open the heartbeat service and the gateway service of Sermant, as shown below:
+
+```properties
+agent.service.heartbeat.enable=true
+agent.service.gateway.enable=true
+```
+> Note: path is the path where the Sermant package is downloaded
+
+## Start Backend
+
+Execute the following command in the `${path}/sermant-agent-x.x.x/server/sermant` directory:
 
 ```shell
-# Run under Windows
-java -cp sermant-template\demo-application\target\demo-application.jar ^
-  -javaagent:sermant-agent-x.x.x\agent\sermant-agent.jar=appName=test ^
-  com.huawei.example.demo.DemoApplication
+java -jar sermant-backend-x.x.x.jar
 ```
 
-Check whether the beginning of the demo-application log file contains the following content:
+> Note: path is the path where the Sermant package is downloaded
 
-```
-[INFO] Loading core library... 
-[INFO] Building argument map... 
-[INFO] Loading sermant agent... 
-[INFO] Load sermant done. 
+## Start demo application
+
+Execute the following command in the `${path}/Sermant-examples/flowcontrol-demo/spring-cloud-demo/spring-provider/target`directory：
+
+```shell
+# linux mac
+java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar -jar spring-provider.jar
+
+# windows
+java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar -jar spring-provider.jar
 ```
 
-If the log is normally output as above, it means that the sermant is mounted successfully.
+> Note: path is the path where the Sermant package is downloaded
+
+## Verification
+
+Check running status of Sermant. In this example, open the browser and navigate to the URL `http://localhost:8900`.
+
+<MyImage src="/docs-img/backend_sermant_info.jpg"></MyImage>

@@ -1,40 +1,62 @@
 # 快速开始
+下面是一个简单的演示，新用户只需4个步骤即可使用Sermant
 
-## 下载或编译
+## 准备工作
 
-点击[此处](https://github.com/huaweicloud/Sermant/releases)下载**Sermant**二进制包。如果您想自己编译项目，请遵循以下步骤。
+- [下载](https://github.com/huaweicloud/Sermant/releases/download/v1.1.0/sermant-1.1.0.tar.gz) Sermant包（当前版本推荐1.1.0）
+- [下载](https://github.com/huaweicloud/Sermant-examples/tree/main/flowcontrol-demo/spring-cloud-demo/spring-provider) demo应用
+- [下载](https://zookeeper.apache.org/releases#download) 并启动zookeeper
 
-执行*maven*命令来打包**Sermant**项目的 [demo module](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template)。
+## 编译打包demo应用
 
-```shell
-mvn clean package -Dmaven.test.skip
-```
-
-## 启动Sermant
-
-**提前准备和启动zookeeper**，再启动 **Sermant** demo 应用：
+在`${path}/Sermant-examples/flowcontrol-demo/spring-cloud-demo/spring-provider/`目录执行以下命令：
 
 ```shell
-# Run under Linux
-java -cp sermant-template/demo-application/target/demo-application.jar \
-  -javaagent:sermant-agent-x.x.x/agent/sermant-agent.jar=appName=test \
-  com.huawei.example.demo.DemoApplication
+# windows linux mac
+mvn clean package
 ```
+
+打包成功后，在`${path}/Sermant-examples/flowcontrol-demo/spring-cloud-demo/spring-provider/target`得到`spring-provider.jar`
+
+> 说明：path为demo应用下载所在路径
+
+## 修改Sermant配置
+
+修改`${path}/sermant-agent-x.x.x/agent/config/config.properties`文件中`agent.service.heartbeat.enable`和`agent.service.gateway.enable`配置为true，以此来开启Sermant的心跳服务和网关服务，如下所示：
+
+```properties
+agent.service.heartbeat.enable=true
+agent.service.gateway.enable=true
+```
+
+> 说明：path为Sermant包下载所在路径
+
+## 启动backend
+
+在`${path}/sermant-agent-x.x.x/server/sermant`目录执行以下命令：
 
 ```shell
-# Run under Windows
-java -cp sermant-template\demo-application\target\demo-application.jar ^
-  -javaagent:sermant-agent-x.x.x\agent\sermant-agent.jar=appName=test ^
-  com.huawei.example.demo.DemoApplication
+java -jar sermant-backend-x.x.x.jar
 ```
 
-查看demo-application的日志文件开头是否包含以下内容：
+> 说明：path为Sermant包下载所在路径
 
-```
-[INFO] Loading core library... 
-[INFO] Building argument map... 
-[INFO] Loading sermant agent... 
-[INFO] Load sermant done. 
+## 启动demo应用
+
+在`${path}/Sermant-examples/flowcontrol-demo/spring-cloud-demo/spring-provider/target`目录执行以下命令：
+
+```shell
+# linux mac
+java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar -jar spring-provider.jar
+
+# windows
+java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar -jar spring-provider.jar
 ```
 
-若日志如上正常输出，则说明sermant挂载成功。
+> 说明：path为Sermant包下载所在路径
+
+## 验证
+
+打开浏览器并导航到URL`http://localhost:8900`，如下图所示：
+
+<MyImage src="/docs-img/backend_sermant_info.jpg"></MyImage>
