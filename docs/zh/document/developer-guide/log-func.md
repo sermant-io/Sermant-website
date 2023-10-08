@@ -41,10 +41,11 @@ public ExecuteContext after(ExecuteContext context) throws Exception {
 
 ```shell
 $ java -javaagent:sermant-agent.jar -jar Application.jar
-[INFO] Loading core library... 
-[INFO] Building argument map... 
-[INFO] Loading sermant agent... 
-[INFO] Load sermant done. 
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Loading god library into BootstrapClassLoader.
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Building argument map by agent arguments.
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Loading core library into SermantClassLoader.
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Loading sermant agent, artifact is: default
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Load sermant done, artifact is: default
 Good morning!
 Good afternoon!
 Good night!
@@ -57,8 +58,8 @@ Good night!
 2. 打开日志文件`sermant-0.log`检查日志内容，在其中可以看到我们构造的日志已经生效了，可以在其中看到日志的触发时间、日志级别、类、方法、代码行、线程等信息，便于了解程序的运行状态。
 
 ```shell
-2023-02-11 15:25:08.047 [INFO] [com.huaweicloud.sermant.template.TemplateDeclarer$1] [before:33] [main] Say good morning before good afternoon!
-2023-02-11 15:25:08.050 [INFO] [com.huaweicloud.sermant.template.TemplateDeclarer$1] [after:40] [main] Say good night after good afternoon!
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.template.TemplateDeclarer$1] [before:33] [main] Say good morning before good afternoon!
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.template.TemplateDeclarer$1] [after:40] [main] Say good night after good afternoon!
 ```
 
 ## API&配置

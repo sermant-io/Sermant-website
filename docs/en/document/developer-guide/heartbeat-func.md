@@ -31,13 +31,21 @@ public ExecuteContext before(ExecuteContext context) throws Exception {
 }
 ```
 
-After the development is complete, you can follow the [Packaged build](README.md#Packaged-build) process when creating the first plug-in, execute the `mvn package` under the project root directory, refer to [Sermant Agent Parameter Configuration](../user-guide/sermant-agent.md#Parameter-Configuration) modification file `agent/config/config.properties`, and refer to [Backend User Manual](../user-guide/backend.md) Starts backend.
+1. After the development is complete, you can follow the [Packaged build](README.md#Packaged-build) process when 
+creating the first plug-in, execute the `mvn package` under the project root directory
+2. refer to [Backend User Manual](../user-guide/backend.md) Starts backend.
+3. Set the heartbeat switch `agent.service.heartbeat.enable` to `true` in file `agent/config/config.properties`:
+```properties
+# 心跳服务开关
+agent.service.heartbeat.enable=true
+```
 
-Finally, access `http://localhost:8900` to view Backend.
+5. Finally, access `http://localhost:8900` to view Backend.
 
 ![pic](../../../binary-doc/backend_sermant_info.png)
 
-As you can see from the figure, there is currently one instance carrying **Sermant Agent**, and it is running properly, and it carries version `0.0.1` of the `template` plugin.
+As you can see from the figure, there is currently one instance carrying **Sermant Agent**, and it is running 
+properly, and it carries version `1.2.0` of the `template` plugin.
 
 > **Sermant Agent** sends heartbeats to **Backend** on a regular basis. **Backend** will renew the heartbeats received from each **Sermant Agent**, and if they exceed the valid time (can be modified by [Backend Parameter Configuration](../user-guide/backend.md#Backend-Parameter-Configuration)). If a heartbeat has not been reported from a node, the node is set to be lost.
 
