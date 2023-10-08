@@ -15,9 +15,9 @@
 由于实时配置中心这块业界已有很多成熟的开源产品，因此Sermant本身并不提供配置中心的单独实现，而是通过对开源的配置中心进行集成，以达到服务治理规则可实时动态配置的业务目标。
 
 
-在具体实现上，sermant-agent内部定义了一套动态配置的通用接口。基于这种架构，
+在具体实现上，Sermant Agent内部定义了一套动态配置的通用接口。基于这种架构，
 
-- 用户通过sermant-agent的配置，来决定Sermant实际对接的配置中心类型。也可以在运维场景中，根据各服务治理插件的使用手册，直接操作动态配置中心，以达到动态配置的业务目标。
+- 用户通过Sermant Agent的配置，来决定Sermant实际对接的配置中心类型。也可以在运维场景中，根据各服务治理插件的使用手册，直接操作动态配置中心，以达到动态配置的业务目标。
 - 开发者在Plugin开发中，只需要对接Sermant动态配置的通用接口，即可实现动态配置的功能，而不需要关注动态配置中心本身的各种选型和实现。
 
 以下架构图说明了该架构的原理。
@@ -28,13 +28,11 @@
 
 动态配置中心的配置，请参见对应的开源动态配置中心 (如[ZooKeeper](https://zookeeper.apache.org/releases.html) 、[ServiceComb Kie](https://servicecomb.apache.org/cn/release/kie-downloads/)) 。本文中不作详细赘述。
 
-首先，在[Sermant-agent使用手册agent框架相关参数配置](sermant-agent.md#agent框架相关参数)中配置`agent.service.dynamic.config.enable=true`，将**启用动态配置服务**开启。
-
-其次，sermant-agent中对应的动态配置中心参数，对应在sermant-agent的产品包`agent/config/config.properties`中进行配置，具体配置说明请参考[Sermant-agent使用手册动态配置中心相关参数配置](sermant-agent.md#动态配置中心相关参数)。
+首先，Sermant Agent的产品包`agent/config/config.properties`中配置`agent.service.dynamic.config.enable=true`，将**启用动态配置服务**。其他Sermant Agent中对应的动态配置中心参数，也都可以在该文件中进行配置。
 
 ## Sermant动态配置中心模型
 
-以sermant-agent中的[KeyGroupService.publishConfig](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyGroupService.java)接口函数说明Sermant中的配置模型。
+以Sermant Agent中的[KeyGroupService.publishConfig](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyGroupService.java)接口函数说明Sermant中的配置模型。
 
 ```java
 /**
@@ -49,14 +47,14 @@ boolean publishConfig(String key, String group, String content);
 ```
 
 
-在上述例子中可见，在sermant-agent中确定配置项的两个参数分别是：
+在上述例子中可见，在Sermant Agent中确定配置项的两个参数分别是：
 
 - key: 最小配置单元的键值。
 - group: 组，类似key的前缀。Sermant主要是通过Group来对接一些配置中心的租户隔离功能。
 
 对于不同的配置中心，以group和key有不同的匹配模型。下文中详细说明。
 
-对于使用者来说，使用动态配置中心需要在插件中开发过程中获取DynamicConfigService的实例，并根据自身场景调用`DynamicConfigService`提供的各种抽象接口来进行相应的服务治理。详细的API接口的解析以及开发指南可参考[插件功能开发介绍相关章节](https://sermant.io/zh/document/developer-guide/dev-complex-plugin.html#%E5%8A%A8%E6%80%81%E9%85%8D%E7%BD%AE%E5%8A%9F%E8%83%BD)。
+对于使用者来说，使用动态配置中心需要在插件中开发过程中获取DynamicConfigService的实例，并根据自身场景调用`DynamicConfigService`提供的各种抽象接口来进行相应的服务治理。详细的API接口的解析以及开发指南可参考开发者指南中的[动态配置功能开发指导](../developer-guide/dynamic-config-func.md)。
 
 ## Sermant 基于不同动态配置中心的配置模型实现
 
@@ -103,8 +101,8 @@ groupKey1=groupValue1[&groupKey2=groupVaue2...]
 
 目前Sermant支持的配置中心组件为:
 
-- [ZooKeeper](https://zookeeper.apache.org/releases.html)，使用版本为3.6.3。
-- [ServiceComb Kie](https://servicecomb.apache.org/cn/release/kie-downloads/)，使用的版本为0.2.0.
+- [ZooKeeper](https://zookeeper.apache.org/releases.html)，使用版本为3.6.3
+- [ServiceComb Kie](https://servicecomb.apache.org/cn/release/kie-downloads/)，使用的版本为0.2.0
 
 ## 启动和结果验证
 
@@ -116,7 +114,14 @@ groupKey1=groupValue1[&groupKey2=groupVaue2...]
 
 首先启动配置中心Zookeeper，Zookeepr部署可自行查找相关资料。
 
-然后参考[sermant-agent使用手册](sermant-agent.md)启动和结果验证一节，挂载sermant-agent启动宿主应用。
+接下来以**Sermant-example**项目 [demo-application ](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/demo-application)为宿主应用，执行以下命令挂载sermant-agent启动demo-application:
+
+```shell
+# Run under Windows
+java -javaagent:sermant-agent-x.x.x\agent\sermant-agent.jar=appName=test -jar demo-application.jar
+# Run under Linux
+java -javaagent:sermant-agent-x.x.x/agent/sermant-agent.jar=appName=test -jar demo-application.jar
+```
 
 #### 发布配置
 
@@ -140,7 +145,7 @@ create /app=default/demo "test"
 2022-12-29 15:48:01.963 [ERROR] [com.huawei.example.demo.common.DemoLogger] [println:42] [main-EventThread] [DemoDynaConfService]-DynamicConfigEvent{key='demo', group='app=default', content='test', eventType=CREATE} com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent[source=demo,app=default]
 ```
 
-如果日志输出无误，则说明动态配置发布成功，sermant-agent已监听到动态配置。
+如果日志输出无误，则说明动态配置发布成功，Sermant Agent已监听到动态配置。
 
 ### Kie
 
@@ -150,7 +155,14 @@ Kie与Zoopeepr使用方式类似，唯一不同的是发布配置按照Kie的方
 
 首先启动配置中心Kie，Kie部署可自行查找相关资料。
 
-然后参考[sermant-agent使用手册](sermant-agent.md)启动和结果验证一节，挂载sermant-agent启动宿主应用。
+接下来以**Sermant-example**项目 [demo-application ](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/demo-application)为宿主应用，执行以下命令挂载sermant-agent启动demo-application:
+
+```shell
+# Run under Windows
+java -javaagent:sermant-agent-x.x.x\agent\sermant-agent.jar=appName=test -jar demo-application.jar
+# Run under Linux
+java -javaagent:sermant-agent-x.x.x/agent/sermant-agent.jar=appName=test -jar demo-application.jar
+```
 
 #### 发布配置
 
@@ -181,5 +193,4 @@ Kie与Zoopeepr使用方式类似，唯一不同的是发布配置按照Kie的方
 2022-12-29 16:45:14.456 [ERROR] [com.huawei.example.demo.common.DemoLogger] [println:42] [main-EventThread] [DemoDynaConfService]-DynamicConfigEvent{key='demo', group='app=default', content='test', eventType=CREATE} com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent[source=demo,app=default]
 ```
 
-如果日志输出无误，则说明动态配置发布成功，sermant-agent已监听到动态配置。
-
+如果日志输出无误，则说明动态配置发布成功，Sermant Agent已监听到动态配置。

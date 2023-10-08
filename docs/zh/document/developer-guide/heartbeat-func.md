@@ -6,9 +6,9 @@
 
 心跳功能在微服务治理领域起着关键的作用，可以通过心跳机制来监控各个服务实例的状态，通过周期性上报心跳可以告知其他服务自己的存活状态，避免实例宕机导致异常。
 
-**Sermant**中通过心跳向Backend上报服务实例的元数据，同时还会上报已经被加载的服务治理插件的信息，来告知当前**Sermant Agent**携带了哪些服务治理插件，通过周期性上报心跳，**Backend**监控面板可以看到当前已经携带**Sermant Agent**的服务实例。
+**Sermant**中通过心跳向Sermant Backend上报服务实例的元数据，同时还会上报已经被加载的服务治理插件的信息，来告知当前**Sermant Agent**携带了哪些服务治理插件，通过周期性上报心跳，**Sermant Backend**监控面板可以看到当前已经携带**Sermant Agent**的服务实例。
 
-> 注意： 心跳功能需要和Backend监控面板同时使用，参考[Backend使用手册](../user-guide/backend.md)。
+> 注意： 心跳功能需要和Backend监控面板同时使用，参考[Sermant Backend使用手册](../user-guide/sermant-backend.md)。
 
 ## 开发示例
 
@@ -31,15 +31,15 @@ public ExecuteContext before(ExecuteContext context) throws Exception {
 }
 ```
 
-开发完成后，可参照创建首个插件时的[打包构建](README.md#打包构建) 流程，在工程根目录下执行 `mvn package`，参考[Sermant Agent配置](../user-guide/sermant-agent.md#参数配置) 修改文件`agent/config/config.properties`，并参考[backend使用手册](../user-guide/backend.md)启动backend。
+开发完成后，可参照创建首个插件时的[打包构建](README.md#打包构建) 流程，在工程根目录下执行 `mvn package`，参考[Sermant Agent配置](../user-guide/sermant-agent.md#参数配置) 修改文件`agent/config/config.properties`，并参考[Sermant Backend使用手册](../user-guide/sermant-backend.md)启动Sermant Backend。
 
-最后访问`http://localhost:8900`查看backend界面
+最后访问`http://localhost:8900`查看Sermant Backend界面
 
 ![pic](../../../binary-doc/backend_sermant_info.png)
 
 从图中可以看到，当前携带**Sermant Agent**的实例有一个，并且处于正常运行状态，并且携带`0.0.1`版本的`template`插件。
 
-> **Sermant Agent**会定期向**Backend**发送心跳，**Backend**在收到来自各个**Sermant Agent**心跳时，会为其续约，如果超过有效时间（可通过[backend配置](../user-guide/backend.md#Backend参数配置)修改），还未收到某一节点上报的心跳，则就将该节点置为失联状态。
+> **Sermant Agent**会定期向**Sermant Backend**发送心跳，**Sermant Backend**在收到来自各个**Sermant Agent**的心跳时，会为其续约，如果超过有效时间（可通过[Sermant Backend配置](../user-guide/sermant-backend.md#Sermant-Backend参数配置)修改），还未收到某一节点上报的心跳，则就将该节点置为失联状态。
 
 ## API&配置
 
