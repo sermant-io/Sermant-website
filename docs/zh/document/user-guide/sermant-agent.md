@@ -81,7 +81,7 @@ $ java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
 [xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Load sermant done, artifact is: default
 ```
 
-若日志如上正常输出，则说明Sermant Agent读取卸载指令成功并开始执行卸载，打开浏览器并导航到`http://localhost:8900`，可以看到已经有Sermant Agent实例，如下图所示效果：
+若日志如上正常输出，则说明Sermant Agent读取启动指令成功并开始执行安装，打开浏览器并导航到`http://localhost:8900`，可以看到已经有Sermant Agent实例，如下图所示效果：
 
 <MyImage src="/docs-img/sermant-agent-agentmain-start.png"></MyImage>
 
@@ -111,7 +111,7 @@ $ java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
 [xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Execute command: UNINSTALL-AGENT
 ```
 
-若日志如上正常输出，则说明Sermant Agent启动成功，打开浏览器并导航到`http://localhost:8900`，可以看到已经有Sermant Agent实例已经下线（**状态为灰色**），如下图所示效果：
+若日志如上正常输出，打开浏览器并导航到`http://localhost:8900`，可以看到已经有Sermant Agent实例已经下线（**状态为灰色**），则说明Sermant Agent卸载成功，如下图所示效果：
 
 <MyImage src="/docs-img/sermant-agent-agentmain-uninstall-success.png"></MyImage>
 
@@ -185,7 +185,7 @@ $ java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
 [Byte Buddy] REDEFINE COMPLETE 1 batch(es) containing 0 types [0 failed batch(es)]
 ```
 
-若日志如上正常输出，则说明插件安装成功，打开浏览器并导航到`http://localhost:8900`，可以看到插件已被成功安装，插件列可以看到当前安装的插件，如下图所示效果：
+若日志如上正常输出，打开浏览器并导航到`http://localhost:8900`，可以看到插件已被成功卸载，插件列可以看到当前安装的插件，如下图所示效果：
 
 **动态卸载插件前**
 
