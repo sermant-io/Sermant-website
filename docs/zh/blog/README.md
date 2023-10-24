@@ -13,6 +13,26 @@ blogArr:
       - 微服务治理
       - 无代理架构
 
+    - name: 如何利用动态配置中心在JavaAgent中实现微服务的多样化治理
+      writer: 张豪鹏
+      date: 2023/10/07
+      description: 'Sermant的动态配置模型的设计理念以及对微服务治理的关键作用'
+      path: 'https://bbs.huaweicloud.com/blogs/412530'
+      tags:
+      - 动态配置
+      - 微服务治理
+      - JavaAgent
+
+    - name: 流量治理的基石——基于字节码增强的全链路流量标签透传
+      writer: 李来
+      date: 2023/09/26
+      description: 'Sermant全链路标签透传如何帮助用户实现高阶的微服务治理解决方案'
+      path: 'https://bbs.huaweicloud.com/blogs/411848'
+      tags:
+      - 标签透传
+      - 流量染色
+      - JavaAgent
+
     - name: Sermant类隔离架构解析——解决JavaAgent场景类冲突的实践
       writer: 栾文飞
       date: 2023/09/07

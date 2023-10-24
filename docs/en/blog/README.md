@@ -13,6 +13,26 @@ blogArr:
       - Microservice Governance
       - Proxyless Architecture
 
+    - name: How to Use Dynamic Configuration Center to Implement Diversified Governance of Microservices in JavaAgent
+      writer: 张豪鹏
+      date: 2023/10/07
+      description: 'The design concept of Sermant’s dynamic configuration model and its key role in microservice governance'
+      path: 'https://bbs.huaweicloud.com/blogs/412530'
+      tags:
+      - Dynamic Configuration
+      - Microservice Governance
+      - JavaAgent
+
+    - name: The Cornerstone of traffic governance —— Full-link Traffic Tag Transmission Based on Bytecode Enhancement
+      writer: 李来
+      date: 2023/09/26
+      description: 'How Sermant Full-link Traffic Tag Transmission helps users implement high-level microservice governance solutions'
+      path: 'https://bbs.huaweicloud.com/blogs/411848'
+      tags:
+      - Traffic Tag Transmission
+      - Traffic Coloring
+      - JavaAgent
+
     - name: Analysis of Sermant class isolation architecture ｜ Practice of Resolving JavaAgent Class Conflicts
       writer: 栾文飞
       date: 2023/09/07
