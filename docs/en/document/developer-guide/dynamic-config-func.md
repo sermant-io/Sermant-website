@@ -39,11 +39,11 @@ This development example is based on the project created in the [Create the Firs
    ```
 5. Start the Zookeeper server and set the `dynamic.config` related configuration in `agent/config/config.properties`, and set the dynamic configuration switch `agent.service.dynamic.config.enable` to `true`. The main configuration examples are as follows:
    ```properties
-   # 动态配置服务开关
+   # Dynamically configure service switches
    agent.service.dynamic.config.enable=true
-   # 指定配置中心的服务端地址
+   # The server address for the configuration center
    dynamic.config.serverAddress=127.0.0.1:2181
-   # 指定动态配置中心类型, 取值范围为NOP(无实现)、ZOOKEEPER、KIE、NACOS
+   # The type for the configuration center, The range of values is NOP(No implementation)、ZOOKEEPER、KIE、NACOS
    dynamic.config.dynamicConfigType=ZOOKEEPER
    ```
 6. When the execution is complete, execute `cd agent/` in the root directory of the project and run the test 

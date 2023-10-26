@@ -107,7 +107,7 @@ contains the `namespaceId`, `group` and `dataId`. The `namespaceId` default valu
 
 ```properties
 {
-	"group": "Group", 			# group
+    "group": "Group", 			# group
     "dataId": "Key",  			# key
     "content": "config", 		# value
     "namespaceId": "default"	# namespace
@@ -131,7 +131,7 @@ The configuration center components currently supported by Sermant are:
 
 - [ZooKeeper](https://zookeeper.apache.org/releases.html), version 3.6.3.
 - [ServiceComb Kie](https://servicecomb.apache.org/cn/release/kie-downloads/), version 0.2.0.
-- [Nacos](https://github.com/alibaba/nacos/releases), version 2.1.0
+- [Nacos](https://github.com/alibaba/nacos/releases), version 2.1.0.
 
 ## Startup and Result Validation
 
@@ -164,7 +164,7 @@ Check out the sermant log file sermant-0.log. The default log file path is `./lo
 Observe if the log file contains the following log output:
 
 ```
-2022-12-29 15:48:01.963 [ERROR] [com.huawei.example.demo.common.DemoLogger] [println:42] [main-EventThread] [DemoDynaConfService]-DynamicConfigEvent{key='demo', group='app=default', content='test', eventType=CREATE} com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent[source=demo,app=default]
+[DemoDynaConfService]-DynamicConfigEvent{key='demo', group='app=default', content='test', eventType=CREATE} com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent[source=demo,app=default]
 ```
 
 If the log output is correct, it means that the dynamic configuration is published successfully and the sermant-agent has listened to the dynamic configuration.
@@ -205,7 +205,7 @@ Check out the sermant log file sermant-0.log. The default log file path is `./lo
 Observe if the log file contains the following log output:
 
 ```
-2022-12-29 16:45:14.456 [ERROR] [com.huawei.example.demo.common.DemoLogger] [println:42] [main-EventThread] [DemoDynaConfService]-DynamicConfigEvent{key='demo', group='app=default', content='test', eventType=CREATE} com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent[source=demo,app=default]
+[DemoDynaConfService]-DynamicConfigEvent{key='demo', group='app=default', content='test', eventType=CREATE} com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent[source=demo,app=default]
 ```
 
 If the log output is correct, it means that the dynamic configuration is published successfully and the sermant-agent has listened to the dynamic configuration.
@@ -235,8 +235,7 @@ curl -d 'dataId=demo' \
 
 Where `app=default` is the value of the legalized group, `demo` is the key, and `test` is the value, and the `default` is
 `service.meta.project` in
-`agent/config/config.properties`. For specific parameters, please refer to [Parameters Related to Dynamic
-Configuration Center of Sermant-agent User Manual](sermant-agent.md#parameters-related-to-dynamic-configuration-center).
+`agent/config/config.properties`.
 
 When the node data is successfully created, the dynamic configuration is successfully published in the configuration center.
 
@@ -247,7 +246,6 @@ Check out the sermant log file sermant-0.log. The default log file path is `./lo
 Observe if the log file contains the following log output:
 
 ```
-2022-12-29 16:45:14.456 [ERROR] [com.huawei.example.demo.common.DemoLogger] [println:42] [main-EventThread] 
 [DemoDynaConfService]-DynamicConfigEvent{key='demo', group='app:default', content='test', eventType=CREATE} com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent[source=demo,app=default]
 ```
 

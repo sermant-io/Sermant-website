@@ -208,9 +208,9 @@ public class HandleConsumerDeclarer extends AbstractPluginDeclarer {
 first plugin, run **mvn package** in the root directory of the project.
 6. Set both the unified Gateway service switch `agent.service.gateway.enable` and the link marking service switch `agent.service.tracing.enable` to `true` in file `agent/config/config.properties` after execution:
 ```properties
-# 统一网关服务开关
+# Gateway Service switch
 agent.service.gateway.enable=true
-# 链路标记服务开关
+# Tracing Service switch
 agent.service.tracing.enable=true
 ```
 

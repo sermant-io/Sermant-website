@@ -36,7 +36,7 @@ creating the first plug-in, execute the `mvn package` under the project root dir
 2. refer to [Backend User Manual](../user-guide/backend.md) Starts backend.
 3. Set the heartbeat switch `agent.service.heartbeat.enable` to `true` in file `agent/config/config.properties`:
 ```properties
-# 心跳服务开关
+# Heartbeat service switch
 agent.service.heartbeat.enable=true
 ```
 
