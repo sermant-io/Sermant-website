@@ -40,10 +40,11 @@ Once the development is complete, follow the [Packaged build](README.md#Packaged
 
 ```shell
 $ java -javaagent:sermant-agent.jar -jar Application.jar
-[INFO] Loading core library... 
-[INFO] Building argument map... 
-[INFO] Loading sermant agent... 
-[INFO] Load sermant done. 
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Loading god library into BootstrapClassLoader.
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Building argument map by agent arguments.
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Loading core library into SermantClassLoader.
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Loading sermant agent, artifact is: default
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Load sermant done, artifact is: default
 Good morning!
 Good afternoon!
 Good night!
@@ -56,8 +57,8 @@ The execution logic defined in the plug-in has been enhanced into the test appli
 2. Open the log file `sermant-0.log` to check the log content. We can see that the log we constructed has taken effect, and we can see the trigger time, log level, class, method, line of code, thread and other information in the log, which is easy to understand the running state of the program.
 
 ```shell
-2023-02-11 15:25:08.047 [INFO] [com.huaweicloud.sermant.template.TemplateDeclarer$1] [before:33] [main] Say good morning before good afternoon!
-2023-02-11 15:25:08.050 [INFO] [com.huaweicloud.sermant.template.TemplateDeclarer$1] [after:40] [main] Say good night after good afternoon!
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.template.TemplateDeclarer$1] [before:33] [main] Say good morning before good afternoon!
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.template.TemplateDeclarer$1] [after:40] [main] Say good night after good afternoon!
 ```
 
 ## API & Configuration

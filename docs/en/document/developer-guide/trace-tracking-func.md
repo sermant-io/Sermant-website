@@ -27,138 +27,203 @@ In order to mark the link completely, it is necessary to mark the key execution 
 
 Based on the above basis, we mark the links for the service invocation process in the project:
 
-First, create a [Interceptor](bytecode-enhancement.md#Interceptor) for `handleRequest` in `SimulateServer` under `template\template-plugin` in the project, and implement the following logic in it:
+1. create an enhanced declaration class `HandleRequestDeclarer` for `handleRequest` in `SimulateServer` under the project `template\template-plugin`, and implement the following logic in it:
 
 > Note: The interceptor is created by referring to [Create your first plugin](README.md), so we won't repeat it in this development example
 
 ```java
-TracingService tracingService = ServiceManager.getService(TracingService.class);
+public class HandleRequestDeclarer extends AbstractPluginDeclarer {
+    private static final java.util.logging.Logger LOGGER = LoggerFactory.getLogger();
 
-@Override
-public ExecuteContext before(ExecuteContext context) throws Exception {
-    TracingRequest request =
-            new TracingRequest(context.getRawCls().getName(), context.getMethod().getName());
-    ExtractService<HashMap<String, String>> extractService = (tracingRequest, carrier) -> {
-        tracingRequest.setTraceId(carrier.get(TracingHeader.TRACE_ID.getValue()));
-        tracingRequest.setParentSpanId(carrier.get(TracingHeader.PARENT_SPAN_ID.getValue()));
-        tracingRequest.setSpanIdPrefix(carrier.get(TracingHeader.SPAN_ID_PREFIX.getValue()));
-    };
-    Optional<SpanEvent> spanEventOptional = tracingService.onProviderSpanStart(request, extractService, (HashMap<String, String>) context.getArguments()[0]);
-    if (spanEventOptional.isPresent()) {
-        SpanEvent spanEvent = spanEventOptional.get();
-        LOGGER.info("TraceId:" + spanEvent.getTraceId());
-        LOGGER.info("SpanId:" + spanEvent.getSpanId());
-        LOGGER.info("ParentSpanId:" + spanEvent.getParentSpanId());
-        LOGGER.info("Class:" + spanEvent.getClassName());
-        LOGGER.info("Method:" + spanEvent.getMethod());
+    @Override
+    public ClassMatcher getClassMatcher() {
+        return ClassMatcher.nameEquals("com.huaweicloud.template.SimulateServer");
     }
-    tracingService.onSpanFinally();
-    return context;
-}
 
-@Override
-public ExecuteContext after(ExecuteContext context) throws Exception {
-    return context;
-}
+    @Override
+    public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
+        return new InterceptDeclarer[]{
+                InterceptDeclarer.build(MethodMatcher.nameEquals("handleRequest"), new Interceptor() {
+                    TracingService tracingService = ServiceManager.getService(TracingService.class);
 
-@Override
-public ExecuteContext onThrow(ExecuteContext context) throws Exception {
-    tracingService.onSpanError(context.getThrowable());
-    return context;
+                    @Override
+                    public ExecuteContext before(ExecuteContext context) {
+                        TracingRequest request =
+                                new TracingRequest(context.getRawCls().getName(), context.getMethod().getName());
+                        ExtractService<HashMap<String, String>> extractService = (tracingRequest, carrier) -> {
+                            tracingRequest.setTraceId(carrier.get(TracingHeader.TRACE_ID.getValue()));
+                            tracingRequest.setParentSpanId(carrier.get(TracingHeader.PARENT_SPAN_ID.getValue()));
+                            tracingRequest.setSpanIdPrefix(carrier.get(TracingHeader.SPAN_ID_PREFIX.getValue()));
+                        };
+                        Optional<SpanEvent> spanEventOptional = tracingService.onProviderSpanStart(request,
+                                extractService, (HashMap<String, String>) context.getArguments()[0]);
+                        if (spanEventOptional.isPresent()) {
+                            SpanEvent spanEvent = spanEventOptional.get();
+                            LOGGER.info("TraceId:" + spanEvent.getTraceId());
+                            LOGGER.info("SpanId:" + spanEvent.getSpanId());
+                            LOGGER.info("ParentSpanId:" + spanEvent.getParentSpanId());
+                            LOGGER.info("Class:" + spanEvent.getClassName());
+                            LOGGER.info("Method:" + spanEvent.getMethod());
+                        }
+                        tracingService.onSpanFinally();
+                        return context;
+                    }
+
+                    @Override
+                    public ExecuteContext after(ExecuteContext context) throws Exception {
+                        return context;
+                    }
+
+                    @Override
+                    public ExecuteContext onThrow(ExecuteContext context) throws Exception {
+                        tracingService.onSpanError(context.getThrowable());
+                        return context;
+                    }
+                })
+        };
+    }
 }
 ```
 > The `handleRequest` in the `SimulateServer` is the service provider execution unit of the `SimulateServer` node in the distributed system. So here use TracingService: : onProviderSpanStart to mark the unit, and through ExtractService defines the ability to link information extracted from communication carrier.
 
-Then create a [Interceptor](bytecode-enhancement.md#Interceptor) for `consume` in the `SimulateServer`, and implement the following logic in it:
+2. create an enhanced declaration class `ConsumerDeclarer` for `consume` in `SimulateServer`, and implement the following logic in it:
 
 ```java
-TracingService tracingService = ServiceManager.getService(TracingService.class);
+public class ConsumerDeclarer extends AbstractPluginDeclarer {
+    private static final java.util.logging.Logger LOGGER = LoggerFactory.getLogger();
 
-@Override
-public ExecuteContext before(ExecuteContext context) throws Exception {
-    TracingRequest request =
-            new TracingRequest(context.getRawCls().getName(), context.getMethod().getName());
-    InjectService<HashMap<String, String>> injectService = (spanEvent, carrier) -> {
-        carrier.put(TracingHeader.TRACE_ID.getValue(), spanEvent.getTraceId());
-        carrier.put(TracingHeader.PARENT_SPAN_ID.getValue(), spanEvent.getSpanId());
-        carrier.put(TracingHeader.SPAN_ID_PREFIX.getValue(), spanEvent.getNextSpanIdPrefix());
-    };
-    Optional<SpanEvent> spanEventOptional = tracingService.onConsumerSpanStart(request, injectService, (HashMap<String, String>) context.getArguments()[0]);
-    if (spanEventOptional.isPresent()) {
-        SpanEvent spanEvent = spanEventOptional.get();
-        LOGGER.info("TraceId:" + spanEvent.getTraceId());
-        LOGGER.info("SpanId:" + spanEvent.getSpanId());
-        LOGGER.info("ParentSpanId:" + spanEvent.getParentSpanId());
-        LOGGER.info("Class:" + spanEvent.getClassName());
-        LOGGER.info("Method:" + spanEvent.getMethod());
+    @Override
+    public ClassMatcher getClassMatcher() {
+        return ClassMatcher.nameEquals("com.huaweicloud.template.SimulateServer");
     }
-    tracingService.onSpanFinally();
-    return context;
-}
 
-@Override
-public ExecuteContext after(ExecuteContext context) throws Exception {
-    return context;
-}
+    @Override
+    public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
+        return new InterceptDeclarer[]{
+                InterceptDeclarer.build(MethodMatcher.nameEquals("consume"), new Interceptor() {
+                    TracingService tracingService = ServiceManager.getService(TracingService.class);
 
-@Override
-public ExecuteContext onThrow(ExecuteContext context) throws Exception {
-    tracingService.onSpanError(context.getThrowable());
-    return context;
+                    @Override
+                    public ExecuteContext before(ExecuteContext context) throws Exception {
+                        TracingRequest request =
+                                new TracingRequest(context.getRawCls().getName(), context.getMethod().getName());
+                        InjectService<HashMap<String, String>> injectService = (spanEvent, carrier) -> {
+                            carrier.put(TracingHeader.TRACE_ID.getValue(), spanEvent.getTraceId());
+                            carrier.put(TracingHeader.PARENT_SPAN_ID.getValue(), spanEvent.getSpanId());
+                            carrier.put(TracingHeader.SPAN_ID_PREFIX.getValue(), spanEvent.getNextSpanIdPrefix());
+                        };
+                        Optional<SpanEvent> spanEventOptional = tracingService.onConsumerSpanStart(request,
+                                injectService, (HashMap<String, String>) context.getArguments()[0]);
+                        if (spanEventOptional.isPresent()) {
+                            SpanEvent spanEvent = spanEventOptional.get();
+                            LOGGER.info("TraceId:" + spanEvent.getTraceId());
+                            LOGGER.info("SpanId:" + spanEvent.getSpanId());
+                            LOGGER.info("ParentSpanId:" + spanEvent.getParentSpanId());
+                            LOGGER.info("Class:" + spanEvent.getClassName());
+                            LOGGER.info("Method:" + spanEvent.getMethod());
+                        }
+                        tracingService.onSpanFinally();
+                        return context;
+                    }
+
+                    @Override
+                    public ExecuteContext after(ExecuteContext context) throws Exception {
+                        return context;
+                    }
+
+                    @Override
+                    public ExecuteContext onThrow(ExecuteContext context) throws Exception {
+                        tracingService.onSpanError(context.getThrowable());
+                        return context;
+                    }
+                })
+        };
+    }
 }
 ```
 > `SimulateServer` in `consume` for the distributed system, namely `SimulateServer` the node execution unit service consumers, so here use TracingService: : onConsumerSpanStart to mark the execution unit, And InjectService defines the ability to inject link context information into the communication carrier.
 
-Create a [Interceptor](bytecode-enhancement.md#Interceptor) for `handleConsume` in `SimulateProvider`, and implement the following logic in it:
+3. create an enhanced declaration class `HandleConsumerDeclarer` for `handleConsume` in `SimulateProvider`, and implement the following logic in it:
 
 
 ```java
-TracingService tracingService = ServiceManager.getService(TracingService.class);
+public class HandleConsumerDeclarer extends AbstractPluginDeclarer {
+    private static final java.util.logging.Logger LOGGER = LoggerFactory.getLogger();
 
-@Override
-public ExecuteContext before(ExecuteContext context) throws Exception {
-    TracingRequest request =
-            new TracingRequest(context.getRawCls().getName(), context.getMethod().getName());
-    ExtractService<HashMap<String, String>> extractService = (tracingRequest, carrier) -> {
-        tracingRequest.setTraceId(carrier.get(TracingHeader.TRACE_ID.getValue()));
-        tracingRequest.setParentSpanId(carrier.get(TracingHeader.PARENT_SPAN_ID.getValue()));
-        tracingRequest.setSpanIdPrefix(carrier.get(TracingHeader.SPAN_ID_PREFIX.getValue()));
-    };
-    Optional<SpanEvent> spanEventOptional = tracingService.onProviderSpanStart(request, extractService, (HashMap<String, String>) context.getArguments()[0]);
-    if (spanEventOptional.isPresent()) {
-        SpanEvent spanEvent = spanEventOptional.get();
-        LOGGER.info("TraceId:" + spanEvent.getTraceId());
-        LOGGER.info("SpanId:" + spanEvent.getSpanId());
-        LOGGER.info("ParentSpanId:" + spanEvent.getParentSpanId());
-        LOGGER.info("Class:" + spanEvent.getClassName());
-        LOGGER.info("Method:" + spanEvent.getMethod());
+    @Override
+    public ClassMatcher getClassMatcher() {
+        return ClassMatcher.nameEquals("com.huaweicloud.template.SimulateProvider");
     }
-    tracingService.onSpanFinally();
-    return context;
-}
 
-@Override
-public ExecuteContext after(ExecuteContext context) throws Exception {
-    return context;
-}
+    @Override
+    public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
+        return new InterceptDeclarer[]{
+                InterceptDeclarer.build(MethodMatcher.nameEquals("handleConsume"), new Interceptor() {
+                    TracingService tracingService = ServiceManager.getService(TracingService.class);
 
-@Override
-public ExecuteContext onThrow(ExecuteContext context) throws Exception {
-    tracingService.onSpanError(context.getThrowable());
-    return context;
+                    @Override
+                    public ExecuteContext before(ExecuteContext context) throws Exception {
+                        TracingRequest request =
+                                new TracingRequest(context.getRawCls().getName(), context.getMethod().getName());
+                        ExtractService<HashMap<String, String>> extractService = (tracingRequest, carrier) -> {
+                            tracingRequest.setTraceId(carrier.get(TracingHeader.TRACE_ID.getValue()));
+                            tracingRequest.setParentSpanId(carrier.get(TracingHeader.PARENT_SPAN_ID.getValue()));
+                            tracingRequest.setSpanIdPrefix(carrier.get(TracingHeader.SPAN_ID_PREFIX.getValue()));
+                        };
+                        Optional<SpanEvent> spanEventOptional = tracingService.onProviderSpanStart(request,
+                                extractService, (HashMap<String, String>) context.getArguments()[0]);
+                        if (spanEventOptional.isPresent()) {
+                            SpanEvent spanEvent = spanEventOptional.get();
+                            LOGGER.info("TraceId:" + spanEvent.getTraceId());
+                            LOGGER.info("SpanId:" + spanEvent.getSpanId());
+                            LOGGER.info("ParentSpanId:" + spanEvent.getParentSpanId());
+                            LOGGER.info("Class:" + spanEvent.getClassName());
+                            LOGGER.info("Method:" + spanEvent.getMethod());
+                        }
+                        tracingService.onSpanFinally();
+                        return context;
+                    }
+
+                    @Override
+                    public ExecuteContext after(ExecuteContext context) throws Exception {
+                        return context;
+                    }
+
+                    @Override
+                    public ExecuteContext onThrow(ExecuteContext context) throws Exception {
+                        tracingService.onSpanError(context.getThrowable());
+                        return context;
+                    }
+                })
+        };
+    }
 }
 ```
 
 > `handleConsume` in `SimulateProvider` is the service provider execution unit of the `SimulateServer` node in the distributed system. So here use TracingService: : onProviderSpanStart to mark the execution unit, and through ExtractService defines the ability to link information extracted from communication carrier.
 
-Once the development is complete, follow the [Packaged build](README.md#Packaged-build) process used to create the first plugin, run **mvn package** in the root directory of the project, and run `cd agent/` in it with **Sermant** to run the test app. Run **java -javaagent:sermant-agent.jar -jar Application.jar**
+4. Add the class name of the above enhanced declaration class to the `META-INF/services/com.huaweicloud.sermant.core.plugin.agent.declarer.PluginDeclarer` SPI file
+
+5. Once the development is complete, follow the [Packaged build](README.md#Packaged-build) process used to create the 
+first plugin, run **mvn package** in the root directory of the project.
+6. Set both the unified Gateway service switch `agent.service.gateway.enable` and the link marking service switch `agent.service.tracing.enable` to `true` in file `agent/config/config.properties` after execution:
+```properties
+# Gateway Service switch
+agent.service.gateway.enable=true
+# Tracing Service switch
+agent.service.tracing.enable=true
+```
+
+7. run `cd agent/` in it with **Sermant** to run 
+   the test app. Run **java -javaagent:sermant-agent.jar -jar Application.jar**
 
 ```shell
 $ java -javaagent:sermant-agent.jar -jar Application.jar
-[INFO] Loading core library... 
-[INFO] Building argument map... 
-[INFO] Loading sermant agent... 
-[INFO] Load sermant done. 
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Loading god library into BootstrapClassLoader.
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Building argument map by agent arguments.
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Loading core library into SermantClassLoader.
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Loading sermant agent, artifact is: default
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Load sermant done, artifact is: default
 Good morning!
 Good afternoon!
 Good night!
@@ -171,23 +236,23 @@ The execution logic defined in the plug-in has been enhanced into the test appli
 2. Open the log file `sermant-0.log` and check the log contents. You can see the following log, from which the `SpanId` and `ParentSpanId` can be used to restore the link relationship of the app:
 
 ```日志
-[TemplateTracingDeclarer.java] [before:55] [main] TraceId:137232c4-ce6e-4161-b44d-88cd819145e5
-[TemplateTracingDeclarer.java] [before:55] [main] SpanId:0
-[TemplateTracingDeclarer.java] [before:56] [main] ParentSpanId:null
-[TemplateTracingDeclarer.java] [before:57] [main] Class:com.huaweicloud.template.SimulateServer
-[TemplateTracingDeclarer.java] [before:58] [main] Method:handleRequest
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.template.HandleRequestDeclarer$1] [before:47] [main] TraceId:715c69a5-0c94-423d-b2b8-b288c5fccdb3
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.template.HandleRequestDeclarer$1] [before:48] [main] SpanId:0
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.template.HandleRequestDeclarer$1] [before:49] [main] ParentSpanId:null
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.template.HandleRequestDeclarer$1] [before:50] [main] Class:com.huaweicloud.template.SimulateServer
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.template.HandleRequestDeclarer$1] [before:51] [main] Method:handleRequest
 
-[TemplateTracingDeclarer.java] [before:88] [main] TraceId:137232c4-ce6e-4161-b44d-88cd819145e5
-[TemplateTracingDeclarer.java] [before:89] [main] SpanId:1
-[TemplateTracingDeclarer.java] [before:90] [main] ParentSpanId:0
-[TemplateTracingDeclarer.java] [before:91] [main] Class:com.huaweicloud.template.SimulateServer
-[TemplateTracingDeclarer.java] [before:92] [main] Method:consume
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.template.ConsumerDeclarer$1] [before:48] [main] TraceId:715c69a5-0c94-423d-b2b8-b288c5fccdb3
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.template.ConsumerDeclarer$1] [before:49] [main] SpanId:1
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.template.ConsumerDeclarer$1] [before:50] [main] ParentSpanId:0
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.template.ConsumerDeclarer$1] [before:51] [main] Class:com.huaweicloud.template.SimulateServer
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.template.ConsumerDeclarer$1] [before:52] [main] Method:consume
 
-[TemplateTracingDeclarer.java] [before:122] [main] TraceId:137232c4-ce6e-4161-b44d-88cd819145e5
-[TemplateTracingDeclarer.java] [before:123] [main] SpanId:1-0-0
-[TemplateTracingDeclarer.java] [before:124] [main] ParentSpanId:1
-[TemplateTracingDeclarer.java] [before:125] [main] Class:com.huaweicloud.template.SimulateProvider
-[TemplateTracingDeclarer.java] [before:126] [main] Method:handleConsume
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.template.HandleConsumerDeclarer$1] [before:47] [main] TraceId:715c69a5-0c94-423d-b2b8-b288c5fccdb3
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.template.HandleConsumerDeclarer$1] [before:48] [main] SpanId:1-0-0
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.template.HandleConsumerDeclarer$1] [before:49] [main] ParentSpanId:1
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.template.HandleConsumerDeclarer$1] [before:50] [main] Class:com.huaweicloud.template.SimulateProvider
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.template.HandleConsumerDeclarer$1] [before:51] [main] Method:handleConsume
 ```
 
 > According to the link marking information carried in the log, the following conclusions can be analyzed

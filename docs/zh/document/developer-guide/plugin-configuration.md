@@ -67,10 +67,11 @@ public ExecuteContext before(ExecuteContext context) throws Exception {
 开发完成后，可参照创建首个插件时的打包构建流程，在工程根目录下执行 `mvn package`，执行完成后在根目录执行 `cd agent/`，并在其中携带Sermant运行测试应用，执行如下命令 `java -javaagent:sermant-agent.jar -jar Application.jar`。控制台输出如下所示：
 
 ```log            
-[INFO] Loading core library... 
-[INFO] Building argument map... 
-[INFO] Loading sermant agent...
-[INFO] Load sermant done. 
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Loading god library into BootstrapClassLoader.
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Building argument map by agent arguments.
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Loading core library into SermantClassLoader.
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Loading sermant agent, artifact is: default
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Load sermant done, artifact is: default
 false
 127.0.0.1
 Good morning!

@@ -12,7 +12,7 @@
 本地执行如下Maven指令：
 
 ```shell
-$ mvn archetype:generate -DarchetypeGroupId=com.huaweicloud.sermant -DarchetypeArtifactId=sermant-template-archetype -DarchetypeVersion=0.0.1 -DgroupId=com.huaweicloud.sermant -Dversion=0.0.1 -Dpackage=com.huaweicloud -DartifactId=first-plugin
+$ mvn archetype:generate -DarchetypeGroupId=com.huaweicloud.sermant -DarchetypeArtifactId=sermant-template-archetype -DarchetypeVersion=1.2.0 -DgroupId=com.huaweicloud.sermant -Dversion=1.2.0 -Dpackage=com.huaweicloud -DartifactId=first-plugin
 ```
 
 执行上述指令后，出现下述日志后回车进行确认：
@@ -20,14 +20,14 @@ $ mvn archetype:generate -DarchetypeGroupId=com.huaweicloud.sermant -DarchetypeA
 ```shell
 [INFO] Using property: groupId = com.huaweicloud.sermant
 [INFO] Using property: artifactId = first-plugin
-[INFO] Using property: version = 0.0.1
+[INFO] Using property: version = 1.2.0
 [INFO] Using property: package = com.huaweicloud
 Confirm properties configuration:
 groupId: com.huaweicloud.sermant
 artifactId: first-plugin
-version: 0.0.1
+version: 1.2.0
 package: com.huaweicloud
- Y: : 
+ Y: :
 ```
 
 出现下述成功提示日志，则通过Archetype模版创建项目成功：
@@ -36,7 +36,9 @@ package: com.huaweicloud
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time:  01:30 min
+[INFO] Total time:  5.409 s
+[INFO] Finished at: 2023-10-19T15:10:05+08:00
+[INFO] ------------------------------------------------------------------------
 ```
 
 ### 工程结构
@@ -55,7 +57,7 @@ package: com.huaweicloud
 
 `application`：为测试应用模块，该模块用于测试模板中已定义的插件是否能够生效，正式进行项目开发时可清理。
 
-`config`：为Sermant的配置目录，参考[Sermant配置](../user-guide/sermant-agent.md#Sermant-agent使用参数配置)。
+`config`：为Sermant的配置目录。
 
 `template`：template插件模块，此处进行插件能力的开发。
 
@@ -148,6 +150,7 @@ com.huaweicloud.sermant.template.TemplateDeclarer
 │   ├── common
 │   ├── config
 │   ├── core
+│   ├── god
 │   ├── implement
 │   ├── pluginPackage
 │   │   └── template
@@ -175,10 +178,11 @@ Good afternoon!
 
 ```shell
 $ java -javaagent:sermant-agent.jar -jar Application.jar
-[INFO] Loading core library... 
-[INFO] Building argument map... 
-[INFO] Loading sermant agent... 
-[INFO] Load sermant done. 
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Loading god library into BootstrapClassLoader.
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Building argument map by agent arguments.
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Loading core library into SermantClassLoader.
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Loading sermant agent, artifact is: default
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Load sermant done, artifact is: default
 Good morning!
 Good afternoon!
 Good night!

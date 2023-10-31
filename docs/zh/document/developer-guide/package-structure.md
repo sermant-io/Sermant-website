@@ -9,7 +9,7 @@
 
 #### sermant-agentcore模块
 
-> [sermant-agentcore模块]((https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core))是Sermant Agent的核心模块，其中提供了字节码增强能力、类隔离能力、插件化能力、服务治理的基础服务等核心能力的封装。
+> [sermant-agentcore模块](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core)是Sermant Agent的核心模块，其中提供了字节码增强能力、类隔离能力、插件化能力、服务治理的基础服务等核心能力的封装。
 
 ## 插件主模块
 
@@ -80,10 +80,11 @@ public ExecuteContext before(ExecuteContext context) throws Exception {
 
 ```java
 $ java -javaagent:sermant-agent.jar -jar Application.jar
-[INFO] Loading core library... 
-[INFO] Building argument map... 
-[INFO] Loading sermant agent... 
-[INFO] Load sermant done. 
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Loading god library into BootstrapClassLoader.
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Building argument map by agent arguments.
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Loading core library into SermantClassLoader.
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Loading sermant agent, artifact is: default
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Load sermant done, artifact is: default
 Good morning!
 ECHO: Good morning to you!
 ```

@@ -37,15 +37,25 @@
    ```shell
    create /test_group/test_key "This is a dynamic config!"
    ```
+5. 开启Zookeeper服务并且在`agent/config/config.properties`中设置`dynamic.config`相关配置，并且将动态配置开关`agent.service.dynamic.config.enable`设置为`true`，主要配置示例如下：
+   ```properties
+   # 动态配置服务开关
+   agent.service.dynamic.config.enable=true
+   # 指定配置中心的服务端地址
+   dynamic.config.serverAddress=127.0.0.1:2181
+   # 指定动态配置中心类型, 取值范围为NOP(无实现)、ZOOKEEPER、KIE、NACOS
+   dynamic.config.dynamicConfigType=ZOOKEEPER
+   ```
 
-5. 执行完成后在项目的根目录执行 `cd agent/`，并在其中携带**Sermant**运行测试应用，执行如下命令 **java -javaagent:sermant-agent.jar -jar Application.jar**
+6. 执行完成后在项目的根目录执行 `cd agent/`，并在其中携带**Sermant**运行测试应用，执行如下命令 **java -javaagent:sermant-agent.jar -jar Application.jar**
 
    ```shell
    $ java -javaagent:sermant-agent.jar -jar Application.jar
-   [INFO] Loading core library... 
-   [INFO] Building argument map... 
-   [INFO] Loading sermant agent... 
-   [INFO] Load sermant done. 
+   [xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Loading god library into BootstrapClassLoader.
+   [xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Building argument map by agent arguments.
+   [xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Loading core library into SermantClassLoader.
+   [xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Loading sermant agent, artifact is: default
+   [xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Load sermant done, artifact is: default
    Good morning!
    This is a dynamic config!
    Good afternoon!

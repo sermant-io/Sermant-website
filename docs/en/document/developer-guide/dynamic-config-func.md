@@ -37,15 +37,25 @@ This development example is based on the project created in the [Create the Firs
    ```shell
    create /test_group/test_key "This is a dynamic config!"
    ```
-
-5. When the execution is complete, execute `cd agent/` in the root directory of the project and run the test Application with **Sermant** in it, executing the command **java-javaagent: sermant-agent.jar-jar application.jar**
+5. Start the Zookeeper server and set the `dynamic.config` related configuration in `agent/config/config.properties`, and set the dynamic configuration switch `agent.service.dynamic.config.enable` to `true`. The main configuration examples are as follows:
+   ```properties
+   # Dynamically configure service switches
+   agent.service.dynamic.config.enable=true
+   # The server address for the configuration center
+   dynamic.config.serverAddress=127.0.0.1:2181
+   # The type for the configuration center, The range of values is NOP(No implementation)、ZOOKEEPER、KIE、NACOS
+   dynamic.config.dynamicConfigType=ZOOKEEPER
+   ```
+6. When the execution is complete, execute `cd agent/` in the root directory of the project and run the test 
+Application with **Sermant** in it, executing the command **java-javaagent: sermant-agent.jar-jar application.jar**
 
    ```shell
    $ java -javaagent:sermant-agent.jar -jar Application.jar
-   [INFO] Loading core library... 
-   [INFO] Building argument map... 
-   [INFO] Loading sermant agent... 
-   [INFO] Load sermant done. 
+   [xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Loading god library into BootstrapClassLoader.
+   [xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Building argument map by agent arguments.
+   [xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Loading core library into SermantClassLoader.
+   [xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Loading sermant agent, artifact is: default
+   [xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Load sermant done, artifact is: default
    Good morning!
    This is a dynamic config!
    Good afternoon!

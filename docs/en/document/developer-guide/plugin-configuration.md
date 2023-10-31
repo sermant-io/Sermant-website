@@ -67,10 +67,11 @@ Finally, don't forget to add the **SPI** profile of the plugin configuration:
 After the development is completed, you can refer to the packaging construction process when creating the first plugin, execute `mvn package` in the project root directory, and execute `cd agent/` in the root directory after completion, and run the test application with Sermant in it. Execute the command `java-javaagent: sermant-agent.jar-jar Application.jar`. The console output is as follows:
 
 ```log            
-[INFO] Loading core library... 
-[INFO] Building argument map... 
-[INFO] Loading sermant agent...
-[INFO] Load sermant done. 
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Loading god library into BootstrapClassLoader.
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Building argument map by agent arguments.
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Loading core library into SermantClassLoader.
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Loading sermant agent, artifact is: default
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Load sermant done, artifact is: default
 false
 127.0.0.1
 Good morning!

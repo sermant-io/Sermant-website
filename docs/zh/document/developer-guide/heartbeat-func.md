@@ -31,13 +31,19 @@ public ExecuteContext before(ExecuteContext context) throws Exception {
 }
 ```
 
-开发完成后，可参照创建首个插件时的[打包构建](README.md#打包构建) 流程，在工程根目录下执行 `mvn package`，参考[Sermant Agent配置](../user-guide/sermant-agent.md#参数配置) 修改文件`agent/config/config.properties`，并参考[Sermant Backend使用手册](../user-guide/sermant-backend.md)启动Sermant Backend。
-
-最后访问`http://localhost:8900`查看Sermant Backend界面
+1. 开发完成后，可参照创建首个插件时的[打包构建](README.md#打包构建) 流程，在工程根目录下执行 `mvn package`
+2. 参考[backend使用手册](../user-guide/backend.md)
+   启动backend。
+3. 将文件`agent/config/config.properties`中的心跳开关`agent.service.heartbeat.enable`设置为`true`:
+```properties
+# 心跳服务开关
+agent.service.heartbeat.enable=true
+```
+4. 最后访问`http://localhost:8900`查看backend界面
 
 ![pic](../../../binary-doc/backend_sermant_info.png)
 
-从图中可以看到，当前携带**Sermant Agent**的实例有一个，并且处于正常运行状态，并且携带`0.0.1`版本的`template`插件。
+从图中可以看到，当前携带**Sermant Agent**的实例有一个，并且处于正常运行状态，并且携带`1.2.0`版本的`template`插件。
 
 > **Sermant Agent**会定期向**Sermant Backend**发送心跳，**Sermant Backend**在收到来自各个**Sermant Agent**的心跳时，会为其续约，如果超过有效时间（可通过[Sermant Backend配置](../user-guide/sermant-backend.md#Sermant-Backend参数配置)修改），还未收到某一节点上报的心跳，则就将该节点置为失联状态。
 

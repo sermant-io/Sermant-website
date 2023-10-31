@@ -26,7 +26,7 @@
 
 ## 参数配置
 
-动态配置中心的配置，请参见对应的开源动态配置中心 (如[ZooKeeper](https://zookeeper.apache.org/releases.html) 、[ServiceComb Kie](https://servicecomb.apache.org/cn/release/kie-downloads/)) 。本文中不作详细赘述。
+动态配置中心的配置，请参见对应的开源动态配置中心 (如[ZooKeeper](https://zookeeper.apache.org/releases.html) 、[ServiceComb Kie](https://servicecomb.apache.org/cn/release/kie-downloads/)、[Nacos](https://github.com/alibaba/nacos/releases)) 。本文中不作详细赘述。
 
 首先，Sermant Agent的产品包`agent/config/config.properties`中配置`agent.service.dynamic.config.enable=true`，将**启用动态配置服务**。其他Sermant Agent中对应的动态配置中心参数，也都可以在该文件中进行配置。
 
@@ -95,14 +95,37 @@ groupKey1=groupValue1[&groupKey2=groupVaue2...]
 >
 > 若传入的`Group`非以上格式，则会默认添加标签`GROUP=传入Group`
 
+### 基于 Nacos 的配置模型实现
 
+对于`Nacos`服务来说，所谓动态配置就是`Nacos`的配置值，`Nacos`本身包含`namespaceId`、`group`和`dataId`。其中`namespaceId`默认取值为`agent/config/config.properties`中的`service.meta.project`即指定服务命名空间；`group`与动态配置核心的`group`保持一致；`dataId`设置为动态配置核心的`Key`即配置的键名称，其格式如下:
+
+```properties
+{
+    "group": "Group", 			# 配置组
+    "dataId": "Key",  			# 配置键
+    "content": "config", 		# 配置值
+    "namespaceId": "default"	# 指定服务命名空间
+}
+```
+
+`Nacos`对于`group`和`dataId`的命名格式要求如下，具体参考[Nacos文档](https://nacos.io/zh-cn/docs/sdk.html):
+
+- `dataId`只允许英文字符和4种特殊字符（"."、":"、"-"、"\_"），不超过256字节。
+- `group`只允许英文字符和4种特殊字符（"."、":"、"-"、"\_"），不超过128字节。
+
+> **特别说明：**
+>
+> 若传入的`group`包含`=`、`&`、`/`三种非法字符时，动态配置核心将自动将其转换为合法字符：
+> `=`转换为`:`、`&`转换为`_`、`/`转换为`.`。
 
 ## 动态配置中心支持的组件及版本
 
 目前Sermant支持的配置中心组件为:
 
-- [ZooKeeper](https://zookeeper.apache.org/releases.html)，使用版本为3.6.3
-- [ServiceComb Kie](https://servicecomb.apache.org/cn/release/kie-downloads/)，使用的版本为0.2.0
+
+- [ZooKeeper](https://zookeeper.apache.org/releases.html)，使用版本为3.6.3。
+- [ServiceComb Kie](https://servicecomb.apache.org/cn/release/kie-downloads/)，使用的版本为0.2.0。
+- [Nacos](https://github.com/alibaba/nacos/releases)，使用版本为2.1.0。
 
 ## 启动和结果验证
 
@@ -142,7 +165,7 @@ create /app=default/demo "test"
 观察日志文件中是否包含以下日志输出：
 
 ```
-2022-12-29 15:48:01.963 [ERROR] [com.huawei.example.demo.common.DemoLogger] [println:42] [main-EventThread] [DemoDynaConfService]-DynamicConfigEvent{key='demo', group='app=default', content='test', eventType=CREATE} com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent[source=demo,app=default]
+[DemoDynaConfService]-DynamicConfigEvent{key='demo', group='app=default', content='test', eventType=CREATE} com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent[source=demo,app=default]
 ```
 
 如果日志输出无误，则说明动态配置发布成功，Sermant Agent已监听到动态配置。
@@ -190,7 +213,52 @@ java -javaagent:sermant-agent-x.x.x/agent/sermant-agent.jar=appName=test -jar de
 观察日志文件中是否包含以下日志输出：
 
 ```
-2022-12-29 16:45:14.456 [ERROR] [com.huawei.example.demo.common.DemoLogger] [println:42] [main-EventThread] [DemoDynaConfService]-DynamicConfigEvent{key='demo', group='app=default', content='test', eventType=CREATE} com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent[source=demo,app=default]
+[DemoDynaConfService]-DynamicConfigEvent{key='demo', group='app=default', content='test', eventType=CREATE} com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent[source=demo,app=default]
 ```
 
-如果日志输出无误，则说明动态配置发布成功，Sermant Agent已监听到动态配置。
+如果日志输出无误，则说明动态配置发布成功，sermant-agent已监听到动态配置。
+
+### Nacos
+
+Nacos与Zookeeper和Kie使用方式类似，唯一不同的是发布配置按照Nacos的方式执行。
+
+#### 启动
+
+首先启动配置中心Nacos，Nacos部署可自行查找相关资料。
+
+接下来以**Sermant-example**项目 [demo-application ](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/demo-application)为宿主应用，执行以下命令挂载sermant-agent启动demo-application:
+
+```shell
+# Run under Windows
+java -javaagent:sermant-agent-x.x.x\agent\sermant-agent.jar=appName=test -jar demo-application.jar
+# Run under Linux
+java -javaagent:sermant-agent-x.x.x/agent/sermant-agent.jar=appName=test -jar demo-application.jar
+```
+
+#### 发布配置
+
+通过控制台命令行发布以下动态配置：
+
+```properties
+curl -d 'dataId=demo' \
+  -d 'group=app:default' \
+  -d 'namespaceId=default' \
+  -d 'content=test' \
+  -X POST 'http://ip:port/nacos/v2/cs/config'
+```
+
+其中`app:default`即为经过合法化后的group的值，`demo`即为key值，`test`为value值，`default`为指定服务命名空间即`agent/config/config.properties`中的`service.meta.project`，具体配置说明请参考[Sermant-agent使用手册动态配置中心相关参数配置](sermant-agent.md#动态配置中心相关参数)。
+
+创建节点数据成功后，即成功在配置中心发布了动态配置。
+
+#### 验证
+
+查看Sermant日志文件sermant-0.log，默认日志文件路径为`./logs/sermant/core`。
+
+观察日志文件中是否包含以下日志输出：
+
+```
+[DemoDynaConfService]-DynamicConfigEvent{key='demo', group='app:default', content='test', eventType=CREATE} com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent[source=demo,app=default]
+```
+
+如果日志输出无误，则说明动态配置发布成功，sermant-agent已监听到动态配置。
