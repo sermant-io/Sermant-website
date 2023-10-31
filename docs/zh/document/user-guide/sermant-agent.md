@@ -49,17 +49,26 @@ java -jar spring-provider.jar
 - 通过`agentmain`方式启动，需要借助`Attach API`来完成，首先通过[附件 AgentLoader.java](#附件)创建一个Java文件，通过javac编译：
 
 ```shell
+# Linux、MacOS
 javac -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader.java
+
+# Windows 已正确配置JAVA所需环境变量
+javac AgentLoader.java -encoding utf-8
 ```
 
 - 编译完成后，将在目录下生成`AgentLoader.class`文件，使用如下指令运行`AgentLoader`
 
 
 ```shell
+# Linux、MacOS
 java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
+
+# Windows 已正确配置JAVA所需环境变量
+java AgentLoader
 ```
 
 ```shell
+# 运行指令根据所使用操作系统进行选择，此处以Linux、MacOS指令编写
 $ java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
 请选择需要使用Sermant Agent的Java进程：
 0: xxxxx AgentLoader # xxxxx为进程号，此处模糊
@@ -92,6 +101,7 @@ $ java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
 在通过[agentmain方式](#agentmain方式)启动后，可以对Sermant Agent进行卸载，再次运行`AgentLoader`，并通过传入参数下发卸载Sermant Agent的指令`command=UNINSTALL-AGENT`：
 
 ```shell
+# 运行指令根据所使用操作系统进行选择，此处以Linux、MacOS指令编写
 $ java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
 请选择需要使用Sermant Agent的Java进程：
 0: xxxxx AgentLoader # xxxxx为进程号，此处模糊
@@ -124,6 +134,7 @@ $ java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
 > 注：可以一次安装多个插件，插件名通过 '/' 进行分隔，pluginA、pluginB为插件名，需要按照实际实际填写，本示例使用[monitor](../plugin/monitor.md)插件
 
 ```shell
+# 运行指令根据所使用操作系统进行选择，此处以Linux、MacOS指令编写
 $ java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
 请选择需要使用Sermant Agent的Java进程：
 0: xxxxx AgentLoader # xxxxx为进程号，此处模糊
@@ -162,6 +173,7 @@ $ java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
 > 注：可以一次卸载多个插件，插件名通过 '/' 进行分隔，pluginA、pluginB为插件名，需要按照实际实际填写，本示例使用[monitor](../plugin/monitor.md)插件
 
 ```shell
+# 运行指令根据所使用操作系统进行选择，此处以Linux、MacOS指令编写
 $ java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
 请选择需要使用Sermant Agent的Java进程：
 0: xxxxx AgentLoader # xxxxx为进程号，此处模糊
