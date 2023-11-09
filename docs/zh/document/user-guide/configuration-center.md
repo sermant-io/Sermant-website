@@ -247,7 +247,7 @@ curl -d 'dataId=demo' \
   -X POST 'http://ip:port/nacos/v2/cs/config'
 ```
 
-其中`app:default`即为经过合法化后的group的值，`demo`即为key值，`test`为value值，`default`为指定服务命名空间即`agent/config/config.properties`中的`service.meta.project`，具体配置说明请参考[Sermant-agent使用手册动态配置中心相关参数配置](sermant-agent.md#动态配置中心相关参数)。
+其中`app:default`即为经过合法化后的group的值，`demo`即为key值，`test`为value值，`default`为指定服务命名空间即`agent/config/config.properties`中的`service.meta.project`。
 
 创建节点数据成功后，即成功在配置中心发布了动态配置。
 
