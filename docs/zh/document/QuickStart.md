@@ -3,7 +3,7 @@
 
 ## 准备工作
 
-- [下载](https://github.com/huaweicloud/Sermant/releases/download/v1.1.0/sermant-1.1.0.tar.gz) Sermant包（当前版本推荐1.1.0）
+- [下载](https://github.com/huaweicloud/Sermant/releases/download/v1.2.1/sermant-1.2.1.tar.gz) Sermant包（当前版本推荐1.2.1）
 - [下载](https://github.com/huaweicloud/Sermant-examples/tree/main/flowcontrol-demo/spring-cloud-demo/spring-provider) demo应用
 - [下载](https://zookeeper.apache.org/releases#download) 并启动zookeeper
 

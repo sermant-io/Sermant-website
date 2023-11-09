@@ -217,7 +217,7 @@ To sum up, The ability to enhance *Java* native classes is provided in [**Serman
 
 ## Interceptor
 Interceptors are used to define enhancement logic when bytecode enhancement is performed on methods of the enhanced class, when postset, and when exception handling is performed：
-- [Interceptor](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/interceptor/Interceptor.java): interceptor interface, which contains three methods：
+- [Interceptor](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-god/src/main/java/com/huaweicloud/sermant/core/plugin/agent/interceptor/Interceptor.java): interceptor interface, which contains three methods：
   - `before`: prefix method, which is executed before the intercept point. The ExecuteContext argument is the context in which the plugin executes, encapsulating all the parameters needed for the interceptor to operate. The skip method allows you to skip the main flow and set the final method result. Note that the main flow cannot be skipped when the constructor is enhanced.
   - `after`:  post method, regardless of whether the blocked method is executed normally, will eventually enter the post-method. Post methods can override the return value of the intercepted method with a return value, so developers need to be careful not to return null too easily here.
   - `onThrow`: a method to handle exceptions, triggered when the intercepted method executes an exception. Handling the exception here does not affect the normal throwing of the exception.
