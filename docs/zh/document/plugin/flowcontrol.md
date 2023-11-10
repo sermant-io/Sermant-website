@@ -84,9 +84,9 @@ flow.control.plugin:
 
 流控规则是否生效取决于流量标记，当流量标记与请求相匹配，流控规则才会生效。而如何将流量标记对应上具体规则，则取决于业务场景名，通常流量标记与流控规则配置均要配置指定前缀。
 
-例如流量标记的键key需以`servicecomb.MatchGroup`为前缀, 而限流规则的键key需以`servicecomb.rateLimiting`为前缀，以一个具体的例子：
+例如流量标记的键key需以`servicecomb.matchGroup`为前缀, 而限流规则的键key需以`servicecomb.rateLimiting`为前缀，以一个具体的例子：
 
-> 流量标记配置键key为：`servicecomb.MatchGroup.flow`。
+> 流量标记配置键key为：`servicecomb.matchGroup.flow`。
 > 
 > 限流规则配置键key为：`servicecomb.rateLimiting.flow`。
 > 
@@ -96,9 +96,9 @@ flow.control.plugin:
 
 - **流量标记**
 
-  **流量标记配置键前缀:** `servicecomb.MatchGroup`
+  **流量标记配置键前缀:** `servicecomb.matchGroup`
 
-  以`zookeeper`为例，当使用`zookeeper`配置中心设置流量标记规则时，结合上述`group`和`key`的说明，需要在`zookeeper`中创建节点`/service=${spring.applicaton.name}/servicecomb.MatchGroup.${sceneName}`,节点内容为流量标记规则，如下述yaml内容。
+  以`zookeeper`为例，当使用`zookeeper`配置中心设置流量标记规则时，结合上述`group`和`key`的说明，需要在`zookeeper`中创建节点`/service=${spring.applicaton.name}/servicecomb.matchGroup.${sceneName}`,节点内容为流量标记规则，如下述yaml内容。
   
   ```yaml
   matches:            # 匹配器集合，可配置多个
