@@ -50,7 +50,7 @@ Prefixes of flow marking and flow control rules are as follows:
 
 | rule | prefix |
 | -- | -- |
-| traffic marks | servicecomb.MatchGroup |
+| traffic marks | servicecomb.matchGroup |
 | traffic Limiting | servicecomb.rateLimiting |
 | Circuit Breaker | servicecomb.circuitBreaker |
 | Bulkhead | servicecomb.bulkhead |
@@ -59,9 +59,10 @@ Prefixes of flow marking and flow control rules are as follows:
 | System Rule | servicecomb.system |
 | System Adaptive | servicecomb.system |
 
-For example, the key of traffic marks must be prefixed with `servicecomb.MatchGroup`. The traffic limiting rule is prefixed with `servicecomb.rateLimiting`. The following is an example:
+For example, the key of traffic marks must be prefixed with `servicecomb.matchGroup`. The traffic limiting rule is 
+prefixed with `servicecomb.rateLimiting`. The following is an example:
 
-> The traffic marking configuration key：`servicecomb.MatchGroup.flow`
+> The traffic marking configuration key：`servicecomb.matchGroup.flow`
 > 
 > The key for configuring the traffic limiting rule：`servicecomb.rateLimiting.flow`
 > 
