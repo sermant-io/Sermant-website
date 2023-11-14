@@ -10,6 +10,39 @@
 
 请务必阅读并遵守我们的[行为准则](https://github.com/huaweicloud/Sermant/tree/develop/CODE_OF_CONDUCT.md)。
 
+### 开源贡献协议
+
+Sermant社区采用DCO ([Developer Certificate of Origin](https://developercertificate.org/)) 作为开源贡献协议，如果您想参与社区贡献，需要按照以下步骤进行。
+
+#### 注册GitHub账号
+
+如果您没有GitHub账号，需要登录GitHub并使用电子邮件地址进行注册。电子邮件地址用于对DCO进行签名并配置SSH公钥。
+
+#### 签署DCO
+
+DCO ([Developer Certificate of Origin](https://developercertificate.org/))是一种轻量级的开源贡献协议，供开源贡献者证明他们有权授予项目使用他们的代码。
+
+使用Git CLI提交代码commit时，可以使用-s参数添加签名：https://git-scm.com/docs/git-commit。使用示例如下：
+
+```shell
+$ git commit -s -m 'This is my commit message'
+```
+
+签名会作为被提交commit信息的一部分，格式为：
+
+```
+This is my commit message
+
+Signed-off-by: Full Name <email>
+```
+
+> - 如果您使用IntelliJ IDEA提交代码，可以在Commit Change工具框中勾选`Sign-off commit`选项，即可在每次提交时附上签名信息。具体操作请参考[IntelliJ IDEA 使用文档](https://www.jetbrains.com/help/idea/commit-changes-dialog.html#2ddf66ea)。
+> - 如果您使用Visual Studio Code提交代码，可以在Settings中勾选`Git: Always Sign Off`选项，即可在每次提交时附上签名信息。具体操作请参考[Visual Studio Code相关说明](https://github.com/microsoft/vscode/issues/83096)。
+
+
+
+请确认**每次提交commit时都正确按照以上方式添加签名签署DCO**，否则您提交的代码将不会被接纳合入至我们的开源仓库。
+
 ## 贡献
 
 Sermant 欢迎任何角色的新参与者，包括用户、贡献者、提交者和 PMC。
@@ -59,19 +92,19 @@ Sermant 欢迎任何角色的新参与者，包括用户、贡献者、提交者
 创建拉取请求时:
 
 1. Please follow [the pull request template](https://github.com/huaweicloud/Sermant/tree/develop/.github/PULL_REQUEST_TEMPLATE.md).
-    
+   
 2. Please create the request to **develop** branch.
-    
+   
 3. Please make sure the PR has a corresponding issue.
-    
+   
 4. If your PR contains large changes, e.g. component refactor or new components, please write detailed documents about its design and usage.
-    
+   
 5. Note that a single PR should not be too large. If heavy changes are required, it's better to separate the changes to a few individual PRs.
-    
+   
 6. After creating a PR, one or more reviewers will be assigned to the pull request.
-    
+   
 7. Before merging a PR, squash any fix review feedback, typo, merged, and rebased sorts of commits. The final commit message should be clear and concise.
-    
+   
 
 如果您的 PR 包含较大的更改，例如组件重构或新组件，请写详细的设计和使用文档。
 
@@ -82,26 +115,26 @@ Sermant 欢迎任何角色的新参与者，包括用户、贡献者、提交者
 一些原则:
 
 - Readability - 重要的代码应该有据可查。 API 应该有 Javadoc。代码风格应与现有风格保持一致。
-    
+  
 - Elegance - 新的函数、类或组件应该设计得很好。
-    
+  
 - Testability - 单元测试用例应该覆盖 80% 的新代码。
-    
+  
 - Maintainability - 代码可维护性好.
-    
+  
 
 ### 现在如何尝试成为commiter?
 
 一般来说，贡献 8 个重要的补丁并让至少三个不同的人来审查它们（你需要三个人来支持你）。然后请人提名你。你在展示你的:
 
 - at least 8 PR and the associated issues to the project,
-    
+  
 - ability to collaborate with the team,
-    
+  
 - understanding of the projects' code base and coding style, and
-    
+  
 - ability to write good code (last but certainly not least)
-    
+  
 
 当前的提交者通过在 Sermant Issue上用标签提名你
 

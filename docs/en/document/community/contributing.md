@@ -10,6 +10,40 @@ If you find something incorrect or missing, please leave comments / suggestions.
 
 Please make sure to read and observe our [Code of Conduct](https://github.com/huaweicloud/Sermant/tree/develop/CODE_OF_CONDUCT.md).
 
+### Open Source Contribution Agreement
+
+The Sermant community adopts DCO ([Developer Certificate of Origin]( https://developercertificate.org/ )) as its open source contribution protocol, if you want to participate in community contributions, you need to follow the following steps.
+
+#### Register GitHub Account
+
+If you do not have a GitHub account, you need to log in to GitHub and register using an email address. The email address is used to sign DCO and configure the SSH public key.
+
+#### Sign DCO
+
+DCO ([Developer Certificate of Origin]( https://developercertificate.org/ ))  is a lightweight open source contribution protocol for open source contributors to prove their right to grant projects access to their code.
+
+When submitting code commit using Git CLI, you can use the - s parameter to add a signature: https://git-scm.com/docs/git-commit . Examples of usage are as follows:
+
+```Shell
+
+$git commit -s -m 'This is my commit message'
+
+```
+
+The signature will be part of the submitted commit message in the format:
+
+```
+This is my commit message
+
+Signed off by: Full Name<email>
+
+```
+
+> - If you use IntelliJ IDEA to submit code, you can check the `Sign-off commit` option in the Commit Change tool box to attach signature information every time you commit. Please refer to the [IntelliJ IDEA User Documentation](https://www.jetbrains.com/help/idea/commit-changes-dialog.html#2ddf66ea)  for specific operations.
+> - If you use Visual Studio Code to submit code, you can check the `Git: Always Sign Off` option in Settings to attach signature information every time you commit. Please refer to the [related pull request of Visual Studio Code ](https://www.jetbrains.com/help/idea/commit-changes-dialog.html#2ddf66ea) for specific operations.
+
+Please confirm that each time you submit a commit, you correctly add a signature and sign the DCO in the above way. Otherwise, your submitted code will not be accepted and integrated into our  repository.
+
 ## Contributing
 
 Sermant welcome new participants of any role, including user, contributor, committer and PMC.
