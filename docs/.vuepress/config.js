@@ -101,6 +101,7 @@ module.exports = {
               children: [
                 "community/",
                 "community/contributing",
+                "community/vulnerability",
               ],
             },
             {
@@ -203,6 +204,7 @@ module.exports = {
               children: [
                 "community/",
                 "community/contributing",
+                "community/vulnerability",
               ],
             },
             {

@@ -6,9 +6,8 @@ The full version release record can be viewed at [github](https://github.com/hua
 
 ## Release Cycle
 
-Sermant currently plans to release twice a year, with each version being maintained for a year.
-
-- Patch version: The version number is **X.X.X** (the third digit of the version number is not 0). The patch version will be released every other month or so. When a problem affecting the function is found in the minor version, the Sermant community will fix it in time , and release a patched version.
+- Sermant currently plans to release a feature version every three months, with the version number in the format of **X.X.0**. Each feature version will contain the latest features, and the maintenance cycle for each feature version is one year.
+- Sermant currently plans to release a patch version every month or so, with a version number of **X.X.X** (the third digit of the version number is not 0). When issues affecting functionality are found in small versions, the Sermant community will promptly fix them and release patch versions.
 
 
 ## Version Convention
