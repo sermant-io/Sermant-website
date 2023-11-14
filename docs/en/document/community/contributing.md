@@ -22,7 +22,7 @@ If you do not have a GitHub account, you need to log in to GitHub and register u
 
 DCO ([Developer Certificate of Origin]( https://developercertificate.org/ ))  is a lightweight open source contribution protocol for open source contributors to prove their right to grant projects access to their code.
 
-When submitting code commit using Git CLI, you can use the - s parameter to add a signature: https://git-scm.com/docs/git-commit . Examples of usage are as follows:
+When submitting code commit using Git CLI, you can use the [-s parameter](https://git-scm.com/docs/git-commit) to add a signature. Examples of usage are as follows:
 
 ```Shell
 

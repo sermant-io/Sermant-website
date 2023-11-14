@@ -22,7 +22,7 @@ Sermant社区采用DCO ([Developer Certificate of Origin](https://developercerti
 
 DCO ([Developer Certificate of Origin](https://developercertificate.org/))是一种轻量级的开源贡献协议，供开源贡献者证明他们有权授予项目使用他们的代码。
 
-使用Git CLI提交代码commit时，可以使用-s参数添加签名：https://git-scm.com/docs/git-commit。使用示例如下：
+使用Git CLI提交代码commit时，可以使用[-s参数](https://git-scm.com/docs/git-commit)添加签名。使用示例如下：
 
 ```shell
 $ git commit -s -m 'This is my commit message'
