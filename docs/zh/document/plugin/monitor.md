@@ -117,20 +117,15 @@ monitor.config:                       # 监控插件配置。
 
 ### 准备工作
 
-- [下载](https://start.spring.io/#!type=maven-project&language=java&platformVersion=2.7.7&packaging=jar&jvmVersion=1.8&groupId=com.example&artifactId=demo&name=demo&description=Demo%20project%20for%20Spring%20Boot&packageName=com.example.demo&dependencies=web)demo应用
+- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.2.1/sermant-examples-monitor-demo-1.2.1.tar.gz) Demo二进制产物压缩包
 - [下载](https://github.com/huaweicloud/Sermant/releases)/编译sermant包
 - [下载](https://github.com/prometheus/prometheus/releases)Prometheus
 
 > 注意：[动态配置中心](../user-guide/configuration-center.md)会在本场景中默认使用，由于非本场景的核心组件，因此在本文中不额外赘述。
 
-### 步骤一：编译打包demo应用
-在demo应用的根目录执行如下命令对demo应用进行打包:
+### 步骤一：获取Demo二进制产物
 
-```shell
-mvn clean package
-```
-打包成功后，在demo根目录会生成`target`文件夹,进入`target`文件夹可以得到demo-0.0.1-SNAPSHOT.jar包。
-
+解压Demo二进制产物压缩包，即可得到`monitor-demo.jar`。
 
 ### 步骤二：修改配置
 
@@ -163,16 +158,16 @@ scrape_configs:
 
 ### 步骤三：启动应用
 
-- 参考如下命令启动demo应用
+- 参考如下命令启动Demo应用
 
 ```shell
 # Run under Linux
-java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -jar demo-0.0.1-SNAPSHOT.jar
+java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -jar monitor-demo.jar
 ```
 
 ```shell
 # Run under Windows
-java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -jar demo-0.0.1-SNAPSHOT.jar
+java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -jar monitor-demo.jar
 ```
 
 > **说明：** ${path}为sermant实际安装路径，x.x.x代表sermant某个版本号。

@@ -194,27 +194,16 @@ dubbo:
 
 - [下载](https://github.com/huaweicloud/Sermant/releases)/编译sermant包
   
-- [下载](https://github.com/huaweicloud/Sermant-examples/tree/main/registry-demo/dubbo-registry-demo)dubbo-registry-demo源码
+- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.2.1/sermant-examples-registry-demo-1.2.1.tar.gz)
+  Demo二进制产物压缩包
 
 - [下载](https://github.com/apache/servicecomb-service-center)ServiceComb，并启动
 
 > **注意：** [动态配置中心](../user-guide/configuration-center.md)会在本场景中默认使用，由于非本场景的核心组件，因此在本文中不额外赘述。
 
-#### 步骤一：编译打包dubbo-registry-demo应用
+### 步骤一：获取Demo二进制产物
 
-在`${path}/Sermant-examples/registry-demo/dubbo-registry-demo`目录执行如下命令：
-
-```shell
-# windows
-mvn clean package
-
-# mac, linux
-mvn clean package
-```
-
-打包成功后可在`${path}/Sermant-examples/registry-demo/dubbo-registry-demo/dubbo-registry-consumer/target`得到` dubbo-registry-consumer.jar`包，在`${path}/Sermant-examples/registry-demo/dubbo-registry-demo/dubbo-registry-provider/target`得到`dubbo-registry-provider`包。
-
-> **说明：** ${path}为dubbo-registry-demo应用下载所在路径。
+解压Demo二进制产物压缩包，即可得到`dubbo-registry-consumer.jar`和`dubbo-registry-provider.jar`。
 
 #### 步骤二：部署应用
 
@@ -238,7 +227,7 @@ java -Dservicecomb.service.enableDubboRegister=true -javaagent:${path}\sermant-a
 java -Dservicecomb.service.enableDubboRegister=true -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -jar dubbo-registry-provider.jar
 ```
 
-> **说明：** 其中${path}需要替换为sermant包路径，x.x.x需要替换为sermant实际版本号，appName为agent启动参数中的应用名，与注册参数无关，执行命令的目录需要为demo应用的jar包目录。
+> **说明：** 其中${path}需要替换为sermant包路径，x.x.x需要替换为sermant实际版本号，appName为agent启动参数中的应用名，与注册参数无关，执行命令的目录需要为Demo应用的jar包目录。
 
 > **注意：** 为了便于测试，这里使用了-Dservicecomb.service.enableDubboRegister=true的方式打开了dubbo注册开关，如果使用了其它的[参数配置方式](../user-guide/sermant-agent.md#参数配置方式)打开了dubbo注册开关，则无需添加该参数。
 
@@ -261,7 +250,7 @@ java -Dservicecomb.service.enableDubboRegister=true -javaagent:${path}/sermant-a
 
 - [下载](https://github.com/huaweicloud/Sermant/releases)/编译sermant包
 
-- [下载](https://github.com/huaweicloud/Sermant-examples/tree/main/registry-demo/spring-cloud-registry-demo)spring-cloud-registry-demo源码
+- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.2.1/sermant-examples-registry-demo-1.2.1.tar.gz) Demo二进制产物压缩包
 
 - [下载](https://github.com/apache/servicecomb-service-center)ServiceComb，并启动
 
@@ -269,33 +258,16 @@ java -Dservicecomb.service.enableDubboRegister=true -javaagent:${path}/sermant-a
 
 > **注意：** [动态配置中心](../user-guide/configuration-center.md)会在本场景中默认使用，由于非本场景的核心组件，因此在本文中不额外赘述。
 
-#### 步骤一：编译打包spring-cloud-registry-demo应用
+### 步骤一：获取Demo二进制产物
 
-在`${path}/Sermant-examples/registry-demo/spring-cloud-registry-demo`目录执行如下命令：
-
-```shell
-# windows
-mvn clean package
-
-# mac, linux
-mvn clean package
-```
-
-打包成功后可在`${path}/Sermant-examples/registry-demo/spring-cloud-registry-demo/spring-cloud-registry-consumer/target`得到` spring-cloud-registry-consumer.jar`包，在`${path}/Sermant-examples/registry-demo/spring-cloud-registry-demo/spring-cloud-registry-provider/target`得到`spring-cloud-registry-provider.jar`包。
-
-> **说明：** ${path}为spring-cloud-registry-demo应用下载所在路径。
+解压Demo二进制产物压缩包，即可得到`spring-cloud-registry-consumer.jar`和`spring-cloud-registry-provider.jar`。
 
 #### 步骤二：部署应用
 
 （1）启动原生产者与原消费者（注册到Zookeeper中）
 
 ```shell
-# windows
-java -jar spring-cloud-registry-provider.jar
-
-java -jar spring-cloud-registry-consumer.jar
-
-# mac, linux
+# windows, linux, mac
 java -jar spring-cloud-registry-provider.jar
 
 java -jar spring-cloud-registry-consumer.jar

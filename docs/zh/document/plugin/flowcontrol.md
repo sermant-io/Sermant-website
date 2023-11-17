@@ -378,22 +378,13 @@ servicecomb:                            # 流量标记前缀
 
 ### 准备工作
 
-- [下载](https://github.com/huaweicloud/Sermant-examples/tree/main/flowcontrol-demo/spring-cloud-demo/spring-provider) demo源码
+- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.2.1/sermant-examples-flowcontrol-demo-1.2.1.tar.gz) Demo二进制产物压缩包
 - [下载](https://github.com/huaweicloud/Sermant/releases) 或编译Sermant包
 - [下载](https://zookeeper.apache.org/releases#download) 并启动zookeeper
 
-### 步骤一：编译打包demo应用
+### 步骤一：获取Demo二进制产物
 
-在`${path}/Sermant-examples/flowcontrol-demo/spring-cloud-demo/spring-provider`目录执行以下命令：
-
-```shell
-# windows,Linux,mac
-mvn clean package
-```
-
-打包成功后，在`${path}/Sermant-examples/flowcontrol-demo/spring-cloud-demo/spring-provider/target`得到`spring-provider.jar`。
-
-> **说明**： ${path}为demo应用下载所在路径。
+解压Demo二进制产物压缩包，即可得到`spring-provider.jar`。
 
 ### 步骤二：修改插件配置
 
@@ -408,9 +399,9 @@ flow.control.plugin:
 
 > **说明**： ${path}为sermant所在路径。
 
-### 步骤三：启动demo应用
+### 步骤三：启动Demo应用
 
-参考如下命令启动demo应用
+参考如下命令启动Demo应用
 
 ```shell
 # windwos

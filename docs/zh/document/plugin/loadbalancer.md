@@ -82,21 +82,13 @@ rule: Random
 
 ### 准备工作
 
-- [下载](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/demo-register)demo源码
+- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.2.1/sermant-examples-load-balance-demo-1.2.1.tar.gz) Demo二进制产物压缩包
 - [下载](https://github.com/huaweicloud/Sermant/releases)/编译sermant包
 - [下载](https://zookeeper.apache.org/releases.html#download)并启动zookeeper
 
-### 步骤一：编译打包demo应用
+### 步骤一：获取Demo二进制产物
 
-在`${path}/Sermant-examples/sermant-template/demo-register`目录执行如下命令：
-
-```shell
-mvn clean package
-```
-
-打包成功后可在`${path}/Sermant-examples/sermant-template/demo-register/resttemplate-consumer/target`得到`resttemplate-consumer.jar`包，在`${path}/Sermant-examples/sermant-template/demo-register/resttemplate-provider/target`得到`resttemplate-provider.jar`。
-
-> **说明：** ${path}为demo应用下载所在路径。
+解压Demo二进制产物压缩包，即可得到`resttemplate-consumer.jar`和`resttemplate-provider.jar`。
 
 ### 步骤二：发布流量标记
 参考使用[动态配置中心使用手册](../user-guide/configuration-center.md#发布配置)进行配置发布，发布如下配置
@@ -160,7 +152,7 @@ matches:
 zkCli.cmd -server localhost:2181 create /app=default&environment=&service=zk-rest-consumer/servicecomb.loadbalance.testLb "rule: Random"
 ```
 
-### 步骤四：启动demo应用
+### 步骤四：启动Demo应用
 
 参考如下命令启动两个生产者
 

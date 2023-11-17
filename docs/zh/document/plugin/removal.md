@@ -72,27 +72,15 @@ rules:                  # 离群实例摘除规则，key：服务名称（为def
 
 ### 准备工作
 
-- [下载](https://github.com/huaweicloud/Sermant-examples/tree/main/removal-demo) removal-demo源码
+- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.2.1/sermant-examples-removal-demo-1.2.1.tar.gz) Demo二进制产物压缩包
 - [下载](https://github.com/huaweicloud/Sermant/releases) 或编译Sermant包
 - [下载](https://zookeeper.apache.org/releases#download) 并启动zookeeper
 
 > **注意：** [动态配置中心](../user-guide/configuration-center.md)会在本场景中默认使用，由于非本场景的核心组件，因此在本文中不额外赘述。
 
-### 步骤一：编译打包demo应用
+### 步骤一：获取Demo二进制产物
 
-在`${path}/Sermant-examples/removal-demo`目录执行以下命令：
-
-```shell
-# windows,Linux,mac
-mvn clean package
-```
-
-打包成功后：
-  在`${path}/Sermant-examples/removal-demo/rest-consumer/target`得到`rest-consumer-1.0.0.jar`。
-  在`${path}/Sermant-examples/removal-demo/rest-provider/target`得到`rest-provider-1.0.0.jar`。
-
-> **说明**： ${path}为demo应用下载所在路径。
-
+解压Demo二进制产物压缩包，即可得到`rest-consumer.jar`和`rest-provider.jar`。
 
 ### 步骤二：修改配置
 
@@ -114,31 +102,31 @@ removal.config:
 
 ### 步骤三：启动应用
 
-- 参考如下命令启动demo应用
+- 参考如下命令启动Demo应用
 
 （1）启动消费者
 
 ```shell
 # Run under Linux
-java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -Dniws.loadbalancer.availabilityFilteringRule.filterCircuitTripped=false -jar rest-consumer-1.0.0.jar
+java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=default -Dniws.loadbalancer.availabilityFilteringRule.filterCircuitTripped=false -jar rest-consumer.jar
 ```
 
 ```shell
 # Run under Windows
-java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -Dniws.loadbalancer.availabilityFilteringRule.filterCircuitTripped=false -jar rest-consumer-1.0.0.jar
+java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=default -Dniws.loadbalancer.availabilityFilteringRule.filterCircuitTripped=false -jar rest-consumer.jar
 ```
 
 （2）启动生产者
 ```shell
 # windows,Linux,mac
-java -jar rest-provider-1.0.0.jar
+java -jar rest-provider.jar
 ```
 
 （3）启动第二个生产者
 
 ```shell
 # windows,Linux,mac
-java -Dtimeout=2000 -Dserver.port=8006 -jar rest-provider-1.0.0.jar
+java -Dtimeout=2000 -Dserver.port=8006 -jar rest-provider.jar
 ```
 
 

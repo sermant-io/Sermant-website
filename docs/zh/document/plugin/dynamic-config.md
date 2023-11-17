@@ -37,11 +37,11 @@ dynamic.config.plugin:
 
 - 若关闭适配，即`enableCseAdapter: false`
 
-    此时插件将根据宿主应用的服务名进行订阅, 即应用配置的`spring.applicaton.name`, 插件订阅配置的group为`service=${spring.applicaton.name}`
-    
+  此时插件将根据宿主应用的服务名进行订阅, 即应用配置的`spring.applicaton.name`, 插件订阅配置的group为`service=${spring.applicaton.name}`
+
 - 若开启适配, 即`enableCseAdapter: true`
 
-    此时插件将根据**应用配置**，**服务配置**以及**自定义配置**三项数据进行配置**同时**订阅， 而这三类配置可参考`${path}/sermant-agent-x.x.x/agent/config/config.properties`, 相关配置如下：
+  此时插件将根据**应用配置**，**服务配置**以及**自定义配置**三项数据进行配置**同时**订阅， 而这三类配置可参考`${path}/sermant-agent-x.x.x/agent/config/config.properties`, 相关配置如下：
 
     ```properties
     # 服务app名称
@@ -57,10 +57,10 @@ dynamic.config.plugin:
     service.meta.customLabelValue=default
     ```
 
-    应用配置，服务配置，自定义配置说明参考[CSE配置中心概述](https://support.huaweicloud.com/devg-cse/cse_devg_0020.html)
-    - 应用配置：由`service.meta.application`与`service.meta.environment`组成， 对应的`group`为`app=default&environment=development`
-    - 服务配置：由`service.meta.application`、`service.meta.environment`以及服务名组成，此处服务即`spring.application.name`, 对应的`group`为`app=default&environment=development&service=DynamicConfigDemo`
-    - 自定义配置：由`service.meta.customLabel`与`service.meta.customLabelValue`组成， 对应的`group`为`public=default`
+  应用配置，服务配置，自定义配置说明参考[CSE配置中心概述](https://support.huaweicloud.com/devg-cse/cse_devg_0020.html)
+  - 应用配置：由`service.meta.application`与`service.meta.environment`组成， 对应的`group`为`app=default&environment=development`
+  - 服务配置：由`service.meta.application`、`service.meta.environment`以及服务名组成，此处服务即`spring.application.name`, 对应的`group`为`app=default&environment=development&service=DynamicConfigDemo`
+  - 自定义配置：由`service.meta.customLabel`与`service.meta.customLabelValue`组成， 对应的`group`为`public=default`
 
 以上为`group`的配置介绍，下面说明`content`配置，当前动态配置仅支持yaml格式, 例如配置如下内容:
 
@@ -124,22 +124,13 @@ public class ValueConfig {
 
 ### 准备工作
 
-- [下载](https://github.com/huaweicloud/Sermant-examples/tree/main/flowcontrol-demo/spring-cloud-demo/spring-provider) demo源码
+- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.2.1/sermant-examples-dynamic-demo-1.2.1.tar.gz) Demo二进制产物压缩包
 - [下载](https://github.com/huaweicloud/Sermant/releases) 或编译Sermant包
 - [下载](https://zookeeper.apache.org/releases#download) 并启动zookeeper
 
-### 步骤一：编译打包demo应用
+### 步骤一：获取Demo二进制产物
 
-在`${path}/Sermant-examples/flowcontrol-demo/spring-cloud-demo/spring-provider`目录执行以下命令：
-
-```shell
-# windows,Linux,mac
-mvn clean package
-```
-
-打包成功后，在`${path}/Sermant-examples/flowcontrol-demo/spring-cloud-demo/spring-provider/target`得到`spring-provider.jar`
-
-> **说明**： ${path}为demo应用下载所在路径。
+解压Demo二进制产物压缩包，即可得到`spring-provider.jar`。
 
 ### 步骤二：修改插件配置
 
@@ -153,9 +144,9 @@ dynamic.config.plugin:
 
 > **说明**：${path}为sermant所在路径。
 
-### 步骤三：启动demo应用
+### 步骤三：启动Demo应用
 
-参考如下命令启动demo应用
+参考如下命令启动Demo应用
 
 ```shell
 # windwos
@@ -172,10 +163,10 @@ java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar -Dspring.app
 浏览器或curl工具访问`localhost:8003/flow`,查看控制台日志是否打印`sermant`日志
 
 
-**demo应用配置**如下：
+**Demo应用配置**如下：
 
 ```yaml
-# demo 应用配置
+# Demo 应用配置
 server:
   port: 8003
 sermant: sermant
@@ -187,28 +178,10 @@ spring:
       enabled: true
 ```
 
-**demo应用/flow接口**代码如下：
-
-```java
-// demo应用源码
-@Controller
-@ResponseBody
-@RefreshScope
-public class FlowController {
-  @Value("${sermant}")
-  private Object sermant;
-
-  @RequestMapping(value = "/flow", method = RequestMethod.GET)
-  public String flow(@RequestParam(required = false) Integer exRate, HttpServletRequest request) {
-    LOGGER.info((String) sermant);
-    return "Hello, I am zk rest template provider, my port is " + port;
-  }
-}
+当调用**flow接口**时，Demo应用将返回如下信息，此时返回sermant的值为"sermant"(该对象通过@value方式注入)：
+```text
+Hello, I am zk rest template provider, my port is 8003, sermant value is sermant
 ```
-
-当调用**flow接口**时，demo应用执行`LOGGER.info((String) sermant);`语句，在控制台打印`sermant`变量的值`sermant`，如下图所示：
-
-<MyImage src="/docs-img/dynamic-config-old-config.jpg"/>
 
 ### 步骤五：修改应用配置
 
@@ -240,6 +213,7 @@ zkCli.cmd -server localhost:2181 create /service=spring-flow-provider/config "se
 
 ### 验证
 
-再次通过浏览器或curl工具访问`localhost:8003/flow`，查看控制台是否有输出`sermant1`日志。
-
-<MyImage src="/docs-img/dynamic-config-verify.jpg"/>
+再次通过浏览器或curl工具访问`localhost:8003/flow`，Demo应用将返回如下信息，此时返回sermant的值为"sermant1"：
+```text
+Hello, I am zk rest template provider, my port is 8003, sermant value is sermant1
+```

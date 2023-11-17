@@ -49,11 +49,15 @@ visibility.config:
 ### 准备工作
 
 - [下载](https://github.com/huaweicloud/Sermant/releases)/编译Sermant包
-- [下载](https://github.com/huaweicloud/Sermant/tree/develop/sermant-integration-tests/dubbo-test)dubbo-test源码
+- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.2.1/sermant-examples-visibility-demo-1.2.1.tar.gz) Demo二进制产物压缩包
 
 > 注意：[动态配置中心](../user-guide/configuration-center.md)会在本场景中默认使用，由于非本场景的核心组件，因此在本文中不额外赘述。
 
-### 步骤一：修改配置
+### 步骤一：获取Demo二进制产物
+
+解压Demo二进制产物压缩包，即可得到`dubbo-integration-consumer.jar`和`dubbo-integration-provider.jar`。
+
+### 步骤二：修改配置
 
 - 修改Sermant-agent配置
 在`${path}/sermant-agent-x.x.x/agent/config/config.properties`找到该配置文件，修改的配置项如下所示：
@@ -68,16 +72,6 @@ agent.service.visibility.enable=true # 控制服务可见性能力的开关
 visibility.config:
   startFlag: true        # 服务可见性采集开关。为true时进行数据采集上报。
 ```
-
-### 步骤二：编译打包dubbo-test应用
-
-执行如下命令，对dubbo-test项目中的子项目dubbo-2-6-integration-consumer和dubbo-2-6-integration-provider进行打包:
-
-```shell
-mvn clean package
-```
-
-可在dubbo-2-6-integration-consumer项目中的`target`文件夹中得到dubbo-integration-consumer.jar包和dubbo-2-6-integration-provider项目中得到dubbo-integration-provider.jar包。
 
 ### 步骤三：启动应用
 
