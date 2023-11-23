@@ -60,11 +60,18 @@
 | :-------------: | :------------: | :--------------: |
 |      JAVA8      |       ✅        |        ✅         |
 |     JAVA11      |       ✅        |        ✅         |
-|     JAVA17      |       ✅        | **（部分支持）** |
+|     JAVA17      |       ✅        |        ✅         |
 |     JAVA19      | **（未验证）** |  **（未验证）**  |
 |     JAVA21      | **（未验证）** |  **（未验证）**  |
 
-
+- **在JAVA17版本启动Sermant时需附加额外JVM命令：**
+```shell
+--add-opens java.base/java.lang=ALL-UNNAMED
+--add-opens java.base/java.net=ALL-UNNAMED
+--add-opens java.base/java.math=ALL-UNNAMED
+--add-opens java.base/sun.net.www=ALL-UNNAMED
+--add-opens java.base/sun.net.www.protocol.http=ALL-UNNAMED
+```
 
 ## 1.1.x版本 向 1.2.x版本升级
 
