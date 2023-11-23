@@ -76,7 +76,7 @@ value: service-b,service-c # 白名单服务集合，仅当strategy配置为whit
 
 注册中心支持：
 
-- Zookeeper 3.4.x及以上
+- Zookeeper 3.6.x及以上
 
 客户端支持：
 
