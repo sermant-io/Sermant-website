@@ -13,6 +13,15 @@ blogArr:
       - Microservice Governance
       - Proxyless Architecture
 
+    - name: Quick Development and Usage Guide for Service Governance Plugins under Sermant Framework
+      writer: 戴振宇
+      date: 2023/11/10
+      description: 'Explain the process of developing plugins and using them based on Sermant through cases'
+      path: 'https://bbs.huaweicloud.com/blogs/415083'
+      tags:
+      - Plugin Development
+      - Sermant
+
     - name: How to Use Dynamic Configuration Center to Implement Diversified Governance of Microservices in JavaAgent
       writer: 张豪鹏
       date: 2023/10/07

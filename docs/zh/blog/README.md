@@ -13,6 +13,15 @@ blogArr:
       - 微服务治理
       - 无代理架构
 
+    - name: Sermant框架下的服务治理插件快速开发及使用指南
+      writer: 戴振宇
+      date: 2023/11/10
+      description: '通过案例讲解说明基于Sermant开发插件及使用的流程'
+      path: 'https://bbs.huaweicloud.com/blogs/415083'
+      tags:
+      - 插件开发
+      - Sermant
+
     - name: 如何利用动态配置中心在JavaAgent中实现微服务的多样化治理
       writer: 张豪鹏
       date: 2023/10/07
