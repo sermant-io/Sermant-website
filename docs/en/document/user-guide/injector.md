@@ -178,16 +178,16 @@ If you want to configure custom environment variables in K8s Deployment, simply 
 Take `env.sermant.io/key1: "value1"` as an example, the configuration rules are: `env.sermant.io/` is the standard prefix for configuring environment variables through `annotations`, `key1` is the name of a custom environment variable that users configure on demand, and `value1` is the value of a custom environment variable that users configure on demand.
 
 ```yaml
-apiVersion: v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: demo-test
+  namespace: default
   labels:
     app: demo-test
 spec:
   replicas: 1
   selector:
-    app: demo-test
     matchLabels:
       app: demo-test
   template:
@@ -201,13 +201,10 @@ spec:
     spec:
       containers:
       - name: image
-        # Please replace it with own image
+        # Please replace it with your own image
         image: image:1.0.0
         ports: 
         - containerPort: 8080
-  ports:
-    - port: 443
-      targetPort: 8443
 ```
 
 If the pod cannot be created, check that the sermant-injector is deployed correctly and that the sermant-agent image is built correctly.
