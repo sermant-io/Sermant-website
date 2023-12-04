@@ -177,16 +177,16 @@ helm install sermant-injector sermant-injector/deployment/release/injector
 以`env.sermant.io/key1: "value1"`为例，配置规则为：`env.sermant.io/`为通过`annotations`配置环境变量的标准前缀，`key1`为用户按需配置的自定义环境变量名称，`value1`为用户按需配置的自定义环境变量值。
 
 ```yaml
-apiVersion: v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: demo-test
+  namespace: default
   labels:
     app: demo-test
 spec:
   replicas: 1
   selector:
-    app: demo-test
     matchLabels:
       app: demo-test
   template:
@@ -204,9 +204,6 @@ spec:
         image: image:1.0.0
         ports: 
         - containerPort: 8080
-  ports:
-    - port: 443
-      targetPort: 8443
 ```
 
 若pod无法创建，请检查Sermant Injector是否正确部署以及Sermant Agent镜像是否正确构建。
