@@ -86,20 +86,11 @@ x-sermant-version: v1          // 自定义header，此处表示通过流量染�
 ### 准备工作
 
 - [下载 ](https://github.com/huaweicloud/Sermant/releases/download/v1.2.0/sermant-1.2.0.tar.gz)Sermant Release包
-- [下载](https://github.com/huaweicloud/Sermant-examples/tree/main/tag-transmission-demo) tag-transmission-demo源码
+- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.2.1/sermant-examples-tag-transmission-demo-1.2.1.tar.gz) Demo二进制产物压缩包
 
-### 步骤一：编译打包tag-transmission-demo应用
+### 步骤一：获取Demo二进制产物
 
-在`${path}/Sermant-examples/tag-transmission-demo`目录执行如下命令：
-
-```shell
-# windows, mac, linux
-mvn clean package
-```
-
-打包成功后可在`${path}/Sermant-examples/tag-transmission-demo/http-client-demo/target`得到` http-client-demo.jar`包，在`${path}/Sermant-examples/tag-transmission-demo/http-server-demo/target`得到`http-server-demo.jar`包，
-
-> 说明：此处${path}为Sermant-examples文件夹所在路径。
+解压Demo二进制产物压缩包，即可得到`http-client-demo.jar`和`http-server-demo.jar`。
 
 ### 步骤二：部署应用
 

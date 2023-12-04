@@ -292,27 +292,15 @@
 
 - [下载](https://github.com/huaweicloud/Sermant/releases)/编译sermant包
   
-- [下载](https://github.com/huaweicloud/Sermant-examples/tree/main/router-demo/spring-cloud-router-demo)spring-cloud-router-demo源码
+- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.2.1/sermant-examples-router-demo-1.2.1.tar.gz) Demo二进制产物压缩包
 
 - [下载](https://github.com/apache/servicecomb-service-center)ServiceComb（注册中心），并启动
 
 - [下载](https://zookeeper.apache.org/releases.html#download)Zookeeper（动态配置中心），并启动
 
-### 步骤一：编译打包spring-cloud-router-demo应用
+### 步骤一：获取Demo二进制产物
 
-在`${path}/Sermant-examples/router-demo/spring-cloud-router-demo`目录执行如下命令：
-
-```shell
-# windows
-mvn clean package
-
-# mac, linux
-mvn clean package
-```
-
-打包成功后可在`${path}/Sermant-examples/router-demo/spring-cloud-router-demo/spring-cloud-router-consumer/target`得到` spring-cloud-router-consumer.jar`包，在`${path}/Sermant-examples/router-demo/spring-cloud-router-demo/spring-cloud-router-provider/target`得到`spring-cloud-router-provider`包，在`${path}/Sermant-examples/router-demo/spring-cloud-router-demo/spring-cloud-router-zuul/target`得到`spring-cloud-router-zuul`包。
-
-> 说明：${path}为spring-cloud-router-demo应用下载所在路径。
+解压Demo二进制产物压缩包，即可得到`spring-cloud-router-consumer.jar`、`spring-cloud-router-provider.jar`和`spring-cloud-router-zuul.jar`。
 
 ### 步骤二：部署应用
 

@@ -211,16 +211,16 @@ spec:
 
 - 已经部署好kubernetes环境
 - [下载](https://github.com/huaweicloud/Sermant/releases)/编译sermant包
-- [下载](https://github.com/huaweicloud/Sermant-examples/tree/main/grace-demo/spring-grace-nacos-demo)demo源码
+- [下载](https://github.com/huaweicloud/Sermant-examples/tree/main/grace-demo/spring-grace-nacos-demo)Demo源码
 - [下载](https://github.com/alibaba/nacos/releases)nacos（注册中心），并部署
 
 > **注意：** 
 > 1. [动态配置中心](../user-guide/configuration-center.md)会在本场景中默认使用，由于非本场景的核心组件，因此在本文中不额外赘述。
 > 2. 容器环境需提前部署好[injector组件](../user-guide/injector.md)。
 
-### 步骤一：制作demo应用镜像
+### 步骤一：制作Demo应用镜像
 
-**1.编译打包demo应用**
+**1.编译打包Demo应用**
 
 在`${path}/Sermant-examples/grace-demo/spring-grace-nacos-demo`目录执行如下命令：
 
@@ -232,7 +232,7 @@ mvn clean package
 
 > **说明：** ${path}为demo应用下载所在路径。
 
-**2.制作demo镜像**
+**2.制作Demo镜像**
 
 修改文件夹中`${path}/Sermant-examples/grace-demo/spring-grace-nacos-demo/deploy/image`中三个服务的Dockfile（`consumerDockerfile`、`dataDockerfile`、`providerDockerfile`）中COPY操作的jar包路径，以及三个服务对应的制作镜像脚本（`build.sh`、`buildConsumer.sh`、`buildData.sh`）中version和name的值。
 
