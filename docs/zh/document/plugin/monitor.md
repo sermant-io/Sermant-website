@@ -33,9 +33,11 @@ monitor.config:                       # 监控插件配置。
 | monitor.config.password           | 授权信息--授权用户密码--AES加密       | 空          | 否    |
 | monitor.config.key                | 授权用户密码加密使用的KEY            | 空          | 否    |
 
-## 详细治理规则
+## 监控采集指标
 
 监控插件目前能采集的指标数据如下表所示（对接prometheus之后用户可以通过指标名在prometheus查询具体的指标信息，参见[验证](#验证))：
+
+### 资源指标
 
 | 指标名                              | 说明                  | 指标类型   |
 |:---------------------------------|:--------------------|:-------|
@@ -97,9 +99,33 @@ monitor.config:                       # 监控插件配置。
 | old_gen_spend                    | 老年代GC耗时             | JVM    |
 | cpu_used                         | JVM占用CPU情况          | JVM    |
 | start_time                       | JVM已经启动时间，毫秒数       | JVM    |
+
+### 数据请求指标
+
+| 指标名                              | 说明                  | 指标类型   |
+|:---------------------------------|:--------------------|:-------|
 | qps                              | 每秒请求数               | 吞吐量    |
 | tps                              | 每秒请求处理数             | 吞吐量    |
 | avg_response_time                | 平均响应时间              | 吞吐量    |
+
+### 熔断指标
+
+| 指标名                              | 说明                  | 指标类型   |
+|:---------------------------------|:--------------------|:-------|
+| fused_request                | 熔断的请求数量（触发熔断匹配规则的请求数量）          | 熔断    |
+| failure_fuse_request         | 失败的请求数量（请求失败和忽略异常的请求数量）              | 熔断    |
+| failure_rate_fuse_request    | 失败率              | 熔断    |
+| avg_response_time            | 平均响应时间              | 熔断    |
+| qps            | 每秒请求数              | 熔断    |
+| tps            | 每秒处理事务数              | 熔断    |
+| slow_call_number            | 慢调用数量              | 熔断    |
+| permitted_fuse_request            | 允许呼叫数              | 熔断    |
+| buffered_calls_number            | 缓存调用数量              | 熔断    |
+| slow_call_failure_number            |   慢调用失败数量            | 熔断    |
+| successful_calls_number            |   成功调用数量            | 熔断    |
+| not_permitted_calls_number            |  不允许呼叫数            | 熔断    |
+| slow_call_success_number            |   慢调用成功数量            | 熔断    |
+
 
 ## 支持版本与限制
 
