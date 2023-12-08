@@ -18,12 +18,19 @@ This plug-in completes the collection of interface information of service regist
 
 ## Parameter configuration
 
-### Sermant-agent configuration
+### Sermant agent configuration
+The service visibility plugin needs to configure the heartbeat switch (`agent.service.heartbeat.enable`), gateway switch (`agent.service.gateway.enable`), notification switch (`notification.enable`), and service metadata (`service.meta.*`) in the configuration file `${path}/sermant-agent-x.x.x/agent/config/config.properties` of the Service Agent.
 
-The service visibility plug-in needs to configure (`agent.service.visibility.enable=true`), configure the service metadata (`service.meta.*`) in the Sermant-agent. For details, refer to the [Sermant-agent User Manual](../user-guide/sermant-agent.md#sermant-agent-parameter-configuration)
-
-- agent.service.visibility.enable: Choose the enable status for visibility service.
-- service.meta.*: Service metadata information. For example: group name, version number, region, etc. The service visibility plug-in collects metadata information for page display.
+```properties
+agent.service.heartbeat.enable=false # Heartbeat switch, controls whether the heartbeat function is enabled. The visibility plugin relies on the heartbeat function to monitor whether the service is offline, and does not display the visibility information of the service when it is offline. It is disabled by default and needs to be set to true when used.
+agent.service.gateway.enable=false   # Gateway switch to control whether the message sending function is enabled. The visibility plugin relies on the message sending function. The plugin sends the collected information to Backend for display through the message sending function. It is disabled by default and needs to be set to true when used.
+notification.enable=false            # Notification switch, controls the switch for notifications such as Netty links. The visibility plugin relies on the notification of Netty links to listen for Netty reconnection. When Netty reconnects, the visibility plugin will resend the collected visibility data to Backend to prevent data loss caused by Backend restart. It is disabled by default and needs to be set to true when used.
+service.meta.application=default     # Specify the application name. The service visibility plugin collects this information for data display.
+service.meta.version=1.0.0           # Specify the service version. The service visibility plugin collects this information for data display.
+service.meta.project=default         # Specify the service namespace. The service visibility plugin collects this information for data display.
+service.meta.environment=            # Specify the environment where the service is located. The service visibility plugin collects this information for data display.
+service.meta.zone=                   # Specify the az (availability zone) where the service is located. The service visibility plugin collects this information for data display.
+```
 
 ### Plug-in configuration
 
@@ -51,9 +58,9 @@ The following will demonstrate how to use the service visibility plug-in.
 
 ### Preparations
 
-- [Download](https://github.com/huaweicloud/Sermant/releases)/compile Sermant package
-- [Download](https://github.com/huaweicloud/Sermant/tree/develop/sermant-integration-tests/dubbo-test) dubbo-test source code
-- [Download](https://zookeeper.apache.org/releases.html) zookeeper and start the application
+- [Download](https://github.com/huaweicloud/Sermant/releases)compile Sermant package
+- [Download](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.2.1/sermant-examples-visibility-demo-1.2.1.tar.gz) Demo binary product compressed package
+- [Download](https://zookeeper.apache.org/releases.html#download) Zookeeper (Dynamic Configuration Center&Registration Center) and launch
 
 ### Step 1: Modify the configuration
 
@@ -62,7 +69,9 @@ The following will demonstrate how to use the service visibility plug-in.
 Find the configuration file in the `${path}/sermant-agent-x.x.x/agent/config/config.properties`. The modified configuration items are as follows:
 
 ```properties
-agent.service.visibility.enable=true # Enable status for visibility service.
+agent.service.heartbeat.enable=true # Heartbeat service switch
+agent.service.gateway.enable=true   # Unified Gateway Service Switch
+notification.enable=true            # Internal event notification switch
 ```
 
 - Modify service visibility plug-in configuration
@@ -127,14 +136,50 @@ java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=prov
 > x.x.x represents a Sermant version number.
 
 ### Verification
-Visit the blood relationship information display page `http://127.0.0.1:8900/#/consanguinity` Or contract information display page `http://127.0.0.1:8900/#/contract`, if the page successfully displays the collection information, the plug-in will take effect.
+
+Accessing the visibility information query interface`http://127.0.0.1:8900/visibility/getcollectorinfo`If the collected information can be seen, it indicates that the plugin is effective.
 
 The display effect is shown below:
 
 - Rendering of contract information display
 
-<MyImage src="/docs-img/visibility-contarct.png"/>
+```json
+{
+ "contractList ": [{
+  "serviceType": "dubbo",
+  "interfaceName": "com.huaweicloud.integration.service.BarService",
+  "serviceKey": "com.huaweicloud.integration.service.BarService",
+  "url": "com.huaweicloud.integration.service.BarService",
+  "methodInfoList": [{
+   "name": "bar",
+   "paramInfoList": [{
+    "paramType": "java.lang.String",
+    "paramName": "str"
+   }],
+   "returnInfo": {
+    "paramType": "java.lang.String",
+   }
+  }]
+ }]
+}
+```
 
 - Rendering of blood relationship information display
 
-<MyImage src="/docs-img/visibility-consanguinity.png"/>
+```json
+{
+ "consanguinityList": [{
+  "serviceType": "dubbo",
+  "interfaceName": "com.huaweicloud.integration.service.BarService",
+  "url": "com.huaweicloud.integration.service.BarService",
+  "serviceKey": "com.huaweicloud.integration.service.BarService",
+  "providers": [{
+   "ip": "x.x.x.x",
+   "port": "28821",
+   "serviceType": "dubbo",
+   "serviceKey": "com.huaweicloud.integration.service.BarService",
+   "url": "com.huaweicloud.integration.service.BarService"
+  }]
+ }]
+}
+```
