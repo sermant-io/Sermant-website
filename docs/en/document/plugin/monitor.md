@@ -36,6 +36,8 @@ monitor.config:                     # Monitoring plug-in configuration.
 
 The indicator data that the monitoring plug-in can collect at present is shown in the following table (after docking with prometheus, users can query the specific indicator information in prometheus through the indicator name, see [Verification](#verification)):
 
+### Resource indicators
+
 | Indicator name                   | Description                                                                | Indicator type |
 |:---------------------------------|:---------------------------------------------------------------------------|:---------------|
 | cpu_user                         | proportion of user time                                                    | CPU            |
@@ -96,9 +98,32 @@ The indicator data that the monitoring plug-in can collect at present is shown i
 | old_gen_spend                    | GC time of the elderly generation                                          | JVM            |
 | cpu_used                         | CPU usage of JVM                                                           | JVM            |
 | start_time                       | JVM started time, milliseconds                                             | JVM            |
+
+### Data Request Metrics
+
+| Indicator name                   | Description                                                                | Indicator type |
+|:---------------------------------|:---------------------------------------------------------------------------|:---------------|
 | qps                              | Requests per second                                                        | Throughput     |
 | tps                              | Number of requests processed per second                                    | Throughput     |
 | avg_response_time                | Average response time                                                      | Throughput     |
+
+### Circuit breaker indicator
+
+|Indicator Name | Description | Indicator Type|
+|:---------------------------------|:---------------------------------------------------------------------------|:---------------|
+|fused_request | Number of fused requests (number of requests triggering fused matching rules) | Fused|
+|failure_fuse_request | Number of failed requests (number of requests that failed and ignored exceptions) | Breach|
+|failure_rate_fuse_request Request | failure rate | circuit breaker|
+|avg_response_time   | average response time | circuit breaker|
+|qps | Requests per second | Blowdown|
+|tps | number of transactions processed per second | circuit breaker|
+|slow_call_number| number of slow calls | circuit breaker|
+|permitted_fuse_request  | number of allowed calls | circuit breaker|
+|buffered_calls_number| number of cache calls | circuit breaker|
+|slow_call_failure_number | number of slow call failures | circuit breaker|
+|successful_calls_number | number of successful calls | circuit breaker|
+|not_permitted_calls_number | number of calls not allowed | circuit breaker|
+|slow_call_success_number | number of successful slow calls | circuit breaker|
 
 ## Supported versions and restrictions
 
