@@ -13,6 +13,24 @@ blogArr:
       - 微服务治理
       - 无代理架构
 
+    - name: 【Sermant DTT直播回放第二期】从架构设计到开发实战，深入浅出了解Sermant
+      writer: 栾文飞
+      date: 2023/12/6
+      description: 'Sermant的架构解析及开发实战演示'
+      path: 'https://bbs.huaweicloud.com/live/DTT_live/202312061600.html'
+      tags:
+      - 直播
+      - Sermant
+
+    - name: 【Sermant DTT直播回放第一期】云原生微服务的下一站：Proxyless Service Mesh
+      writer: 杨奕 李来
+      date: 2023/10/25
+      description: '云原生微服务架构的演进以及架构改造实操'
+      path: 'https://bbs.huaweicloud.com/live/DTT_live/202310251630.html'
+      tags:
+      - 直播
+      - Sermant
+
     - name: Sermant框架下的服务治理插件快速开发及使用指南
       writer: 戴振宇
       date: 2023/11/10
