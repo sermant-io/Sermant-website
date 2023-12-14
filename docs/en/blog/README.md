@@ -13,6 +13,24 @@ blogArr:
       - Microservice Governance
       - Proxyless Architecture
 
+    - name: 【Sermant DTT live N0.2】From Architecture Design To Actual Development, Learn About Sermant In A Simple Way
+      writer: 栾文飞
+      date: 2023/12/6
+      description: 'Sermant’s architecture analysis and development practical demonstration'
+      path: 'https://bbs.huaweicloud.com/live/DTT_live/202312061600.html'
+      tags:
+      - live
+      - Sermant
+
+    - name: 【Sermant DTT live N0.1】The Next Destination For Cloud-Native Microservices：Proxyless Service Mesh
+      writer: 杨奕 李来
+      date: 2023/10/25
+      description: 'The evolution of cloud-native microservice architecture and practical architecture transformation'
+      path: 'https://bbs.huaweicloud.com/live/DTT_live/202310251630.html'
+      tags:
+      - live
+      - Sermant
+
     - name: Quick Development and Usage Guide for Service Governance Plugins under Sermant Framework
       writer: 戴振宇
       date: 2023/11/10

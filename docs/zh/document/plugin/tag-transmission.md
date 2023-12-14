@@ -187,12 +187,11 @@ crossthread.config:
   content为具体的流量标签透传配置内容。动态配置与静态配置中的`tag.transmission.config`一致，遵循yaml的格式，参数说明参考上文。在运行时动态修改透传规则时需将该配置刷新至动态配置中心。若直接删除配置，则关闭标签透传能力。
 
   ```yaml
-  tag.transmission.config:
-    enabled: true
-    matchRule:
-      exact: ["id", "name"]
-      prefix: ["x-sermant-"]
-      suffix: ["-sermant"]
+  enabled: true
+  matchRule:
+    exact: ["id", "name"]
+    prefix: ["x-sermant-"]
+    suffix: ["-sermant"]
   ```
 
-​		每次动态配置成功下发后会覆盖原有静态配置或之前的动态配置，且立即生效。
+每次动态配置成功下发后会覆盖原有静态配置或之前的动态配置，且立即生效。
