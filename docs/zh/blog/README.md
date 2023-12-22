@@ -13,6 +13,16 @@ blogArr:
       - 微服务治理
       - 无代理架构
 
+    - name: 开发者能力机制解析，玩转Sermant开发
+      writer: 栾文飞
+      date: 2023/12/18
+      description: '介绍Sermant的插件加载和调度机制以及开发中常用到的能力'
+      path: 'https://bbs.huaweicloud.com/blogs/418057'
+      tags:
+      - 架构解析
+      - 插件开发
+      - Sermant
+
     - name: 【Sermant DTT直播回放第二期】从架构设计到开发实战，深入浅出了解Sermant
       writer: 栾文飞
       date: 2023/12/6
