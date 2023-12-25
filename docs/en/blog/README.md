@@ -13,6 +13,16 @@ blogArr:
       - Microservice Governance
       - Proxyless Architecture
 
+    - name: Analysis Of Developer Capability Mechanism And Mastering Sermant Development
+      writer: 栾文飞
+      date: 2023/12/18
+      description: 'Introducing Sermant’s plugin loading and scheduling mechanism as well as capabilities commonly used in development'
+      path: 'https://bbs.huaweicloud.com/blogs/418057'
+      tags:
+      - Architecture Analysis
+      - Plugin Development
+      - Sermant
+
     - name: 【Sermant DTT live N0.2】From Architecture Design To Actual Development, Learn About Sermant In A Simple Way
       writer: 栾文飞
       date: 2023/12/6
