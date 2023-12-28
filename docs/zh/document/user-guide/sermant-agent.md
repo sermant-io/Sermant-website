@@ -53,7 +53,7 @@ java -jar spring-provider.jar
 javac -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader.java
 
 # Windows 已正确配置JAVA所需环境变量
-javac AgentLoader.java -encoding utf-8
+javac -cp "%JAVA_HOME%\lib\tools.jar" AgentLoader.java -encoding utf-8
 ```
 
 - 编译完成后，将在目录下生成`AgentLoader.class`文件，使用如下指令运行`AgentLoader`
@@ -73,7 +73,7 @@ $ java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
 请选择需要使用Sermant Agent的Java进程：
 0: xxxxx AgentLoader # xxxxx为进程号，此处模糊
 1: xxxxx spring-provider.jar # xxxxx为进程号，此处模糊
-2: xxxxx sermant-backend-1.0.0.jar # xxxxx为进程号，此处模糊
+2: xxxxx sermant-backend-1.2.0.jar # xxxxx为进程号，此处模糊
 请输入需要使用Sermant Agent的Java进程序号：1 # 选择spring-provider的进程序号
 您选择的进程 ID 是：xxxxx # xxxxx为进程号，此处模糊
 请输入Sermant Agent所在目录（默认采用该目录下sermant-agent.jar为入口）：${path}/sermant-agent-x.x.x/agent # 填充Sermant Agent所在目录
@@ -106,7 +106,7 @@ $ java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
 请选择需要使用Sermant Agent的Java进程：
 0: xxxxx AgentLoader # xxxxx为进程号，此处模糊
 1: xxxxx spring-provider.jar # xxxxx为进程号，此处模糊
-2: xxxxx sermant-backend-1.0.0.jar # xxxxx为进程号，此处模糊
+2: xxxxx sermant-backend-1.2.0.jar # xxxxx为进程号，此处模糊
 请输入需要使用Sermant Agent的Java进程序号：1 # 选择spring-provider的进程序号
 您选择的进程 ID 是：xxxxx # xxxxx为进程号，此处模糊
 请输入Sermant Agent所在目录（默认采用该目录下sermant-agent.jar为入口）：${path}/sermant-agent-x.x.x/agent # 填充Sermant Agent所在目录
@@ -139,7 +139,7 @@ $ java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
 请选择需要使用Sermant Agent的Java进程：
 0: xxxxx AgentLoader # xxxxx为进程号，此处模糊
 1: xxxxx spring-provider.jar # xxxxx为进程号，此处模糊
-2: xxxxx sermant-backend-1.0.0.jar # xxxxx为进程号，此处模糊
+2: xxxxx sermant-backend-1.2.0.jar # xxxxx为进程号，此处模糊
 请输入需要使用Sermant Agent的Java进程序号：1 # 选择spring-provider的进程序号
 您选择的进程 ID 是：xxxxx # xxxxx为进程号，此处模糊
 请输入Sermant Agent所在目录（默认采用该目录下sermant-agent.jar为入口）：${path}/sermant-agent-x.x.x/agent # 填充Sermant Agent所在目录
@@ -178,7 +178,7 @@ $ java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
 请选择需要使用Sermant Agent的Java进程：
 0: xxxxx AgentLoader # xxxxx为进程号，此处模糊
 1: xxxxx spring-provider.jar # xxxxx为进程号，此处模糊
-2: xxxxx sermant-backend-1.0.0.jar # xxxxx为进程号，此处模糊
+2: xxxxx sermant-backend-1.2.0.jar # xxxxx为进程号，此处模糊
 请输入需要使用Sermant Agent的Java进程序号：1 # 选择spring-provider的进程序号
 您选择的进程 ID 是：xxxxx # xxxxx为进程号，此处模糊
 请输入Sermant Agent所在目录（默认采用该目录下sermant-agent.jar为入口）：${path}/sermant-agent-x.x.x/agent # 填充Sermant Agent所在目录
@@ -188,9 +188,9 @@ $ java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
 按照指引填充完成后在`spring-provider.jar`日志中可以看到以下内容：
 
 ```shell
-[2023-09-27T17:42:50.500] [INFO] Building argument map by agent arguments.
-[2023-09-27T17:42:50.504] [INFO] Sermant for artifact is running, artifact is: default
-[2023-09-27T17:42:50.504] [INFO] Execute command: UNINSTALL-PLUGINS:monitor #本示例以monitor进行演示
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Building argument map by agent arguments.
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Sermant for artifact is running, artifact is: default
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Execute command: UNINSTALL-PLUGINS:monitor #本示例以monitor进行演示
 # 该日志会展示本次卸载中恢复了多少被字节码增强过的类
 [Byte Buddy] REDEFINE BATCH #0 [1 of 1 type(s)]
 [Byte Buddy] REDEFINE COMPLETE 1 batch(es) containing 1 types [0 failed batch(es)]
@@ -208,6 +208,50 @@ $ java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
 <MyImage src="/docs-img/sermant-agent-dynamic-uninstall-plugin-success.png"></MyImage>
 
 > 注：该能力可以在开发态通过调用sermant-agentcore-core所提供[PluginManager](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/PluginManager.java)::uninstall(Set pluginNames)方法来实现
+
+## 增强信息查询
+在sermant通过任意方式启动成功后，可以通过运行`AgentLoader`，并通过传入参数下发查询增强信息的指令`command=CHECK_ENHANCEMENT`：
+
+> 注：增强信息查询将以**INFO级别**打印到log中，如使用该功能，请事先配置日志级别，修改方式见[日志配置](../developer-guide/log-func.md#配置)
+
+```shell
+# 运行指令根据所使用操作系统进行选择，此处以Linux、MacOS指令编写
+$ java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
+请选择需要使用Sermant Agent的Java进程：
+0: xxxxx AgentLoader # xxxxx为进程号，此处模糊
+1: xxxxx spring-provider.jar # xxxxx为进程号，此处模糊
+2: xxxxx sermant-backend-1.2.0.jar # xxxxx为进程号，此处模糊
+请输入需要使用Sermant Agent的Java进程序号：1 # 选择spring-provider的进程序号
+您选择的进程 ID 是：xxxxx # xxxxx为进程号，此处模糊
+请输入Sermant Agent所在目录（默认采用该目录下sermant-agent.jar为入口）：${path}/sermant-agent-x.x.x/agent # 填充Sermant Agent所在目录
+请输入向Sermant Agent传入的参数(可为空，默认配置参数agentPath)：command=CHECK_ENHANCEMENT # 此处通过传入参数下发查询增强信息指令
+```
+
+按照指引填充完成后在sermant日志中可以看到以下内容：
+```shell
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.core.command.CheckEnhancementsCommandExecutor] [execute:42] [Attach Listener] ---------- PLUGINS ----------
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.core.command.CheckEnhancementsCommandExecutor] [execute:44] [Attach Listener] test-plugin-A:1.0.0
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.core.command.CheckEnhancementsCommandExecutor] [execute:44] [Attach Listener] test-plugin-B:1.0.0
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.core.command.CheckEnhancementsCommandExecutor] [execute:46] [Attach Listener] ---------- ENHANCEMENT ----------
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.core.command.CheckEnhancementsCommandExecutor] [execute:58] [Attach Listener] test-plugin-A:1.0.0
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.core.command.CheckEnhancementsCommandExecutor] [execute:65] [Attach Listener] xxxxx.xxxx.TestClassA#testFunctionA(boolean,java.lang.String,java.lang.String,java.lang.String)@sun.misc.Launcher$AppClassLoader@5c647e05 [xxxx.xxxx.TestInterceptorA]
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.core.command.CheckEnhancementsCommandExecutor] [execute:65] [Attach Listener] xxxxx.xxxx.TestClassB#testFunctionB(boolean,java.lang.String,java.lang.String,java.lang.String)@sun.misc.Launcher$AppClassLoader@5c647e05 [xxxx.xxxx.TestInterceptorB,xxxx.xxxx.TestInterceptorC]
+```
+
+打印的内容格式为：
+```shell
+---------- PLUGINS ----------
+\\ 已安装的插件列表，格式为 插件名名:插件版本
+test-plugin-A:1.0.0
+test-plugin-B:1.0.0
+---------- ENHANCEMENT ----------
+\\ 成功完成增强处理的插件，格式为 插件名:插件版本
+test-plugin-A:1.0.0
+\\ 该插件成功完成增强处理的信息
+\\ 格式为 增强的类全限定名#增强的方法名(入参类型)@类加载器信息 [拦截器列表]
+xxxxx.xxxx.TestClassA#testFunctionA(boolean,java.lang.String,java.lang.String,java.lang.String)@sun.misc.Launcher$AppClassLoader@5c647e05 [xxxx.xxxx.TestInterceptorA]
+xxxxx.xxxx.TestClassB#testFunctionB(boolean,java.lang.String,java.lang.String,java.lang.String)@sun.misc.Launcher$AppClassLoader@5c647e05 [xxxx.xxxx.TestInterceptorB,xxxx.xxxx.TestInterceptorC]
+```
 
 ## 配置规范
 
