@@ -84,7 +84,7 @@ blogArr:
 ```
 name字段表示博客名称，description字段为描述信息，path为新创建的博客文件夹名称，tags下可添加自定义的标签，注意格式与上面保持一致即可。
 
-## 用户案例（story）
+## 【暂未开启】用户案例（story）
 使用用户案例模块，可以先在story根目录下创建一个相应的用户案例文件夹(文件夹名称将会用作用户名)，并在新创建的文件夹下创建README\.md文件。(用户案例具体内容)，然后需要配置story根目录下的README.md文件,配置示例如下所示。
 ```yml
 userArr: 
@@ -124,11 +124,7 @@ sidebar: {
     children: ["", "QuickStart"],
 },
 ```
-使用对象来进行分组，title属性为分组组名，path为点击时跳转的路径，为空则不可以通过点击分组组名跳转，collapsable为分组是否可以收缩，设为false时不收缩，会显示分组组名下的所有组名.
-![img](readme-img/sidebar-no-collapsable.jpg)
-为true时可收缩
-![img](readme-img/sidebar-collapsable.jpg)
-sidebarDepth属性为侧边栏标题深度，默认为1即可。
+使用对象来进行分组，title属性为分组组名，path为点击时跳转的路径，为空则不可以通过点击分组组名跳转，collapsable为分组是否可以收缩，设为false时不收缩，会显示分组组名下的所有组名，为true时可收缩，sidebarDepth属性为侧边栏标题深度，默认为1即可。
 
 children属性为该分组下要显示的所有md文件，空字符串代表README.md文件，其中可继续进行嵌套，将字符串改为以上对象形式，可继续分级（但层数过多会导致侧边栏混乱，不推荐）。
 
@@ -141,10 +137,7 @@ themeConfig: {
     sidebarDepth: 1,
     }
 ```
-## 插件生态 （plugin）
-使用方法与文档相同，只不过配置时需要将对应信息放置在"/zh/plugin/"后面，同时也要注意中英文都需要进行配置。
-
-## 关于 (about)
+## 【暂未开启】关于 (about)
 该模块中有四个子模块，可按照目录结构（在上方结构中有介绍），在相应目录下的README.md文件中编辑模块介绍信息。
 其中比较特殊的是团队（team）模块,可以在其中添加团队成员信息,description字段为开发团队人员介绍信息，members为团队成员信息。可按以下示例进行编辑
 ```yml
