@@ -166,6 +166,19 @@ $ java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
 
 > 注：该能力可以在开发态通过调用sermant-agentcore-core所提供[PluginManager](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/PluginManager.java)::install(Set pluginNames)方法来实现
 
+### 重复安装插件
+该能力的推出主要因为在一些场景中，插件的生效范围有动态扩展的诉求，主要是扩展增强的类和方法，并且需要保证已经生效的部分不会受到影响，在这种情况下，就不能通过卸载插件，调整配置后重新安装来解决此类场景的问题。例如故障注入场景中，针对不同的故障可能需要对不同的类进行字节码增强，并且需要按照测试方案中的编排逐渐注入各式各样的故障场景，在这种情况下，我们就不能通过卸载再重新安装的方式来完成这项工作，只能将负责故障注入的插件安装多次来解决这个问题，这就要用到重复安装插件的能力，重复安装插件将会复用静态资源，Sermant内部通过插件管理来隔离重复安装的插件。
+
+#### 如何实施插件的重复安装？
+如需重复安装插件，在执行动态插件安装时需要将插件名后通过`#`号为本次安装的插件添加一个编码，如：
+```shell
+command=INSTALL-PLUGINS:pluginA#FIRST
+```
+通过这种方式，插件就可以重复安装。
+
+> 注：当卸载插件时，如果想卸载通过携带编码安装的插件，在卸载指令中也需要配置携带编码的插件名。
+
+
 ## 动态卸载插件
 
 在通过[agentmain方式](#agentmain方式)启动并[动态安装插件](#动态安装插件)后，可以动态的卸载服务治理插件（需要插件支持动态安装和卸载），再次运行`AgentLoader`，并通过传入参数下发动态卸载插件的指令`command=UNINSTALL-PLUGINS:pluginA/pluginB`：
