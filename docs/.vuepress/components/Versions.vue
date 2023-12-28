@@ -20,7 +20,7 @@ export default {
   mounted: function () {
     this.$axios
       .get(
-        "https://api.github.com/repos/huaweicloud/Sermant-website/git/trees/develop"
+        "https://api.github.com/repos/huaweicloud/Sermant-website/git/trees/latest"
       )
       .then((response) => {
         const versionNode = response.data.tree.find((e) => {
