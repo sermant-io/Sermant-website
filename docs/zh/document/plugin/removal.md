@@ -68,13 +68,14 @@ rules:                  # 离群实例摘除规则，key：服务名称（为def
 
 ## 操作和结果验证
 
-下面将演示如何使用离群实例摘除插件，验证采用zookeeper配置中心为SpringCloud应用配置离群摘除规则场景。
+下面将演示如何使用离群实例摘除插件，验证采用ZooKeeper配置中心为SpringCloud应用配置离群摘除规则场景。
 
 ### 准备工作
 
-- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.2.1/sermant-examples-removal-demo-1.2.1.tar.gz) Demo二进制产物压缩包
-- [下载](https://github.com/huaweicloud/Sermant/releases) 或编译Sermant包
-- [下载](https://zookeeper.apache.org/releases#download) 并启动zookeeper
+- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.3.0/sermant-examples-removal-demo-1.3.0.tar.gz) Demo二进制产物压缩包
+- [下载](https://github.com/huaweicloud/Sermant/releases/download/v1.3.0/sermant-1.3.0.tar.gz) Sermant
+  Release包（当前版本推荐1.3.0版本）
+- [下载](https://zookeeper.apache.org/releases#download) 并启动ZooKeeper
 
 > **注意：** [动态配置中心](../user-guide/configuration-center.md)会在本场景中默认使用，由于非本场景的核心组件，因此在本文中不额外赘述。
 

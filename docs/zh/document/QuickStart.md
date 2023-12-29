@@ -3,57 +3,50 @@
 
 ## 准备工作
 
-- [下载](https://github.com/huaweicloud/Sermant/releases/download/v1.2.1/sermant-1.2.1.tar.gz) Sermant包（当前版本推荐1.2.1）
-- [下载](https://github.com/huaweicloud/Sermant-examples/tree/main/flowcontrol-demo/spring-cloud-demo/spring-provider) demo应用
-- [下载](https://zookeeper.apache.org/releases#download) 并启动zookeeper
+- [下载](https://github.com/huaweicloud/Sermant/releases/download/v1.3.0/sermant-1.3.0.tar.gz) Sermant
+  Release包（当前版本推荐1.3.0版本）
+- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.3.0/sermant-examples-flowcontrol-demo-1.3.0.tar.gz) Demo二进制产物压缩包
+- [下载](https://zookeeper.apache.org/releases#download) 并启动ZooKeeper
 
-## 编译打包demo应用
+## 获取Demo二进制产物
 
-在`${path}/Sermant-examples/flowcontrol-demo/spring-cloud-demo/spring-provider/`目录执行以下命令：
-
-```shell
-# windows linux mac
-mvn clean package
-```
-
-打包成功后，在`${path}/Sermant-examples/flowcontrol-demo/spring-cloud-demo/spring-provider/target`得到`spring-provider.jar`
-
-> 说明：path为demo应用下载所在路径
+解压Demo二进制产物压缩包，即可得到`spring-provider.jar`。
 
 ## 修改Sermant配置
 
-修改`${path}/sermant-agent-x.x.x/agent/config/config.properties`文件中`agent.service.heartbeat.enable`和`agent.service.gateway.enable`配置为true，以此来开启Sermant的心跳服务和网关服务，如下所示：
+修改`${sermant-path}/sermant-agent-x.x.x/agent/config/config.properties`文件中`agent.service.heartbeat.enable`和`agent.
+service.gateway.enable`配置为true，以此来开启Sermant的心跳服务和网关服务，如下所示：
 
 ```properties
 agent.service.heartbeat.enable=true
 agent.service.gateway.enable=true
 ```
 
-> 说明：path为Sermant包下载所在路径
+> 说明：${sermant-path}为Sermant Release包下载所在路径
 
-## 启动backend
+## 启动Backend
 
-在`${path}/sermant-agent-x.x.x/server/sermant`目录执行以下命令：
+在`${sermant-path}/sermant-agent-x.x.x/server/sermant`目录执行以下命令：
 
 ```shell
 java -jar sermant-backend-x.x.x.jar
 ```
 
-> 说明：path为Sermant包下载所在路径
+> 说明：${sermant-path}为Sermant Release包下载所在路径
 
-## 启动demo应用
+## 启动Demo微服务
 
-在`${path}/Sermant-examples/flowcontrol-demo/spring-cloud-demo/spring-provider/target`目录执行以下命令：
+参考如下命令启动Demo微服务
 
 ```shell
 # linux mac
-java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar -jar spring-provider.jar
+java -javaagent:${sermant-path}/sermant-agent-x.x.x/agent/sermant-agent.jar -jar spring-provider.jar
 
 # windows
-java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar -jar spring-provider.jar
+java -javaagent:${sermant-path}\sermant-agent-x.x.x\agent\sermant-agent.jar -jar spring-provider.jar
 ```
 
-> 说明：path为Sermant包下载所在路径
+> 说明：${sermant-path}为Sermant Release包下载所在路径
 
 ## 验证
 
