@@ -68,7 +68,7 @@ module.exports = {
                 "plugin/graceful",
                 "plugin/loadbalancer",
                 "plugin/monitor",
-                // "plugin/mq-consume-prohibition",
+                "plugin/mq-consume-prohibition",
                 "plugin/router",
                 "plugin/tag-transmission",
                 "plugin/register-migration",
