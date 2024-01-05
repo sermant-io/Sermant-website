@@ -136,8 +136,9 @@ export default {
       let versionText = "Versions";
       const versionKey = "/versions";
       let startIndex = currentPath.indexOf(versionKey);
+      let latestVersionText = versions[0] + "(latest)";
       if (startIndex === -1) {
-        versionText = "latest";
+        versionText = latestVersionText;
       } else {
         const numStartIndex = startIndex + versionKey.length + 1;
         const numEndIndex = currentPath.indexOf("/", numStartIndex);
@@ -146,7 +147,7 @@ export default {
           versionText = temVersion;
         }
       }
-      const tmpVersionArr = ["latest", ...versions].filter((tmpV) => {
+      const tmpVersionArr = [latestVersionText, ...versions].filter((tmpV) => {
         return tmpV !== versionText;
       });
       this.versionDropdown = {
@@ -158,7 +159,7 @@ export default {
           const versionIdx = path.indexOf("/versions/");
           const startIdx = versionIdx >= 0 ? versionIdx + 10 : 0;
           const endIdx = path.indexOf("/", startIdx);
-          const versionPath = version === "latest" ? "" : `/versions/${version}`;
+          const versionPath = version === latestVersionText ? "" : `/versions/${version}`;
           let link = versionPath + path.substring(endIdx);
           return { text, link, isOutLink: true };
         }),
