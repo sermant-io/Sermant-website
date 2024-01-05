@@ -148,7 +148,8 @@ export default {
         }
       }
       const tmpVersionArr = [latestVersionText, ...versions].filter((tmpV) => {
-        return tmpV !== versionText;
+        // 判断可选择版本列表中1、不包含当前已选中版本 2、不包含最新版本，最新版本名用xxx（latest）取代了，所以这里可以去除
+        return tmpV !== versionText && tmpV !== versions[0];
       });
       this.versionDropdown = {
         text: versionText,
