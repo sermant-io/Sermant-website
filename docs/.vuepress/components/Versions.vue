@@ -37,7 +37,8 @@ export default {
             if (this.options.length === 0) {
               return;
             }
-            this.options.unshift({ value: "latest", text: "latest" });
+            // 不再添加Latest选项
+            // this.options.unshift({ value: "latest", text: "latest" });
             const path = window.location.pathname;
             if (path.startsWith("/versions/")) {
               const start = 10;
