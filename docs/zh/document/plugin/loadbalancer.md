@@ -78,13 +78,14 @@ rule: Random
 
 ## 操作和结果验证
 
-下面将演示如何使用负载均衡插件，验证springboot应用采用zookeeper配置中心，动态更新宿主应用的负载均衡策略场景。
+下面将演示如何使用负载均衡插件，验证SpringBoot应用采用ZooKeeper配置中心，动态更新宿主应用的负载均衡策略场景。
 
 ### 准备工作
 
-- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.2.1/sermant-examples-load-balance-demo-1.2.1.tar.gz) Demo二进制产物压缩包
-- [下载](https://github.com/huaweicloud/Sermant/releases)/编译sermant包
-- [下载](https://zookeeper.apache.org/releases.html#download)并启动zookeeper
+- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.3.0/sermant-examples-load-balance-demo-1.3.0.tar.gz) Demo二进制产物压缩包
+- [下载](https://github.com/huaweicloud/Sermant/releases/download/v1.3.0/sermant-1.3.0.tar.gz) Sermant
+  Release包（当前版本推荐1.3.0版本）
+- [下载](https://zookeeper.apache.org/releases.html#download)并启动ZooKeeper
 
 ### 步骤一：获取Demo二进制产物
 
@@ -101,7 +102,7 @@ rule: Random
 }
 ```
 
-以zookeeper为例，利用zookeeper提供的命令行工具进行配置发布。
+以ZooKeeper为例，利用ZooKeeper提供的命令行工具进行配置发布。
 
 1、在`${path}/bin/`目录执行以下命令创建节点`/app=default&environment=&service=zk-rest-consumer`
 
@@ -140,7 +141,7 @@ matches:
 }
 ```
 
-以zookeeper为例，利用zookeeper提供的命令行工具进行配置发布。
+以ZooKeeper为例，利用ZooKeeper提供的命令行工具进行配置发布。
 
 1、在`${path}/bin/`目录执行以下命令创建节点`/app=default&environment=&service=zk-rest-consumer/servicecomb.loadbalance.testLb`和数据`rule: Random`
 

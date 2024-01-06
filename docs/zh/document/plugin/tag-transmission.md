@@ -85,8 +85,9 @@ x-sermant-version: v1          // 自定义header，此处表示通过流量染�
 
 ### 准备工作
 
-- [下载 ](https://github.com/huaweicloud/Sermant/releases/download/v1.2.0/sermant-1.2.0.tar.gz)Sermant Release包
-- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.2.1/sermant-examples-tag-transmission-demo-1.2.1.tar.gz) Demo二进制产物压缩包
+- [下载](https://github.com/huaweicloud/Sermant/releases/download/v1.3.0/sermant-1.3.0.tar.gz) Sermant 
+  Release包（当前版本推荐1.3.0版本）
+- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.3.0/sermant-examples-tag-transmission-demo-1.3.0.tar.gz) Demo二进制产物压缩包
 
 ### 步骤一：获取Demo二进制产物
 
