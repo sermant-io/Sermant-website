@@ -136,8 +136,9 @@ export default {
       let versionText = "Versions";
       const versionKey = "/versions";
       let startIndex = currentPath.indexOf(versionKey);
+      let latestVersionText = versions[0] + "(latest)";
       if (startIndex === -1) {
-        versionText = "latest";
+        versionText = latestVersionText;
       } else {
         const numStartIndex = startIndex + versionKey.length + 1;
         const numEndIndex = currentPath.indexOf("/", numStartIndex);
@@ -146,8 +147,9 @@ export default {
           versionText = temVersion;
         }
       }
-      const tmpVersionArr = ["latest", ...versions].filter((tmpV) => {
-        return tmpV !== versionText;
+      const tmpVersionArr = [latestVersionText, ...versions].filter((tmpV) => {
+        // 判断可选择版本列表中1、不包含当前已选中版本 2、不包含最新版本，最新版本名用xxx（latest）取代了，所以这里可以去除
+        return tmpV !== versionText && tmpV !== versions[0];
       });
       this.versionDropdown = {
         text: versionText,
@@ -158,7 +160,7 @@ export default {
           const versionIdx = path.indexOf("/versions/");
           const startIdx = versionIdx >= 0 ? versionIdx + 10 : 0;
           const endIdx = path.indexOf("/", startIdx);
-          const versionPath = version === "latest" ? "" : `/versions/${version}`;
+          const versionPath = version === latestVersionText ? "" : `/versions/${version}`;
           let link = versionPath + path.substring(endIdx);
           return { text, link, isOutLink: true };
         }),
