@@ -286,17 +286,15 @@
 
 ## 操作和结果验证
 
-下面将演示如何使用标签路由插件，验证使用Sermant动态配置中心（zookeeper）为SpringCloud服务配置标签路由场景。
+下面将演示如何使用标签路由插件，验证使用Sermant动态配置中心（ZooKeeper）为SpringCloud服务配置标签路由场景。
 
 ### 准备工作
 
-- [下载](https://github.com/huaweicloud/Sermant/releases)/编译sermant包
-  
-- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.2.1/sermant-examples-router-demo-1.2.1.tar.gz) Demo二进制产物压缩包
-
+- [下载](https://github.com/huaweicloud/Sermant/releases/download/v1.3.0/sermant-1.3.0.tar.gz) Sermant
+  Release包（当前版本推荐1.3.0版本）
+- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.3.0/sermant-examples-router-demo-1.3.0.tar.gz) Demo二进制产物压缩包
 - [下载](https://github.com/apache/servicecomb-service-center)ServiceComb（注册中心），并启动
-
-- [下载](https://zookeeper.apache.org/releases.html#download)Zookeeper（动态配置中心），并启动
+- [下载](https://zookeeper.apache.org/releases.html#download)ZooKeeper（动态配置中心），并启动
 
 ### 步骤一：获取Demo二进制产物
 
@@ -386,7 +384,7 @@ java -Dservicecomb_service_enableSpringRegister=true -Dservice_meta_version=1.0.
 ```
 **上述标签路由规则解释：** 请求头信息中id属性值为1的请求会路由到组名为gray的服务实例，id属性值为2的请求会路由到版本号为1.0.1的服务实例。
 
-利用zookeeper提供的命令行工具进行配置发布。
+利用ZooKeeper提供的命令行工具进行配置发布。
 
 1、在`${path}/bin/`目录执行以下命令创建节点`/app=default&environment=`
 
@@ -454,7 +452,7 @@ zkCli.cmd -server localhost:2181 create /app=default&environment=/servicecomb.ro
           weight: 100"
 ```
 
-> 说明：`${path}`为zookeeper的安装目录。
+> 说明：`${path}`为ZooKeeper的安装目录。
 
 ### 验证
 

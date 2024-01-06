@@ -374,13 +374,14 @@ servicecomb:                            # 流量标记前缀
 
 ## 操作和结果验证
 
-下面将演示如何使用流控插件，验证springboot应用采用zookeeper配置中心，设置限流策略场景。
+下面将演示如何使用流控插件，验证SpringBoot应用采用ZooKeeper配置中心，设置限流策略场景。
 
 ### 准备工作
 
-- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.2.1/sermant-examples-flowcontrol-demo-1.2.1.tar.gz) Demo二进制产物压缩包
-- [下载](https://github.com/huaweicloud/Sermant/releases) 或编译Sermant包
-- [下载](https://zookeeper.apache.org/releases#download) 并启动zookeeper
+- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.3.0/sermant-examples-flowcontrol-demo-1.3.0.tar.gz) Demo二进制产物压缩包
+- [下载](https://github.com/huaweicloud/Sermant/releases/download/v1.3.0/sermant-1.3.0.tar.gz) Sermant
+  Release包（当前版本推荐1.3.0版本）
+- [下载](https://zookeeper.apache.org/releases#download) 并启动ZooKeeper
 
 ### 步骤一：获取Demo二进制产物
 
@@ -425,7 +426,7 @@ java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar -Dspring.app
 }
 ```
 
-利用zookeeper提供的命令行工具来发布流量标记策略和流控策略：
+利用ZooKeeper提供的命令行工具来发布流量标记策略和流控策略：
 
 1. 在`${path}/bin/`目录执行以下命令创建节点`/service=spring-flow-provider`
 
@@ -475,7 +476,7 @@ name: flow
 rate: 4"
 ```
 
-> 说明：${path}为zookeeper的安装目录。
+> 说明：${path}为ZooKeeper的安装目录。
 
 ### 验证
 

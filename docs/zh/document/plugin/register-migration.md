@@ -192,11 +192,9 @@ dubbo:
 
 #### 准备工作
 
-- [下载](https://github.com/huaweicloud/Sermant/releases)/编译sermant包
-  
-- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.2.1/sermant-examples-registry-demo-1.2.1.tar.gz)
-  Demo二进制产物压缩包
-
+- [下载](https://github.com/huaweicloud/Sermant/releases/download/v1.3.0/sermant-1.3.0.tar.gz) Sermant
+  Release包（当前版本推荐1.3.0版本）
+- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.3.0/sermant-examples-registry-demo-1.3.0.tar.gz) Demo二进制产物压缩包
 - [下载](https://github.com/apache/servicecomb-service-center)ServiceComb，并启动
 
 > **注意：** [动态配置中心](../user-guide/configuration-center.md)会在本场景中默认使用，由于非本场景的核心组件，因此在本文中不额外赘述。
@@ -244,7 +242,7 @@ java -Dservicecomb.service.enableDubboRegister=true -javaagent:${path}/sermant-a
 
 ### 双注册模式
 
-下面将演示如何使用注册迁移插件，验证SpringCloud应用在双注册模式下的从旧注册中心（Zookeeper）迁移到新注册中心（ServiceComb）场景。
+下面将演示如何使用注册迁移插件，验证SpringCloud应用在双注册模式下的从旧注册中心（ZooKeeper）迁移到新注册中心（ServiceComb）场景。
 
 #### 准备工作
 
@@ -254,7 +252,7 @@ java -Dservicecomb.service.enableDubboRegister=true -javaagent:${path}/sermant-a
 
 - [下载](https://github.com/apache/servicecomb-service-center)ServiceComb，并启动
 
-- [下载](https://zookeeper.apache.org/releases.html#download)Zookeeper，并启动
+- [下载](https://zookeeper.apache.org/releases.html#download)ZooKeeper，并启动
 
 > **注意：** [动态配置中心](../user-guide/configuration-center.md)会在本场景中默认使用，由于非本场景的核心组件，因此在本文中不额外赘述。
 
@@ -264,7 +262,7 @@ java -Dservicecomb.service.enableDubboRegister=true -javaagent:${path}/sermant-a
 
 #### 步骤二：部署应用
 
-（1）启动原生产者与原消费者（注册到Zookeeper中）
+（1）启动原生产者与原消费者（注册到ZooKeeper中）
 
 ```shell
 # windows, linux, mac
@@ -320,7 +318,7 @@ java -Dserver.port=8261 -Dservicecomb.service.openMigration=true -Dservicecomb.s
 
 （5）关闭原消费者
 
-（6）停止旧的注册中心（Zookeeper）
+（6）停止旧的注册中心（ZooKeeper）
 
 > **注意：**
 >

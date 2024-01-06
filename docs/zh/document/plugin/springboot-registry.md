@@ -4,7 +4,7 @@
 
 ## 功能介绍
 
-该插件为纯SpringBoot应用提供服务注册发现能力，方便用户在不修改代码的前提下快速接入注册中心（目前只支持**Zookeeper**），同时提供超时重试的能力，实现服务调用的高可用。
+该插件为纯SpringBoot应用提供服务注册发现能力，方便用户在不修改代码的前提下快速接入注册中心（目前只支持**ZooKeeper**），同时提供超时重试的能力，实现服务调用的高可用。
 
 插件会根据发起客户端调用Url解析下游服务，并根据负载均衡策略选择优选实例，动态替换Url，完成服务调用。
 
@@ -76,7 +76,7 @@ value: service-b,service-c # 白名单服务集合，仅当strategy配置为whit
 
 注册中心支持：
 
-- Zookeeper 3.6.x及以上
+- ZooKeeper 3.6.x及以上
 
 客户端支持：
 
@@ -92,15 +92,14 @@ value: service-b,service-c # 白名单服务集合，仅当strategy配置为whit
 
 ## 操作和结果验证
 
-下面将演示如何使用SpringBoot注册插件，验证纯SpringBoot应用快速接入注册中心（Zookeeper）场景。
+下面将演示如何使用SpringBoot注册插件，验证纯SpringBoot应用快速接入注册中心（ZooKeeper）场景。
 
 ### 准备工作
 
-- [下载](https://github.com/huaweicloud/Sermant/releases)/编译sermant包
-
-- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.2.1/sermant-examples-springboot-registry-demo-1.2.1.tar.gz) Demo二进制产物压缩包
-
-- [下载](https://zookeeper.apache.org/releases.html#download)Zookeeper（动态配置中心&注册中心），并启动
+- [下载](https://github.com/huaweicloud/Sermant/releases/download/v1.3.0/sermant-1.3.0.tar.gz) Sermant
+  Release包（当前版本推荐1.3.0版本）
+- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.3.0/sermant-examples-springboot-registry-demo-1.3.0.tar.gz) Demo二进制产物压缩包
+- [下载](https://zookeeper.apache.org/releases.html#download)ZooKeeper（动态配置中心&注册中心），并启动
 
 ### 步骤一：获取Demo二进制产物
 
@@ -138,7 +137,7 @@ java -Dserver.port=9999 -Dsermant.springboot.registry.enableRegistry=true -javaa
 
 其中key值为**sermant.plugin.registry**，group为**app=default&environment=&service=service-a**，content为**strategy: all**。
 
-利用zookeeper提供的命令行工具进行配置发布。
+利用ZooKeeper提供的命令行工具进行配置发布。
 
 1、在`${path}/bin/`目录执行以下命令创建节点`/app=default&environment=`
 
@@ -150,7 +149,7 @@ java -Dserver.port=9999 -Dsermant.springboot.registry.enableRegistry=true -javaa
 zkCli.cmd -server localhost:2181 create /app=default&environment=&service=service-a
 ```
 
-> **说明：** `${path}`为zookeeper的安装目录
+> **说明：** `${path}`为ZooKeeper的安装目录
 
 2、在`${path}/bin/`目录执行以下命令创建节点`/app=default&environment=&service=service-a/sermant.plugin.registry`和数据`strategy: all`。
 

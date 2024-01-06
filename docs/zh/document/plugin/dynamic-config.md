@@ -120,13 +120,14 @@ public class ValueConfig {
 
 ## 操作和结果验证
 
-下面将演示如何使用动态配置插件，验证使用Sermant动态配置中心（zookeeper）更新spring boot应用配置的场景。
+下面将演示如何使用动态配置插件，验证使用Sermant动态配置中心（ZooKeeper）更新SpringBoot应用配置的场景。
 
 ### 准备工作
 
-- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.2.1/sermant-examples-dynamic-demo-1.2.1.tar.gz) Demo二进制产物压缩包
-- [下载](https://github.com/huaweicloud/Sermant/releases) 或编译Sermant包
-- [下载](https://zookeeper.apache.org/releases#download) 并启动zookeeper
+- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.3.0/sermant-examples-dynamic-demo-1.3.0.tar.gz) Demo二进制产物压缩包
+- [下载](https://github.com/huaweicloud/Sermant/releases/download/v1.3.0/sermant-1.3.0.tar.gz) Sermant
+  Release包（当前版本推荐1.3.0版本）
+- [下载](https://zookeeper.apache.org/releases#download) 并启动ZooKeeper
 
 ### 步骤一：获取Demo二进制产物
 
@@ -187,7 +188,7 @@ Hello, I am zk rest template provider, my port is 8003, sermant value is sermant
 
 参考使用[动态配置中心使用手册](../user-guide/configuration-center.md#发布配置) 进行配置发布
 
-以zookeeper为例，利用zookeeper提供的命令行工具来来发布动态配置：
+以ZooKeeper为例，利用ZooKeeper提供的命令行工具来来发布动态配置：
 
 1. 在`${path}/bin/`目录执行以下命令创建节点`/service=spring-flow-provider`
 
@@ -209,7 +210,7 @@ zkCli.cmd -server localhost:2181 create /service=spring-flow-provider
 zkCli.cmd -server localhost:2181 create /service=spring-flow-provider/config "sermant: sermant1"
 ```
 
-> 说明：${path}为zookeeper的安装目录。
+> 说明：${path}为ZooKeeper的安装目录。
 
 ### 验证
 

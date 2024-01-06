@@ -68,6 +68,7 @@ module.exports = {
                 "plugin/graceful",
                 "plugin/loadbalancer",
                 "plugin/monitor",
+                "plugin/mq-consume-prohibition",
                 "plugin/router",
                 "plugin/tag-transmission",
                 "plugin/register-migration",
@@ -103,6 +104,7 @@ module.exports = {
                 "community/",
                 "community/contributing",
                 "community/vulnerability",
+                "community/sermant-2023-summary",
               ],
             },
             {

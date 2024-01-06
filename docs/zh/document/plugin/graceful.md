@@ -195,7 +195,7 @@ spec:
 框架支持：
 
 - **仅支持SpringCloud应用**，需确保SpringCloud版本在`Edgware.SR2`及以上
-- 注册中心支持：Zookeeper、Consul、Naocs、Eureka、ServiceComb
+- 注册中心支持：ZooKeeper、Consul、Naocs、Eureka、ServiceComb
 
 限制：
 
@@ -210,9 +210,10 @@ spec:
 ### 准备工作
 
 - 已经部署好kubernetes环境
-- [下载](https://github.com/huaweicloud/Sermant/releases)/编译sermant包
-- [下载](https://github.com/huaweicloud/Sermant-examples/tree/main/grace-demo/spring-grace-nacos-demo)Demo源码
-- [下载](https://github.com/alibaba/nacos/releases)nacos（注册中心），并部署
+- [下载](https://github.com/huaweicloud/Sermant/releases/download/v1.3.0/sermant-1.3.0.tar.gz) Sermant
+  Release包（当前版本推荐1.3.0版本）
+- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.3.0/sermant-examples-grace-demo-1.3.0.tar.gz) Demo二进制产物压缩包
+- [下载](https://github.com/alibaba/nacos/releases)Nacos（注册中心），并部署
 
 > **注意：** 
 > 1. [动态配置中心](../user-guide/configuration-center.md)会在本场景中默认使用，由于非本场景的核心组件，因此在本文中不额外赘述。
@@ -230,7 +231,7 @@ mvn clean package
 
 打包成功后可在`${path}/Sermant-examples/grace-demo/spring-grace-nacos-demo/nacos-rest-data/target`得到` nacos-rest-data-2.2.0.RELEASE.jar`包，在`${path}/Sermant-examples/grace-demo/spring-grace-nacos-demo/nacos-rest-consumer/target`得到`nacos-rest-consumer-2.2.0.RELEASE.jar`，在`${path}/Sermant-examples/grace-demo/spring-grace-nacos-demo/nacos-rest-provider/target`得到`nacos-rest-provider-2.2.0.RELEASE.jar`。
 
-> **说明：** ${path}为demo应用下载所在路径。
+> **说明：** ${path}为Demo应用下载所在路径。
 
 **2.制作Demo镜像**
 
@@ -268,7 +269,7 @@ docker push ${imageName}:{imageVerison}
 kubectl apply -f data.yaml
 ```
 
-> **注意：** 部署之前需修改data.yaml中相关namespace、服务镜像地址和nacos注册中心地址。
+> **注意：** 部署之前需修改data.yaml中相关Namespace、服务镜像地址和Nacos注册中心地址。
 
 `data.yaml`配置如下：
 
@@ -310,7 +311,7 @@ spec:
 kubectl apply -f provider-closeWarmUp.yaml
 ```
 
-> **注意：** 部署之前需修改provider-closeWarmUp.yaml中相关namespace、服务镜像地址和nacos注册中心地址。
+> **注意：** 部署之前需修改provider-closeWarmUp.yaml中相关Namespace、服务镜像地址和Nacos注册中心地址。
 
 `provider-closeWarmUp.yaml`配置如下：
 
@@ -342,7 +343,7 @@ spec:
           - name: "server_port"
             value: "8006"
           - name: "spring_cloud_nacos_discovery_serveraddr"
-            value: "x.x.x.x:8848" # nacos注册中心地址
+            value: "x.x.x.x:8848" # Nacos注册中心地址
           - name: "grace_rule_enableSpring"
             value: "true"
           - name: "grace_rule_enableWarmUp"
@@ -363,7 +364,7 @@ spec:
 kubectl apply -f provider.yaml
 ```
 
-> **注意：** 部署之前需修改provider.yaml中相关namespace、服务镜像地址和nacos注册中心地址。
+> **注意：** 部署之前需修改provider.yaml中相关Namespace、服务镜像地址和Nacos注册中心地址。
 
 `provider.yaml`配置如下：
 
@@ -408,7 +409,7 @@ spec:
         - name: default-secret
 ```
 
-> **注意：** 第二个provider实例对比第一个provider实例会延迟30s后再注册到nacos注册中心
+> **注意：** 第二个provider实例对比第一个provider实例会延迟30s后再注册到Nacos注册中心
 
 （4）部署consumer（端口8005）
 
@@ -418,7 +419,7 @@ spec:
 kubectl apply -f consumer.yaml
 ```
 
-> **注意：** 部署之前需修改consumer.yaml中相关namespace、服务镜像地址和nacos注册中心地址。
+> **注意：** 部署之前需修改consumer.yaml中相关Namespace、服务镜像地址和Nacos注册中心地址。
 
 `consumer.yaml`配置如下：
 
@@ -448,7 +449,7 @@ spec:
           - containerPort: 8005
           env:
           - name: "spring_cloud_nacos_discovery_serveraddr"
-            value: "x.x.x.x:8848" # nacos注册中心地址
+            value: "x.x.x.x:8848" # Nacos注册中心地址
           - name: "grace_rule_enableSpring"
             value: "true"
           - name: "grace_rule_enableWarmUp"
@@ -461,7 +462,7 @@ spec:
         - name: default-secret
 ```
 
-如下图所示：3个服务对应的4个实例都已经注册至nacos上
+如下图所示：3个服务对应的4个实例都已经注册至Nacos上
 
 <MyImage src="/docs-img/nacos-rest-services.png"/>
 
