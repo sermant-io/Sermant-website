@@ -129,28 +129,42 @@ groupKey1=groupValue1[&groupKey2=groupVaue2...]
 
 ## 启动和结果验证
 
-本教程使用[Sermant-examples](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template)仓库中的demo插件来进行动态配置能力的演示，该插件中实现添加监听器以监听动态配置变化。
+本教程使用[Sermant-examples](https://github.com/huaweicloud/Sermant-examples/tree/main/first-plugin-demo)仓库中的Demo插件和微服务来进行动态配置能力的演示，该插件中配置了监听器以监听动态配置变化。
 
-### Zookeeper
+### 准备工作
+- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.2.1/sermant-examples-first-plugin-demo-1.2.1.tar.gz) Demo二进制产物压缩包
+- [下载](https://zookeeper.apache.org/releases.html#download) ZooKeeper服务端
+- [下载](https://servicecomb.apache.org/cn/release/kie-downloads) Kie服务端
+- [下载](https://github.com/alibaba/nacos/releases/download/2.1.0/nacos-server-2.1.0.tar.gz) Nacos服务端
 
-#### 启动
+### 获取Demo二进制产物
 
-首先启动配置中心Zookeeper，Zookeepr部署可自行查找相关资料。
+解压Demo二进制产物压缩包，即可得到`agent\`目录文件。
 
-接下来以**Sermant-example**项目 [demo-application ](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/demo-application)为宿主应用，执行以下命令挂载sermant-agent启动demo-application:
+### ZooKeeper
+启动ZooKeeper服务端
+#### Demo微服务启动
+
+修改`agent\config\config.properties`文件中的配置项，指定配置中心的类型和服务端地址：
+```properties
+# 指定配置中心的服务端地址
+dynamic.config.serverAddress=127.0.0.1:2181
+# 指定动态配置中心类型, 取值范围为NOP(无实现)、ZOOKEEPER、KIE、NACOS
+dynamic.config.dynamicConfigType=ZOOKEEPER
+```
+
+在`agent`目录执行以下命令挂载Sermant Agent启动Demo微服务:
 
 ```shell
-# Run under Windows
-java -javaagent:sermant-agent-x.x.x\agent\sermant-agent.jar=appName=test -jar demo-application.jar
-# Run under Linux
-java -javaagent:sermant-agent-x.x.x/agent/sermant-agent.jar=appName=test -jar demo-application.jar
+java -javaagent:sermant-agent.jar -jar Application.jar
 ```
 
 #### 发布配置
 
-使用Zookeeper命令行工具或可视化工具发布配置。此处以命令行工具为例，执行以下命令：
+使用ZooKeeper命令行工具或可视化工具发布配置。此处以命令行工具为例，执行以下命令：
 
 ```shell
+create /app=default
 create /app=default/demo "test"
 ```
 
@@ -160,31 +174,32 @@ create /app=default/demo "test"
 
 #### 验证
 
-查看Sermant日志文件sermant-0.log，默认日志文件路径为`./logs/sermant/core`。
-
-观察日志文件中是否包含以下日志输出：
+观察Demo微服务控制台是否包含以下日志输出：
 
 ```
-[DemoDynaConfService]-DynamicConfigEvent{key='demo', group='app=default', content='test', eventType=CREATE} com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent[source=demo,app=default]
+插件配置项发生变化，配置项值为: test
 ```
 
 如果日志输出无误，则说明动态配置发布成功，Sermant Agent已监听到动态配置。
 
 ### Kie
 
-Kie与Zoopeepr使用方式类似，唯一不同的是发布配置按照Kie的方式执行。
+启动Kie服务端。
 
-#### 启动
+#### Demo微服务启动
 
-首先启动配置中心Kie，Kie部署可自行查找相关资料。
+修改`agent\config\config.properties`文件中的配置项，指定配置中心的类型和服务端地址：
+```properties
+# 指定配置中心的服务端地址
+dynamic.config.serverAddress=127.0.0.1:30110
+# 指定动态配置中心类型, 取值范围为NOP(无实现)、ZOOKEEPER、KIE、NACOS
+dynamic.config.dynamicConfigType=KIE
+```
 
-接下来以**Sermant-example**项目 [demo-application ](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/demo-application)为宿主应用，执行以下命令挂载sermant-agent启动demo-application:
+在`agent`目录执行以下命令挂载Sermant Agent启动Demo微服务:
 
 ```shell
-# Run under Windows
-java -javaagent:sermant-agent-x.x.x\agent\sermant-agent.jar=appName=test -jar demo-application.jar
-# Run under Linux
-java -javaagent:sermant-agent-x.x.x/agent/sermant-agent.jar=appName=test -jar demo-application.jar
+java -javaagent:sermant-agent.jar -jar Application.jar
 ```
 
 #### 发布配置
@@ -208,31 +223,32 @@ java -javaagent:sermant-agent-x.x.x/agent/sermant-agent.jar=appName=test -jar de
 
 #### 验证
 
-查看Sermant日志文件sermant-0.log，默认日志文件路径为`./logs/sermant/core`。
-
-观察日志文件中是否包含以下日志输出：
+观察Demo微服务控制台是否包含以下日志输出：
 
 ```
-[DemoDynaConfService]-DynamicConfigEvent{key='demo', group='app=default', content='test', eventType=CREATE} com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent[source=demo,app=default]
+插件配置项发生变化，配置项值为: test
 ```
 
-如果日志输出无误，则说明动态配置发布成功，sermant-agent已监听到动态配置。
+如果日志输出无误，则说明动态配置发布成功，Sermant Agent已监听到动态配置。
 
 ### Nacos
 
-Nacos与Zookeeper和Kie使用方式类似，唯一不同的是发布配置按照Nacos的方式执行。
+启动Nacos服务端
 
-#### 启动
+#### Demo微服务启动
 
-首先启动配置中心Nacos，Nacos部署可自行查找相关资料。
+修改`agent\config\config.properties`文件中的配置项，指定配置中心的类型和服务端地址：
+```properties
+# 指定配置中心的服务端地址
+dynamic.config.serverAddress=127.0.0.1:8848
+# 指定动态配置中心类型, 取值范围为NOP(无实现)、ZOOKEEPER、KIE、NACOS
+dynamic.config.dynamicConfigType=NACOS
+```
 
-接下来以**Sermant-example**项目 [demo-application ](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/demo-application)为宿主应用，执行以下命令挂载sermant-agent启动demo-application:
+在`agent`目录执行以下命令挂载Sermant Agent启动Demo微服务:
 
 ```shell
-# Run under Windows
-java -javaagent:sermant-agent-x.x.x\agent\sermant-agent.jar=appName=test -jar demo-application.jar
-# Run under Linux
-java -javaagent:sermant-agent-x.x.x/agent/sermant-agent.jar=appName=test -jar demo-application.jar
+java -javaagent:sermant-agent.jar -jar Application.jar
 ```
 
 #### 发布配置
@@ -247,18 +263,16 @@ curl -d 'dataId=demo' \
   -X POST 'http://ip:port/nacos/v2/cs/config'
 ```
 
-其中`app:default`即为经过合法化后的group的值，`demo`即为key值，`test`为value值，`default`为指定服务命名空间即`agent/config/config.properties`中的`service.meta.project`。
+其中`app:default`即为经过合法化处理后的group值，`demo`即为key值，`test`为content值，`default`为指定服务命名空间即`agent/config/config.properties`中的`service.meta.project`。
 
 创建节点数据成功后，即成功在配置中心发布了动态配置。
 
 #### 验证
 
-查看Sermant日志文件sermant-0.log，默认日志文件路径为`./logs/sermant/core`。
-
-观察日志文件中是否包含以下日志输出：
+观察Demo微服务控制台是否包含以下日志输出：
 
 ```
-[DemoDynaConfService]-DynamicConfigEvent{key='demo', group='app:default', content='test', eventType=CREATE} com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent[source=demo,app=default]
+插件配置项发生变化，配置项值为: test
 ```
 
-如果日志输出无误，则说明动态配置发布成功，sermant-agent已监听到动态配置。
+如果日志输出无误，则说明动态配置发布成功，Sermant Agent已监听到动态配置。
