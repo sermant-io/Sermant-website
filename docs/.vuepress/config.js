@@ -104,7 +104,6 @@ module.exports = {
                 "community/",
                 "community/contributing",
                 "community/vulnerability",
-                "community/sermant-2023-summary",
               ],
             },
             {

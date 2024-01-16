@@ -13,17 +13,6 @@ blogArr:
       - Microservice Governance
       - Proxyless Architecture
 
-    - name: Review Of Sermant's Open Source Operations In 2023
-      writer: 李来
-      date: 2024/1/4
-      description: 'Summarize the key events of Sermant’s open source operations in 2023'
-      path: 'https://sermant.io/zh/document/community/sermant-2023-summary.html'
-      tags:
-      - Open Source Operation
-      - Live
-      - Preaching
-      - Trusted Authentication
-
     - name: A Joint Scheme For Non Invasive Observable Indicator Collection For Java Application Network Streaming——Sermant & Gopher
       writer: 杨奕 张豪鹏 殷森道
       date: 2023/12/29
