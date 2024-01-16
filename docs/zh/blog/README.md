@@ -13,17 +13,6 @@ blogArr:
       - 微服务治理
       - 无代理架构
 
-    - name: Sermant 2023年开源运营回顾
-      writer: 李来
-      date: 2024/1/4
-      description: '总结Sermant2023年在开源运营方面的关键动态'
-      path: 'https://sermant.io/zh/document/community/sermant-2023-summary.html'
-      tags:
-      - 开源运营
-      - 直播
-      - 布道
-      - 可信认证
-
     - name: 面向Java应用网络流的非侵入可观测指标采集联合方案——Sermant & Gopher
       writer: 杨奕 张豪鹏 殷森道
       date: 2023/12/29
