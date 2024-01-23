@@ -217,8 +217,8 @@
 > 我们在FAQ中的[Sermant框架常见问题](../faq/framework.md)里列举了已知的[Sermant不支持增强的原生类](../faq/framework.md#sermant不支持对哪些原生类的增强)。
 
 ## 拦截器
-拦截器用于定义在对被增强类的方法进行字节码增强时的前置、后置及处理异常时的增强逻辑：
-- [Interceptor](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-god/src/main/java/com/huaweicloud/sermant/core/plugin/agent/interceptor/Interceptor.java): 拦截器接口，其中包含三个方法：
-  - `before`，前置方法，该方法在拦截点之前执行。ExecuteContext参数为插件执行的上下文，里面封装拦截器运作所需的所有参数，通过skip方法可跳过主要流程，并设置最终方法结果，注意，增强构造函数时，不能跳过主要流程。
-  - `after`，后置方法，无论被拦截方法是否正常执行，最后都会进入后置方法中。后置方法可以通过返回值覆盖被拦截方法的返回值，因此这里开发者需要注意不要轻易返回null。
-  - `onThrow`，处理异常的方法，当被拦截方法执行异常时触发。这里处理异常并不会影响异常的正常抛出。
+拦截器被用来定义对被增强类的增强逻辑。Sermant的拦截器提供了Before、After、Throw三个关键的生命周期，并在其上提供了形如跳过方法执行，修改方法参数，修改方法返回，修改异常抛出等通用能力。
+- [Interceptor](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-god/src/main/java/com/huaweicloud/sermant/core/plugin/agent/interceptor/Interceptor.java): 拦截器接口，其中包含before、after和onThrow三个方法，分别对应于拦截器的三个生命周期。ExecuteContext参数为插件执行的上下文，里面封装拦截器运作所需的所有参数：
+  - `before`，前置方法，对应拦截器Before生命周期。该方法在拦截点之前执行。可通过ExecuteContext参数执行修改方法入参、跳过拦截点宿主方法的执行等操作。注意，增强构造函数时，不能跳过构造方法的执行。
+  - `after`，后置方法，对应拦截器After生命周期。after方法在拦截点运行结束后执行，在after方法中可以通过ExecuteContext参数修改方法的返回值。
+  - `onThrow`，异常处理方法，对应拦截器Throw生命周期。该方法在拦截点抛出异常时才能触发执行，如果异常在拦截点方法中被捕获，则无法触发onThrow方法。在onThrow方法中可以通过ExecuteContext参数修改抛出的异常，如果将异常修改为null，此时方法将不再会抛出异常。
