@@ -13,6 +13,16 @@ blogArr:
       - Microservice Governance
       - Proxyless Architecture
 
+    - name: Dynamic mounting of JavaAgent and plugins during service runtime - Analysis of Sermant's hot swapping capability
+      writer: 栾文飞
+      date: 2024/02/06
+      description: 'Analyzing the Core Mechanism of Sermant’s Hot Swap Capability'
+      path: 'https://bbs.huaweicloud.com/blogs/421723'
+      tags:
+      - Hot swappable
+      - Dynamic mounting
+      - Sermant
+
     - name: A Joint Scheme For Non Invasive Observable Indicator Collection For Java Application Network Streaming——Sermant & Gopher
       writer: 杨奕 张豪鹏 殷森道
       date: 2023/12/29

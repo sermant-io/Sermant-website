@@ -13,6 +13,16 @@ blogArr:
       - 微服务治理
       - 无代理架构
 
+    - name: 服务运行时动态挂载JavaAgent和插件——Sermant热插拔能力解析
+      writer: 栾文飞
+      date: 2024/02/06
+      description: '解析Sermant热插拔能力的核心机制'
+      path: 'https://bbs.huaweicloud.com/blogs/421723'
+      tags:
+      - 热插拔
+      - 动态挂载
+      - Sermant
+
     - name: 面向Java应用网络流的非侵入可观测指标采集联合方案——Sermant & Gopher
       writer: 杨奕 张豪鹏 殷森道
       date: 2023/12/29
