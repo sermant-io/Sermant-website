@@ -19,7 +19,7 @@ In order to solve the above problems, graceful log-off came into being. For the 
 
 Currently, the graceful online/offline capability **supports only SpringCloud applications**. Ensure that the SpringCloud version is `Edgware.SR2` or later.
 
-Regitry Center Support：Zookeeper、Consul、Naocs、Eureka、Service Center
+Regitry Center Support：Zookeeper、Consul、Nacos、Eureka、Service Center
 
 **Notice**：The graceful online/offline capability is developed based on the default load balancing capability of SpringCloud. If you have implemented the custom load balancing capability, this capability is no longer applicable.
 
@@ -60,7 +60,7 @@ grace.rule:
 Framework support:
 
 - **Only supports SpringCloud applications**, you need to ensure that the SpringCloud version is `Edgware.SR2` and above
-- Registry support: Zookeeper, Consul, Naocs, Eureka, ServiceCenter
+- Registry support: Zookeeper, Consul, Nacos, Eureka, ServiceCenter
 
 Limit:
 
