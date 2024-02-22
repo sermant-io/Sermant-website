@@ -14,7 +14,7 @@ Backend参数可在编译打包前通过`sermant-backend/src/main/resources/appl
 | **参数键**         | **说明**                             | **默认值** | **是否必须** |
 | ------------------ | ------------------------------------ | ---------- | ------------ |
 | server.port        | Backend的服务占用端口                | 8900       | 否           |
-| netty.port         | Netty消息接收端口                    | 127.0.0.1  | 否           |
+| netty.port         | Netty消息接收端口                    | 6888  | 否           |
 | netty.wait.time    | Netty的读等待时间，单位：s           | 60         | 否           |
 | max.effective.time | 判断应用心跳存活的有效时间，单位：ms | 60000      | 否           |
 | max.cache.time     | 应用心跳在缓存中的有效时间，单位：ms | 600000     | 否           |
