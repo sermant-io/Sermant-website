@@ -13,6 +13,15 @@ blogArr:
       - Microservice Governance
       - Proxyless Architecture
 
+    - name: What have we done a year after the official launch? | Sermant 2023 Annual Summary
+      writer: 李来
+      date: 2024/02/22
+      description: 'Sermant 2023 Annual Summary'
+      path: 'https://bbs.huaweicloud.com/blogs/422188'
+      tags:
+      - Annual Summary
+      - Sermant
+
     - name: Dynamic mounting of JavaAgent and plugins during service runtime - Analysis of Sermant's hot swapping capability
       writer: 栾文飞
       date: 2024/02/06
