@@ -13,6 +13,15 @@ blogArr:
       - 微服务治理
       - 无代理架构
 
+    - name: 正式发布后的一年，我们都做了什么？ | Sermant 2023年度总结
+      writer: 李来
+      date: 2024/02/22
+      description: 'Sermant 2023年度总结'
+      path: 'https://bbs.huaweicloud.com/blogs/422188'
+      tags:
+      - 年度总结
+      - Sermant
+
     - name: 服务运行时动态挂载JavaAgent和插件——Sermant热插拔能力解析
       writer: 栾文飞
       date: 2024/02/06
