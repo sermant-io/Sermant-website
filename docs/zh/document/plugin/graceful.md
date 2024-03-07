@@ -195,7 +195,7 @@ spec:
 框架支持：
 
 - **仅支持SpringCloud应用**，需确保SpringCloud版本在`Edgware.SR2`及以上
-- 注册中心支持：ZooKeeper、Consul、Naocs、Eureka、ServiceComb
+- 注册中心支持：ZooKeeper、Consul、Nacos、Eureka、ServiceComb
 
 限制：
 

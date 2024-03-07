@@ -13,16 +13,24 @@ blogArr:
       - 微服务治理
       - 无代理架构
 
-    - name: Sermant 2023年开源运营回顾
+    - name: 正式发布后的一年，我们都做了什么？ | Sermant 2023年度总结
       writer: 李来
-      date: 2024/1/4
-      description: '总结Sermant2023年在开源运营方面的关键动态'
-      path: 'https://sermant.io/zh/document/community/sermant-2023-summary.html'
+      date: 2024/02/22
+      description: 'Sermant 2023年度总结'
+      path: 'https://bbs.huaweicloud.com/blogs/422188'
       tags:
-      - 开源运营
-      - 直播
-      - 布道
-      - 可信认证
+      - 年度总结
+      - Sermant
+
+    - name: 服务运行时动态挂载JavaAgent和插件——Sermant热插拔能力解析
+      writer: 栾文飞
+      date: 2024/02/06
+      description: '解析Sermant热插拔能力的核心机制'
+      path: 'https://bbs.huaweicloud.com/blogs/421723'
+      tags:
+      - 热插拔
+      - 动态挂载
+      - Sermant
 
     - name: 面向Java应用网络流的非侵入可观测指标采集联合方案——Sermant & Gopher
       writer: 杨奕 张豪鹏 殷森道

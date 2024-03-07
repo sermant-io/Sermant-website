@@ -207,17 +207,18 @@
 更多方法匹配方式可以参考[byte-buddy](https://javadoc.io/doc/net.bytebuddy/byte-buddy/latest/net/bytebuddy/matcher/ElementMatchers.html)中含`MethodDescription`泛型的方法。
 ### 原生类增强
 
-增强原生类和增强普通类在增强定义和拦截器编写上没有什么区别，但是还是希望插件开发者尽量少地对原生类进行增强，原因有三：
+增强原生类和增强普通类在增强定义和拦截器编写上没有什么区别，但还是希望插件开发者尽量少地对原生类进行增强，原因有二：
 
-- 对原生类的增强往往是发散的，对他们增强很可能会对其他插件或宿主功能造成影响。
-- 对原生类的增强逻辑，将使用反射的方式调用系统类加载器中的拦截器方法。由于*Java*重定义*Class*的限制，每次调用被增强方法的时候，都会进行反射处理的逻辑，这将极大影响被增强方法的性能。
-- 对原生类的增强过程中，涉及到使用**Advice模板类**生成动态拦截类。对于每个被增强的原生类方法，都会动态生成一个，他们将被系统类加载器加载。如果不加限制的增强原生类，加载动态类也会成为启动过程中不小的负担。
+- 对原生类进行增强可能导致不可预知的错误。因为原生类在开发过程中被广泛使用，对它们增强后可能会对使用到该类的其他插件或宿主功能造成影响。
+- 对Sermant增强过程中使用的个别原生类方法进行增强可能会出现类循环依赖错误。比如Sermant类加载器在加载类的过程中会使用`java.net.URL`类，如果在插件中对URL类的构造方法进行增强，宿主应用挂载Agent启动后JVM抛出`ClassCircularityError`错误。
 
 综上，[**Sermant**核心功能模块](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core)中提供对*Java*原生类增强的能力，但不建议不加限制地对他们进行增强，如果有多个增强点可选，优先考虑增强普通类。
 
+> 我们在FAQ中的[Sermant框架常见问题](../faq/framework.md)里列举了已知的[Sermant不支持增强的原生类](../faq/framework.md#sermant不支持对哪些原生类的增强)。
+
 ## 拦截器
-拦截器用于定义在对被增强类的方法进行字节码增强时的前置、后置及处理异常时的增强逻辑：
-- [Interceptor](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-god/src/main/java/com/huaweicloud/sermant/core/plugin/agent/interceptor/Interceptor.java): 拦截器接口，其中包含三个方法：
-  - `before`，前置方法，该方法在拦截点之前执行。ExecuteContext参数为插件执行的上下文，里面封装拦截器运作所需的所有参数，通过skip方法可跳过主要流程，并设置最终方法结果，注意，增强构造函数时，不能跳过主要流程。
-  - `after`，后置方法，无论被拦截方法是否正常执行，最后都会进入后置方法中。后置方法可以通过返回值覆盖被拦截方法的返回值，因此这里开发者需要注意不要轻易返回null。
-  - `onThrow`，处理异常的方法，当被拦截方法执行异常时触发。这里处理异常并不会影响异常的正常抛出。
+拦截器被用来定义对被增强类的增强逻辑。Sermant的拦截器提供了Before、After、Throw三个关键的生命周期，并在其上提供了形如跳过方法执行，修改方法参数，修改方法返回，修改异常抛出等通用能力。
+- [Interceptor](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-god/src/main/java/com/huaweicloud/sermant/core/plugin/agent/interceptor/Interceptor.java): 拦截器接口，其中包含before、after和onThrow三个方法，分别对应于拦截器的三个生命周期。ExecuteContext参数为插件执行的上下文，里面封装拦截器运作所需的所有参数：
+  - `before`，前置方法，对应拦截器Before生命周期。该方法在拦截点之前执行。可通过ExecuteContext参数执行修改方法入参、跳过拦截点宿主方法的执行等操作。注意，增强构造函数时，不能跳过构造方法的执行。
+  - `after`，后置方法，对应拦截器After生命周期。after方法在拦截点运行结束后执行，在after方法中可以通过ExecuteContext参数修改方法的返回值。
+  - `onThrow`，异常处理方法，对应拦截器Throw生命周期。该方法在拦截点抛出异常时才能触发执行，如果异常在拦截点方法中被捕获，则无法触发onThrow方法。在onThrow方法中可以通过ExecuteContext参数修改抛出的异常，如果将异常修改为null，此时方法将不再会抛出异常。

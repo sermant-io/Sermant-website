@@ -33,7 +33,7 @@
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page.sync="currentPage"
-            :page-size="10"
+            :page-size="30"
             layout="total, prev, pager, next, jumper"
             :total="total"
           >
@@ -167,8 +167,8 @@ export default {
     },
     loadBlog() {
       this.currentBlogArr = this.blog.slice(
-        (this.currentPage - 1) * 10,
-        this.currentPage * 10
+        (this.currentPage - 1) * 30,
+        this.currentPage * 30
       );
     },
   },

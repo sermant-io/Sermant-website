@@ -104,7 +104,6 @@ module.exports = {
                 "community/",
                 "community/contributing",
                 "community/vulnerability",
-                "community/sermant-2023-summary",
               ],
             },
             {
@@ -114,11 +113,12 @@ module.exports = {
               sidebarDepth: 1,
               children: [
                 "faq/",
-                "faq/performance",
+                "faq/development-debug",
                 "faq/framework",
-                "faq/registry",
                 "faq/flowcontrol",
+                "faq/registry",
                 "faq/upgrade",
+                "faq/performance",
               ],
             },
           ],

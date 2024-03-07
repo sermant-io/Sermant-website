@@ -1,266 +1,452 @@
 # 流控
-
-本文介绍如何使用[流控插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-flowcontrol)。
+本文介绍[流控插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-flowcontrol)及其使用方式。
 
 ## 功能介绍
 
-流控插件基于[resilience4j](https://github.com/resilience4j) 框架，以"流量"切入点，实现"非侵入式"流量控制；当前支持**限流**、**熔断**、**隔离仓**、**错误注入**与**重试**、**熔断指标采集**、**系统规则**、**系统自适应**流控能力，并且支持配置中心动态配置规则，实时生效。
+流控插件基于[resilience4j](https://github.com/resilience4j) 框架实现，以"流量"为切入点，实现"非侵入式"流量控制；当前支持[限流](#限流)、[熔断](#熔断)、[隔离](#隔离)、[错误注入](#错误注入)、[重试](#重试)、[系统规则](#系统级流控)，并且支持通过配置中心动态下发流控规则，实时生效。
 
-- **限流**：对指定接口限制1S秒内通过的QPS，当1S内流量超过指定阈值，将触发流控，限制请求流量，在客户端和服务端都可生效。
-- **熔断**：对指定接口配置熔断策略，可从单位统计时间窗口内的错误率或者慢请求率进行统计，当请求错误率或者慢请求率达到指定比例阈值，即触发熔断，在时间窗口重置前，隔离所有请求，在客户端和服务端都可生效。
-- **隔离仓**：对指定接口设置允许的最大并发量，当超过最大并发量时，对并发流量进行排队等待控制，等待超过最大等待时间则拒绝调用，避免瞬时并发流量过大导致服务崩溃，在客户端和服务端都可生效。
-- **重试**：当服务遇到非致命的错误时，可以通过重试的方式避免服务的最终失败。
-- **错误注入**：指在服务运行时，给指定服务配置错误注入策略，在客户端访问目标服务前，以指定策略模式返回。该策略多用于减少目标服务的访问负载，可作为降级的一种措施。
-- **熔断指标采集**：当服务配置了熔断策略后，插件会异步采集熔断的相关信息，并通过[监控插件](./monitor.md)进行指标上报。
-- **系统规则**：在服务运行时，若系统负载，CPU使用率，并发线程数，请求平均响应时间，请求qps任意指标超出阈值，将触发流控，限制请求流量。
-- **系统自适应**：在服务运行时，根据系统当前负载状态，以及过去一段时间内系统数据，对请求进行自适应流控。
+### 快速开始
+本插件的快速上手使用教程可参考[操作和结果验证](#操作和结果验证)。
 
-## 参数配置
+## 限流
+**限流能力对指定接口限制1S秒内通过的QPS，当1S内流量超过指定阈值，将触发限流，限制请求流量，在客户端和服务端都可生效。**
 
-### Sermant-agent配置
+执行限流策略需要通过配置中心下发流量匹配规则和限流规则，主要分为两步：
 
-流控插件依赖动态配置中心，需要在Sermant-agent中配置动态配置中心的地址（`dynamic.config.serverAddress`），动态配置中心的类型（`dynamic.config.dynamicConfigType`），具体参考[Sermant-agent使用手册](../user-guide/sermant-agent.md#sermant-agent使用参数配置)。
+**下发流量匹配规则：** 下发流量匹配规则匹配满足要求的流量。
 
-### 插件配置
+**下发限流规则：** 下发限流规则对匹配的流量执行限流策略。
 
-流控插件需打开是否开启ServiceComb适配（`flow.control.plugin.useCseRule`），是否开启指标监控（`flow.control.plugin.enable-start-monitor`）等开关，可在`${path}/sermant-agent-x.x.x/agent/pluginPackage/flowcontrol/config/config.yaml`找到插件的配置文件，配置如下所示：
+### 示例 
 
+现有如下场景：在名称为flowcontrol的微服务中，对于API访问路径为/rateLimiting的流量，如果每秒请求数超过2次，将触发限流机制。具体下发的规则如下所示：
+
+#### 下发流量匹配规则
+为实现上述限流场景，首先下发流量匹配规则来匹配需要执行限流策略的流量。根据动态配置中心的配置模型，流量匹配规则由group、key和content组成，group用来约束流量匹配规则生效的微服务，key用来约束流量匹配规则生效的场景，content为具体的流量匹配规则，其内容如下所示：
+* **group：** service=flowcontrol
+* **key：** servicecomb.matchGroup.rateLimitingScene
+* **content：**
 ```yaml
-flow.control.plugin:
-  useCseRule: false # 是否开启ServiceComb适配
-  enable-start-monitor: false # 是否启动指标监控
-  enable-system-adaptive: false # 是否开启系统自适应流控,开启此开关需enable-system-rule配置项也开启
-  enable-system-rule: false # 是否开启系统规则流控
-```
-
-
-| 参数键       | 说明                     | 默认值 | 是否必须 |
-| :----------  | ----------------------- | ----- | ------ |
-| useCseRule  | 是否开启ServiceComb适配; <br> **true**:插件根据应用配置,服务配置,自定义标签订阅配置 <br> **false**:插件根据实例服务名进行配置订阅  | true  | 是     |
-| enable-start-monitor | 是否开启指标监控; **true**:熔断指标数据通过监控插件上传至Prometheus，详情查看[监控插件](./monitor.md) | false | 否 |
-| enable-system-adaptive | 是否开启系统自适应流控; <br> **true**:根据系统负载对请求流量进行自适应流控 | false | 否 |
-| enable-system-rule | 是否开启系统规则流控; <br> **true**:根据流控策略中的系统参数阈值进行流控 | false | 否 |
-
-> useCseRule说明： Sermant当前支持zookeeper和ServiceComb-kie配置中心，默认采用zookeeper配置中心，若用户使用ServiceComb-kie，则需要设置**useCseRule**配置为**true**
-
-## 详细治理规则
-
-流控配置主要基于`group`进行配置订阅，该`group`由多个键值对组成。下面详细说明`group`和键值对`key`和`value`的设置规则。
-
-> 关于`group` `key` 的介绍以及配置中心的设置参考[动态配置中心使用手册](../user-guide/configuration-center.md#发布配置)。
-
-#### 根据采用配置中心的不同，`group`的值将会有所区别,以下介绍`group`的设置规则：
-
-- 采用`zookeeper`
-
-  此时插件将根据宿主应用的服务名进行订阅, 即应用配置的`spring.applicaton.name`, 插件订阅配置的group为`service=${spring.applicaton.name}`。
-
-- 采用`KIE`
-
-  此时插件将根据**应用配置**，**服务配置**以及**自定义配置**三项数据配置**同时**订阅， 而这三类配置可参考`${path}/sermant-agent-x.x.x/agent/config/config.properties`, 相关配置如下：
-
-    ```properties
-    # 服务app名称
-    service.meta.application=default
-    # 服务版本
-    service.meta.version=1.0.0
-    # serviceComb 命名空间
-    service.meta.project=default
-    # 环境
-    service.meta.environment=development
-    # 自定义标签，按需配置，用于后续的配置订阅
-    service.meta.customLabel=public
-    service.meta.customLabelValue=default
-    ```
-
-  应用配置，服务配置，自定义配置说明参考[CSE配置中心概述](https://support.huaweicloud.com/devg-cse/cse_devg_0020.html)。
-  - 应用配置：由`service.meta.application`与`service.meta.environment`组成， 对应的`group`为`app=default&environment=development`。
-  - 服务配置：由`service.meta.application`、`service.meta.environment`以及服务名组成，此处服务即`spring.application.name`, 对应的`group`为`app=default&environment=development&service=DynamicConfigDemo`。
-  - 自定义配置：由`service.meta.customLabel`与`service.meta.customLabelValue`组成， 对应的`group`为`public=default`。
-
-#### 流控插件根据配置键`key`的前缀进行规则匹配，以下介绍配置键`key`的规则：
-
-流量治理采用流量标记+流控规则的方式对指定的流量进行流控，所谓流量标记，通俗讲为请求信息，例如接口路径、接口方法类型、请求头以及下游服务名。
-
-流控规则是否生效取决于流量标记，当流量标记与请求相匹配，流控规则才会生效。而如何将流量标记对应上具体规则，则取决于业务场景名，通常流量标记与流控规则配置均要配置指定前缀。
-
-例如流量标记的键key需以`servicecomb.matchGroup`为前缀, 而限流规则的键key需以`servicecomb.rateLimiting`为前缀，以一个具体的例子：
-
-> 流量标记配置键key为：`servicecomb.matchGroup.flow`。
-> 
-> 限流规则配置键key为：`servicecomb.rateLimiting.flow`。
-> 
-> 如上，`flow`即为业务场景名，仅当两者业务场景名称一致，当请求匹配上流量标记时，限流规则才会生效。
-
-#### 下面介绍流控规则配置键`key`对应值`value`的相关信息：
-
-- **流量标记**
-
-  **流量标记配置键前缀:** `servicecomb.matchGroup`
-
-  以`zookeeper`为例，当使用`zookeeper`配置中心设置流量标记规则时，结合上述`group`和`key`的说明，需要在`zookeeper`中创建节点`/service=${spring.applicaton.name}/servicecomb.matchGroup.${sceneName}`,节点内容为流量标记规则，如下述yaml内容。
-  
-  ```yaml
-  matches:            # 匹配器集合，可配置多个
-  - apiPath:          # 匹配的api路径， 支持各种比较方式，相等(exact)、包含(contains)等
-      exact: /degrade # 具体匹配路径
-    headers:          # 请求头
-      key: 
-        exact: value  # 请求头值，此处为key=value, 比较方式同apiPath
-    method:           # 支持方法类型
-    - GET
-    name: degrade     # 可选，配置名
+  # 精确匹配api访问路径为/rateLimiting的流量
+  matches:          
+  - apiPath:          
+      exact: /rateLimiting     
   ```
+流量匹配的更多规则说明请参考[流量匹配规则说明](#流量匹配规则说明)，
+动态配置的配置模型请参考[动态配置中心配置模型](../user-guide/configuration-center.md#sermant动态配置中心模型)。如何使用不同的动态配置中心请参考：[基于-zookeeper-的配置模型实现](../user-guide/configuration-center.md#基于-zookeeper-的配置模型实现)，[基于-nacos-的配置模型实现](../user-guide/configuration-center.md#基于-nacos-的配置模型实现)，[基于-servicecomb-kie-的配置模型实现](../user-guide/configuration-center.md#基于-servicecomb-kie-的配置模型实现)。
+> 说明1：流量匹配规则的group由`service=`和`${service.name}`组成，其中`${service.name}`为微服务的名称，由微服务配置文件的`dubbo.application.name`、`spring.applicaton.name`或`application`确定，优先级`dubbo.application.name` > `spring.applicaton.name` > `application`，本示例设定微服务名称为flowcontrol。
 
-  **流量标记解释:**
-
-  - 请求路径为`/degrade`且方法类型为`GET`, 同时满足要求请求头包含`key=value`即匹配成功
-
-    详细配置项可参考[ServiceComb开发文档](http://servicecomb.gitee.io/servicecomb-java-chassis-doc/java-chassis/zh_CN/references-handlers/governance.html#_2) 流量标记部分。
-
-  **流量标记请求路径（apiPath）配置说明**
-
-  流量标记的请求路径会因不同的请求协议配置而存在差异，当前主要为Http（Spring）与Rpc（Dubbo）协议，下面分别说明两种请求协议的配置方式：
-
-  - Http协议
-
-    该协议依据请求路径进行匹配，例如请求路径为localhost:8080/test/flow, 则实际拿到的路径为`/test/flow`，因此若需设置匹配规则，需依据该路径进行配置。
-
-    值得注意的是，如果用户配置了contextPath, 则需要加上contextPath前缀才可生效，即流量标记中请求路径为`${contextPath}/test/flow`。
-
-  - Rpc协议（Dubbo）
-
-    该协议调用需要基于接口+方法，例如请求的接口为com.demo.test, 其方法为flow， 则对应的请求路径为`com.demo.test.flow`, 特别的，如果用户有配置接口的版本，例如指定的version为1.0.0， 则请求路径为`com.demo.test:1.0.0.flow`。同时需要配置请求方法为`POST`, RPC协议仅支持POST类型。
-
-- **限流**
-
-  **限流规则配置键前缀：** `servicecomb.rateLimiting`
-
-  **限流规则：**
-  
-  | 配置项             | 说明                                                         | 默认值 | 是否必须 |
-  | ------------------ | ------------------------------------------------------------ | ---- | ---- |
-  | limitRefreshPeriod | 单位统计时间，单位毫秒, 若需配置秒则可增加单位`S`， 例如`10S` | 1000ms | 否 |
-  | rate               | 单位统计时间所能通过的**请求个数**                           | 1000 | 否 |
-
-  以zookeeper为例，当使用`zookeeper`配置中心设置限流规则时，结合上述`group`和`key`的说明，需要在`zookeeper`中创建节点`/service=${spring.applicaton.name}/servicecomb.rateLimiting.${sceneName}`,节点内容为限流规则，如下述yaml内容：
-  
-  ```yaml
+> 说明2：流量匹配规则的key由前缀`servicecomb.matchGroup`和自定义场景名称组成，本示例设定场景名称为`rateLimitingScene`。流量匹配规则和限流规则的key的自定义场景名称需保持一致，才能对匹配的流量执行限流策略。
+#### 下发限流规则
+下发流量匹配规则后，对匹配的流量执行限流策略还需要下发限流规则。根据动态配置中心的配置模型，限流规则由group、key和content三部分组成，group用来约束限流规则生效的微服务，key用来约束限流规则生效的场景，需和流量匹配规则的场景名称保持一致，content为具体的限流规则，其内容如下所示：
+* **group：** service=flowcontrol
+* **key：** servicecomb.rateLimiting.rateLimitingScene
+* **content：**
+```yaml
+  # 1秒内超过2个请求，则触发限流能力
   limitRefreshPeriod: 1000
-  rate: 2
+  rate: 2    
   ```
-  **上述限流规则解释：** 若1秒内超过2个请求，即触发流控效果。
+  限流配置的更多规则说明请参考[限流规则说明](#限流规则说明)，动态配置的配置模型请参考[动态配置中心配置模型](../user-guide/configuration-center.md#sermant动态配置中心模型)。如何使用不同的动态配置中心请参考：[基于-zookeeper-的配置模型实现](../user-guide/configuration-center.md#基于-zookeeper-的配置模型实现)，[基于-nacos-的配置模型实现](../user-guide/configuration-center.md#基于-nacos-的配置模型实现)，[基于-servicecomb-kie-的配置模型实现](../user-guide/configuration-center.md#基于-servicecomb-kie-的配置模型实现)。
+> 说明1：限流规则的group由`service=`和`${service.name}`组成，其中`${service.name}`为微服务的名称，由微服务配置文件的`dubbo.application.name`、`spring.applicaton.name`或`application`确定，优先级`dubbo.application.name` > `spring.applicaton.name` > `application`，本示例设定微服务名称为flowcontrol。
 
-- **熔断**
+> 说明2：限流规则的key由前缀`servicecomb.rateLimiting`和自定义场景名称组成，本示例设定场景名称为`rateLimitingScene`。流量匹配规则和限流规则的key的自定义场景名称需保持一致，才能对匹配的流量执行限流策略。
 
-  **熔断规则配置键前缀:** `servicecomb.circuitBreaker`
+## 熔断
+**熔断指对指定接口配置熔断策略，可从单位统计时间窗口内的错误率或者慢请求率进行统计，当请求错误率或者慢请求率达到指定比例阈值，即触发熔断，在时间窗口重置前，隔离所有请求，在客户端和服务端都可生效。**
 
-  **熔断规则：**
-  
-  | 配置项                     | 说明                                                          | 默认值 | 是否必须 |
-  | ------------------------- | ------------------------------------------------------------ | ---- | ---- |
-  | failureRateThreshold      | 熔断所需达到的错误率                                             | 50   | 否 |
-  | minimumNumberOfCalls      | 滑动窗口内的最小请求数， 超过最小请求数才开始判断熔断条件               | 100  | 否 |
-  | name                      | 配置项名称，可选参数                                             | null | 否 |
-  | slidingWindowSize         | 滑动统计窗口大小，支持毫秒与秒，例如`1000`为1000毫秒, `10S`代表10秒    | 100ms | 否 |
-  | slidingWindowType         | 滑动窗口类型，目前支持`time`与`count`两种类型，前者基于时间窗口统计，后者基于请求次数 | time | 否 | 
-  | slowCallDurationThreshold | 慢请求阈值，单位同滑动窗口配置                                     | 60s | 否 |
-  | slowCallRateThreshold     | 慢请求占比，当慢调用请求数达到该比例触发通断                          | 100 | 否 |
-  | waitDurationInOpenState   | 熔断后恢复时间                                                  | 60s | 否 |
+执行熔断策略需要通过配置中心下发流量匹配规则和熔断规则，主要分为两步：
 
-  以zookeeper为例，当使用`zookeeper`配置中心设置熔断规则时，结合上述`group`和`key`的说明，需要在`zookeeper`中创建节点`/service=${spring.applicaton.name}/servicecomb.circuitBreaker.${sceneName}`,节点内容为熔断规则，如下述yaml内容：
+**下发流量匹配规则：** 下发流量匹配规则匹配满足要求的流量。
 
-  ```yaml
+**下发熔断规则：** 下发熔断规则对匹配的流量执行熔断策略。
+
+### 示例 
+
+现有如下场景：在名称为flowcontrol的微服务中，对api访问路径为/circuitBreaker的流量，在10秒内，若流量标记的接口请求次数超过3次，且错误率超过90%或者慢请求占比超过80%则触发熔断。具体下发的规则如下所示：
+
+#### 下发流量匹配规则
+为实现上述熔断场景，首先下发流量匹配规则来匹配需要执行熔断策略的流量。根据动态配置中心的配置模型，流量匹配规则由group、key和content组成，group用来约束流量匹配规则生效的微服务，key用来约束流量匹配规则生效的场景，content为具体的流量匹配规则，其内容如下所示：
+* **group：** service=flowcontrol 
+* **key：** servicecomb.matchGroup.circuitBreakerScene
+* **content：**
+```yaml
+  # 精确匹配api访问路径为/circuitBreaker的流量
+  matches:          
+  - apiPath:          
+      exact: /circuitBreaker     
+  ```
+流量匹配的更多规则说明请参考[流量匹配规则说明](#流量匹配规则说明)，
+动态配置的配置模型请参考[动态配置中心配置模型](../user-guide/configuration-center.md#sermant动态配置中心模型)。如何使用不同的动态配置中心请参考：[基于-zookeeper-的配置模型实现](../user-guide/configuration-center.md#基于-zookeeper-的配置模型实现)，[基于-nacos-的配置模型实现](../user-guide/configuration-center.md#基于-nacos-的配置模型实现)，[基于-servicecomb-kie-的配置模型实现](../user-guide/configuration-center.md#基于-servicecomb-kie-的配置模型实现)。
+> 说明1：流量匹配规则的group由`service=`和`${service.name}`组成，其中`${service.name}`为微服务的名称，由微服务配置文件的`dubbo.application.name`、`spring.applicaton.name`或`application`确定，优先级`dubbo.application.name` > `spring.applicaton.name` > `application`，本示例设定微服务名称为flowcontrol。
+
+> 说明2：流量匹配规则的key由前缀`servicecomb.matchGroup`和自定义场景名称组成，本示例设定场景名称为`circuitBreakerScene`。流量匹配规则和熔断规则的key的自定义场景名称需保持一致，才能对匹配的流量执行熔断策略。
+
+#### 下发熔断规则
+下发流量匹配规则后，对匹配的流量执行熔断策略还需要下发熔断规则。根据动态配置中心的配置模型，熔断规则由group、key和content三部分组成，group用来约束熔断规则生效的微服务，key用来约束熔断规则生效的场景，需和流量匹配规则的场景名称保持一致，content为具体的熔断规则，其内容如下所示：
+* **group：** service=flowcontrol
+* **key：** servicecomb.circuitBreaker.circuitBreakerScene
+* **content：**
+```yaml
+  # 在10秒内，若流量标记的接口请求次数超过3次，且错误率超过90%或者慢请求占比超过80%则触发熔断
   failureRateThreshold: 90
   minimumNumberOfCalls: 3
-  name: degrade
   slidingWindowSize: 10S
   slidingWindowType: time
-  slowCallDurationThreshold: "1"
-  slowCallRateThreshold: 80
-  waitDurationInOpenState: 10s
+  slowCallRateThreshold: 80  
   ```
-  
-  **上述熔断规则解释：** 10秒内，若流量标记的接口请求次数超过3次，且错误率超过90%或者慢请求占比超过80%则触发熔断。
+熔断配置的更多规则说明请参考[熔断规则说明](#熔断规则说明)，动态配置的配置模型请参考[动态配置中心配置模型](../user-guide/configuration-center.md#sermant动态配置中心模型)。如何使用不同的动态配置中心请参考：[基于-zookeeper-的配置模型实现](../user-guide/configuration-center.md#基于-zookeeper-的配置模型实现)，[基于-nacos-的配置模型实现](../user-guide/configuration-center.md#基于-nacos-的配置模型实现)，[基于-servicecomb-kie-的配置模型实现](../user-guide/configuration-center.md#基于-servicecomb-kie-的配置模型实现)。
+> 说明1：熔断规则的group由`service=`和`${service.name}`组成，其中`${service.name}`为微服务的名称，由微服务配置文件的`dubbo.application.name`、`spring.applicaton.name`或`application`确定，优先级`dubbo.application.name` > `spring.applicaton.name` > `application`，本示例设定微服务名称为flowcontrol。
 
-- **隔离**
+> 说明2：熔断规则的key由前缀`servicecomb.circuitBreaker`和自定义场景名称组成，本示例设定场景名称为`circuitBreakerScene`。流量匹配规则和熔断规则的key的自定义场景名称需保持一致，才能对匹配的流量执行熔断策略。
 
-  **隔离规则配置键前缀:**  `servicecomb.bulkhead`
-
-  **隔离规则：**
-  
-  | 配置项             | 说明                                                         | 默认值 | 是否必须 |
-  | ------------------ | ------------------------------------------------------------ | ---- | ---- |
-  | maxConcurrentCalls | 最大并发数                                                   | 1000 | 否 |
-  | maxWaitDuration    | 最大等待时间，若线程超过`maxConcurrentCalls`，会尝试等待，若超出等待时间还未获取资源，则抛出隔离仓异常 | 0 | 否 |
-  | name               | 可选，配置名称                                               | null | 否 |
-
-  以zookeeper为例，当使用`zookeeper`配置中心设置隔离规则时，结合上述`group`和`key`的说明，需要在`zookeeper`中创建节点`/service=${spring.applicaton.name}/servicecomb.circuitBreaker.${sceneName}`,节点内容为隔离规则，如下述yaml内容：
-
-  ```yaml
-  maxConcurrentCalls: "5"
-  maxWaitDuration: "10S"
-  name: "隔离仓"
+### 熔断指标采集
+服务配置了[熔断策略](#熔断)后，可以开启监控开关，插件会异步采集[熔断指标](./monitor.md#熔断指标)，并通过[监控插件](./monitor.md)进行指标上报。
+在`${sermant-path}/agent/pluginPackage/flowcontrol/config/config.yaml`配置文件中开启监控开关：
+```yaml
+  flow.control.plugin:
+    enable-start-monitor: true 
   ```
-  
-  **上述隔离规则解释：** 针对流量标记的接口, 若最大并发数超过5，且新的请求等待10S，还未获取资源，则触发隔离仓异常。
+> 说明：${sermant-path}为sermant包路径。
 
-- **重试**
+## 隔离
+**隔离对指定接口设置允许的最大并发量，当超过最大并发量时，对并发流量进行排队等待控制，等待超过最大等待时间则拒绝调用，避免瞬时并发流量过大导致服务崩溃，在客户端和服务端都可生效。**
 
-  **重试规则配置键前缀:** `servicecomb.retry`
+执行隔离策略需要通过配置中心下发流量匹配规则和限流规则，主要分为两步：
 
-  **重试规则：**
-  
-  | 配置项                | 说明                                                         | 默认值 | 是否必须 |
-  | --------------------- | ------------------------------------------------------------ | ---- | ---- |
-  | waitDuration          | 重试等待时间，默认毫秒；支持秒单位，例如2S                   | 10ms | 否 |
-  | retryStrategy         | 重试策略，当前支持两种重试策略：固定时间间隔（FixedInterval）， 指数增长间隔(RandomBackoff) | FixedInterval | 否 |
-  | maxAttempts           | 最大重试次数                                                 | 3 | 否 |
-  | retryOnResponseStatus | HTTP状态码，当前仅支持HTTP请求；针对dubbo请求，可通过配置异常类型确定是否需要重试，默认为RpcException | null | 否 |
+**下发流量匹配规则：** 下发流量匹配规则匹配满足要求的流量。
 
-  以zookeeper为例，当使用`zookeeper`配置中心设置重试规则时，结合上述`group`和`key`的说明，需要在`zookeeper`中创建节点`/service=${spring.applicaton.name}/servicecomb.retry.${sceneName}`,节点内容为重试规则，如下述yaml内容：
+**下发隔离规则：** 下发隔离规则对匹配的流量执行隔离策略。
 
-  ```yaml
-  waitDuration: "2000"
-  retryStrategy: FixedInterval
-  maxAttempts: 2
-  retryOnResponseStatus:
-    - 500
+### 示例
+
+现有如下场景：在名称为flowcontrol的微服务中，对api访问路径为/bulkhead的流量，若最大并发数超过5，且新的请求等待10S，还未获取资源，则触发隔离异常。
+
+#### 下发流量匹配规则
+为实现上述隔离场景，首先下发流量匹配规则来匹配需要执行隔离策略的流量。根据动态配置中心的配置模型，流量匹配规则由group、key和content组成，group用来约束流量匹配规则生效的微服务，key用来约束流量匹配规则生效的场景，content为具体的流量匹配规则，其内容如下所示：
+* **group：** service=flowcontrol
+* **key：** servicecomb.matchGroup.bulkheadScene
+* **content：**
+```yaml
+  # 精确匹配api访问路径为/bulkhead的流量
+  matches:          
+  - apiPath:          
+      exact: /bulkhead     
   ```
-  
-  **上述重试规则解释：** 针对流量标记的接口, 当请求抛出500异常时进行重试，直到重试成功或者达到最大重试次数。
+流量匹配的更多规则说明请参考[流量匹配规则说明](#流量匹配规则说明)，动态配置的配置模型请参考[动态配置中心配置模型](../user-guide/configuration-center.md#sermant动态配置中心模型)。如何使用不同的动态配置中心请参考：[基于-zookeeper-的配置模型实现](../user-guide/configuration-center.md#基于-zookeeper-的配置模型实现)，[基于-nacos-的配置模型实现](../user-guide/configuration-center.md#基于-nacos-的配置模型实现)，[基于-servicecomb-kie-的配置模型实现](../user-guide/configuration-center.md#基于-servicecomb-kie-的配置模型实现)。
+> 说明1：流量匹配规则的group由`service=`和`${service.name}`组成，其中`${service.name}`为微服务的名称，由微服务配置文件的`dubbo.application.name`、`spring.applicaton.name`或`application`确定，优先级`dubbo.application.name` > `spring.applicaton.name` > `application`，本示例设定微服务名称为flowcontrol。
 
-- **错误注入**
+> 说明2：流量匹配规则的key由前缀`servicecomb.matchGroup`和自定义场景名称组成，本示例设定场景名称为`bulkheadScene`。流量匹配规则和隔离规则的key的自定义场景名称需保持一致，才能对匹配的流量执行隔离策略。
+#### 下发隔离规则
+下发流量匹配规则后，对匹配的流量执行隔离策略还需要下发隔离规则。根据动态配置中心的配置模型，隔离规则由group、key和content三部分组成，group用来约束隔离规则生效的微服务，key用来约束隔离规则生效的场景，需和流量匹配规则的场景名称保持一致，content为具体的隔离规则，其内容如下所示：
+* **group：** service=flowcontroll
+* **key：** servicecomb.bulkhead.bulkheadScene
+* **content：**
+```yaml
+  # 最大并发数超过5，且新的请求等待10S，还未获取资源，则触发隔离异常
+  maxConcurrentCalls: 5
+  maxWaitDuration: 10S
+  ```
+隔离配置的更多规则说明请参考[隔离规则说明](#隔离规则说明)，动态配置的配置模型请参考[动态配置中心配置模型](../user-guide/configuration-center.md#sermant动态配置中心模型)。如何使用不同的动态配置中心请参考：[基于-zookeeper-的配置模型实现](../user-guide/configuration-center.md#基于-zookeeper-的配置模型实现)，[基于-nacos-的配置模型实现](../user-guide/configuration-center.md#基于-nacos-的配置模型实现)，[基于-servicecomb-kie-的配置模型实现](../user-guide/configuration-center.md#基于-servicecomb-kie-的配置模型实现)。
+> 说明1：隔离规则的group由`service=`和`${service.name}`组成，其中`${service.name}`为微服务的名称，由微服务配置文件的`dubbo.application.name`、`spring.applicaton.name`或`application`确定，优先级`dubbo.application.name` > `spring.applicaton.name` > `application`，本示例设定微服务名称为flowcontrol。
 
-  **错误注入规则配置键前缀:** `servicecomb.faultInjection`
+> 说明2：隔离规则的key由前缀`servicecomb.bulkhead`和自定义场景名称组成，本示例设定场景名称为`bulkheadScene`。流量匹配规则和隔离规则的key的自定义场景名称需保持一致，才能对匹配的流量执行隔离策略。
+## 错误注入
+**错误注入指在服务运行时，给指定服务配置错误注入策略，在客户端访问目标服务前，以指定策略模式返回。该策略多用于减少目标服务的访问负载，可作为降级的一种措施。**
 
-  **错误注入规则：**
+执行错误注入策略需要通过配置中心下发流量匹配规则和限流规则，主要分为两步：
 
-  | 配置项       | 说明                                                         | 默认值 | 是否必须 |
-  | ------------ | ------------------------------------------------------------ | ---- | ---- |
-  | type         | 错误注入类型, 目前支持abort(请求直接返回)与delay（请求延时） | delay | 否 |
-  | percentage   | 错误注入触发概率                                             | -1 | 是 |
-  | fallbackType | 请求调用返回类型，仅`type=abort`生效。当前支持两种`ReturnNull`:直接返回空内容，状态码200；`ThrowException`: 按照指定错误码返回，关联配置`errorCode` | ThrowException | 否 |
-  | errorCode    | 指定错误码返回, 默认500, 仅在`type=abort`且`fallbackType=ThrowException`生效 | 500 | 否 |
-  | forceClosed  | 是否强制关闭错误注入能力, 当为true时，错误注入将不会生效。默认false | false | 否 |
+**下发流量匹配规则：** 下发流量匹配规则匹配满足要求的流量。
 
-  以zookeeper为例，当使用`zookeeper`配置中心设置错误注入规则时，结合上述`group`和`key`的说明，需要在`zookeeper`中创建节点`/service=${spring.applicaton.name}/servicecomb.retry.${sceneName}`,节点内容为错误注入规则，如下述yaml内容：
+**下发错误注入规则：** 下发错误注入规则对匹配的流量执行错误注入策略。
 
-  ```yaml
+### 示例 
+
+现有如下场景：在名称为flowcontrol的微服务中，对api访问路径为/faultInjection的流量，访问接口时100%将返回空值。 
+
+#### 下发流量匹配规则
+为实现上述错误注入场景，首先下发流量匹配规则来匹配需要执行错误注入策略的流量。根据动态配置中心的配置模型，流量匹配规则由group、key和content组成，group用来约束流量匹配规则生效的微服务，key用来约束流量匹配规则生效的场景，content为具体的流量匹配规则，其内容如下所示：
+* **group：** service=flowcontrol
+* **key：** servicecomb.matchGroup.faultInjectionScene
+* **content：**
+```yaml
+  # 精确匹配api访问路径为/faultInjection的流量
+  matches:          
+  - apiPath:          
+      exact: /faultInjection     
+  ```
+流量匹配的更多规则说明请参考[流量匹配规则说明](#流量匹配规则说明)，
+动态配置的配置模型请参考[动态配置中心配置模型](../user-guide/configuration-center.md#sermant动态配置中心模型)。如何使用不同的动态配置中心请参考：[基于-zookeeper-的配置模型实现](../user-guide/configuration-center.md#基于-zookeeper-的配置模型实现)，[基于-nacos-的配置模型实现](../user-guide/configuration-center.md#基于-nacos-的配置模型实现)，[基于-servicecomb-kie-的配置模型实现](../user-guide/configuration-center.md#基于-servicecomb-kie-的配置模型实现)。
+> 说明1：流量匹配规则的group由`service=`和`${service.name}`组成，其中`${service.name}`为微服务的名称，由微服务配置文件的`dubbo.application.name`、`spring.applicaton.name`或`application`确定，优先级`dubbo.application.name` > `spring.applicaton.name` > `application`，本示例设定微服务名称为flowcontrol。
+
+> 说明2：流量匹配规则的key由前缀`servicecomb.matchGroup`和自定义场景名称组成，本示例设定场景名称为`faultInjectionScene`。流量匹配规则和错误注入规则的key的自定义场景名称需保持一致，才能对匹配的流量执行错误注入策略。
+#### 下发错误注入规则
+下发流量匹配规则后，对匹配的流量执行错误注入策略还需要下发错误注入规则。根据动态配置中心的配置模型，错误注入规则由group、key和content三部分组成，group用来约束错误注入规则生效的微服务，key用来约束错误注入规则生效的场景，需和流量匹配规则的场景名称保持一致，content为具体的错误注入规则，其内容如下所示：
+* **group：** service=flowcontrol
+* **key：** servicecomb.faultInjection.faultInjectionScene
+* **content：**
+```yaml
+  # 访问接口时100%将返回空值
   type: abort
   percentage: 100
   fallbackType: ReturnNull
   forceClosed: false
   errorCode: 503
   ```
-  
-  **上述错误注入规则解释：** 当请求流量标记的接口时，100%将返回空。
+错误注入配置的更多规则说明请参考[错误注入规则说明](#错误注入规则说明)，动态配置的配置模型请参考[动态配置中心配置模型](../user-guide/configuration-center.md#sermant动态配置中心模型)。如何使用不同的动态配置中心请参考：[基于-zookeeper-的配置模型实现](../user-guide/configuration-center.md#基于-zookeeper-的配置模型实现)，[基于-nacos-的配置模型实现](../user-guide/configuration-center.md#基于-nacos-的配置模型实现)，[基于-servicecomb-kie-的配置模型实现](../user-guide/configuration-center.md#基于-servicecomb-kie-的配置模型实现)。
+> 说明1：错误注入规则的group由`service=`和`${service.name}`组成，其中`${service.name}`为微服务的名称，由微服务配置文件的`dubbo.application.name`、`spring.applicaton.name`或`application`确定，优先级`dubbo.application.name` > `spring.applicaton.name` > `application`，本示例设定微服务名称为flowcontrol。
 
-- **系统规则**
+> 说明2：错误注入规则的key由前缀`servicecomb.faultInjection`和自定义场景名称组成，本示例设定场景名称为`faultInjectionScene`。流量匹配规则和错误注入规则的key的自定义场景名称需保持一致，才能对匹配的流量执行错误注入策略。
+## 重试
+**重试策略指当服务遇到非致命的错误时，可以通过重试的方式避免服务的最终失败。**
 
-  **系统规则配置键前缀:** `servicecomb.system`
+执行重试策略需要通过配置中心下发流量匹配规则和限流规则，主要分为两步：
 
-  | 配置项       | 说明                                                         | 默认值 | 是否必须 |
+**下发流量匹配规则：** 下发流量匹配规则匹配满足要求的流量。
+
+**下发重试规则：** 下发重试规则对匹配的流量执行重试策略。
+
+### 示例 
+
+现有如下场景：在名称为flowcontrol的微服务中，对api访问路径为/retry的流量，访问接口时，当请求抛出500异常时进行重试，直到重试成功或者达到最大重试次数。 
+
+#### 下发流量匹配规则
+为实现上述重试场景，首先下发流量匹配规则来匹配需要执行重试策略的流量。根据动态配置中心的配置模型，流量匹配规则由group、key和content组成，group用来约束流量匹配规则生效的微服务，key用来约束流量匹配规则生效的场景，content为具体的流量匹配规则，其内容如下所示：
+* **group：** service=flowcontrol
+* **key：** servicecomb.matchGroup.retryScene
+* **content：**
+```yaml
+  # 精确匹配api访问路径为/retry的流量
+  matches:          
+  - apiPath:          
+      exact: /retry     
+  ```
+流量匹配的更多规则说明请参考[流量匹配规则说明](#流量匹配规则说明)，
+动态配置的配置模型请参考[动态配置中心配置模型](../user-guide/configuration-center.md#sermant动态配置中心模型)。如何使用不同的动态配置中心请参考：[基于-zookeeper-的配置模型实现](../user-guide/configuration-center.md#基于-zookeeper-的配置模型实现)，[基于-nacos-的配置模型实现](../user-guide/configuration-center.md#基于-nacos-的配置模型实现)，[基于-servicecomb-kie-的配置模型实现](../user-guide/configuration-center.md#基于-servicecomb-kie-的配置模型实现)。
+> 说明1：流量匹配规则的group由`service=`和`${service.name}`组成，其中`${service.name}`为微服务的名称，由微服务配置文件的`dubbo.application.name`、`spring.applicaton.name`或`application`确定，优先级`dubbo.application.name` > `spring.applicaton.name` > `application`，本示例设定微服务名称为flowcontrol。
+
+> 说明2：流量匹配规则的key由前缀`servicecomb.matchGroup`和自定义场景名称组成，本示例设定场景名称为`retryScene`。流量匹配规则和重试规则的key的自定义场景名称需保持一致，才能对匹配的流量执行重试策略。
+#### 下发重试规则
+下发流量匹配规则后，对匹配的流量执行重试策略还需要下发重试规则。根据动态配置中心的配置模型，重试规则由group、key和content三部分组成，group用来约束重试规则生效的微服务，key用来约束重试规则生效的场景，需和流量匹配规则的场景名称保持一致，content为具体的重试规则，其内容如下所示：
+* **group：** service=flowcontrol
+* **key：** servicecomb.retry.retryScene
+* **content：**
+```yaml
+  # 访问接口时，当请求抛出500异常时进行重试，直到重试成功或者达到最大重试次数
+  waitDuration: 2000
+  retryStrategy: FixedInterval
+  maxAttempts: 2
+  retryOnResponseStatus:
+    - 500
+  ```
+重试配置的更多规则说明请参考[重试规则说明](#重试规则说明)，动态配置的配置模型请参考[动态配置中心配置模型](../user-guide/configuration-center.md#sermant动态配置中心模型)。如何使用不同的动态配置中心请参考：[基于-zookeeper-的配置模型实现](../user-guide/configuration-center.md#基于-zookeeper-的配置模型实现)，[基于-nacos-的配置模型实现](../user-guide/configuration-center.md#基于-nacos-的配置模型实现)，[基于-servicecomb-kie-的配置模型实现](../user-guide/configuration-center.md#基于-servicecomb-kie-的配置模型实现)。
+> 说明1：重试规则的group由`service=`和`${service.name}`组成，其中`${service.name}`为微服务的名称，由微服务配置文件的`dubbo.application.name`、`spring.applicaton.name`或`application`确定，优先级`dubbo.application.name` > `spring.applicaton.name` > `application`，本示例设定微服务名称为flowcontrol。
+
+> 说明2：重试规则的key由前缀`servicecomb.retry`和自定义场景名称组成，本示例设定场景名称为`retryScene`。流量匹配规则和重试规则的key的自定义场景名称需保持一致，才能对匹配的流量执行重试策略。
+
+## 系统级流控
+**系统级别的流控策略是指，在服务运行过程中，当系统的负载、CPU使用率、并发线程数、请求的平均响应时间或请求的每秒数量（qps）任何一个指标超过预设阈值时，将会启动流控机制，对请求流量进行限制。**
+
+使用系统级流控能力，需要在`${sermant-path}/agent/pluginPackage/flowcontrol/config/config.yaml`配置文件中开启系统级流控开关：
+```yaml
+  flow.control.plugin:
+    enable-system-rule: true 
+  ```
+> 说明：${sermant-path}为sermant包路径。
+
+执行系统规则策略需要通过配置中心下发流量匹配规则和限流规则，主要分为两步：
+
+**下发流量匹配规则：** 下发流量匹配规则匹配满足要求的流量。
+
+**下发系统级流控规则：** 下发系统级流控规则对匹配的流量执行系统级流控策略。
+
+### 示例 
+
+现有如下场景：在名称为flowcontrol的微服务中，对api访问路径为/system的流量，当系统负载超过5，或cpu使用率超过0.6，或qps超过1000，或请求响应时间小于100ms，或并发线程数大于200时，即触发限流，返回对应异常信息。
+#### 下发流量匹配规则
+为实现上述系统规则场景，首先下发流量匹配规则来匹配需要执行系统规则策略的流量。根据动态配置中心的配置模型，流量匹配规则由group、key和content组成，group用来约束流量匹配规则生效的微服务，key用来约束流量匹配规则生效的场景，content为具体的流量匹配规则，其内容如下所示：
+* **group：** service=flowcontrol
+* **key：** servicecomb.matchGroup.systemScene
+* **content：**
+```yaml
+  # 精确匹配api访问路径为/system的流量
+  matches:          
+  - apiPath:          
+      exact: /system     
+  ```
+流量匹配的更多规则说明请参考[流量匹配规则说明](#流量匹配规则说明)，
+动态配置的配置模型请参考[动态配置中心配置模型](../user-guide/configuration-center.md#sermant动态配置中心模型)。如何使用不同的动态配置中心请参考：[基于-zookeeper-的配置模型实现](../user-guide/configuration-center.md#基于-zookeeper-的配置模型实现)，[基于-nacos-的配置模型实现](../user-guide/configuration-center.md#基于-nacos-的配置模型实现)，[基于-servicecomb-kie-的配置模型实现](../user-guide/configuration-center.md#基于-servicecomb-kie-的配置模型实现)。
+> 说明1：流量匹配规则的group由`service=`和`${service.name}`组成，其中`${service.name}`为微服务的名称，由微服务配置文件的`dubbo.application.name`、`spring.applicaton.name`或`application`确定，优先级`dubbo.application.name` > `spring.applicaton.name` > `application`，本示例设定微服务名称为flowcontrol。
+
+> 说明2：流量匹配规则的key由前缀`servicecomb.matchGroup`和自定义场景名称组成，本示例设定场景名称为`systemScene`。流量匹配规则和系统规则的key的自定义场景名称需保持一致，才能对匹配的流量执行系统规则策略。
+#### 下发系统级流控规则
+下发流量匹配规则后，对匹配的流量执行系统规则策略还需要下发系统规则。根据动态配置中心的配置模型，系统规则由group、key和content三部分组成，group用来约束系统规则生效的微服务，key用来约束系统规则生效的场景，需和流量匹配规则的场景名称保持一致，content为具体的系统规则，其内容如下所示：
+* **group：** service=flowcontrol
+* **key：** servicecomb.system.systemScene
+* **content：**
+```yaml
+  # 当系统负载超过5，或cpu使用率超过0.6，或qps超过1000，或请求响应时间小于100ms，或并发线程数大于200时，即触发限流，返回异常信息
+  systemLoad: 5
+  cpuUsage: 0.6
+  qps: 1000
+  aveRt: 100
+  threadNum: 200
+  ```
+系统级流控配置的更多规则说明请参考[系统级流控规则说明](#系统级流控规则说明)，动态配置的配置模型请参考[动态配置中心配置模型](../user-guide/configuration-center.
+md#sermant动态配置中心模型)。如何使用不同的动态配置中心请参考：[基于-zookeeper-的配置模型实现](../user-guide/configuration-center.md#基于-zookeeper-的配置模型实现)，[基于-nacos-的配置模型实现](../user-guide/configuration-center.md#基于-nacos-的配置模型实现)，[基于-servicecomb-kie-的配置模型实现](../user-guide/configuration-center.md#基于-servicecomb-kie-的配置模型实现)。
+> 说明1：系统规则的group由`service=`和`${service.name}`组成，其中`${service.name}`为微服务的名称，由微服务配置文件的`dubbo.application.name`、`spring.applicaton.name`或`application`确定，优先级`dubbo.application.name` > `spring.applicaton.name` > `application`，本示例设定微服务名称为flowcontrol。
+
+> 说明2：系统规则的key由前缀`servicecomb.system`和自定义场景名称组成，本示例设定场景名称为`systemScene`。流量匹配规则和系统规则的key的自定义场景名称需保持一致，才能对匹配的流量执行系统规则策略。
+### 系统自适应
+**系统自适应指在服务运行时，根据系统当前负载状态，以及过去一段时间内系统数据，对请求进行自适应流控。**
+
+使用系统自适应规则，需要在`${sermant-path}/agent/pluginPackage/flowcontrol/config/config.yaml`配置文件中开启系统规则开关和系统自适应开关，并下发[系统级流控规则](#下发系统级流控规则)。根据上述下发的系统级流控规则，系统自适应的规则为当系统负载大于5时，若当前并发线程数大于系统容量（系统容量由qps * minRt计算得出），则触发限流：
+```yaml
+  flow.control.plugin:
+    enable-system-rule: true 
+    enable-system-adaptive: true
+  ```
+> 说明1：${sermant-path}为sermant包路径。
+## 多流控能力配置
+**上述文档介绍了如何针对单个流控能力进行配置，本节介绍对于匹配的流量如何执行多个流控策略的配置。**
+
+执行多个流控策略需要通过配置中心下发流量匹配规则和流控规则，主要分为两步：
+
+**下发流量匹配规则：** 下发流量匹配规则匹配满足要求的流量。
+
+**下发流控规则：** 下发多个流控规则对匹配的流量执行流控规则策略。
+
+### 示例
+
+现有如下场景：在名称为flowcontrol的微服务中，对api访问路径为/mutliCapability的流量，若1秒内超过2个请求，则触发限流能力，或者访问接口时，当请求抛出500异常时进行重试，直到重试成功或者达到最大重试次数。
+
+#### 下发流量匹配规则
+为实现上述流控策略场景，首先下发流量匹配规则来匹配需要执行流控策略的流量。根据动态配置中心的配置模型，流量匹配规则由group、key和content组成，group用来约束流量匹配规则生效的微服务，key用来约束流量匹配规则生效的场景，content为具体的流量匹配规则，其内容如下所示：
+* **group：** service=flowcontrol
+* **key：** servicecomb.matchGroup.mutliCapabilityScene
+* **content：**
+```yaml
+  # 精确匹配api访问路径为/mutliCapability的流量
+  matches:          
+  - apiPath:          
+      exact: /mutliCapability     
+  ```
+流量匹配的更多配置规则请参考[流量匹配配置项](#流量匹配配置项)，
+动态配置的配置模型请参考[动态配置中心配置模型](../user-guide/configuration-center.md#sermant动态配置中心模型)。如何使用不同的动态配置中心请参考：[基于-zookeeper-的配置模型实现](../user-guide/configuration-center.md#基于-zookeeper-的配置模型实现)，[基于-nacos-的配置模型实现](../user-guide/configuration-center.md#基于-nacos-的配置模型实现)，[基于-servicecomb-kie-的配置模型实现](../user-guide/configuration-center.md#基于-servicecomb-kie-的配置模型实现)。
+> 说明1：流量匹配规则的group由`service=`和`${service.name}`组成，其中`${service.name}`为微服务的名称，由微服务配置文件的`dubbo.application.name`、`spring.applicaton.name`或`application`确定，优先级`dubbo.application.name` > `spring.applicaton.name` > `application`，本示例设定微服务名称为flowcontrol。
+
+> 说明2：流量匹配规则的key由前缀`servicecomb.matchGroup`和自定义场景名称组成，本示例设定场景名称为`mutliCapabilityScene`。流量匹配规则和多个流控规则的key的自定义场景名称需保持一致，才能对匹配的流量执行多个流控策略。
+#### 下发限流规则
+下发流量匹配规则后，对匹配的流量执行限流策略还需要下发限流规则。根据动态配置中心的配置模型，限流规则由group、key和content三部分组成，group用来约束限流规则生效的微服务，key用来约束限流规则生效的场景，需和流量匹配规则的场景名称保持一致，content为具体的限流规则，其内容如下所示：
+* **group：** service=flowcontrol
+* **key：** servicecomb.rateLimiting.mutliCapabilityScene
+* **content：**
+```yaml
+  # 1秒内超过2个请求，则触发限流能力
+  limitRefreshPeriod: 1000
+  rate: 2    
+  ```
+  限流配置的更多配置规则请参考[限流策略配置项](#限流策略配置项)一节，动态配置的配置模型请参考[动态配置中心配置模型](../user-guide/configuration-center.md#sermant动态配置中心模型)。如何使用不同的动态配置中心请参考：[基于-zookeeper-的配置模型实现](../user-guide/configuration-center.md#基于-zookeeper-的配置模型实现)，[基于-nacos-的配置模型实现](../user-guide/configuration-center.md#基于-nacos-的配置模型实现)，[基于-servicecomb-kie-的配置模型实现](../user-guide/configuration-center.md#基于-servicecomb-kie-的配置模型实现)。
+> 说明1：限流规则的group由`service=`和`${service.name}`组成，其中`${service.name}`为微服务的名称，由微服务配置文件的`dubbo.application.name`、`spring.applicaton.name`或`application`确定，优先级`dubbo.application.name` > `spring.applicaton.name` > `application`，本示例设定微服务名称为flowcontrol。
+
+> 说明2：限流规则的key由前缀`servicecomb.rateLimiting`和自定义场景名称组成，本示例设定场景名称为`mutliCapabilityScene`。流量匹配规则和限流规则的key的自定义场景名称需保持一致，才能对匹配的流量执行限流策略。
+#### 下发重试规则
+下发流量匹配规则后，对匹配的流量执行重试策略还需要下发重试规则。根据动态配置中心的配置模型，重试规则由group、key和content三部分组成，group用来约束重试规则生效的微服务，key用来约束重试规则生效的场景，需和流量匹配规则的场景名称保持一致，content为具体的重试规则，其内容如下所示：
+* **group：** service=flowcontrol
+* **key：** servicecomb.retry.mutliCapabilityScene
+* **content：**
+```yaml
+  # 访问接口时，当请求抛出500异常时进行重试，直到重试成功或者达到最大重试次数
+  waitDuration: 2000
+  retryStrategy: FixedInterval
+  maxAttempts: 2
+  retryOnResponseStatus:
+    - 500
+  ```
+重试配置的更多配置规则请参考[重试策略配置项](#重试策略配置项)，动态配置的配置模型请参考[动态配置中心配置模型](../user-guide/configuration-center.md#sermant动态配置中心模型)。如何使用不同的动态配置中心请参考：[基于-zookeeper-的配置模型实现](../user-guide/configuration-center.md#基于-zookeeper-的配置模型实现)，[基于-nacos-的配置模型实现](../user-guide/configuration-center.md#基于-nacos-的配置模型实现)，[基于-servicecomb-kie-的配置模型实现](../user-guide/configuration-center.md#基于-servicecomb-kie-的配置模型实现)。
+> 说明1：重试规则的group由`service=`和`${service.name}`组成，其中`${service.name}`为微服务的名称，由微服务配置文件的`dubbo.application.name`、`spring.applicaton.name`或`application`确定，优先级`dubbo.application.name` > `spring.applicaton.name` > `application`，本示例设定微服务名称为flowcontrol。
+
+> 说明2：重试规则的key由前缀`servicecomb.retry`和自定义场景名称组成，本示例设定场景名称为`mutliCapabilityScene`。流量匹配规则和重试规则的key的自定义场景名称需保持一致，才能对匹配的流量执行重试策略。
+## 详细规则说明
+### 流量匹配规则说明
+流量匹配是使用流控能力的前提配置，用于给不同的流控能力匹配相应的流量。
+流量匹配规则的详细说明如下所示：
+ ```yaml
+  # 匹配器集合，可配置多个
+  matches:
+  # 匹配的api路径， 支持各种比较方式，相等(exact)、包含(contains)等            
+  - apiPath:
+      # 具体匹配路径          
+      exact: /degrade 
+    # 请求头
+    headers:          
+      key:
+        # 请求头值，此处为key=value
+        exact: value  
+    method:
+    # 支持方法类型           
+    - GET
+    # 可选，自定义配置名
+    name: degrade     
+  ```
+该示例流量匹配规则用于匹配api路径为/degrade，请求头包含exact=value，请求方法类型为get的流量。
+
+**流量标记请求路径（apiPath）规则说明**
+
+  流量标记的请求路径会因不同的请求协议配置而存在差异，当前主要为Http（Spring）与Rpc（Dubbo）协议，下面分别说明两种请求协议的规则配置方式：
+
+  - Http协议
+
+    该协议依据请求路径进行匹配，例如请求路径为localhost:8080/test/flow，则实际拿到的路径为`/test/flow`，因此若需设置匹配规则，需依据该路径进行配置。
+
+    值得注意的是，如果用户配置了contextPath，则需要加上contextPath前缀才可生效，即流量标记中请求路径为`${contextPath}/test/flow`。
+
+  - Rpc协议（Dubbo）
+
+    该协议调用需要基于接口+方法，例如请求的接口为com.demo.test，其方法为flow， 则对应的请求路径为`com.demo.test.flow`，特别的，如果用户有配置接口的版本，例如指定的version为1.0.0， 则请求路径为`com.demo.test:1.0.0.flow`。同时需要配置请求方法为`POST`，RPC协议仅支持POST类型。
+
+### 限流规则说明
+| 规则项             | 说明                                                         | 默认值 | 是否必须 |
+  | ------------------ | ------------------------------------------------------------ | ---- | ---- |
+  | limitRefreshPeriod | 单位统计时间，单位毫秒，若需配置秒则可增加单位`S`， 例如`10S` | 1000ms | 否 |
+  | rate               | 单位统计时间所能通过的**请求个数**                           | 1000 | 否 |
+### 熔断规则说明
+| 规则项                     | 说明                                                          | 默认值 | 是否必须 |
+  | ------------------------- | ------------------------------------------------------------ | ---- | ---- |
+  | failureRateThreshold      | 熔断所需达到的错误率                                             | 50   | 否 |
+  | minimumNumberOfCalls      | 滑动窗口内的最小请求数， 超过最小请求数才开始判断熔断条件               | 100  | 否 |
+  | name                      | 配置项名称，可选参数                                             | null | 否 |
+  | slidingWindowSize         | 滑动统计窗口大小，支持毫秒与秒，例如`1000`为1000毫秒，`10S`代表10秒    | 100ms | 否 |
+  | slidingWindowType         | 滑动窗口类型，目前支持`time`与`count`两种类型，前者基于时间窗口统计，后者基于请求次数 | time | 否 | 
+  | slowCallDurationThreshold | 慢请求阈值，单位同滑动窗口配置                                     | 60s | 否 |
+  | slowCallRateThreshold     | 慢请求占比，当慢调用请求数达到该比例触发通断                          | 100 | 否 |
+  | waitDurationInOpenState   | 熔断后恢复时间                                                  | 60s | 否 |
+### 隔离规则说明
+| 规则项             | 说明                                                         | 默认值 | 是否必须 |
+  | ------------------ | ------------------------------------------------------------ | ---- | ---- |
+  | maxConcurrentCalls | 最大并发数                                                   | 1000 | 否 |
+  | maxWaitDuration    | 最大等待时间，若线程超过`maxConcurrentCalls`，会尝试等待，若超出等待时间还未获取资源，则抛出隔离仓异常 | 0 | 否 |
+  | name               | 可选，配置名称                                               | null | 否 |
+### 错误注入规则说明
+| 规则项       | 说明                                                         | 默认值 | 是否必须 |
+  | ------------ | ------------------------------------------------------------ | ---- | ---- |
+  | type         | 错误注入类型，目前支持abort(请求直接返回)与delay（请求延时） | delay | 否 |
+  | percentage   | 错误注入触发概率                                             | -1 | 是 |
+  | fallbackType | 请求调用返回类型，仅`type=abort`生效。当前支持两种`ReturnNull`:直接返回空内容，状态码200；`ThrowException`: 按照指定错误码返回，关联配置`errorCode` | ThrowException | 否 |
+  | errorCode    | 指定错误码返回，默认500，仅在`type=abort`且`fallbackType=ThrowException`生效 | 500 | 否 |
+  | forceClosed  | 是否强制关闭错误注入能力，当为true时，错误注入将不会生效。默认false | false | 否 |
+
+### 重试规则说明
+| 规则项                | 说明                                                         | 默认值 | 是否必须 |
+  | --------------------- | ------------------------------------------------------------ | ---- | ---- |
+  | waitDuration          | 重试等待时间，默认毫秒；支持秒单位，例如2S                   | 10ms | 否 |
+  | retryStrategy         | 重试策略，当前支持两种重试策略：固定时间间隔（FixedInterval）， 指数增长间隔(RandomBackoff) | FixedInterval | 否 |
+  | maxAttempts           | 最大重试次数                                                 | 3 | 否 |
+  | retryOnResponseStatus | HTTP状态码，当前仅支持HTTP请求；针对dubbo请求，可通过配置异常类型确定是否需要重试，默认为RpcException | null | 否 |
+
+### 系统级流控规则说明  
+
+  | 规则项       | 说明                                                         | 默认值 | 是否必须 |
   | ----------  | ------------------------------------------------------------ | ---- | ---- |
   | systemLoad  | 系统负载阈值，仅支持linux | Double.MAX_VALUE | 否 |
   | cpuUsage    | 系统cpu使用率阈值 | 1.0 | 否 |
@@ -268,94 +454,39 @@ flow.control.plugin:
   | aveRt       | 入口流量的平均响应时间阈值，单位ms | Long.MAX_VALUE | 否 |
   | threadNum   | 入口流量的并发线程数阈值 | Long.MAX_VALUE | 否 |
 
-  以zookeeper为例，当使用`zookeeper`配置中心设置系统规则时，结合上述`group`和`key`的说明，需要在`zookeeper`中创建节点`/service=${spring.applicaton.name}/servicecomb.system.${sceneName}`,节点内容为系统规则，如下述yaml内容：
-  
-  ```yaml
-  systemLoad: 5
-  cpuUsage: 0.6
-  qps: 1000
-  aveRt: 100
-  threadNum: 200
-  ```
-  
-  **上述系统规则解释：** 
-    - 针对使用流控插件的应用示例来说，当系统负载超过5，或者cpu使用率超过0.6，或者qps超过1000，或者请求响应时间小鱼100ms，或者并发线程数大于200时，即触发限流，返回对应异常信息。 
-    - 若开启系统自适应开关，则当系统负载大于5时，若当前并发线程数大于系统容量（系统容量由qps * minRt计算得出），则触发限流。
-
-### 基于配置文件设置规则
+### 基于配置文件设置流控规则
 
 若应用未采用配置中心的方式配置流控规则，也可采用配置文件的方式使用流控能力。
 
-流控插件在应用启动时，会尝试的从SpringBoot加载的配置源读取流控规则以及对应的流量标记，用户需要在启动之前进行配置。如下为配置示例, 示例配置直接基于`application.yml`进行配置
+流控插件在应用启动时，会尝试从SpringBoot框架加载的配置源读取流控规则，用户需要在启动之前进行配置。如下为流控规则的配置示例，示例配置直接基于`application.yml`文件进行配置：
 
 ```yaml
-servicecomb:                            # 流量标记前缀
-  matchGroup:                           # 流量标记前缀
-    demo-fault-null:                    # 错误注入场景
-      matches:                          # 匹配器集合
-        - apiPath:                      # 匹配的api路径
-            exact: "/flow"              # 具体匹配路径
-    demo-retry:                         # 重试场景
+servicecomb:                            
+  matchGroup:            
+    # 重试场景下的流量匹配规则
+    demo-retry:                         
       matches:                          
         - apiPath:                      
             prefix: "/retry"            
           serviceName: rest-provider    
-          method:                       # 支持方法类型
-          - GET                         
-    demo-rateLimiting:                  # 限流场景
+          method:                       
+          - GET
+    # 限流场景下的流量匹配规则                        
+    demo-rateLimiting:                  
       matches:
         - apiPath:
             exact: "/flow"
-    demo-circuitBreaker-exception:      # 熔断场景
-      matches:
-        - apiPath:
-            exact: "/exceptionBreaker"
-    demo-bulkhead:                      # 隔离舱场景
-      matches:
-        - apiPath:
-            exact: "/flowcontrol/bulkhead"
-    demo-system:                        # 系统规则场景
-      matched:
-        - apiPath:
-            prefix: /
-  rateLimiting:                         # 限流规则
+  rateLimiting:                         
+    # 限流场景下的流控规则
     demo-rateLimiting:
       rate: 1
-  retry:                                # 重试规则
+  retry:                                
+    # 重试场景下的流控规则
     demo-retry: |
       maxAttempts: 3
       retryOnResponseStatus:
       - 500
-  circuitBreaker:                       # 熔断规则
-    demo-circuitBreaker-exception: |
-      failureRateThreshold: 44
-      minimumNumberOfCalls: 2
-      name: 熔断
-      slidingWindowSize: 10000
-      slidingWindowType: time
-      waitDurationInOpenState: 5s
-  bulkhead:                             # 隔离规则
-    demo-bulkhead: |
-      maxConcurrentCalls: 1
-      maxWaitDuration: 10
-  faultInjection:                       # 错误注入规则
-    demo-fault-null: |
-      type: abort
-      percentage: 100
-      fallbackType: ReturnNull
-      forceClosed: false
-  system:                               # 系统流控规则
-    demo-system: |
-      systemLoad: 0.6
-      cpuUsage: 0.6
-      qps: 100
-      aveRt: 20
-      threadNum: 100
 ```
-
-### 基于Sermant动态配置中心发布规则
-
-基于Sermant动态配置中心发布规则，可以参考[动态配置中心使用手册](../user-guide/configuration-center.md)。
 
 ## 支持版本与限制
 
@@ -370,116 +501,92 @@ servicecomb:                            # 流量标记前缀
 ### 限制
 
 - 系统规则与系统自适应规则中`systemLoad`配置仅限于**Linux**。
-- 上述[基于配置文件设置配置](#基于配置文件设置配置) 仅限于**Springboot**应用。
+- 上述[基于配置文件设置配置](#基于配置文件设置流控规则) 仅限于**Springboot**应用。
 
 ## 操作和结果验证
-
-下面将演示如何使用流控插件，验证SpringBoot应用采用ZooKeeper配置中心，设置限流策略场景。
-
+下面我们通过限流场景开始使用流控插件，通过简单的几个步骤，就可以开始对微服务执行限流。本次示例使用ZooKeeper作为动态配置中心。
 ### 准备工作
 
-- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.3.0/sermant-examples-flowcontrol-demo-1.3.0.tar.gz) Demo二进制产物压缩包
-- [下载](https://github.com/huaweicloud/Sermant/releases/download/v1.3.0/sermant-1.3.0.tar.gz) Sermant
-  Release包（当前版本推荐1.3.0版本）
-- [下载](https://zookeeper.apache.org/releases#download) 并启动ZooKeeper
+- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.3.0/sermant-examples-dynamic-demo-1.3.0.tar.gz)流控Demo二进制产物压缩包
+- [下载](https://github.com/huaweicloud/Sermant/releases/download/v1.3.0/sermant-1.3.0.tar.gz)Sermant包（当前版本推荐1.3.0版本）
+- [下载](https://zookeeper.apache.org/releases#download)并启动ZooKeeper
 
-### 步骤一：获取Demo二进制产物
+### 限流示例
+#### 步骤一：启动流控Demo
 
-解压Demo二进制产物压缩包，即可得到`spring-provider.jar`。
-
-### 步骤二：修改插件配置
-
-参考[插件配置](#插件配置) 修改`${path}/sermant-agent-x.x.x/agent/pluginPackage/flowcontrol/config/config.yaml`文件为以下内容：
-```shell
-flow.control.plugin:
-  useCseRule: false # 是否开启ServiceComb适配
-  enable-start-monitor: false # 是否启动指标监控
-  enable-system-adaptive: false # 是否开启系统自适应流控
-  enable-system-rule: false # 是否开启系统规则流控
-```
-
-> **说明**： ${path}为sermant所在路径。
-
-### 步骤三：启动Demo应用
-
-参考如下命令启动Demo应用
+解压准备工作下载的流控Demo获得可执行JAR包，即spring-provider.jar文件，参考如下命令启动Demo
 
 ```shell
-# windwos
-java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar -Dspring.application.name=spring-flow-provider -Dspring.cloud.zookeeper.connectString=127.0.0.1:2181 -jar spring-provider.jar
-
 #linux mac
-java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar -Dspring.application.name=spring-flow-provider -Dspring.cloud.zookeeper.connectString=127.0.0.1:2181 -jar spring-provider.jar
+java -javaagent:${sermant-path}/agent/sermant-agent.jar -Dspring.application.name=spring-flow-provider -jar spring-provider.jar
 ```
 
-> **说明：** ${path}为sermant实际安装路径，x.x.x代表sermant某个版本号。
+> **说明：** ${sermant-path}为Sermant包路径。
 
-### 步骤四：发布流量标记
+#### 步骤二：发布流量匹配规则
 
-参考使用[动态配置中心使用手册](../user-guide/configuration-center.md)，发布如下配置：
+参考[动态配置中心使用手册配置模型](../user-guide/configuration-center.md#sermant动态配置中心模型)，流量匹配规则由group、key和content三部分组成，group用来约束流量匹配规则生效的微服务，key用来约束流量匹配规则生效的场景，需和限流规则的场景名称保持一致，content为具体的流量匹配规则，其内容如下所示：
+* **group：** service=spring-flow-provider
+* **key：** servicecomb.matchGroup.flowScene
+* **content：**
+```yaml
+  # 精确匹配api路径为/flow并且请求方法类型为GET的流量
+  matches:
+  - apiPath:
+      exact: /flow
+    method:
+    - GET    
+  ```
+> 说明1：流量匹配规则的group由`service=`和`${service.name}`组成，其中`${service.name}`为微服务的名称，本示例所使用Demo的微服务名称为spring-flow-provider。
 
-```json
-{
-  "value": "alias: scene\nmatches:\n- apiPath:\n    exact: /flow\n  headers: {}\n  method:\n  - GET\n  name: flow\n",
-  "group": "service=spring-flow-provider",
-  "key": "servicecomb.matchGroup.sceneFlow"
-}
-```
+> 说明2：流量匹配规则的key由前缀`servicecomb.matchGroup`和自定义场景名称组成，本示例设定场景名称为`flowScene`。流量匹配规则和限流规则的key的自定义场景名称需保持一致，才能对匹配的流量执行限流策略。
 
-利用ZooKeeper提供的命令行工具来发布流量标记策略和流控策略：
+利用ZooKeeper提供的命令行工具下发流量匹配规则：
 
-1. 在`${path}/bin/`目录执行以下命令创建节点`/service=spring-flow-provider`
+1. 在`${zookeeper-path}/bin/`目录执行以下命令创建配置模型的group节点`/service=spring-flow-provider`：
 
 ```shell
 # linux mac
 ./zkCli.sh -server localhost:2181 create /service=spring-flow-provider
-
-# windows
-zkCli.cmd -server localhost:2181 create /service=spring-flow-provider
 ```
 
-2. 在`${path}/bin/`目录执行以下命令创建节点`/service=spring-flow-provider/servicecomb.matchGroup.sceneFlow`和数据`"alias: scene\nmatches:\n- apiPath:\n    exact: /flow\n  headers: {}\n  method:\n  - GET\n  name: flow\n"`
+2. 创建完成group节点后，在`${zookeeper-path}/bin/`目录执行以下命令创建配置模型的key节点`/service=spring-flow-provider/servicecomb.matchGroup.flowScene`，并设置节点的content：
 
 ```shell
 # linux mac
-./zkCli.sh -server localhost:2181 create /service=spring-flow-provider/servicecomb.matchGroup.sceneFlow "alias: scene
-matches:
+./zkCli.sh -server localhost:2181 create /service=spring-flow-provider/servicecomb.matchGroup.flowScene "matches:
 - apiPath:
     exact: /flow
-  headers: {}
   method:
-  - GET
-  name: flow"
-  
-# windwos
-zkCli.cmd -server localhost:2181 create /service=spring-flow-provider/servicecomb.matchGroup.sceneFlow "alias: scene
-matches:
-- apiPath:
-    exact: /flow
-  headers: {}
-  method:
-  - GET
-  name: flow"
+  - GET"
 ```
+> 说明：${zookeeper-path}为ZooKeeper的安装目录。
+#### 步骤三：发布限流规则
+参考[动态配置中心使用手册配置模型](../user-guide/configuration-center.md#sermant动态配置中心模型)，限流规则由group、key和content三部分组成，group用来约束限流规则生效的微服务，key用来约束限流规则生效的场景，需和流量匹配规则的场景名称保持一致，content为具体的限流规则，其内容如下所示：
+* **group：** service=spring-flow-provider
+* **key：** servicecomb.rateLimiting.flowScene
+* **content：**
+```yaml
+  # 限制两秒内不能访问超过四次
+  limitRefreshPeriod: 2S
+  rate: 4
+  ```
+> 说明1：限流规则的group由`service=`和`${service.name}`组成，其中`${service.name}`为微服务的名称，本示例所使用Demo的微服务名称为spring-flow-provider。
 
-3. 在`${path}/bin/`目录执行以下命令创建节点`/service=spring-flow-provider/servicecomb.rateLimiting.sceneFlow`和数据`"limitRefreshPeriod: \"2S\"\nname: flow\nrate: \"4\"\n"`
+> 说明2：限流规则的key由前缀`servicecomb.rateLimiting`和自定义场景名称组成，本示例设定场景名称为`flowScene`。流量匹配规则和限流规则的key的自定义场景名称需保持一致，才能对匹配的流量执行限流策略。
+
+利用ZooKeeper提供的命令行工具下发限流规则：
+1. 步骤二已经创建了group节点，在`${zookeeper-path}/bin/`目录执行以下命令创建配置模型的key节点`/service=spring-flow-provider/servicecomb.rateLimiting.flowScene`并设置节点的content：
 
 ```shell
 # linux mac
-./zkCli.sh -server localhost:2181 create /service=spring-flow-provider/servicecomb.rateLimiting.sceneFlow "limitRefreshPeriod: 2S
-name: flow
-rate: 4"
-
-#windows
-zkCli.cmd -server localhost:2181 create /service=spring-flow-provider/servicecomb.rateLimiting.sceneFlow "limitRefreshPeriod: 2S
-name: flow
+./zkCli.sh -server localhost:2181 create /service=spring-flow-provider/servicecomb.rateLimiting.flowScene "limitRefreshPeriod: 2S
 rate: 4"
 ```
 
-> 说明：${path}为ZooKeeper的安装目录。
+> 说明：${zookeeper-path}为ZooKeeper的安装目录。
 
 ### 验证
 
-通过curl工具多次请求`localhost:8003/flow`, 若在2秒内请求数超过4个时返回`rate limited`，则触发流控成功，效果如下：
-
+通过浏览器多次请求`localhost:8003/flow`若在2秒内请求数超过4个时返回`rate limited`，则触发流控成功，效果如下：
 <MyImage src="/docs-img/flowcontrol-verity.jpg"/>

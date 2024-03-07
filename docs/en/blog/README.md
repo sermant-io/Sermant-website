@@ -13,16 +13,24 @@ blogArr:
       - Microservice Governance
       - Proxyless Architecture
 
-    - name: Review Of Sermant's Open Source Operations In 2023
+    - name: What have we done a year after the official launch? | Sermant 2023 Annual Summary
       writer: 李来
-      date: 2024/1/4
-      description: 'Summarize the key events of Sermant’s open source operations in 2023'
-      path: 'https://sermant.io/zh/document/community/sermant-2023-summary.html'
+      date: 2024/02/22
+      description: 'Sermant 2023 Annual Summary'
+      path: 'https://bbs.huaweicloud.com/blogs/422188'
       tags:
-      - Open Source Operation
-      - Live
-      - Preaching
-      - Trusted Authentication
+      - Annual Summary
+      - Sermant
+
+    - name: Dynamic mounting of JavaAgent and plugins during service runtime - Analysis of Sermant's hot swapping capability
+      writer: 栾文飞
+      date: 2024/02/06
+      description: 'Analyzing the Core Mechanism of Sermant’s Hot Swap Capability'
+      path: 'https://bbs.huaweicloud.com/blogs/421723'
+      tags:
+      - Hot swappable
+      - Dynamic mounting
+      - Sermant
 
     - name: A Joint Scheme For Non Invasive Observable Indicator Collection For Java Application Network Streaming——Sermant & Gopher
       writer: 杨奕 张豪鹏 殷森道
