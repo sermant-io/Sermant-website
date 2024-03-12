@@ -23,6 +23,8 @@
 
 [SpringBoot注册插件](./springboot-registry.md)：纯SpringBoot应用提供服务注册发现能力，方便用户在不修改代码的前提下快速接入注册中心（目前只支持**Zookeeper**），同时提供超时重试的能力，实现服务调用的高可用。
 
+[数据库禁写插件](./database-write-prohibition.md): 用于在服务运行时实现对指定数据库的禁止写入能力，在多云多活场景下保证数据库数据的一致性。
+
 [服务可见性插件](./visibility.md)：为Spring Cloud和Dubbo应用提供契约信息和血缘关系采集展示的功能，方便用户在不修改代码的前提下可以通过backend查看所有服务对外提供的接口信息以及服务之间的调用关系信息。
 
 ### 兼容性列表
