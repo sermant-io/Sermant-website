@@ -102,6 +102,7 @@ module.exports = {
               sidebarDepth: 1,
               children: [
                 "community/",
+                "community/user",
                 "community/contributing",
                 "community/vulnerability",
               ],
