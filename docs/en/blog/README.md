@@ -13,6 +13,14 @@ blogArr:
       - Microservice Governance
       - Proxyless Architecture
 
+    - name: Sermant’s overall process learning summary
+      writer: 用友汽车 刘亚洲
+      date: 2024/02/29
+      description: 'Learned and sorted out the overall process of Sermant operation'
+      path: 'https://bbs.huaweicloud.com/blogs/422826'
+      tags:
+      - Learning Summary
+
     - name: What have we done a year after the official launch? | Sermant 2023 Annual Summary
       writer: 李来
       date: 2024/02/22

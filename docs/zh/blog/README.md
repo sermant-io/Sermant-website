@@ -13,6 +13,14 @@ blogArr:
       - 微服务治理
       - 无代理架构
 
+    - name: Sermant的整体流程学习梳理
+      writer: 用友汽车 刘亚洲
+      date: 2024/02/29
+      description: '对Sermant运行的整体流程进行了学习梳理'
+      path: 'https://bbs.huaweicloud.com/blogs/422826'
+      tags:
+      - 学习总结
+
     - name: 正式发布后的一年，我们都做了什么？ | Sermant 2023年度总结
       writer: 李来
       date: 2024/02/22
