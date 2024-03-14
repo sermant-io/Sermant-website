@@ -77,8 +77,8 @@ configMap:
   enabled: true
   namespaces: [default]	
   env:
-  	backend.nettyIp: 127.0.0.1
-  	backend.nettyPort: 8900
+    gateway.nettyIp: 127.0.0.1
+    gateway.nettyPort: 6888
 ```
 
 即可使default命名空间下的所有pod挂载的Sermant都与该**Backend**后端连接。
