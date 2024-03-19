@@ -1,33 +1,32 @@
 # 插件结构
 
-一个**Sermant**的插件中可包含以下模块：
+一个**Sermant**插件主要由以下模块组成：
 
-- `插件主模块(plugin)`，该模块主要用于声明字节码增强逻辑及插件服务接口定义
-- `插件服务模块(service)`，该模块用于为插件包提供插件服务接口实现
+- `插件主模块(plugin)`，该模块主要用于声明字节码增强逻辑
+- `插件服务模块(service)`，该模块用于辅助插件主模块完成增强逻辑，比如添加动态配置监听器等（非必要模块）
 
-开始之前，需要明确约定，为避免类冲突问题，在`插件主模块(plugin)`中，开发者只能使用Java原生API和[sermant-agentcore模块](#sermant-agentcore模块)中的API，不能依赖或使用任何除`byte-buddy`以外的第三方依赖。如果应业务要求，需要使用其他第三方依赖的话，只能在`插件主模块(plugin)`中定义功能接口，并在`插件服务模块(service)`中编写接口实现，在开发中遵循上述约定，才可以更好的利用到**Sermant**提供的类隔离能力。
+通过在pom文件的`properties`中指定`package.plugin.type`的值确定模块类型，`plugin`表示该模块为插件主模块，`service`表示该模块为插件服务模块。插件中可包含多个插件主模块和插件服务模块。
 
-#### sermant-agentcore模块
-
-> [sermant-agentcore模块](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core)是Sermant Agent的核心模块，其中提供了字节码增强能力、类隔离能力、插件化能力、服务治理的基础服务等核心能力的封装。
+基于Sermant良好的类加载器设计，在`插件主模块(plugin)`中，可以通过compile方式引入第三方依赖，而不会引发与宿主应用的类冲突问题，但是开发者如果需要在插件中使用宿主类，则不建议在plugin模块通过compile方式引入该类所在的依赖，如果需要，可在service模块引入，并在plugin模块中调用service模块的实现，下文将介绍使用方式。
 
 ## 插件主模块
 
-插件主模块是插件的主要实现，开发者需要在该模块中声明该插件的**增强逻辑**。**增强逻辑**开发可参考[字节码增强](bytecode-enhancement.md)章节。为避免类冲突问题，插件主模块中不可引入第三方依赖。
+插件主模块是插件的主要实现，开发者需要在该模块中声明该插件的**增强逻辑**。**增强逻辑**开发可参考[字节码增强](bytecode-enhancement.md)章节。
 
 ## 插件服务模块
 
 **插件服务模块**较**插件主模块**相比：
 
-- 用于编写[插件服务](#插件服务)，无法在其中声明插件所需的**增强逻辑**。
-- 允许自由添加需要的第三方依赖，打包构建的时候需要构建带依赖jar包。
-- 需以`provided`形式在其pom中引入其对应的[插件主模块](#插件主模块)。
+- 用于编写[插件主模块](#插件主模块)无法实现的**增强逻辑**。
+- 允许通过compile方式自由添加所需的第三方依赖。
+
+> 注意：若需引入插件主模块，需以`provided`形式在其pom中引入。
 
 ## 插件服务
 
 **插件服务**主要分为两部分：
 
-**服务接口定义**在[插件主模块](#插件主模块)中用于描述该服务提供的能力，在定义插件的插件服务时，需要继承插件服务基础接口[com.huaweicloud.sermant.core.PluginService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/service/PluginService.java)，该接口提供`start()`方法会在**Sermant**启动时被调用，`stop()`方法会在JVM停止时被调用。
+**服务接口定义**在[插件主模块](#插件主模块)中用于描述该服务提供的能力，在定义插件的插件服务时，需要继承插件服务基础接口[com.huaweicloud.sermant.core.PluginService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/service/PluginService.java)，该接口提供的`start()`方法会在**Sermant**启动时被调用，`stop()`方法会在JVM停止时被调用。
 
 **服务接口实现**在[插件服务模块](#插件服务模块)中，在[插件主模块](#插件主模块)中可以通过**SPI**机制加载并使用插件服务的接口实现。
 
