@@ -18,8 +18,9 @@
 
 [流量标签透传](./tag-transmission.md): 为流量标签提供全链路透传的能力，以满足流量治理的需求。
 
-[注册迁移插件](./register-migration.md)：提供代码非侵入方式，可让原本注册于Eureka，Nacos，Zookeeper、Consul等主流注册中心的微服务，非侵入地注册到[ServiceComb]
-(https://github.com/apache/servicecomb-service-center)或[Nacos](https://nacos.io/)上, 同时支持Dubbo与SpringCloud框架。
+[注册迁移插件](./register-migration.md)：提供代码非侵入方式，可让原本注册于Eureka，Nacos，Zookeeper、Consul等主流注册中心的微服务，
+非侵入地注册到[ServiceComb](https://github.com/apache/servicecomb-service-center)，或[Nacos](https://nacos.io/)上, 
+同时支持Dubbo与SpringCloud框架。
 
 [SpringBoot注册插件](./springboot-registry.md)：纯SpringBoot应用提供服务注册发现能力，方便用户在不修改代码的前提下快速接入注册中心（目前只支持**Zookeeper**），同时提供超时重试的能力，实现服务调用的高可用。
 
@@ -27,16 +28,22 @@
 
 [服务可见性插件](./visibility.md)：为Spring Cloud和Dubbo应用提供契约信息和血缘关系采集展示的功能，方便用户在不修改代码的前提下可以通过backend查看所有服务对外提供的接口信息以及服务之间的调用关系信息。
 
+[离群实例摘除](./removal.md)：离群实例摘除插件通过无侵入的方式检测应用实例的可用性，并对异常的应用实例进行摘除操作，以保证服务的稳定性。
+
 ### 兼容性列表
 
-|                    插件名称                     | 微服务框架组件支持列表                                                                                                                                  | 配置中心支持列表                      | 注册中心支持列表                   |
+|                    插件名称                     | 微服务框架组件支持列表                                                                                                                                  | 动态配置中心支持列表                      | 注册中心支持列表                   |
 |:-------------------------------------------:|:---------------------------------------------------------------------------------------------------------------------------------------------|:------------------------------|:---------------------------|
-|        [动态配置插件](./dynamic-config.md)        | SpringBoot 1.5.x - 2.6.2<br>spring-cloud-starter-alibaba-nacos-config 1.5.0.RELEASE+<br>spring-cloud-starter-zookeeper-config 1.2.0.RELEASE+ | servicecomb-kie<br/>ZooKeeper | N/A                        |
-|          [流控插件](./flowcontrol.md)           | SpringBoot 1.2.x - 2.6.x <br> SpringWebMvc 4.1.3.RELEASE - 5.3.x<br>Dubbo 2.6.x-2.7.x                                                        | servicecomb-kie<br>ZooKeeper  | N/A                        |
-|          [优雅上下线插件](./graceful.md)           | SpringBoot 1.5.x - 2.6.2 <br/> SpringCloud Edgware.SR2 - 2021.0.0                                                                            | servicecomb-kie<br/>ZooKeeper | N/A                        |该功能基于SpringCloud默认负载均衡实现，若实现自定义负载均衡，该能力将失效|
-|         [负载均衡插件](./loadbalancer.md)         | SpringBoot 1.5.x - 2.6.2 <br/> SpringCloud Edgware.SR2 - 2021.0.0                                                                            | servicecomb-kie<br/>ZooKeeper | N/A                        |
-|            [监控插件](./monitor.md)             | ALL                                                                                                                                          | N/A                           | N/A                        |
-|            [标签路由插件](./router.md)            | SpringBoot 1.5.x - 2.6.2 <br/>SpringCloud Edgware.SR2 - 2021.0.0<br/>Dubbo 2.6.x-2.7.x                                                       | servicecomb-kie               | servicecomb-service-center |不支持异步调用<br>不支持混合框架（Dubbo调SpringCloud或者SpringCloud调Dubbo）做路由|
-|        [注册迁移插件](./register-migration.md)        | SpringBoot 1.5.x - 2.6.2 <br> SpringCloud Edgware.SR2 - 2021.0.0<br>Dubbo 2.6.x-2.7.x                                                        | N/A                           | servicecomb-service-center<br/>Nacos |
-| [SpringBoot 注册插件](./springboot-registry.md) | SpringBoot 1.5.10.Release+                                                                                                                   | servicecomb-kie<br/>ZooKeeper | Zookeeper 3.4.x+           |
-|         [服务可见性插件](./visibility.md)          | SpringBoot 1.5.10.Release及以上<br>Dubbo 2.6.x-2.7.x                                                                                            | ZooKeeper                     | N/A                        |
+|        [动态配置插件](./dynamic-config.md)        | SpringBoot 1.5.x - 2.6.2<br>spring-cloud-starter-alibaba-nacos-config 1.5.0.RELEASE+<br>spring-cloud-starter-zookeeper-config 1.2.0.RELEASE+ | ServiceComb Kie<br/>ZooKeeper<br/>Nacos | N/A     |
+|          [流控插件](./flowcontrol.md)           | SpringBoot 1.2.x - 2.6.x <br> SpringWebMvc 4.1.3.RELEASE - 5.3.x<br>Dubbo 2.6.x-2.7.x                                                        | ServiceComb Kie<br/>ZooKeeper<br/>Nacos  | N/A     |
+|          [优雅上下线插件](./graceful.md)           | SpringBoot 1.5.x - 2.6.2 <br/> SpringCloud Edgware.SR2 - 2021.0.0                                                                            | ServiceComb Kie<br/>ZooKeeper<br/>Nacos | N/A    |该功能基于SpringCloud默认负载均衡实现，若实现自定义负载均衡，该能力将失效|
+|         [负载均衡插件](./loadbalancer.md)         | SpringBoot 1.5.x - 2.6.2 <br/> SpringCloud Edgware.SR2 - 2021.0.0                                                                            | ServiceComb Kie<br/>ZooKeeper<br/>Nacos | N/A      |
+|            [监控插件](./monitor.md)             | ALL                                                                                                                                          | N/A                           | N/A       |
+|            [标签路由插件](./router.md)            | SpringBoot 1.5.x - 2.6.2 <br/>SpringCloud Edgware.SR2 - 2021.0.0<br/>Dubbo 2.6.x-2.7.x                                                       | ServiceComb Kie<br/>ZooKeeper<br/>Nacos            | ServiceComb-Service-Center |不支持异步调用<br>不支持混合框架（Dubbo调SpringCloud或者SpringCloud调Dubbo）做路由|
+|        [注册迁移插件](./register-migration.md)        | SpringBoot 1.5.x - 2.6.2 <br> SpringCloud Edgware.SR2 - 2021.0.0<br>Dubbo 2.6.x-2.7.x                                                        | N/A                           | ServiceComb-Service-Center<br/>Nacos |
+| [SpringBoot 注册插件](./springboot-registry.md) | SpringBoot 1.5.10.Release+                                                                                                                   | ServiceComb Kie<br/>ZooKeeper<br/>Nacos | Zookeeper 3.4.x+           |
+|         [服务可见性插件](./visibility.md)          | SpringBoot 1.5.10.Release+<br>Dubbo 2.6.x-2.7.x                                                                                            | ServiceComb Kie<br/>ZooKeeper<br/>Nacos  | N/A                        |
+|         [流量标签透传插件](./tag-transmission.md)  | Servlet 3.0+<br>Jetty 8.x+<br>Tomcat 7.x+<br>Spring Framework 4.x+<br>Apache HttpClient 3.x, 4.x<br>OKHttp2 2.x<br/>HttpURLConnection 1.7.x+<br/>Dubbo 2.6.x, 2.7.x, 3.x<br/>Grpc 1.13+<br/>SofaRpc 5.x<br/>ServiceComb Java Chassis 2.x<br/>RocketMQ 4.8.x+, 5.x<br/>Kafka 1.x, 2.x, 3.x| ServiceComb Kie<br/>ZooKeeper<br/>Nacos  | N/A                        |
+|         [消息队列禁止消费插件](./mq-consume-prohibition.md)          | Kafka 1.x, 2.x<br>RocketMQ 4.8.x-5.1.x                                                                                | ServiceComb Kie<br/>ZooKeeper<br/>Nacos  | N/A                        |
+|         [数据库禁写插件](./database-write-prohibition.md)          | mongodb-driver-sync 2.6.2-2.7.x, 3.0.x-3.3.x<br>mariadb-java-client 3.7.x-3.11.x, 4.0.x-4.11.x<br/>opengauss-jdbc 3.0.x, 3.1.x<br/>postgresql 9.4.x, 42.0.x-42.7.x  | ServiceComb Kie<br/>ZooKeeper<br/>Nacos  | N/A                        |
+|         [离群实例摘除](./visibility.md)          | SpringBoot 1.5.10.Release+<br>Dubbo 2.6.x-2.7.x                                                                                            | ServiceComb Kie<br/>ZooKeeper<br/>Nacos  | N/A                        |

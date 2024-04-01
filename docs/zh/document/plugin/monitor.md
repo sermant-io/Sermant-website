@@ -143,9 +143,9 @@ monitor.config:                       # 监控插件配置。
 
 ### 准备工作
 
-- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.3.0/sermant-examples-monitor-demo-1.3.0.tar.gz) Demo二进制产物压缩包
-- [下载](https://github.com/huaweicloud/Sermant/releases/download/v1.3.0/sermant-1.3.0.tar.gz) Sermant
-  Release包（当前版本推荐1.3.0版本）
+- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.4.0/sermant-examples-monitor-demo-1.4.0.tar.gz) Demo二进制产物压缩包
+- [下载](https://github.com/huaweicloud/Sermant/releases/download/v1.4.0/sermant-1.4.0.tar.gz) Sermant
+  Release包（当前版本推荐1.4.0版本）
 - [下载](https://github.com/prometheus/prometheus/releases)Prometheus
 
 > 注意：[动态配置中心](../user-guide/configuration-center.md)会在本场景中默认使用，由于非本场景的核心组件，因此在本文中不额外赘述。

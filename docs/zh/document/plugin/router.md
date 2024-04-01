@@ -68,7 +68,7 @@
               version: 1.0.0             # 满足match条件的实例路由到version标签为1.0.0的实例
           - weight: 80                   # 权重值为80%
             tags:
-              version: 1.0.1             # 满足match条件的实例路由到version标签为1.0.0的实例
+              version: 1.0.1             # 满足match条件的实例路由到version标签为1.0.1的实例
       - precedence: 1                    # 优先级，数字越大，优先级越高。
         route:
           - weight: 20                   # 权重值为20%
@@ -290,9 +290,9 @@
 
 ### 准备工作
 
-- [下载](https://github.com/huaweicloud/Sermant/releases/download/v1.3.0/sermant-1.3.0.tar.gz) Sermant
-  Release包（当前版本推荐1.3.0版本）
-- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.3.0/sermant-examples-router-demo-1.3.0.tar.gz) Demo二进制产物压缩包
+- [下载](https://github.com/huaweicloud/Sermant/releases/download/v1.4.0/sermant-1.4.0.tar.gz) Sermant
+  Release包（当前版本推荐1.4.0版本）
+- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.4.0/sermant-examples-router-demo-1.4.0.tar.gz) Demo二进制产物压缩包
 - [下载](https://github.com/apache/servicecomb-service-center)ServiceComb（注册中心），并启动
 - [下载](https://zookeeper.apache.org/releases.html#download)ZooKeeper（动态配置中心），并启动
 
