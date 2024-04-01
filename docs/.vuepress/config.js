@@ -73,6 +73,7 @@ module.exports = {
                 "plugin/tag-transmission",
                 "plugin/register-migration",
                 "plugin/springboot-registry",
+                "plugin/database-write-prohibition",
                 "plugin/visibility",
                 "plugin/removal",
               ],

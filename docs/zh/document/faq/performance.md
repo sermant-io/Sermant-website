@@ -172,7 +172,7 @@ Kubernetes Version: v1.23
 
 K8s中所有应用Pod的规格一致，均为`4vCPUs|8GiB`。
 
-Sermant版本：[`Release v1.3.0`](https://github.com/huaweicloud/Sermant/releases/tag/v1.2.0)
+Sermant版本：[`Release v1.3.0`](https://github.com/huaweicloud/Sermant/releases/tag/v1.3.0)
 
 ### 测试结果 
 
@@ -185,3 +185,40 @@ Sermant版本：[`Release v1.3.0`](https://github.com/huaweicloud/Sermant/releas
 ### 总结
 
 测试结果表明Sermant消息队列禁止消费插件对内存的占用20M左右，影响较小。另外挂载Sermant后Class增加量为2000～2200左右，线程的增加量3～4个，主要来自于Sermant框架的logback线程以及ZooKeeper动态配置监听的EventThread和SendThread线程，其中RocketMQ-pull场景额外增加1个重平衡线程。
+
+## 数据库禁写插件
+
+本次测试分为对照组和实验组，对照组所有被测微服务均不挂载Sermant，实验组的被测微服务均挂载Sermant。
+测试的数据库分别为MySQL、MongoDB、PostgreSQL和OpenGauss，测试场景为测试微服务查询数据库数据和插入数据库数据。
+使用Jmeter对测试微服务进行压测，微服务启动时挂载async-profiler，分别记录对照组和实验组的压测指标数据。
+
+### 部署环境
+
+本次测试使用华为云容器引擎CCE进行应用部署，K8s集群的ECS节点数量为3个，规格如下：
+
+```
+规格：通用计算型｜16vCPUs｜32GiB｜s6.4xlarge.2
+Docker Version: v18.09.9
+Kubernetes Version: v1.20.2
+```
+
+K8s中所有应用Pod的规格一致，均为`4vCPUs|8GiB`。
+
+Sermant版本：[`Release v1.4.0`](https://github.com/huaweicloud/Sermant/releases/tag/v1.4.0)
+
+### 测试结果
+| **被测数据库和场景**       | 达到最大TPS时长（无Sermant/有Sermant/ 差异） | 最大TPS（无Sermant/有Sermant/ 差异） | 平均TPS（无Sermant/有Sermant/ 差异） | CPU占用率增加 | 总内存增加 | 
+| ------------------ | -------------------------------------------- | ------------------------------------ | ------------------------------------ | ------------- | ------------ |
+| MySQL(查询场景)    | 2s / 5s / +3s                              | 972/ 955.2 / -1.72%                    | 917.4 / 899.2 / -1.98%                    | 1.56%         | 24M    | 
+| MySQL(插入场景) | 2s / 3s / +1s                                | 119.1 / 939.7 / +689%                    | 108.7 / 886.9 / +716%                    | 3.26%         | 24M    | 
+| MongoDB(查询场景)    | 21s / 23s / +2s                              | 1499.2 / 1500.8 / +0.1%                    | 1453.3 / 1452.3 / -0.06%          | 0.06%         | 23M    | 
+| MongoDB(插入场景)     | 19s / 22s / +3s                               | 1054.8 / 1468.4 / +39.2%                    | 1018.9 / 1433.7 / +40.7%       | 0.98%         | 23M    | 
+| PostgreSQL(查询场景)    | 11s / 11s / 0                              | 1372.5 / 1402.7 / +2.2%                    | 1290.5 / 1285.9 / -0.36%         | 0.44%         | 22M    | 
+| PostgreSQL(插入场景)   | 2s / 5s / +3s                              | 1622.9 / 1619.9 / -0.19%                    | 1473.2 / 1514.7 / +2.8%          | 1.32%         | 22M    | 
+| OpenGauss(查询场景)   | 15s / 17s / +2s                              | 1306.2 / 1309.2 / +0.22%                    | 1229.8 / 1230.5 / +0.06%        | 1.77%         | 21M    | 
+| OpenGauss(插入场景)  | 7s / 8s / +1s                              | 811 / 817.8 / +0.84%                    | 745.6 / 745.7 / +0.13%                 | 3.44%         | 21M    | 
+
+### 总结
+1. 挂载数据库禁写插件后各场景内存增加总量在22M左右，最大TPS、平均TPS下降和CPU占用不超过5%，影响较小。
+2. MySQL和MongoDB在插入场景下，执行了禁写策略，不会和数据库进行数据交互，MongoDB和MySQL执行写入数据库耗时较久，且测试Demo写操作占接口方法执行时间比重大，因此TPS增加较多；
+   PostgreSQL和OpenGauss写入数据库执行时间较短，同时测试Demo写操作占接口方法时间比重较小，因此写场景下挂载SermantTPS增加不明显。
