@@ -13,6 +13,24 @@ blogArr:
       - Microservice Governance
       - Proxyless Architecture
 
+    - name: Practice of Sermant hot-swappable capability in fault injection scenarios
+      writer: 张豪鹏
+      date: 2024/04/03
+      description: 'Complete fault injection using Sermant’s hot-swappable capability'
+      path: 'https://bbs.huaweicloud.com/blogs/425040'
+      tags:
+      - hot-swappable capability
+      - fault injection
+
+    - name: The use of Sermant-based full-link grayscale release in the automotive industry DMS system
+      writer: 聂子雄
+      date: 2024/04/01
+      description: 'Automotive industry DMS system applies Sermant’s full-link grayscale release capability'
+      path: 'https://bbs.huaweicloud.com/blogs/424899'
+      tags:
+      - grayscale release
+      - automotive industry DMS system
+
     - name: Sermant’s overall process learning summary
       writer: 用友汽车 刘亚洲
       date: 2024/02/29

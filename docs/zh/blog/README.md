@@ -13,6 +13,24 @@ blogArr:
       - 微服务治理
       - 无代理架构
 
+    - name: Sermant热插拔能力在故障注入场景的实践
+      writer: 张豪鹏
+      date: 2024/04/03
+      description: '使用Sermant的热插拔能力完成故障注入'
+      path: 'https://bbs.huaweicloud.com/blogs/425040'
+      tags:
+      - 热插拔
+      - 故障注入
+
+    - name: 基于Sermant的全链路灰度发布在汽车行业DMS系统的应用
+      writer: 聂子雄
+      date: 2024/04/01
+      description: '汽车行业DMS系统应用Sermant的全链路灰度发布能力'
+      path: 'https://bbs.huaweicloud.com/blogs/424899'
+      tags:
+      - 灰度发布
+      - 汽车DMS系统
+
     - name: Sermant的整体流程学习梳理
       writer: 用友汽车 刘亚洲
       date: 2024/02/29
