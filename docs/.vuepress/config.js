@@ -53,7 +53,8 @@ module.exports = {
                 "user-guide/sermant-agent",
                 "user-guide/sermant-backend",
                 "user-guide/sermant-injector",
-                "user-guide/configuration-center"
+                "user-guide/configuration-center",
+                "user-guide/script"
               ],
             },
             {
@@ -155,6 +156,7 @@ module.exports = {
                 "user-guide/backend",
                 "user-guide/configuration-center",
                 "user-guide/injector",
+                "user-guide/script"
               ],
             },
             {
