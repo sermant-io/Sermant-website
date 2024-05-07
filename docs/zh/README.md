@@ -39,5 +39,5 @@ Sermant是基于Java字节码增强技术的无代理服务网格，其利用Jav
 :::
 
 ::: slot footer
-Apache-2.0 Licensed | Copyright © 2021-present A Huawei Cloud Project
+Apache-2.0 Licensed | Copyright © 2021-present | A CNCF Landscape Project
 :::

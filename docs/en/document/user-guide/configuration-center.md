@@ -35,9 +35,9 @@ Second, you can configure parameters for dynamic configuration center of sermant
 
 ## Sermant Dynamic Configuration Center Model
 
-以sermant-agent中的[KeyGroupService.publishConfig](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyGroupService.java)接口函数说明Sermant中的配置模型。
+以sermant-agent中的[KeyGroupService.publishConfig](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/service/dynamicconfig/api/KeyGroupService.java)接口函数说明Sermant中的配置模型。
 
-The configuration model in Sermant is illustrated by the interface function [KeyGroupService.publishConfig](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyGroupService.java) in sermant-agent.
+The configuration model in Sermant is illustrated by the interface function [KeyGroupService.publishConfig](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/service/dynamicconfig/api/KeyGroupService.java) in sermant-agent.
 
 ```java
 /**
@@ -135,7 +135,7 @@ The configuration center components currently supported by Sermant are:
 
 ## Startup and Result Validation
 
-This document uses the demo plugin in [Sermant-examples](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template) to demonstrate dynamic configuration capability, whose implementation adds a listener to listen for dynamic configuration changes.
+This document uses the demo plugin in [Sermant-examples](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/template) to demonstrate dynamic configuration capability, whose implementation adds a listener to listen for dynamic configuration changes.
 
 ### Zookeeper
 
@@ -164,7 +164,7 @@ Check out the sermant log file sermant-0.log. The default log file path is `./lo
 Observe if the log file contains the following log output:
 
 ```
-[DemoDynaConfService]-DynamicConfigEvent{key='demo', group='app=default', content='test', eventType=CREATE} com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent[source=demo,app=default]
+[DemoDynaConfService]-DynamicConfigEvent{key='demo', group='app=default', content='test', eventType=CREATE} io.sermant.core.service.dynamicconfig.common.DynamicConfigEvent[source=demo,app=default]
 ```
 
 If the log output is correct, it means that the dynamic configuration is published successfully and the sermant-agent has listened to the dynamic configuration.
@@ -205,7 +205,7 @@ Check out the sermant log file sermant-0.log. The default log file path is `./lo
 Observe if the log file contains the following log output:
 
 ```
-[DemoDynaConfService]-DynamicConfigEvent{key='demo', group='app=default', content='test', eventType=CREATE} com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent[source=demo,app=default]
+[DemoDynaConfService]-DynamicConfigEvent{key='demo', group='app=default', content='test', eventType=CREATE} io.sermant.core.service.dynamicconfig.common.DynamicConfigEvent[source=demo,app=default]
 ```
 
 If the log output is correct, it means that the dynamic configuration is published successfully and the sermant-agent has listened to the dynamic configuration.
@@ -246,7 +246,7 @@ Check out the sermant log file sermant-0.log. The default log file path is `./lo
 Observe if the log file contains the following log output:
 
 ```
-[DemoDynaConfService]-DynamicConfigEvent{key='demo', group='app:default', content='test', eventType=CREATE} com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent[source=demo,app=default]
+[DemoDynaConfService]-DynamicConfigEvent{key='demo', group='app:default', content='test', eventType=CREATE} io.sermant.core.service.dynamicconfig.common.DynamicConfigEvent[source=demo,app=default]
 ```
 
 If the log output is correct, it means that the dynamic configuration is published successfully and the sermant-agent has listened to the dynamic configuration.

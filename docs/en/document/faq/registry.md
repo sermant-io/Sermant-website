@@ -1,6 +1,6 @@
 # Service Registration FAQs
 
-This document describes frequently asked questions (FAQs) about using the [service registration plugin](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-registry).
+This document describes frequently asked questions (FAQs) about using the [service registration plugin](https://github.com/sermant-io/Sermant/tree/develop/sermant-plugins/sermant-service-registry).
 
 ## Exception：No Such Extension org.apache.dubbo.registry.RegistryFactory by name sc
 

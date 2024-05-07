@@ -12,7 +12,7 @@ The Backend is a **non-essential component** that can be deployed on demand.
 
 ### Sermant-agent Parameter Configuration
 
-First, when configure `agent.config.serviceBlackList` in [Parameters Related to Agent Framework of Sermant-agent User Manual](sermant-agent.md#parameters-related-to-agent-framework) to decide which core services are forbidden to start, it is necessary to remove `com.huaweicloud.sermant.implement.service.heartbeat.HeartbeatServiceImpl` to **enable heartbeat service**.
+First, when configure `agent.config.serviceBlackList` in [Parameters Related to Agent Framework of Sermant-agent User Manual](sermant-agent.md#parameters-related-to-agent-framework) to decide which core services are forbidden to start, it is necessary to remove `io.sermant.implement.service.heartbeat.HeartbeatServiceImpl` to **enable heartbeat service**.
 
 Second, modify relative configuration in `agent/config/config.properties` of sermant-agent product package. Please refer to [Parameters Related to Backend of Sermant-agent User Manual](sermant-agent.md#parameters-related-to-backend) for specific parameters.
 

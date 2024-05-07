@@ -1,6 +1,6 @@
 # 离群实例摘除
 
-本文介绍如何使用[离群实例摘除插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-removal)。
+本文介绍如何使用[离群实例摘除插件](https://github.com/sermant-io/Sermant/tree/develop/sermant-plugins/sermant-service-removal)。
 
 ## 功能介绍
 
@@ -72,8 +72,8 @@ rules:                  # 离群实例摘除规则，key：服务名称（为def
 
 ### 准备工作
 
-- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.4.0/sermant-examples-removal-demo-1.4.0.tar.gz) Demo二进制产物压缩包
-- [下载](https://github.com/huaweicloud/Sermant/releases/download/v1.4.0/sermant-1.4.0.tar.gz) Sermant
+- [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v1.4.0/sermant-examples-removal-demo-1.4.0.tar.gz) Demo二进制产物压缩包
+- [下载](https://github.com/sermant-io/Sermant/releases/download/v1.4.0/sermant-1.4.0.tar.gz) Sermant
   Release包（当前版本推荐1.4.0版本）
 - [下载](https://zookeeper.apache.org/releases#download) 并启动ZooKeeper
 

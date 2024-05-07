@@ -8,7 +8,7 @@ If you find something incorrect or missing, please leave comments / suggestions.
 
 ### Code of Conduct
 
-Please make sure to read and observe our [Code of Conduct](https://github.com/huaweicloud/Sermant/tree/develop/CODE_OF_CONDUCT.md).
+Please make sure to read and observe our [Code of Conduct](https://github.com/sermant-io/Sermant/tree/develop/CODE_OF_CONDUCT.md).
 
 ### Open Source Contribution Agreement
 
@@ -52,13 +52,13 @@ We encourage new comers actively join in Sermant projects and involving from use
 
 #### Open / Pickup An Issue for Preparation
 
-If you find a typo in document, find a bug in code, or want new features, or want to give suggestions, you can [open an issue on GitHub](https://github.com/huaweicloud/Sermant/issues/new) to report it.
+If you find a typo in document, find a bug in code, or want new features, or want to give suggestions, you can [open an issue on GitHub](https://github.com/sermant-io/Sermant/issues/new) to report it.
 
 If you just want to contribute directly you can choose the issue below.
 
--   [Contribution Welcome](https://github.com/huaweicloud/Sermant/labels/contribution%20welcome): Heavily needed issue, but currently short of hand.
+-   [Contribution Welcome](https://github.com/sermant-io/Sermant/labels/contribution%20welcome): Heavily needed issue, but currently short of hand.
     
--   [good first issue](https://github.com/huaweicloud/Sermant/labels/good%20first%20issue): Good for newcomers, new comer can pickup one for warm-up.
+-   [good first issue](https://github.com/sermant-io/Sermant/labels/good%20first%20issue): Good for newcomers, new comer can pickup one for warm-up.
     
 
 We strongly value documentation and integration with other projects such as Spring Cloud, Kubernetes, Dubbo, etc. We are very glad to work on any issue for these aspects.
@@ -92,7 +92,7 @@ Now, if you are ready to create PR, here is the workflow for contributors:
 
 When creating pull request:
 
-1.  Please follow [the pull request template](https://github.com/huaweicloud/Sermant/tree/develop/.github/PULL_REQUEST_TEMPLATE.md).
+1.  Please follow [the pull request template](https://github.com/sermant-io/Sermant/tree/develop/.github/PULL_REQUEST_TEMPLATE.md).
     
 2.  Please create the request to **develop** branch.
     

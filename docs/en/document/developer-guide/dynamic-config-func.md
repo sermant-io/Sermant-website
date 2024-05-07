@@ -12,7 +12,7 @@ This article describes how to use the dynamic configuration capabilities provide
 
 This development example is based on the project created in the [Create the First Plugin](README.md) document to demonstrate the development process with the acquisition of a dynamic configuration：
 
-1. Add new variable `dynamicConfigService` in `com.huaweicloud.sermant.template.TemplateDeclarer` class of `template\template-plugin`, the new variable in the class gets the dynamic configuration service provided by the Sermant framework, which is used to create dynamically configured listeners and obtain configurations:
+1. Add new variable `dynamicConfigService` in `io.sermant.template.TemplateDeclarer` class of `template\template-plugin`, the new variable in the class gets the dynamic configuration service provided by the Sermant framework, which is used to create dynamically configured listeners and obtain configurations:
 
    ```java
    DynamicConfigService dynamicConfigService = ServiceManager.getService(DynamicConfigService.class);
@@ -70,7 +70,7 @@ Examples of other interfaces are not listed here. You can refer to the following
 
 ### API
 
-The **Dynamic Configuration functionality** service functionality `API` is provided by the [DynamicConfigService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java) abstract class, which implements three interfaces, as found in the [API](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api) directory.
+The **Dynamic Configuration functionality** service functionality `API` is provided by the [DynamicConfigService](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/service/dynamicconfig/DynamicConfigService.java) abstract class, which implements three interfaces, as found in the [API](https://github.com/sermant-io/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/service/dynamicconfig/api) directory.
 
 #### Get the dynamic configuration service
 
@@ -229,28 +229,28 @@ There are three concepts that need to be clarified for the API we'll cover next�
 
 #### Illustrate
 
-The above `API` is mainly divided into the operation of adding, selecting, changing and deleting data, and the operation of adding and deleting Listener [DynamicConfigListener](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java). The event callback of the latter is a crucial part of the function of the **dynamic configuration service**, and is also the main function of the plugin using **dynamic configuration service**.
+The above `API` is mainly divided into the operation of adding, selecting, changing and deleting data, and the operation of adding and deleting Listener [DynamicConfigListener](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java). The event callback of the latter is a crucial part of the function of the **dynamic configuration service**, and is also the main function of the plugin using **dynamic configuration service**.
 
-Also, it's important to note that all `APIs` for **certain configuration keys** are` APIs` without `Group`. They all use the default `Group` in [DynamicConfigService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java). The default ` Group ` can be changed by sermant-agent **configuration file** , which is `dynamic.config.default` of` /config/config.properties ` . Parameters can be described in [Sermant-agent User manual](../user-guide/sermant-agent.md#Parameters-Related-to-Dynamic-Configuration-Center).
+Also, it's important to note that all `APIs` for **certain configuration keys** are` APIs` without `Group`. They all use the default `Group` in [DynamicConfigService](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/service/dynamicconfig/DynamicConfigService.java). The default ` Group ` can be changed by sermant-agent **configuration file** , which is `dynamic.config.default` of` /config/config.properties ` . Parameters can be described in [Sermant-agent User manual](../user-guide/sermant-agent.md#Parameters-Related-to-Dynamic-Configuration-Center).
 
 Finally, in addition to the above service interfaces, there are a few other interfaces, configurations, or entities that developers need to focus on:
 
-- [DynamicConfigListener](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java), the interface methods are as follows：
+- [DynamicConfigListener](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java), the interface methods are as follows：
 
   | Method                                                       | Parse                                                       |
   | :----------------------------------------------------------- | :---------------------------------------------------------- |
-  | void process([DynamicConfigEvent](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigEvent.java)) | Callback interface for handling configuration change events |
+  | void process([DynamicConfigEvent](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/service/dynamicconfig/common/DynamicConfigEvent.java)) | Callback interface for handling configuration change events |
 
-- [DynamicConfigEvent](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigEvent.java), its member properties are as follows：
+- [DynamicConfigEvent](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/service/dynamicconfig/common/DynamicConfigEvent.java), its member properties are as follows：
 
   | Type                                                         | Property  | Parse          |
   | :----------------------------------------------------------- | :-------- | :------------- |
   | String                                                       | key       | Config Key     |
   | String                                                       | group     | Config group   |
   | String                                                       | content   | Config content |
-  | [DynamicConfigEventType](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigEventType.java) | eventType | Event type     |
+  | [DynamicConfigEventType](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/service/dynamicconfig/common/DynamicConfigEventType.java) | eventType | Event type     |
 
-- [DynamicConfigEventType](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigEventType.java)，including the following four：
+- [DynamicConfigEventType](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/service/dynamicconfig/common/DynamicConfigEventType.java)，including the following four：
 
   | Enums  | Parse                                         |
   | :----- | :-------------------------------------------- |

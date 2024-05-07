@@ -1,134 +1,113 @@
-# 开发说明
+# Development Guide
+[简体中文](README_zh.md) | [English](README.md)
 
-## 如何使用
-首先确保存在node环境，可先从官网下载。[nodejs中文官网](https://nodejs.org/zh-cn/download/)
-环境安装完成后可通过
+## How o deploy
+First, ensure that the Node.js environment exists. You can download it from the official website. After [Node.js](https://nodejs.org/en/download/) is installed, you can use
 ```shell
 node -v
 npm -v
 ```
-来查看是否安装成功。
-之后进入根目录即SERMANT-WEBSITE目录，运行
+to check whether the installation is successful. Then go to the root directory, the SERMANT-WEBSITE directory, run
 ```shell
 npm install
 ```
-安装项目所需依赖。
-本地运行指令
+to install project required dependencies. Local deploy instruction is
 ```shell
 npm run dev
 ```
-项目打包
+Project packaging instruction is
 ```shell
 npm run build
 ```
-## 结构
+## Structure
 ```
 sermant-website
     └─docs
         ├─.vuepress
-        │  ├─components (vue组件)
-        │  ├─public （各种静态资源）
-        │  │  ├─img （图片）
-        │  │  └─user-story-logo （用户案例中的用户logo）
-        │  ├─styles （全局样式）
-        │  └─theme  （主题配置）
+        │  ├─components (vue component)
+        │  ├─public (static resources)
+        │  │  ├─img （pictures）
+        │  │  └─user-story-logo （user logos of user story）
+        │  ├─styles （global style）
+        │  └─theme  （theme configuration）
         │      ├─components
         │      └─styles
-        ├─en （英文文档目录）
-        │  ├─about （关于）
-        │  │  ├─community （社区指南）
-        │  │  ├─question  （常见问题）
-        │  │  ├─team  （开发团队）
-        │  │  └─version （版本发布）
-        │  ├─blog （博客）
-        │  │  └─README.md(博客配置)
-        │  │
-        │  ├─document （文档）
-        │  ├─plugin （插件生态）
-        │  └─story （用户案例）
-        │  └─README.md(主页内容及配置)   
-        └─zh （中文文档目录，结构与英文文档一样）
+        ├─en （english document directory）
+        │  ├─document
+        │  │  ├─community (community documents)
+        │  │  ├─developer-guide (development documents)
+        │  │  ├─faq (frequently asked questions)
+        │  │  ├─plugin (plugin documents)
+        │  │  └─user-guide (user documents)
+        │  ├─blog
+        │  │  └─README.md (blogs)
+        │  ├─QuickStart.md
+        │  └─README.md (homepage)
+        └─zh (same as en)
 ```
-## markdown用法
-文章中的url链接需要改成需要跳转位置的相对路径,可在路径后面添加标题来设置跳转到相应文档的相应标题处。其中标题中的特殊符号改写为"-"，标题末尾的特殊符号省略（如“？”需要去除），英文标题中的大写字母需要全部改写为小写字母。
+## Markdown usage
+The url links in the article need to be changed to the relative path of the desired jump location, and the title can be added after the path to set the jump to the corresponding title of the corresponding document. The special symbol in the title is changed to "-", and the special symbol at the end of the title is omitted (such as "?"). All uppercase letters in the English title need to be changed to lowercase letters.
 ```
 ../../about/question/flowcontrol.md#possible-causes-for-the-retry-rule-does-not-take-effect
 ```
 
-文章中的图片需要使用MyImage标签。如下所示。
+Images in the article need to be tagged 'MyImage'. As shown below.
 ```
 <MyImage src="/docs-img/sermant-rt-arch.png" />
 ```
-src中的路径为图片路径，图片统一存放在.vuepress/public目录下，可在目录下新建图片目录，目前文档网站各个模块的md文件中的图片存放在.vuepress/public/docs-img中，路径只需要像示例一样书写即可。
-## 主页（home）
+The path in src is the image path, and the images are stored in the .vuepress/public directory. You can create an image directory under the directory.
 
-可在zh及en文档目录下的第一个README.md文件中编辑主页内容，内容放置在slot-footer以及头部之间，使用markdown语法，内容会被填充到主页的footer上方位置。
+## Homepage
 
-## 博客（blog）
+The home page content can be edited in the first README.md file in the zh and en document directories. The content is placed between slot-footer and the header using Markdown syntax. The content is populated above footer on the home page.
 
-使用时进入到blog目录下，当需要发布一篇博客时，可新建一个文件夹（文件夹名称可自定义），并在该目录下新建README.md(博客内容)。并在blog根目录下的README.md中添加配置。
+## Blog
+
+Enter the blog directory, when you need to publish a blog, you can add blog content in the README.md.
 ```yml
 blogArr: 
-    - name: 博客1
-      description: '这里是描述'
+    - name: blog1
+      description: 'This is description'
       path: 'blogtest1'
       tags:
       - html
       - javascript
-    - name: 博客1
-      description: '这里是描述'
-      path: 'blogtest1'
+    - name: blog2
+      description: 'This is description'
+      path: 'blogtest2'
       tags:
       - html
       - javascript
 ```
-name字段表示博客名称，description字段为描述信息，path为新创建的博客文件夹名称，tags下可添加自定义的标签，注意格式与上面保持一致即可。
-
-## 【暂未开启】用户案例（story）
-使用用户案例模块，可以先在story根目录下创建一个相应的用户案例文件夹(文件夹名称将会用作用户名)，并在新创建的文件夹下创建README\.md文件。(用户案例具体内容)，然后需要配置story根目录下的README.md文件,配置示例如下所示。
-```yml
-userArr: 
-    - name: Huawei
-      img: '/user-story-logo/huawei.gif'
-      description: '这里是描述'
-    - name: Huawei
-      img: '/user-story-logo/huawei.gif'
-      description: '这里是描述'
-```
-name字段为用户名称（同时也是用户案例相应的文件夹名称），img字段为用户头像路径，可将头像放置在public目录下的user-story-logo中，description为用户案例的相关描述信息。
+The name field indicates the name of the blog, the description field indicates the description information, and the path indicates the address of the newly created blog. You can add user-defined tag to tags. Note that the format of the tags is consistent with that above.
 
 ## 文档 （document）
-document根目录下存在一个README.md文件，可在该文件中编写整个模块的简介或者概览等信息。
-然后可以创建多个文档信息，均为md类型文件，创建后可在其中编辑文档内容。编辑完后，为了能让这些文档信息能通过左侧侧边栏跳转，需要去.vuepress目录下的config.js中添加配置信息。在sidebar字段下添加相应内容，如下所示。
+There is a README.md file in the document root where you can write information such as an introduction or overview of the entire module.
+You can then create multiple document information, all of which are md files, in which you can edit the document content. After editing, in order to make the documentation information jump through the left sidebar, you need to go to the .vuepress directory config.js to add configuration information. Add the appropriate content under the sidebar field, as shown below.
 ```javascript
 sidebar: {
-          "/zh/document/": ["", "one", "two"],
-          "/zh/plugin/": [""],
-          "/zh/story/": [""],
-          "/zh/blog/": [""],
-          "/zh/about/question/": [""],
-          "/zh/about/version/": [""],
-          "/zh/about/community/": [""],
-          "/zh/about/team/": [""],
+          "/en/document/": ["", "one", "two"],
+          "/en/plugin/": [""],
+          "/en/blog/": [""],
         },
 ```
-如自己新创建的一个文档叫one，则将文件名（不需要后缀）以数组的形式添加到"/zh/document/"属性后面，同时注意中英文的sidebar中都要进行这一步，否则可能造成中英文侧边栏不一致。
+If you create a new document called one, add the file name (without suffix) to the "/zh/document/" property in the form of an array. At the same time, note that this step should be carried out in the sidebar in both English and Chinese, otherwise it may cause inconsistency between the Chinese and English sidebars.
 
-进阶用法：当层级较多时，可使用分组。
+Advanced usage: Groups can be used when there are more levels.
 ```
 {
-    title: "开始",
+    title: "begin",
     path: "",
     collapsable: false,
     sidebarDepth: 1,
     children: ["", "QuickStart"],
 },
 ```
-使用对象来进行分组，title属性为分组组名，path为点击时跳转的路径，为空则不可以通过点击分组组名跳转，collapsable为分组是否可以收缩，设为false时不收缩，会显示分组组名下的所有组名，为true时可收缩，sidebarDepth属性为侧边栏标题深度，默认为1即可。
+Use the object to group, title attribute is the group name and path is the path to be jumped when you click. If empty, you cannot click the group name to jump. Collapsable refers to whether the group can be shrunk; if set to false, all group names in the group name will be collapsable, and if true, all group names in the group name can be shrunk. The sidebarDepth property is the depth of the sidebar title. The default value is 1.
 
-children属性为该分组下要显示的所有md文件，空字符串代表README.md文件，其中可继续进行嵌套，将字符串改为以上对象形式，可继续分级（但层数过多会导致侧边栏混乱，不推荐）。
+The children attribute is all the md files to be displayed under this group, and the empty string represents the README.md file, where nesting can continue. The string can be changed to the above object form, and the grading can continue (but too many layers can cause confusion in the sidebar and is not recommended).
 
-侧边栏最终会显示md文件中的一级标题，若想要修改侧边栏显示的标题，直接修改md文件中的一级标题即可。由于侧边栏提取比较严格，md文件中的标题等级请严格从一级标题开始、每级递增不要跳级。当前设置会在点击某一篇侧边栏的md文件标题时，展开显示二级标题。若想提取更深层次标题，请修改配置.vuepress/config.js中的sidebarDepth属性。如下所示，1则会提取二级标题，2则会提取二级标题和三级标题，最大为2.
+The sidebar will eventually display the Level 1 title in the md file. If you want to change the title displayed in the sidebar, you can directly modify the level 1 title in the md file. Due to the strict extraction of the sidebar, the title level in the md file should strictly start with the first-level title, and do not skip each level. The current setting expands to show secondary headings when you click on the md file title in a sidebar. To extract deeper titles, modify the sidebarDepth in the configuration file .vuepress/config.js. As shown below, 1 will extract the second-level title, and 2 will extract the second-level title and third-level title, with a maximum of 2.
 ```
 themeConfig: {
     logo: "/img/sermant-logo.png",
@@ -137,16 +116,3 @@ themeConfig: {
     sidebarDepth: 1,
     }
 ```
-## 【暂未开启】关于 (about)
-该模块中有四个子模块，可按照目录结构（在上方结构中有介绍），在相应目录下的README.md文件中编辑模块介绍信息。
-其中比较特殊的是团队（team）模块,可以在其中添加团队成员信息,description字段为开发团队人员介绍信息，members为团队成员信息。可按以下示例进行编辑
-```yml
-members: 
-    - name: xxx
-      shortDesc: '简短介绍'
-      avatar: '/user-story-logo/huawei.gif'
-      location: '省份'
-      blog: 'xx'
-      github: 'xx'
-```
-name为团队成员名称，shortDesc为个人简短介绍（负责职位等），avatar为个人头像地址（可将头像存到public目录下），location可填写地区信息，blog和github可填写自己个人博客及github地址，这两个选项可以选填，不填的话就不会显示。

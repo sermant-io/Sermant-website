@@ -1,6 +1,6 @@
 # Tag Router
 
-This document is used to introduce the usage of [tag router](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-router).
+This document is used to introduce the usage of [tag router](https://github.com/sermant-io/Sermant/tree/develop/sermant-plugins/sermant-router).
 
 ## Function
 
@@ -98,9 +98,9 @@ Take the Spring Cloud scenario as an example to demonstrate the use of label rou
 
 ### Preparations
 
-- [Download](https://github.com/huaweicloud/Sermant/releases)/Compile the sermant package
+- [Download](https://github.com/sermant-io/Sermant/releases)/Compile the sermant package
 
-- [Download](https://github.com/huaweicloud/Sermant-examples/tree/main/router-demo/spring-cloud-router-demo) spring-cloud-router-demo source code
+- [Download](https://github.com/sermant-io/Sermant-examples/tree/main/router-demo/spring-cloud-router-demo) spring-cloud-router-demo source code
 
 - [Download](https://github.com/apache/servicecomb-service-center) ServiceComb, and start
 

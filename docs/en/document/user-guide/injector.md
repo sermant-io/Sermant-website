@@ -9,7 +9,7 @@ Sermant-injector is a MutatingAdmissionWebhook that can intercept and modify req
 
 ### Parameter Configuration for sermant-injector
 
-This project adopts  Helm for Kubernetes package management. The parameters for deploying sermant-injector are set in [sermant-injector/deployment/release/values.yaml](https://github.com/huaweicloud/Sermant/blob/develop/sermant-injector/deployment/release/injector/values.yaml).
+This project adopts  Helm for Kubernetes package management. The parameters for deploying sermant-injector are set in [sermant-injector/deployment/release/values.yaml](https://github.com/sermant-io/Sermant/blob/develop/sermant-injector/deployment/release/injector/values.yaml).
 
 ```yaml
 namespace:
@@ -88,7 +88,7 @@ All sermants in pods of default namespace are connected to the **Backend**.
 
 ### Parameter Configuration for mirror scripts
 
-**[build-sermant-image.sh](https://github.com/huaweicloud/Sermant/blob/develop/sermant-injector/images/sermant-agent/build-sermant-image.sh)**
+**[build-sermant-image.sh](https://github.com/sermant-io/Sermant/blob/develop/sermant-injector/images/sermant-agent/build-sermant-image.sh)**
 
 | Parameters     | Description                           | Required |
 | -------------- | ------------------------------------- | -------- |
@@ -96,7 +96,7 @@ All sermants in pods of default namespace are connected to the **Backend**.
 | imageName      | Image name of sermant-agent mirror    | True     |
 | imageVersion   | Image version of sermant-agent mirror | True     |
 
-**[build-injector-image.sh](https://github.com/huaweicloud/Sermant/blob/develop/sermant-injector/images/injector/build-injector-image.sh)**
+**[build-injector-image.sh](https://github.com/sermant-io/Sermant/blob/develop/sermant-injector/images/injector/build-injector-image.sh)**
 
 | Parameters   | Description                              | Required |
 | ------------ | ---------------------------------------- | -------- |
@@ -119,7 +119,7 @@ Before deploying **sermant-injector**, you need to build the **sermant-agent** i
 
 #### Prepare Sermant-agent package
 
-Click [here](https://github.com/huaweicloud/Sermant/releases) to download latest release package `sermant-agent-x.x.x.tar.gz` or you can package sermant yourself.
+Click [here](https://github.com/sermant-io/Sermant/releases) to download latest release package `sermant-agent-x.x.x.tar.gz` or you can package sermant yourself.
 
 #### Build Image
 

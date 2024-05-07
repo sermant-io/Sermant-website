@@ -2,7 +2,7 @@
 
 ## 当前版本
 
-完整版本发布记录可以在 [github](https://github.com/huaweicloud/Sermant)查阅。
+完整版本发布记录可以在 [github](https://github.com/sermant-io/Sermant)查阅。
 
 ## 发布周期
 
@@ -17,7 +17,7 @@
 
 ### 稳定版本
 
-稳定版本会出现在Sermant的[发布页](https://github.com/huaweicloud/Sermant/releases)中，其在Maven中新仓中以**X.X.X**为后缀。稳定版本是经过测试后发布的，每一个版本一经发布后将不会再进行改动，如有新增或更改，将会在下一个稳定版本中体现。
+稳定版本会出现在Sermant的[发布页](https://github.com/sermant-io/Sermant/releases)中，其在Maven中新仓中以**X.X.X**为后缀。稳定版本是经过测试后发布的，每一个版本一经发布后将不会再进行改动，如有新增或更改，将会在下一个稳定版本中体现。
 
 ## 版本发布准备
 ### 清单核查

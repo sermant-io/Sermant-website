@@ -1,5 +1,5 @@
 # Monitoring
-This article describes how to use the [Monitoring plugin](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-monitor).
+This article describes how to use the [Monitoring plugin](https://github.com/sermant-io/Sermant/tree/develop/sermant-plugins/sermant-monitor).
 
 ## Function introduction
 
@@ -147,7 +147,7 @@ The following will demonstrate how to use the monitoring plug-in.
 
 - [Download](https://start.spring.io/#!type=maven-project&language=java&platformVersion=2.7.7&packaging=jar&jvmVersion=1.8&groupId=com.example&artifactId=demo&name=demo&description=Demo%20project%20for%20Spring%20Boot&packageName=com.example.demo&dependencies=web) demo application
 
-- [Download](https://github.com/huaweicloud/Sermant/releases)/Compile the sermant package
+- [Download](https://github.com/sermant-io/Sermant/releases)/Compile the sermant package
 
 - [Download](https://github.com/prometheus/prometheus/releases) Prometheus
 

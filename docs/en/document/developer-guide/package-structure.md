@@ -9,7 +9,7 @@ Before we start, we need to make a clear convention to avoid class conflicts, in
 
 #### Sermant-Agentcore Module
 
-> [Sermant - Agent core Module](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core) is the core module of Sermant Agent, which provides encapsulation of core capabilities such as bytecode enhancement capability, class isolation capability, plug-in capability, and basic services of service governance.
+> [Sermant - Agent core Module](https://github.com/sermant-io/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core) is the core module of Sermant Agent, which provides encapsulation of core capabilities such as bytecode enhancement capability, class isolation capability, plug-in capability, and basic services of service governance.
 
 ## Plugin Main Module
 
@@ -27,7 +27,7 @@ The plugin master module is the main implementation of the plugin, and the devel
 
 **Plugin Services** are mainly divided into two parts:
 
-**Service Interface Definition** is used in the [plugin main module](#Plugin-Main-Module) to describe the capabilities provided by the service. When defining the plug-in service of a plugin, you need to inherit the plugin service base interface [com.huaweicloud.sermant.core.PluginService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/service/PluginService.java),. This interface provides the `start()` method to be called when **Sermant** is started, and the `stop()` method to be called when the JVM is stopped.
+**Service Interface Definition** is used in the [plugin main module](#Plugin-Main-Module) to describe the capabilities provided by the service. When defining the plug-in service of a plugin, you need to inherit the plugin service base interface [io.sermant.core.plugin.service.PluginService](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/plugin/service/PluginService.java),. This interface provides the `start()` method to be called when **Sermant** is started, and the `stop()` method to be called when the JVM is stopped.
 
 **Service interface implementation** In the [plugin service module](#Plugin-Service-Module), in the [plugin main module](#Plugin-Main-Module) can be loaded through the **SPI** mechanism and use the interface implementation of the plugin service.
 
@@ -58,15 +58,15 @@ public class EchoServiceImpl implements EchoService {
 }
 ```
 
-Finally, when developing a plug-in service, don't forget to add the plugin service's **SPI** configuration, add the `META-INF/services` directory to the `resources` directory under` template\template-service` in the project, then create **SPI** file named `com.huaweicloud.sermant.core.plugin.service.PluginService` in it，and add the class name of the plugin service implementation class to it.
+Finally, when developing a plug-in service, don't forget to add the plugin service's **SPI** configuration, add the `META-INF/services` directory to the `resources` directory under` template\template-service` in the project, then create **SPI** file named `io.sermant.core.plugin.service.PluginService` in it，and add the class name of the plugin service implementation class to it.
 
 ```java
 com.huaweicloud.sermant.template.EchoServiceImpl
 ```
 
-Next, find the `com.huaweicloud.sermant.template.TemplateDeclarer` class under project `template\template-plugin`, use the already developed plugin service in the `before` method of the [interceptor](bytecode-enhancement.md#Interceptor) of the `main` method, get the plugin service through the [com.huaweicloud.sermant.core.plugin.service.PluginServiceManager](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/service/PluginServiceManager.java) plugin service manager and use:
+Next, find the `com.huaweicloud.sermant.template.TemplateDeclarer` class under project `template\template-plugin`, use the already developed plugin service in the `before` method of the [interceptor](bytecode-enhancement.md#Interceptor) of the `main` method, get the plugin service through the [io.sermant.core.plugin.service.PluginServiceManager](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/plugin/service/PluginServiceManager.java) plugin service manager and use:
 
-> Note：`com.huaweicloud.sermant.core.plugin.service.PluginServiceManager::getPluginService(Class clazz)` can obtain the instance of plugin service implementation based on Java **SPI** mechanism through plugin service interface.
+> Note：`io.sermant.core.plugin.service.PluginServiceManager::getPluginService(Class clazz)` can obtain the instance of plugin service implementation based on Java **SPI** mechanism through plugin service interface.
 
 ```java
 public ExecuteContext before(ExecuteContext context) throws Exception {

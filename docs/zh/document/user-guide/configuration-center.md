@@ -32,7 +32,7 @@
 
 ## Sermant动态配置中心模型
 
-以Sermant Agent中的[KeyGroupService.publishConfig](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyGroupService.java)接口函数说明Sermant中的配置模型。
+以Sermant Agent中的[KeyGroupService.publishConfig](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/service/dynamicconfig/api/KeyGroupService.java)接口函数说明Sermant中的配置模型。
 
 ```java
 /**
@@ -129,10 +129,10 @@ groupKey1=groupValue1[&groupKey2=groupVaue2...]
 
 ## 启动和结果验证
 
-本教程使用[Sermant-examples](https://github.com/huaweicloud/Sermant-examples/tree/main/first-plugin-demo)仓库中的Demo插件和微服务来进行动态配置能力的演示，该插件中配置了监听器以监听动态配置变化。
+本教程使用[Sermant-examples](https://github.com/sermant-io/Sermant-examples/tree/main/first-plugin-demo)仓库中的Demo插件和微服务来进行动态配置能力的演示，该插件中配置了监听器以监听动态配置变化。
 
 ### 准备工作
-- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.4.0/sermant-examples-first-plugin-demo-1.4.0.tar.gz) Demo二进制产物压缩包
+- [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v1.4.0/sermant-examples-first-plugin-demo-1.4.0.tar.gz) Demo二进制产物压缩包
 - [下载](https://zookeeper.apache.org/releases.html#download) ZooKeeper服务端
 - [下载](https://servicecomb.apache.org/cn/release/kie-downloads) Kie服务端
 - [下载](https://github.com/alibaba/nacos/releases/download/2.1.0/nacos-server-2.1.0.tar.gz) Nacos服务端

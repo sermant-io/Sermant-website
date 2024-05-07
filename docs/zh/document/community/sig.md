@@ -3,7 +3,7 @@
 
 ## 可观测性方向兴趣讨论第一次会议
 **会议议题**：
-1. 研讨Issue 1445：[Sermant 能够支持 Prometheus 监控](https://github.com/huaweicloud/Sermant/issues/1445)
+1. 研讨Issue 1445：[Sermant 能够支持 Prometheus 监控](https://github.com/sermant-io/Sermant/issues/1445)
 
 **会议链接**：[2024/03/08 下午 15:00--15:45 UTC+8](https://meeting.tencent.com/dm/oRvUhbxwBpMx)
 

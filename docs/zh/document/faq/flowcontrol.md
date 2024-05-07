@@ -32,4 +32,4 @@
 
 ## 启动报HttpHostConnectException异常的可能原因
 
-- 出现该异常的原因是未启动`Sermant`后台服务`sermant-backhend`, 找到启动类`com.huawei.apm.backend.NettyServerApplication`启动后台服务，并重启应用即可。
+- 出现该异常的原因是未启动`Sermant`后台服务`sermant-backhend`, 启动`sermant-backhend`后台服务，并重启应用即可。

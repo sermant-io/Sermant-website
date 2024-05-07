@@ -32,7 +32,7 @@ module.exports = {
         nav: [
           { text: "文档", link: "/zh/document/" },
           { text: "博客", link: "/zh/blog/" },
-          { text: "Github", link: "https://github.com/huaweicloud/Sermant" },
+          { text: "Github", link: "https://github.com/sermant-io/Sermant" },
         ],
         sidebar: {
           "/zh/document/": [
@@ -136,7 +136,7 @@ module.exports = {
         nav: [
           { text: "Document", link: "/en/document/" },
           { text: "Blog", link: "/en/blog/" },
-          { text: "Github", link: "https://github.com/huaweicloud/Sermant" },
+          { text: "Github", link: "https://github.com/sermant-io/Sermant" },
         ],
         sidebar: {
           "/en/document/": [

@@ -1,6 +1,6 @@
 # SpringBoot Registry
 
-This article describes how to use the [SpringBoot registry plugin](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-springboot-registry).
+This article describes how to use the [SpringBoot registry plugin](https://github.com/sermant-io/Sermant/tree/develop/sermant-plugins/sermant-springboot-registry).
 
 ## Function
 
@@ -97,9 +97,9 @@ The following SpringBoot scenario is an example to demonstrate how the SpringBoo
 
 #### Preparations
 
-- [Download](https://github.com/huaweicloud/Sermant/releases)/Compile the sermant package
+- [Download](https://github.com/sermant-io/Sermant/releases)/Compile the sermant package
 
-- [Download](https://github.com/huaweicloud/Sermant-examples/tree/main/registry-demo/springboot-registry-demo) springboot-registry-demo source code
+- [Download](https://github.com/sermant-io/Sermant-examples/tree/main/registry-demo/springboot-registry-demo) springboot-registry-demo source code
 
 - [Download](https://zookeeper.apache.org/releases.html#download) Zookeeper, and start
 

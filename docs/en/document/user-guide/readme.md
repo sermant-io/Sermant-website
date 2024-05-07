@@ -10,7 +10,7 @@ The overall architecture of Sermant includes sermant-agent, Backend, Dynamic Con
 
 ### sermant-agent
 
-Sermant-agent is the essential core component of Sermant, which contains bytecode enhancements of [sermant-agentcore](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore), [sermant-plugins](https://gIthub.com/huaweicloud/Sermant/tree/develop/sermant-plugins), [sermant-common](https://github.com/huaweicloud/Sermant/tree/develop/sermant-common). Sermant-agent takes effect when the host application is launched by specifying the `sermant-agent.jar'` package via the `-javaagent` argument. 
+Sermant-agent is the essential core component of Sermant, which contains bytecode enhancements of [sermant-agentcore](https://github.com/sermant-io/Sermant/tree/develop/sermant-agentcore), [sermant-plugins](https://github.com/sermant-io/Sermant/tree/develop/sermant-plugins), [sermant-common](https://github.com/sermant-io/Sermant/tree/develop/sermant-common). Sermant-agent takes effect when the host application is launched by specifying the `sermant-agent.jar'` package via the `-javaagent` argument. 
 
 Sermant-agent is based on JavaAgent technology and supports JDK 1.6 and above.  
 

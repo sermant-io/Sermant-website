@@ -363,11 +363,11 @@ export default {
       }
     },
     goToGithub() {
-      window.open("https://github.com/huaweicloud/Sermant");
+      window.open("https://github.com/sermant-io/Sermant");
     },
     getGithubStars() {
       this.$axios
-        .get("https://api.github.com/repos/huaweicloud/sermant")
+        .get("https://api.github.com/repos/sermant-io/sermant")
         .then((res) => {
           this.githubStars = res.data.stargazers_count || 0;
         })

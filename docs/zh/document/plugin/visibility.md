@@ -1,6 +1,6 @@
 # 服务可见性
 
-本文介绍如何使用[服务可见性插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-visibility)。
+本文介绍如何使用[服务可见性插件](https://github.com/sermant-io/Sermant/tree/develop/sermant-plugins/sermant-service-visibility)。
 
 ## 术语
 
@@ -58,9 +58,9 @@ visibility.config:
 
 ### 准备工作
 
-- [下载](https://github.com/huaweicloud/Sermant/releases/download/v1.4.0/sermant-1.4.0.tar.gz) Sermant
+- [下载](https://github.com/sermant-io/Sermant/releases/download/v1.4.0/sermant-1.4.0.tar.gz) Sermant
   Release包（当前版本推荐1.4.0版本）
-- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.4.0/sermant-examples-visibility-demo-1.4.0.tar.gz) Demo二进制产物压缩包
+- [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v1.4.0/sermant-examples-visibility-demo-1.4.0.tar.gz) Demo二进制产物压缩包
 - [下载](https://zookeeper.apache.org/releases.html#download)ZooKeeper（动态配置中心&注册中心），并启动
 
 ### 步骤一：获取Demo二进制产物
@@ -138,9 +138,9 @@ java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=prov
 {
  "contractList ": [{
   "serviceType": "dubbo",
-  "interfaceName": "com.huaweicloud.integration.service.BarService",
-  "serviceKey": "com.huaweicloud.integration.service.BarService",
-  "url": "com.huaweicloud.integration.service.BarService",
+  "interfaceName": "io.sermant.integration.service.BarService",
+  "serviceKey": "io.sermant.integration.service.BarService",
+  "url": "io.sermant.integration.service.BarService",
   "methodInfoList": [{
    "name": "bar",
    "paramInfoList": [{
@@ -161,15 +161,15 @@ java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=prov
 {
  "consanguinityList": [{
   "serviceType": "dubbo",
-  "interfaceName": "com.huaweicloud.integration.service.BarService",
-  "url": "com.huaweicloud.integration.service.BarService",
-  "serviceKey": "com.huaweicloud.integration.service.BarService",
+  "interfaceName": "io.sermant.integration.service.BarService",
+  "url": "io.sermant.integration.service.BarService",
+  "serviceKey": "io.sermant.integration.service.BarService",
   "providers": [{
    "ip": "x.x.x.x",
    "port": "28821",
    "serviceType": "dubbo",
-   "serviceKey": "com.huaweicloud.integration.service.BarService",
-   "url": "com.huaweicloud.integration.service.BarService"
+   "serviceKey": "io.sermant.integration.service.BarService",
+   "url": "io.sermant.integration.service.BarService"
   }]
  }]
 }

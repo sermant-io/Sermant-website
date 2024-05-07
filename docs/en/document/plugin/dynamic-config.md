@@ -1,6 +1,6 @@
 # Dynamic Configuration
 
-This article describes how to use the [Dynamic Configuration Plugin](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-dynamic-config)
+This article describes how to use the [Dynamic Configuration Plugin](https://github.com/sermant-io/Sermant/tree/develop/sermant-plugins/sermant-dynamic-config)
 
 ## Functions
 
@@ -126,8 +126,8 @@ The following shows how to use the dynamic configuration plugin.
 
 ### Preparation
 
-- [Download](https://github.com/huaweicloud/Sermant-examples/tree/main/flowcontrol-demo/spring-cloud-demo/spring-provider) Demo source code
-- [Download](https://github.com/huaweicloud/Sermant/releases) or build Sermant package
+- [Download](https://github.com/sermant-io/Sermant-examples/tree/main/flowcontrol-demo/spring-cloud-demo/spring-provider) Demo source code
+- [Download](https://github.com/sermant-io/Sermant/releases) or build Sermant package
 - [Download](https://zookeeper.apache.org/releases#download) and start zookeeper
 - [Download](https://github.com/vran-dev/PrettyZoo/releases) PrettyZoo  and connect zookeeper
 

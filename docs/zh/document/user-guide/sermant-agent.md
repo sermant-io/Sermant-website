@@ -125,7 +125,7 @@ $ java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
 
 <MyImage src="/docs-img/sermant-agent-agentmain-uninstall-success.png"></MyImage>
 
-> 注：该能力可以在开发态通过调用sermant-agentcore-core所提供 [AgentCoreEntrance](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/AgentCoreEntrance.java)::uninstall()接口来实现
+> 注：该能力可以在开发态通过调用sermant-agentcore-core所提供 [AgentCoreEntrance](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/AgentCoreEntrance.java)::uninstall()接口来实现
 
 ## 动态安装插件
 
@@ -164,7 +164,7 @@ $ java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
 
 <MyImage src="/docs-img/sermant-agent-dynamic-install-plugin-success.png"></MyImage>
 
-> 注：该能力可以在开发态通过调用sermant-agentcore-core所提供[PluginManager](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/PluginManager.java)::install(Set pluginNames)方法来实现
+> 注：该能力可以在开发态通过调用sermant-agentcore-core所提供[PluginManager](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/plugin/PluginManager.java)::install(Set pluginNames)方法来实现
 
 ### 重复安装插件
 该能力的推出主要因为在一些场景中，插件的生效范围有动态扩展的诉求，主要是扩展增强的类和方法，并且需要保证已经生效的部分不会受到影响，在这种情况下，就不能通过卸载插件，调整配置后重新安装来解决此类场景的问题。例如故障注入场景中，针对不同的故障可能需要对不同的类进行字节码增强，并且需要按照测试方案中的编排逐渐注入各式各样的故障场景，在这种情况下，我们就不能通过卸载再重新安装的方式来完成这项工作，只能将负责故障注入的插件安装多次来解决这个问题，这就要用到重复安装插件的能力，重复安装插件将会复用静态资源，Sermant内部通过插件管理来隔离重复安装的插件。
@@ -220,7 +220,7 @@ $ java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
 
 <MyImage src="/docs-img/sermant-agent-dynamic-uninstall-plugin-success.png"></MyImage>
 
-> 注：该能力可以在开发态通过调用sermant-agentcore-core所提供[PluginManager](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/PluginManager.java)::uninstall(Set pluginNames)方法来实现
+> 注：该能力可以在开发态通过调用sermant-agentcore-core所提供[PluginManager](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/plugin/PluginManager.java)::uninstall(Set pluginNames)方法来实现
 
 ## 增强信息查询
 在sermant通过任意方式启动成功后，可以通过运行`AgentLoader`，并通过传入参数下发查询增强信息的指令`command=CHECK_ENHANCEMENT`：
@@ -242,13 +242,13 @@ $ java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
 
 按照指引填充完成后在sermant日志中可以看到以下内容：
 ```shell
-xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.core.command.CheckEnhancementsCommandExecutor] [execute:42] [Attach Listener] ---------- PLUGINS ----------
-xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.core.command.CheckEnhancementsCommandExecutor] [execute:44] [Attach Listener] test-plugin-A:1.0.0
-xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.core.command.CheckEnhancementsCommandExecutor] [execute:44] [Attach Listener] test-plugin-B:1.0.0
-xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.core.command.CheckEnhancementsCommandExecutor] [execute:46] [Attach Listener] ---------- ENHANCEMENT ----------
-xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.core.command.CheckEnhancementsCommandExecutor] [execute:58] [Attach Listener] test-plugin-A:1.0.0
-xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.core.command.CheckEnhancementsCommandExecutor] [execute:65] [Attach Listener] xxxxx.xxxx.TestClassA#testFunctionA(boolean,java.lang.String,java.lang.String,java.lang.String)@sun.misc.Launcher$AppClassLoader@5c647e05 [xxxx.xxxx.TestInterceptorA]
-xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.core.command.CheckEnhancementsCommandExecutor] [execute:65] [Attach Listener] xxxxx.xxxx.TestClassB#testFunctionB(boolean,java.lang.String,java.lang.String,java.lang.String)@sun.misc.Launcher$AppClassLoader@5c647e05 [xxxx.xxxx.TestInterceptorB,xxxx.xxxx.TestInterceptorC]
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [io.sermant.core.command.CheckEnhancementsCommandExecutor] [execute:42] [Attach Listener] ---------- PLUGINS ----------
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [io.sermant.core.command.CheckEnhancementsCommandExecutor] [execute:44] [Attach Listener] test-plugin-A:1.0.0
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [io.sermant.core.command.CheckEnhancementsCommandExecutor] [execute:44] [Attach Listener] test-plugin-B:1.0.0
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [io.sermant.core.command.CheckEnhancementsCommandExecutor] [execute:46] [Attach Listener] ---------- ENHANCEMENT ----------
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [io.sermant.core.command.CheckEnhancementsCommandExecutor] [execute:58] [Attach Listener] test-plugin-A:1.0.0
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [io.sermant.core.command.CheckEnhancementsCommandExecutor] [execute:65] [Attach Listener] xxxxx.xxxx.TestClassA#testFunctionA(boolean,java.lang.String,java.lang.String,java.lang.String)@sun.misc.Launcher$AppClassLoader@5c647e05 [xxxx.xxxx.TestInterceptorA]
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [io.sermant.core.command.CheckEnhancementsCommandExecutor] [execute:65] [Attach Listener] xxxxx.xxxx.TestClassB#testFunctionB(boolean,java.lang.String,java.lang.String,java.lang.String)@sun.misc.Launcher$AppClassLoader@5c647e05 [xxxx.xxxx.TestInterceptorB,xxxx.xxxx.TestInterceptorC]
 ```
 
 打印的内容格式为：

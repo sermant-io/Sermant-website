@@ -3,7 +3,7 @@
 
 This document describes how the Sermant plugin uses the heartbeat function.
 
-Heartbeat is one of the core services in [**Sermant** core module](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core). An instance of heartbeatService is obtained by:
+Heartbeat is one of the core services in [**Sermant** core module](https://github.com/sermant-io/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core). An instance of heartbeatService is obtained by:
 ```java
 HeartbeatService heartbeatService = ServiceManager.getService(HeartbeatService.class);
 ```

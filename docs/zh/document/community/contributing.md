@@ -8,7 +8,7 @@
 
 ### 行为守则
 
-请务必阅读并遵守我们的[行为准则](https://github.com/huaweicloud/Sermant/tree/develop/CODE_OF_CONDUCT.md)。
+请务必阅读并遵守我们的[行为准则](https://github.com/sermant-io/Sermant/tree/develop/CODE_OF_CONDUCT.md)。
 
 ### 开源贡献协议
 
@@ -51,13 +51,13 @@ Sermant 欢迎任何角色的新参与者，包括用户、贡献者、提交者
 
 #### 打开/提取Issue以进行准备
 
-如果你发现文档中的错字，发现代码中的错误，或者想要新功能，或者想要提出建议，你可以在 [GitHub](https://github.com/huaweicloud/Sermant/issues/new) 上提Issue。
+如果你发现文档中的错字，发现代码中的错误，或者想要新功能，或者想要提出建议，你可以在 [GitHub](https://github.com/sermant-io/Sermant/issues/new) 上提Issue。
 
 如果您只想直接贡献，您可以选择下面的Issue:
 
--   [Contribution Welcome](https://github.com/huaweicloud/Sermant/labels/contribution%20welcome): 急需的问题，但目前手头不足。
+-   [Contribution Welcome](https://github.com/sermant-io/Sermant/labels/contribution%20welcome): 急需的问题，但目前手头不足。
     
--   [good first issue](https://github.com/huaweicloud/Sermant/labels/good%20first%20issue): 适合新人，新人可以拿一个热身。
+-   [good first issue](https://github.com/sermant-io/Sermant/labels/good%20first%20issue): 适合新人，新人可以拿一个热身。
     
 
 我们非常重视文档和与其他项目的集成，例如 Spring Cloud、Kubernetes、Dubbo 等。我们很高兴在这些方面解决任何问题。
@@ -91,7 +91,7 @@ Sermant 欢迎任何角色的新参与者，包括用户、贡献者、提交者
 
 创建拉取请求时:
 
-1. Please follow [the pull request template](https://github.com/huaweicloud/Sermant/tree/develop/.github/PULL_REQUEST_TEMPLATE.md).
+1. Please follow [the pull request template](https://github.com/sermant-io/Sermant/tree/develop/.github/PULL_REQUEST_TEMPLATE.md).
    
 2. Please create the request to **develop** branch.
    

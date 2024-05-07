@@ -70,7 +70,7 @@
 
 ### API
 
-**动态配置功能**的服务功能`API`由[DynamicConfigService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java)抽象类提供，其实现三个接口，见于[API](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api)目录中。
+**动态配置功能**的服务功能`API`由[DynamicConfigService](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/service/dynamicconfig/DynamicConfigService.java)抽象类提供，其实现三个接口，见于[API](https://github.com/sermant-io/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/service/dynamicconfig/api)目录中。
 
 #### 获取动态配置服务
 
@@ -229,28 +229,28 @@ DynamicConfigService dynamicConfigService = ServiceManager.getService(DynamicCon
 
 #### 说明
 
-以上的`API`主要分为数据的增删查改操作，以及监听器的[DynamicConfigListener](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java)增删操作，其中后者的事件回调是**动态配置服务**得以实现功能中至关重要的一环，也是插件中使用**动态配置服务**的主要功能。
+以上的`API`主要分为数据的增删查改操作，以及监听器的[DynamicConfigListener](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java)增删操作，其中后者的事件回调是**动态配置服务**得以实现功能中至关重要的一环，也是插件中使用**动态配置服务**的主要功能。
 
-另外，对**某个配置键的相关操作**的所有`API`都是不带`Group`的`API`，它们在[DynamicConfigService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java)中其实都会使用默认`Group`，这点需要注意。默认`Group`可以通过sermant-agent的**配置文件**`/config/config.properties`的`dynamic.config.defaultGroup`修改，参数说明可参考[Sermant-agent使用手册](../user-guide/sermant-agent.md#动态配置中心相关参数)。
+另外，对**某个配置键的相关操作**的所有`API`都是不带`Group`的`API`，它们在[DynamicConfigService](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/service/dynamicconfig/DynamicConfigService.java)中其实都会使用默认`Group`，这点需要注意。默认`Group`可以通过sermant-agent的**配置文件**`/config/config.properties`的`dynamic.config.defaultGroup`修改，参数说明可参考[Sermant-agent使用手册](../user-guide/sermant-agent.md#动态配置中心相关参数)。
 
 最后，除了以上的服务接口以外，开发者还需要关注一些其他接口、配置或实体：
 
-- 动态配置监听器[DynamicConfigListener](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java)，其中包含的接口方法如下：
+- 动态配置监听器[DynamicConfigListener](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java)，其中包含的接口方法如下：
 
   | 方法                                                         | 解析                       |
   | :----------------------------------------------------------- | :------------------------- |
-  | void process([DynamicConfigEvent](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigEvent.java)) | 处理配置改变事件的回调接口 |
+  | void process([DynamicConfigEvent](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/service/dynamicconfig/common/DynamicConfigEvent.java)) | 处理配置改变事件的回调接口 |
 
-- 动态配置改变事件[DynamicConfigEvent](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigEvent.java)，其成员属性如下：
+- 动态配置改变事件[DynamicConfigEvent](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/service/dynamicconfig/common/DynamicConfigEvent.java)，其成员属性如下：
 
   | 类型                                                         | 属性      | 解析     |
   | :----------------------------------------------------------- | :-------- | :------- |
   | String                                                       | key       | 配置键   |
   | String                                                       | group     | 配置分组 |
   | String                                                       | content   | 配置信息 |
-  | [DynamicConfigEventType](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigEventType.java) | eventType | 事件类型 |
+  | [DynamicConfigEventType](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/service/dynamicconfig/common/DynamicConfigEventType.java) | eventType | 事件类型 |
 
-- 动态配置改变事件类型[DynamicConfigEventType](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigEventType.java)，含以下四种：
+- 动态配置改变事件类型[DynamicConfigEventType](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/service/dynamicconfig/common/DynamicConfigEventType.java)，含以下四种：
 
   | 枚举值 | 解析                     |
   | :----- | :----------------------- |

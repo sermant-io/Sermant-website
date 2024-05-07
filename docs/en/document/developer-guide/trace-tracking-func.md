@@ -202,7 +202,7 @@ public class HandleConsumerDeclarer extends AbstractPluginDeclarer {
 
 > `handleConsume` in `SimulateProvider` is the service provider execution unit of the `SimulateServer` node in the distributed system. So here use TracingService: : onProviderSpanStart to mark the execution unit, and through ExtractService defines the ability to link information extracted from communication carrier.
 
-4. Add the class name of the above enhanced declaration class to the `META-INF/services/com.huaweicloud.sermant.core.plugin.agent.declarer.PluginDeclarer` SPI file
+4. Add the class name of the above enhanced declaration class to the `META-INF/services/io.sermant.core.plugin.agent.declarer.PluginDeclarer` SPI file
 
 5. Once the development is complete, follow the [Packaged build](README.md#Packaged-build) process used to create the 
 first plugin, run **mvn package** in the root directory of the project.
@@ -236,23 +236,23 @@ The execution logic defined in the plug-in has been enhanced into the test appli
 2. Open the log file `sermant-0.log` and check the log contents. You can see the following log, from which the `SpanId` and `ParentSpanId` can be used to restore the link relationship of the app:
 
 ```日志
-xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.template.HandleRequestDeclarer$1] [before:47] [main] TraceId:715c69a5-0c94-423d-b2b8-b288c5fccdb3
-xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.template.HandleRequestDeclarer$1] [before:48] [main] SpanId:0
-xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.template.HandleRequestDeclarer$1] [before:49] [main] ParentSpanId:null
-xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.template.HandleRequestDeclarer$1] [before:50] [main] Class:com.huaweicloud.template.SimulateServer
-xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.template.HandleRequestDeclarer$1] [before:51] [main] Method:handleRequest
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [io.sermant.template.HandleRequestDeclarer$1] [before:47] [main] TraceId:715c69a5-0c94-423d-b2b8-b288c5fccdb3
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [io.sermant.template.HandleRequestDeclarer$1] [before:48] [main] SpanId:0
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [io.sermant.template.HandleRequestDeclarer$1] [before:49] [main] ParentSpanId:null
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [io.sermant.template.HandleRequestDeclarer$1] [before:50] [main] Class:com.huaweicloud.template.SimulateServer
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [io.sermant.template.HandleRequestDeclarer$1] [before:51] [main] Method:handleRequest
 
-xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.template.ConsumerDeclarer$1] [before:48] [main] TraceId:715c69a5-0c94-423d-b2b8-b288c5fccdb3
-xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.template.ConsumerDeclarer$1] [before:49] [main] SpanId:1
-xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.template.ConsumerDeclarer$1] [before:50] [main] ParentSpanId:0
-xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.template.ConsumerDeclarer$1] [before:51] [main] Class:com.huaweicloud.template.SimulateServer
-xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.template.ConsumerDeclarer$1] [before:52] [main] Method:consume
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [io.sermant.template.ConsumerDeclarer$1] [before:48] [main] TraceId:715c69a5-0c94-423d-b2b8-b288c5fccdb3
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [io.sermant.template.ConsumerDeclarer$1] [before:49] [main] SpanId:1
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [io.sermant.template.ConsumerDeclarer$1] [before:50] [main] ParentSpanId:0
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [io.sermant.template.ConsumerDeclarer$1] [before:51] [main] Class:com.huaweicloud.template.SimulateServer
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [io.sermant.template.ConsumerDeclarer$1] [before:52] [main] Method:consume
 
-xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.template.HandleConsumerDeclarer$1] [before:47] [main] TraceId:715c69a5-0c94-423d-b2b8-b288c5fccdb3
-xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.template.HandleConsumerDeclarer$1] [before:48] [main] SpanId:1-0-0
-xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.template.HandleConsumerDeclarer$1] [before:49] [main] ParentSpanId:1
-xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.template.HandleConsumerDeclarer$1] [before:50] [main] Class:com.huaweicloud.template.SimulateProvider
-xxxx-xx-xx xx:xx:xx.xxx [INFO] [com.huaweicloud.sermant.template.HandleConsumerDeclarer$1] [before:51] [main] Method:handleConsume
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [io.sermant.template.HandleConsumerDeclarer$1] [before:47] [main] TraceId:715c69a5-0c94-423d-b2b8-b288c5fccdb3
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [io.sermant.template.HandleConsumerDeclarer$1] [before:48] [main] SpanId:1-0-0
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [io.sermant.template.HandleConsumerDeclarer$1] [before:49] [main] ParentSpanId:1
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [io.sermant.template.HandleConsumerDeclarer$1] [before:50] [main] Class:com.huaweicloud.template.SimulateProvider
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [io.sermant.template.HandleConsumerDeclarer$1] [before:51] [main] Method:handleConsume
 ```
 
 > According to the link marking information carried in the log, the following conclusions can be analyzed

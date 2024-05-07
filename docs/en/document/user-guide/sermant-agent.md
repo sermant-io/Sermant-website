@@ -1,6 +1,6 @@
 # Sermant-agent User Manual
 
-Sermant-agent is the essential core component of Sermant, which contains bytecode enhancements of [sermant-agentcore](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore), [sermant-plugins](https://gIthub.com/huaweicloud/Sermant/tree/develop/sermant-plugins), [sermant-common](https://github.com/huaweicloud/Sermant/tree/develop/sermant-common). The modules of the sermant-agent component are found in the `sermant-agent-x.x.x/agent` directory described in the [Sermant Introduction](readme.md). This article describes how to use sermant-agent.
+Sermant-agent is the essential core component of Sermant, which contains bytecode enhancements of [sermant-agentcore](https://github.com/sermant-io/Sermant/tree/develop/sermant-agentcore), [sermant-plugins](https://github.com/sermant-io/Sermant/tree/develop/sermant-plugins), [sermant-common](https://github.com/sermant-io/Sermant/tree/develop/sermant-common). The modules of the sermant-agent component are found in the `sermant-agent-x.x.x/agent` directory described in the [Sermant Introduction](readme.md). This article describes how to use sermant-agent.
 
 The framework body of sermant-agent provides bytecode enhanced implementation logic for Sermant, and supports common core capabilities such as heartbeat function, dynamic configuration function and log function. In the sermant-agent plugin package, the extension plugins provide the service governance capabilities such as label routing, flow control and double registration.
 
@@ -41,11 +41,11 @@ All other configurations beside plugin configurations are configured in the `age
 ```properties
 # agent config
 agent.config.isEnhanceBootStrapEnable=false
-agent.config.ignoredPrefixes=com.huawei.sermant,com.huaweicloud.sermant
+agent.config.ignoredPrefixes=io.sermant
 agent.config.ignoredInterfaces=org.springframework.cglib.proxy.Factory
 agent.config.combineStrategy=ALL
-agent.config.serviceBlackList=com.huaweicloud.sermant.implement.service.heartbeat.HeartbeatServiceImpl,com.huaweicloud.sermant.implement.service.send.NettyGatewayClient,com.huaweicloud.sermant.implement.service.tracing.TracingServiceImpl
-agent.config.serviceInjectList=com.huawei.discovery.service.lb.filter.NopInstanceFilter,com.huawei.discovery.service.lb.DiscoveryManager
+agent.config.serviceBlackList=io.sermant.implement.service.heartbeat.HeartbeatServiceImpl,io.sermant.implement.service.send.NettyGatewayClient,io.sermant.implement.service.tracing.TracingServiceImpl
+agent.config.serviceInjectList=io.sermant.discovery.service.lb.filter.NopInstanceFilter,io.sermant.discovery.service.lb.DiscoveryManager
 agent.config.isShowEnhanceLogEnable=false
 agent.config.enhancedClassOutputPath=
 
@@ -87,11 +87,11 @@ The parameters involved are associated with sermant-agent, Backend, Dynamic Conf
 | <span style="display:inline-block;width:100px">Parameter Key</span> | <span style="display:inline-block;width:120px">Description</span> | <span style="display:inline-block;width:70px">Parameter Category</span> |                        Default Value                         | Required |
 | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :------: |
 |            agent.config.isEnhanceBootStrapEnable             | Switch for enhancement of classes loaded by the bootstrap classloader |                            Agent                             |                            false                             |  False   |
-|                 agent.config.ignoredPrefixes                 | Ignored class set, where the fully qualified name prefixes defined in this set are used to exclude classes that are ignored during the enhancement process |                            Agent                             |          com.huawei.sermant,com.huaweicloud.sermant          |  False   |
+|                 agent.config.ignoredPrefixes                 | Ignored class set, where the fully qualified name prefixes defined in this set are used to exclude classes that are ignored during the enhancement process |                            Agent                             |          io.sermant          |  False   |
 |                agent.config.ignoredInterfaces                | Ignored interface set, where the fully qualified name prefixes defined in this set are used to exclude interfaces that are ignored during the enhancement process |                            Agent                             |           org.springframework.cglib.proxy.Factory            |  False   |
 |                 agent.config.combineStrategy                 | Plugin declarator merge policy: NONE, no merge; BY_NAME, coalesced by matching class names; ALL, all merge |                            Agent                             |                             ALL                              |  False   |
-|                agent.config.serviceBlackList                 | Sermant-agent core functionality blacklist to disable related services |                            Agent                             | com.huaweicloud.sermant.implement.service.heartbeat.HeartbeatServiceImpl<br>,com.huaweicloud.sermant.implement.service.send.NettyGatewayClient<br>,com.huaweicloud.sermant.implement.service.tracing.TracingServiceImpl |  False   |
-|                agent.config.serviceInjectList                |         List of service in plugin to be intercepted          |                            Agent                             | com.huawei.discovery.service.lb.filter.NopInstanceFilter<br>,com.huawei.discovery.service.lb.DiscoveryManager |  False   |
+|                agent.config.serviceBlackList                 | Sermant-agent core functionality blacklist to disable related services |                            Agent                             | io.sermant.implement.service.heartbeat.HeartbeatServiceImpl<br>,io.sermant.implement.service.send.NettyGatewayClient<br>,io.sermant.implement.service.tracing.TracingServiceImpl |  False   |
+|                agent.config.serviceInjectList                |         List of service in plugin to be intercepted          |                            Agent                             | io.sermant.discovery.service.lb.filter.NopInstanceFilter<br>,io.sermant.discovery.service.lb.DiscoveryManager |  False   |
 |             agent.config.isShowEnhanceLogEnable              |     Whether to output retrieval logs during enhancement      |                            Agent                             |                            false                             |  False   |
 |             agent.config.enhancedClassOutputPath             |           The output path of the enhanced classed            |                            Agent                             |                              -                               |  False   |
 
@@ -225,7 +225,7 @@ Sermant-agent supports Linux, Windows, and Aix operating systems, supports JDK 1
 
 ### Startup
 
-Start with a **Sermant-example** project [demo-application] (https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/demo-application) as the host application, execute the following command to mount the sermant-agent and start demo-application:
+Start with a **Sermant-example** project [demo-application] (https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/demo-application) as the host application, execute the following command to mount the sermant-agent and start demo-application:
 
 ```shell
 # Run under Windows
