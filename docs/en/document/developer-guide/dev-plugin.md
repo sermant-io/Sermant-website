@@ -1,6 +1,6 @@
 # Plugin Development Guide
 
-This document focuses on **Sermant**'s [example module](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template), which describes some common scenarios during plug-in development.
+This document focuses on **Sermant**'s [example module](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template), which describes some common scenarios during plug-in development.
 
 - [Development Environment](#Development-Environment)
 - [Components](#Components)
@@ -35,29 +35,29 @@ According to the [Plugin Module](../UserGuide/plugin.md), a `main` plugin module
 
 Considering that the latter three have great changes with the actual business scenarios, they are given a high degree of development freedom, and they are only limited by the module directory and the output directory. For this reason, the `example module` will not be a reference case for them. The `example module` contains the following modules:
 
-- [demo-plugin](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin): the example for plugin
-- [demo-service](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-service): the example for plugin service
-- [demo-application](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/demo-application): the example for host application
+- [demo-plugin](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/template/template-plugin): the example for plugin
+- [demo-service](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/template/template-service): the example for plugin service
+- [demo-application](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/demo-application): the example for host application
 
 ## Plugin Module
 
 The example plugin module `demo-plugin` is mainly used to show plugin developers some scenarios that may be encountered in the development process of plugins and some functions that may be used.
 
-Before we start, it's important to agree that in `plugin` modules, developers can only use the *Java* native API and the [**Sermant** core module](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core) and cannot rely on or use any third-party dependencies other than `byte-buddy` and `slf4j`. If the business needs to use other third-party dependencies, you can only define the interface in the `plugin` module and write the implementation in the `service` module. Refer to the [Plugin Module](../UserGuide/plugin.md#Add-Plugin-Module) for more information.
+Before we start, it's important to agree that in `plugin` modules, developers can only use the *Java* native API and the [**Sermant** core module](https://github.com/sermant-io/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core) and cannot rely on or use any third-party dependencies other than `byte-buddy` and `slf4j`. If the business needs to use other third-party dependencies, you can only define the interface in the `plugin` module and write the implementation in the `service` module. Refer to the [Plugin Module](../UserGuide/plugin.md#Add-Plugin-Module) for more information.
 
 ### Enhancement Definition
 
 The core capability of **Sermant** is to make non-intrusive bytecode enhancements to the host application, and these enhancement rules are base on plugins. In the `main` module of each **Sermant** plugin, enhancement definitions can be defined to enhance the bytecode of specific methods of the host application to achieve certain functionality. So how the `main` module tells the **Sermant** which classes to augment is an important topic.
 
-The Enhancement definition of plugins requires the implementation of [PluginDeclarer](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/declarer/PluginDeclarer.java) interface, which contains two methods:
+The Enhancement definition of plugins requires the implementation of [PluginDeclarer](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/plugin/agent/declarer/PluginDeclarer.java) interface, which contains two methods:
 
-- `getClassMatcher` is used to get the matcher [ClassMatcher](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/matcher/ClassMatcher.java) of the enhanced class.
-- `getInterceptDeclarers` is used to obtain the method of interceptor point of the enhanced class, as well as the interceptors embedded in it, encapsulated in the method interceptor point [InterceptDeclarer](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/declarer/InterceptDeclarer.java).
-- `getSuperTpeDecarers` gets the plugin's superclass declaration [SuperTypeDeclarer](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/declarer/SuperTypeDeclarer.java).
+- `getClassMatcher` is used to get the matcher [ClassMatcher](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/plugin/agent/matcher/ClassMatcher.java) of the enhanced class.
+- `getInterceptDeclarers` is used to obtain the method of interceptor point of the enhanced class, as well as the interceptors embedded in it, encapsulated in the method interceptor point [InterceptDeclarer](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/plugin/agent/declarer/InterceptDeclarer.java).
+- `getSuperTpeDecarers` gets the plugin's superclass declaration [SuperTypeDeclarer](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/plugin/agent/declarer/SuperTypeDeclarer.java).
 
-The matcher [ClassMatcher](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/matcher/ClassMatcher.java), which provides two types of matchers in the core module:
+The matcher [ClassMatcher](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/plugin/agent/matcher/ClassMatcher.java), which provides two types of matchers in the core module:
 
-[ClassTypeMatcher](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/matcher/ClassTypeMatcher.java)(the matcher for class name)
+[ClassTypeMatcher](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/plugin/agent/matcher/ClassTypeMatcher.java)(the matcher for class name)
 
 - The most common way to do this is purely by name matching, which is obtained by:
   ```java
@@ -72,7 +72,7 @@ The matcher [ClassMatcher](https://github.com/huaweicloud/Sermant/blob/develop/s
   ```
   Where `${class reference array}` is a full qualified class name mutable array of the enhanced class.
 
-[ClassFuzzyMatcher](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/matcher/ClassFuzzyMatcher.java)（the fuzzy matcher of class name）
+[ClassFuzzyMatcher](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/plugin/agent/matcher/ClassFuzzyMatcher.java)（the fuzzy matcher of class name）
 
 - The enhanced class is located by the prefix of full qualified class name, which can be obtained by:
   ```java
@@ -137,7 +137,7 @@ The matcher [ClassMatcher](https://github.com/huaweicloud/Sermant/blob/develop/s
   ```
   Where `${class matcher array}` is a variable-length array of matcher.
 
-For method interception points [MethodMatcher](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/matcher/MethodMatcher.java), we provide a variety of matching methods:
+For method interception points [MethodMatcher](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/plugin/agent/matcher/MethodMatcher.java), we provide a variety of matching methods:
 
 - Match any method:
   ```java
@@ -246,16 +246,16 @@ For more methods matching method, refer to [byte-buddy](https://javadoc.io/doc/n
 Don't forget to add the *SPI* configuration file for the `PluginDeclarer` interface:
 
 - Add `META-INF/services` folder under `resources`.
-- Add `com.huaweicloud.sermant.core.plugin.agent.declarer.PluginDeclarer` under `META-INF/services` .
+- Add `io.sermant.core.plugin.agent.declarer.PluginDeclarer` under `META-INF/services` .
 - In the above file, type all the enhancements definitions of `PluginDeclarer` in the plugin package separated with LF.
 
 The `example module` of **Sermant** contains the following example implementation of the `PluginDeclarer` interface:
 
-- [DemoAnnotationDeclarer](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/declarer/DemoAnnotationDeclarer.java): Locate enhanced class by annotation in the decorated class.
-- [DemoNameDeclarer](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/declarer/DemoNameDeclarer.java): Locate enhanced class by name.
-- [DemoSuperTypeDeclarer](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/declarer/DemoSuperTypeDeclarer.java): Locate enhanced class by superclass.
-- [DemoBootstrapDeclarer](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/declarer/DemoBootstrapDeclarer.java): Enhancement definition for the boot classloader, refer to [Enhancement for Native Class](#Enhancement-for-Native-Class) for details.
-- [DemoTraceDeclarer](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/declarer/DemoTraceDeclarer.java): Enhancement definition for the usage of trace tracking, refer to [Trace Tracking](#Trace-Tracking) for details.
+- [DemoAnnotationDeclarer](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/declarer/DemoAnnotationDeclarer.java): Locate enhanced class by annotation in the decorated class.
+- [DemoNameDeclarer](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/declarer/DemoNameDeclarer.java): Locate enhanced class by name.
+- [DemoSuperTypeDeclarer](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/declarer/DemoSuperTypeDeclarer.java): Locate enhanced class by superclass.
+- [DemoBootstrapDeclarer](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/declarer/DemoBootstrapDeclarer.java): Enhancement definition for the boot classloader, refer to [Enhancement for Native Class](#Enhancement-for-Native-Class) for details.
+- [DemoTraceDeclarer](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/declarer/DemoTraceDeclarer.java): Enhancement definition for the usage of trace tracking, refer to [Trace Tracking](#Trace-Tracking) for details.
 
 When the plugin developers write the plugin enhancement definition, you can use the above examples as a reference to develop the enhancement definition that meets their own needs.
 
@@ -263,9 +263,9 @@ When the plugin developers write the plugin enhancement definition, you can use 
 
 For *Java* native classes such as `java.lang.Thread`, which are loaded by the `BootStrapClassLoader`, there are two main difficulties in enhancing them:
 
-- Native classes are loaded by the BootStrapClassLoader, so if we want to enhance them, we need to overwrite the enhanced bytecode back into the BootStrapClassLoader. Considering that the enhanced embedded code is mostly written in **interceptors**, this content is mainly loaded by the system class loader `AppClassLoader`, which is not accessible by BootStrapClassLoader. Since [**Advice template class**](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/template) invokes the interceptors by reflection, it is allowed to write interceptors without restrictions for enhancement of native classes.
+- Native classes are loaded by the BootStrapClassLoader, so if we want to enhance them, we need to overwrite the enhanced bytecode back into the BootStrapClassLoader. Considering that the enhanced embedded code is mostly written in **interceptors**, this content is mainly loaded by the system class loader `AppClassLoader`, which is not accessible by BootStrapClassLoader. Since [**Advice template class**](https://github.com/sermant-io/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/plugin/agent/template) invokes the interceptors by reflection, it is allowed to write interceptors without restrictions for enhancement of native classes.
 
-- Due to *Java* redefining *Class* restrictions, we can't modify the metadata of these native classes, so we can't use byte-buddy delegation to enhance them (by adding delegation properties and static code blocks). Fortunately, we can use [**Advice template class**](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/template) with [**byte-buddy advice**](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/transformer/BootstrapTransformer.java) technology to enhance. That's what **core module** is doing. 
+- Due to *Java* redefining *Class* restrictions, we can't modify the metadata of these native classes, so we can't use byte-buddy delegation to enhance them (by adding delegation properties and static code blocks). Fortunately, we can use [**Advice template class**](https://github.com/sermant-io/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/plugin/agent/template) with [**byte-buddy advice**](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/plugin/agent/transformer/BootstrapTransformer.java) technology to enhance. That's what **core module** is doing. 
 
 Combined with the above, there is no difference between native classes and regular classes in terms of enhancement definition and writing interceptors. However, it is desirable for plugin developers to minimize enhancement to native classes for three reasons:
 
@@ -273,27 +273,27 @@ Combined with the above, there is no difference between native classes and regul
 - The native class enhancement logic will use reflection to invoke interceptor methods in the system classloader. Due to the *Java* redefinition of the *Class*, every time an enhanced method is called, the reflection logic is processed, which significantly limits the *TPS* of the method.
 - The enhancements to the native classes involved using the **Advice template class** to generate a dynamic interceptor class. For each enhanced native class method, one will be generated dynamically and they will be loaded by the system classloader. If native classes are enhanced without restriction, loading dynamic classes can also become a significant burden during startup.
 
-In summary, [**Sermant** core module](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core) provides the ability to augment *Java* native classes. However, it is not recommended to enhance them without restrictions. If there are multiple enhancement points to choose from, you'd better choose enhancing regular classes.
+In summary, [**Sermant** core module](https://github.com/sermant-io/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core) provides the ability to augment *Java* native classes. However, it is not recommended to enhance them without restrictions. If there are multiple enhancement points to choose from, you'd better choose enhancing regular classes.
 
-In **Sermant** `example module`, [DemoBootstrapDeclarer](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/declarer/DemoBootstrapDeclarer.java) enhances `java.lang.Thread`. You can launch the example application [DemoApplication](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/demo-application/src/main/java/com/huawei/example/demo/DemoApplication.java) to see if `java.lang.Thread` is enhanced properly.
+In **Sermant** `example module`, [DemoBootstrapDeclarer](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/declarer/DemoBootstrapDeclarer.java) enhances `java.lang.Thread`. You can launch the example application [DemoApplication](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/demo-application/src/main/java/com/huawei/example/demo/DemoApplication.java) to see if `java.lang.Thread` is enhanced properly.
 
 ### Interceptor
 
 In the development of the new version of the plugin, the distinction between static methods, constructors and instance methods is no longer made at the interceptor level, which reduces the complexity of plugin development.
 For `MethodInterceptPoint`, there are three acquisition types: static method, constructor, and instance method. There are also three types of interceptors:
 
-- [interceptor](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/interceptor/Interceptor.java): the interceptor interface, which contains three methods:
+- [interceptor](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/plugin/agent/interceptor/Interceptor.java): the interceptor interface, which contains three methods:
   - `before`, the preceding method, which is executed before the interception point. The ExecuteContext parameter is the context of the plugin execution, which encapsulates all the parameters required for the interceptor to operate. Through the skip method, the main process can be skipped and the final method result can be set. Note that the main process cannot be skipped when the constructor is enhanced .
   - `after`, the post-method, ends up in the post-method whether or not the intercepted method executes normally. Postmethods can override the return value of the intercepted method with their return value, so developers need to be careful not to return null easily here.
   - `onThrow`, an exception handling method that is triggered when the intercepted method executes an exception. Handling the exception here does not affect the normal throwing of the exception.
 
 The `example module` of **Sermant** contains the following example interceptor:
 
-- [DemoStaticInterceptor](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoStaticInterceptor.java): an ordinary static method interceptor
-- [DemoConstInterceptor](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoConstInterceptor.java): an ordinary constructor interceptor
-- [DemoMemberInterceptor](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoMemberInterceptor.java): an ordinary instance method interceptor
-- [DemoConfigInterceptor](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoConfigInterceptor.java): an example interceptor for the plugin configuration acquisition, as described in the [Plugin Configuration](#Plugin-Configuration) section.
-- [DemoServiceInterceptor](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoServiceInterceptor.java): an example interceptor for the usage of plugin service, as described in the [Plugin Service](#Plugin-Service) section.
+- [DemoStaticInterceptor](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoStaticInterceptor.java): an ordinary static method interceptor
+- [DemoConstInterceptor](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoConstInterceptor.java): an ordinary constructor interceptor
+- [DemoMemberInterceptor](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoMemberInterceptor.java): an ordinary instance method interceptor
+- [DemoConfigInterceptor](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoConfigInterceptor.java): an example interceptor for the plugin configuration acquisition, as described in the [Plugin Configuration](#Plugin-Configuration) section.
+- [DemoServiceInterceptor](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoServiceInterceptor.java): an example interceptor for the usage of plugin service, as described in the [Plugin Service](#Plugin-Service) section.
 
 When writing custom interceptors, plugin developers can use the above example as a reference to develop interceptors that meet their own functional needs.
 
@@ -301,30 +301,30 @@ When writing custom interceptors, plugin developers can use the above example as
 
 **Plugin Configuration** refers to the configuration system used in plugin packages and plugin service packages. It consists of three main parts:
 
-- [PluginConfig](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/config/PluginConfig.java) plugin configuration interface: All normal plugin configurations must implement this interface.
+- [PluginConfig](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/plugin/config/PluginConfig.java) plugin configuration interface: All normal plugin configurations must implement this interface.
 
-- [PluginConfigManager](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/config/PluginConfigManager.java) plugin configuration manager: provides a method to get the plugin configuration `PluginConfig` :
+- [PluginConfigManager](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/plugin/config/PluginConfigManager.java) plugin configuration manager: provides a method to get the plugin configuration `PluginConfig` :
   
   ```java
   // ${plugin config class} is the plugin configuration class
   PluginConfigManager.getPluginConfig(${plugin config class});
   ```
-  `PluginConfigManager` is the unified configuration manager [ConfigManager](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/config/ConfigManager.java), The plugin side can directly use the interface of the latter to obtain plugin configuration and unified configuration：
+  `PluginConfigManager` is the unified configuration manager [ConfigManager](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/config/ConfigManager.java), The plugin side can directly use the interface of the latter to obtain plugin configuration and unified configuration：
   
   ```java
   // ${base config class}is the plugin configuration class or unified configuration class
   ConfigManager.getConfig(${base config class});
   ```
 
-From the **Sermant** `example module` plugin configuration file [config.yaml](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/config/config.yaml) can be seen that the configuration file is a *yaml file*. The `plugin` and `service` configurations of a `main` plugin module are encapsulated in a single `config.yaml`.
+From the **Sermant** `example module` plugin configuration file [config.yaml](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/template/config/config.yaml) can be seen that the configuration file is a *yaml file*. The `plugin` and `service` configurations of a `main` plugin module are encapsulated in a single `config.yaml`.
 
-Instead of a traditional *YAML* format configuration file for a single *Java Pojo* object, here `config.yaml` can encapsulate multiple *Java Pojos*, which are distinguished by fully qualified names or aliases, forming a *Map-like* structure. The key `demo.test` corresponds to the [DemoConfig](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java) object in the **example plugin package** and `com.huawei.example.demo.config.DemoServiceConfig` key corresponds to [DemoServiceConfig](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-service/src/main/java/com/huawei/example/demo/config/DemoServiceConfig.java) object in the **example plugin service pack**.
+Instead of a traditional *YAML* format configuration file for a single *Java Pojo* object, here `config.yaml` can encapsulate multiple *Java Pojos*, which are distinguished by fully qualified names or aliases, forming a *Map-like* structure. The key `demo.test` corresponds to the [DemoConfig](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java) object in the **example plugin package** and `com.huawei.example.demo.config.DemoServiceConfig` key corresponds to [DemoServiceConfig](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/template/template-service/src/main/java/com/huawei/example/demo/config/DemoServiceConfig.java) object in the **example plugin service pack**.
 
-Compared to `DemoServiceConfig`, [DemoConfig](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java) is decorated with the [ConfigTypeKey](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/config/common/ConfigTypeKey.java) annotation, so the `demo.test` alias is set. If it is not annotated with the `ConfigTypeKey` annotation, the full qualified class name is used as the index.
+Compared to `DemoServiceConfig`, [DemoConfig](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java) is decorated with the [ConfigTypeKey](../../sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/config/common/ConfigTypeKey.java) annotation, so the `demo.test` alias is set. If it is not annotated with the `ConfigTypeKey` annotation, the full qualified class name is used as the index.
 
-The `map` property in [DemoConfig](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java) is annotated with [ConfigFieldKey](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/config/common/ConfigFieldKey.java), changing its property name to `str2DemoSimplePojoMap`. However, it is important to note that the semantics of the **Java Pojo** using this annotation is invalid if it is wrapped by an array, a *List* or a *Map*. Therefore, for now, this annotation can only be used to modify the current **plugin configuration class** or directly used **Java Pojo**.
+The `map` property in [DemoConfig](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java) is annotated with [ConfigFieldKey](../../sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/config/common/ConfigFieldKey.java), changing its property name to `str2DemoSimplePojoMap`. However, it is important to note that the semantics of the **Java Pojo** using this annotation is invalid if it is wrapped by an array, a *List* or a *Map*. Therefore, for now, this annotation can only be used to modify the current **plugin configuration class** or directly used **Java Pojo**.
 
-As [DemoConfig](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java)[DemoConfig](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java) shows, plugin configuration now supports data types include:
+As [DemoConfig](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java)[DemoConfig](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java) shows, plugin configuration now supports data types include:
 
 - Primitive and wrapper types for Boolean and numeric classes
 - String
@@ -339,9 +339,9 @@ As [DemoConfig](https://github.com/huaweicloud/Sermant-examples/tree/main/serman
 - For complex objects involved in arrays, lists, and maps, using `ConfigFieldKey` to fix property names is not supported.
 - For strings in arrays, lists, and maps, there is no support for `${}` conversions, **plugin configuration class** string properties and string properties inside complex type properties are supported.
 - Parameters are only used for string `${}` conversions. Direct setting property values using parameters is not supported.
-- The field names of configuration classes are usually small camels.You can use [ConfigFieldKey](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/config/common/ConfigTypeKey.java) to define aliases for the transverse-line style. After the annotation is added, it can be parsed in *YAML* using either transverse-line or small camel style. Refer to the `intField` of [DemoConfig](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java).
+- The field names of configuration classes are usually small camels.You can use [ConfigFieldKey](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/config/common/ConfigTypeKey.java) to define aliases for the transverse-line style. After the annotation is added, it can be parsed in *YAML* using either transverse-line or small camel style. Refer to the `intField` of [DemoConfig](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java).
 - The priority of the configuration is: startup parameters > environment variables > system variables (-d parameter) > *YAML* file configuration
-- The camel style and transverse line can be used to split words to look for matches when the configuration class properties fetch reference values according to the priority(startup parameters, environment variables, and system variables (-d parameter)) in effect. For example, for `intField` of [DemoConfig](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java), the key will be transformed into one of the following forms and searched in order:
+- The camel style and transverse line can be used to split words to look for matches when the configuration class properties fetch reference values according to the priority(startup parameters, environment variables, and system variables (-d parameter)) in effect. For example, for `intField` of [DemoConfig](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java), the key will be transformed into one of the following forms and searched in order:
   - demo.test.intField
   - demo_test_intField
   - demo-test-intField
@@ -361,26 +361,26 @@ As [DemoConfig](https://github.com/huaweicloud/Sermant-examples/tree/main/serman
   - The array /list/set should be configured in `YAML` string format. For example: DEMO_TEST_LIST_NAME=[elem1,elem2]
   - The map needs to be configured as a `YAML` string format. For example: DEMO_TEST_MAP_NAME={key1: value1, key2: value2}
 
-Most of the possible configuration scenarios are covered in [DemoConfig](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java), plugin developers can reference and write plugin configuration classes that meet your business needs.
+Most of the possible configuration scenarios are covered in [DemoConfig](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java), plugin developers can reference and write plugin configuration classes that meet your business needs.
 
 Finally, don't forget to add the *SPI* configuration file for the plugin configuration:
 
 - Add `META-INF/services` folder under `resources`.
-- Add `com.huaweicloud.sermant.core.plugin.config.PluginConfig` configuration file under `META-INF/services`.
+- Add `io.sermant.core.plugin.config.PluginConfig` configuration file under `META-INF/services`.
 - In the above file, type the `PluginConfig` implementation for all plugin configurations in the plugin package and separate them by LF.
 
 ### Plugin Service
 
 **Plugin service** refers to the service system used in plugin package and plugin service package. It mainly consists of two parts:
 
-- [PluginService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/service/PluginService.java), the plugin service interface.
-- [PluginServiceManager](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/service/PluginServiceManager.java), the plugin service manager, which provides an interface to get `PluginService` :
+- [PluginService](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/plugin/service/PluginService.java), the plugin service interface.
+- [PluginServiceManager](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/plugin/service/PluginServiceManager.java), the plugin service manager, which provides an interface to get `PluginService` :
   
   ```java
   // ${plugin service class} is the plugin service class
   PluginServiceManager.getPluginService(${plugin service class});
   ```
-  `PluginServiceManager` is a particular case of [ServiceManager](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/ServiceManager.java). The latter interface can be used directly to access the core and plugin services:
+  `PluginServiceManager` is a particular case of [ServiceManager](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/service/ServiceManager.java). The latter interface can be used directly to access the core and plugin services:
   
   ```java
   // ${base service class}is the core service class or plugin service class
@@ -389,25 +389,25 @@ Finally, don't forget to add the *SPI* configuration file for the plugin configu
 
   Learned form [Plugin Module](../UserGuide/plugin.md#Add-Plugin-Module), plugins can be categorized as **simple plugins** and **complex plugins**, depending on the complexity of the service they define:
   
-  - Services defined in **simple plugins** can only use *Java* native *APIs*, self-developed *APIs* (start with `com.huawei`) in [**Sermant** core module](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core) , and *APIs* of `byte-buddy` and `slf4j`.
+  - Services defined in **simple plugins** can only use *Java* native *APIs*, self-developed *APIs* (start with `com.huawei`) in [**Sermant** core module](https://github.com/sermant-io/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core) , and *APIs* of `byte-buddy` and `slf4j`.
   - In addition to the above *API*, the services in **complex plugins** have the right to use other *APIs* that third parties rely on. These services need to be separated into the **plugin service interface** and the **plugin service implementation**: the former is written in the `plugin` module for the interceptor to invoke. The latter is written in the `service` module and loaded by a custom *ClassLoader* to achieve classloader-level dependency isolation.
 
 #### Simple Plugin Service
 
-As for **simple plugin service**, you can just implement [PluginService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/service/PluginService.java), such as [DemoSimpleService](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/service/DemoSimpleService.java). Based on the implementation of the `start` and `stop` methods, you can add other required methods such as the `activeFunc` method. Get an instance of the `DemoSimpleService` and invoke the `activeFunc` method with the following code:
+As for **simple plugin service**, you can just implement [PluginService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/plugin/service/PluginService.java), such as [DemoSimpleService](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/service/DemoSimpleService.java). Based on the implementation of the `start` and `stop` methods, you can add other required methods such as the `activeFunc` method. Get an instance of the `DemoSimpleService` and invoke the `activeFunc` method with the following code:
 ```java
 DemoSimpleService simpleService = PluginServiceManager.getPluginService(DemoSimpleService.class);
 simpleService.activeFunc();
 ```
 
-For **simple plugin service**, the only restriction is to use only the *Java* native *API*, [**Sermant** core module](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core) self-developed *APIs* (starting with `com.huawei`) and *APIs* in `byte-buddy` and `slf4j`.
+For **simple plugin service**, the only restriction is to use only the *Java* native *API*, [**Sermant** core module](https://github.com/sermant-io/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core) self-developed *APIs* (starting with `com.huawei`) and *APIs* in `byte-buddy` and `slf4j`.
 
-Plugin developers can refer to [DemoSimpleService](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/service/DemoSimpleService.java) to write **simple plugin services** for your business on demand.
+Plugin developers can refer to [DemoSimpleService](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/service/DemoSimpleService.java) to write **simple plugin services** for your business on demand.
 
-Finally, don't forget to add the *SPI* configuration file for [PluginService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/service/PluginService.java):
+Finally, don't forget to add the *SPI* configuration file for [PluginService](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/plugin/service/PluginService.java):
 
 - Add `META-INF/services` folder under `resources`.
-- Add `com.huaweicloud.sermant.core.plugin.service.PluginService` configuration file under `META-INF/services`.
+- Add `io.sermant.core.plugin.service.PluginService` configuration file under `META-INF/services`.
 - In the above file, type the `PluginService` implementation for all plugin services in the plugin package and separate them by LF.
 
 In particular, do not try to get instances of other **plugin services** in the `start` method of `PluginService`, since **plugin services** are still being initialized and it may not be possible to get these **plugin services** correctly.
@@ -419,7 +419,7 @@ There are only two differences between **complex plugin service** and **simple p
 - **Complex plugin services** write their interface in the `plugin` module and their implementation in the [Plugin Service Module](#Plugin-Service-Module), while **simple plugin services** do not need to write the interface and are implemented directly in the `plugin` module.
 - The implementation of a **complex plugin service** can use any third-party dependency on demand.
 
-[DemoComplexService](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/service/DemoComplexService.java) is a **complex plugin service** sample interface. Methods can be added on demand, such as the `activeFunc` method. [DemoComplexServiceImpl](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-service/src/main/java/com/huawei/example/demo/service/DemoComplexServiceImpl.java) is the corresponding implementation. We can invoke the `activeFunc` method with the following code:
+[DemoComplexService](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/service/DemoComplexService.java) is a **complex plugin service** sample interface. Methods can be added on demand, such as the `activeFunc` method. [DemoComplexServiceImpl](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/template/template-service/src/main/java/com/huawei/example/demo/service/DemoComplexServiceImpl.java) is the corresponding implementation. We can invoke the `activeFunc` method with the following code:
 
 ```java
 DemoComplexService complexService = PluginServiceManager.getPluginService(DemoComplexService.class);
@@ -430,19 +430,19 @@ Adding *SPI* configuration and other considerations is no different than **simpl
 
 #### Log
 
-Considering dependency isolation, [**Sermant** core module](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core) provides the `plugin` and `service` to use only **jul** log. Get the **jul** log instance by:
+Considering dependency isolation, [**Sermant** core module](https://github.com/sermant-io/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core) provides the `plugin` and `service` to use only **jul** log. Get the **jul** log instance by:
 
 ```java
 
-import com.huaweicloud.sermant.core.common.LoggerFactory;
+import io.sermant.core.common.LoggerFactory;
 Logger logger=LoggerFactory.getLogger();
 ```
 
-Plugin developers who need to output log information can refer to [DemoLogger](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/common/DemoLogger.java) sample development.
+Plugin developers who need to output log information can refer to [DemoLogger](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/common/DemoLogger.java) sample development.
 
 #### Heartbeat
 
-Heartbeat is one of the core services in [**Sermant** core module](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core). An instance of heartbeatService is obtained by:
+Heartbeat is one of the core services in [**Sermant** core module](https://github.com/sermant-io/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core). An instance of heartbeatService is obtained by:
 ```java
 HeartbeatService heartbeatService = ServiceManager.getService(HeartbeatService.class);
 ```
@@ -470,7 +470,7 @@ heartbeatService.setExtInfo(new ExtInfoProvider() {
 });
 ```
 
-Plugin developers who need to add additional content to the packets sent by the heartbeat function can refer to [DemoHeartBeatService](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/service/DemoHeartBeatService.java) sample development.
+Plugin developers who need to add additional content to the packets sent by the heartbeat function can refer to [DemoHeartBeatService](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/service/DemoHeartBeatService.java) sample development.
 
 For more information about heartbeat services, see [Heartbeat Service](service_heartbeat.md).
 
@@ -481,9 +481,9 @@ The **Trace Tracking** is an upper layer function established by message sending
 - When sending data, the `TraceId` and `SpanId` required by the trace are inserted in the data packet. The former is the view of the whole trace in the distributed system, and the later represents the view inside the different services in the whole trace.
 - When receiving data, it parses the trace-related content embedded in the data packet, forms a trace and submits it to the backend server, and gradually forms a invoke chain.
 
-In the [DemoTraceService](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/demo-application/src/main/java/com/huawei/example/demo/service/DemoTraceService.java), the `counsumer` and `provider` methods mimic how the server receives data and handles sending it, while the packet is assumed to exist in a `ThreadLocal` until the next invocation to the `provider` method receives the data.
+In the [DemoTraceService](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/demo-application/src/main/java/com/huawei/example/demo/service/DemoTraceService.java), the `counsumer` and `provider` methods mimic how the server receives data and handles sending it, while the packet is assumed to exist in a `ThreadLocal` until the next invocation to the `provider` method receives the data.
 
-Based on the above example host application, we write enhancement definition [DemoTraceDeclarer](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/declarer/DemoTraceDeclarer.java) and enhance `provider` and `consumer` of `DemoTraceService` by [DemoTraceProviderInterceptor](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoTraceProviderInterceptor.java) and [DemoTraceConsumerInterceptor](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoTraceConsumerInterceptor.java) respectively
+Based on the above example host application, we write enhancement definition [DemoTraceDeclarer](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/declarer/DemoTraceDeclarer.java) and enhance `provider` and `consumer` of `DemoTraceService` by [DemoTraceProviderInterceptor](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoTraceProviderInterceptor.java) and [DemoTraceConsumerInterceptor](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoTraceConsumerInterceptor.java) respectively
 
 - For the sending `provider` method, the following enhancements are made：
   ```java
@@ -544,12 +544,12 @@ Based on the above example host application, we write enhancement definition [De
         return context;
     }
   ```
-  If the plugin developers need to use the trace tracking function, refer to [DemoTraceNormalInterceptor](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoTraceNormalInterceptor.java) for further development.
+  If the plugin developers need to use the trace tracking function, refer to [DemoTraceNormalInterceptor](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoTraceNormalInterceptor.java) for further development.
 
 
 ### Dynamic Configuration
 
-Dynamic configuration is one of the core services in [**Sermant** core module](https://github.com/huaweicloud/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core). An instance is obtained by:
+Dynamic configuration is one of the core services in [**Sermant** core module](https://github.com/sermant-io/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core). An instance is obtained by:
 ```java
 DynamicConfigService service = ServiceManager.getService(DynamicConfigService.class);
 ```
@@ -568,7 +568,7 @@ service.addConfigListener("${key}", "${group}", new DynamicConfigListener() {
 
 Once the listener is registered, the `process` method will be triggered when the server creates, deletes, modifies, or adds child nodes.
 
-Plugin developers who need to use dynamic configuration can refer to [DemoDynaConfService](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/service/DemoDynaConfService.java) sample development.
+Plugin developers who need to use dynamic configuration can refer to [DemoDynaConfService](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/service/DemoDynaConfService.java) sample development.
 
 For more information on dynamic configuration service, refer to [Dynamic Configuration Service](service_dynamicconfig.md).
 
@@ -580,6 +580,6 @@ Compared to **plugin module**, **plugin service module** :
 - can only write a **plugin configuration** and **plugin service interface** implementation, and cannot write **enhancement definition ** **interceptor** and **plugins service interface**.
 - allow the freedom to add third-party dependencies as needed. When packaging, you need to provide a way to export dependencies, you can use the `shade` plugin or `assembly` plugin to export the dependency *jar* package, or you can directly use the `dependency` plugin to export the dependency package.
 
-Note: Due to the limitations of the `byte-buddy` and `slf4j` packages, it is still recommended to use the `shade` plugin package directly. The relevant rules are defined in the [main module of plugins](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins). You can directly import the plugin. Refer to [Plugin Module](../UserGuide/plugin.md#Add-Plugin-Service-Module) for details.
+Note: Due to the limitations of the `byte-buddy` and `slf4j` packages, it is still recommended to use the `shade` plugin package directly. The relevant rules are defined in the [main module of plugins](https://github.com/sermant-io/Sermant/tree/develop/sermant-plugins). You can directly import the plugin. Refer to [Plugin Module](../UserGuide/plugin.md#Add-Plugin-Service-Module) for details.
 
 The **plugin service module** usually involves writing [plugin configuration](#Plugin-Configuration) and [plugin service](#Plugin-Service), where **plugin service** mainly refers to the implementation of [complex plugin service](#Complex-Plugin-Service). 

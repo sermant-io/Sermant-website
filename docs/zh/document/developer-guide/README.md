@@ -133,7 +133,7 @@ public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
 
 ### 添加增强声明的SPI配置
 
-开发插件的最后，不要忘记添加增强声明的**SPI**配置，在工程中`template\template-plugin`下的资源目录`resources`中添加`META-INF/services`目录，并在其中创建名为` com.huaweicloud.sermant.core.plugin.agent.declarer.PluginDeclarer`的**SPI**文件，并向其中添加字节码增强声明类的类名：
+开发插件的最后，不要忘记添加增强声明的**SPI**配置，在工程中`template\template-plugin`下的资源目录`resources`中添加`META-INF/services`目录，并在其中创建名为` io.sermant.core.plugin.agent.declarer.PluginDeclarer`的**SPI**文件，并向其中添加字节码增强声明类的类名：
 
 ```shell
 com.huaweicloud.sermant.template.TemplateDeclarer

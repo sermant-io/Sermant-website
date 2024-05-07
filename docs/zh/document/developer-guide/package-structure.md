@@ -26,7 +26,7 @@
 
 **插件服务**主要分为两部分：
 
-**服务接口定义**在[插件主模块](#插件主模块)中用于描述该服务提供的能力，在定义插件的插件服务时，需要继承插件服务基础接口[com.huaweicloud.sermant.core.PluginService](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/service/PluginService.java)，该接口提供的`start()`方法会在**Sermant**启动时被调用，`stop()`方法会在JVM停止时被调用。
+**服务接口定义**在[插件主模块](#插件主模块)中用于描述该服务提供的能力，在定义插件的插件服务时，需要继承插件服务基础接口[io.sermant.core.plugin.service.PluginService](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/plugin/service/PluginService.java)，该接口提供的`start()`方法会在**Sermant**启动时被调用，`stop()`方法会在JVM停止时被调用。
 
 **服务接口实现**在[插件服务模块](#插件服务模块)中，在[插件主模块](#插件主模块)中可以通过**SPI**机制加载并使用插件服务的接口实现。
 
@@ -57,15 +57,15 @@ public class EchoServiceImpl implements EchoService {
 }
 ```
 
-开发插件服务的最后，不要忘记添加插件服务的**SPI**配置，在工程中`template\template-service`下的资源目录`resources`中添加`META-INF/services`目录，并在其中创建名为`com.huaweicloud.sermant.core.plugin.service.PluginService`的**SPI**文件，并向其中添加插件服务实现类的类名：
+开发插件服务的最后，不要忘记添加插件服务的**SPI**配置，在工程中`template\template-service`下的资源目录`resources`中添加`META-INF/services`目录，并在其中创建名为`io.sermant.core.plugin.service.PluginService`的**SPI**文件，并向其中添加插件服务实现类的类名：
 
 ```java
 com.huaweicloud.sermant.template.EchoServiceImpl
 ```
 
-接下来，找到工程中`template\template-plugin`下的`com.huaweicloud.sermant.template.TemplateDeclarer`类，在针对`main`方法的[拦截器](bytecode-enhancement.md#拦截器)的`before`方法中使用已经开发完成的插件服务，通过[com.huaweicloud.sermant.core.plugin.service.PluginServiceManager](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/service/PluginServiceManager.java)插件服务管理器获取插件服务并使用：
+接下来，找到工程中`template\template-plugin`下的`com.huaweicloud.sermant.template.TemplateDeclarer`类，在针对`main`方法的[拦截器](bytecode-enhancement.md#拦截器)的`before`方法中使用已经开发完成的插件服务，通过[io.sermant.core.plugin.service.PluginServiceManager](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/plugin/service/PluginServiceManager.java)插件服务管理器获取插件服务并使用：
 
-> 注：`com.huaweicloud.sermant.core.plugin.service.PluginServiceManager::getPluginService(Class clazz)`可通过插件服务接口基于Java SPI机制获取插件服务实现的实例。
+> 注：`io.sermant.core.plugin.service.PluginServiceManager::getPluginService(Class clazz)`可通过插件服务接口基于Java SPI机制获取插件服务实现的实例。
 
 ```java
 public ExecuteContext before(ExecuteContext context) throws Exception {

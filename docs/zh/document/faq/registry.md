@@ -1,6 +1,6 @@
 # 服务注册常见问题
 
-本文主要介绍[服务注册插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-registry)在使用时遇到的常见问题。
+本文主要介绍[服务注册插件](https://github.com/sermant-io/Sermant/tree/develop/sermant-plugins/sermant-service-registry)在使用时遇到的常见问题。
 
 ## 报错：No such extension org.apache.dubbo.registry.RegistryFactory by name sc
 

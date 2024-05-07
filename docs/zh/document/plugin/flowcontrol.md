@@ -1,5 +1,5 @@
 # 流控
-本文介绍[流控插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-flowcontrol)及其使用方式。
+本文介绍[流控插件](https://github.com/sermant-io/Sermant/tree/develop/sermant-plugins/sermant-flowcontrol)及其使用方式。
 
 ## 功能介绍
 
@@ -507,8 +507,8 @@ servicecomb:
 下面我们通过限流场景开始使用流控插件，通过简单的几个步骤，就可以开始对微服务执行限流。本次示例使用ZooKeeper作为动态配置中心。
 ### 准备工作
 
-- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.4.0/sermant-examples-dynamic-demo-1.4.0.tar.gz)流控Demo二进制产物压缩包
-- [下载](https://github.com/huaweicloud/Sermant/releases/download/v1.4.0/sermant-1.4.0.tar.gz)Sermant包（当前版本推荐1.4.0版本）
+- [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v1.4.0/sermant-examples-dynamic-demo-1.4.0.tar.gz)流控Demo二进制产物压缩包
+- [下载](https://github.com/sermant-io/Sermant/releases/download/v1.4.0/sermant-1.4.0.tar.gz)Sermant包（当前版本推荐1.4.0版本）
 - [下载](https://zookeeper.apache.org/releases#download)并启动ZooKeeper
 
 ### 限流示例

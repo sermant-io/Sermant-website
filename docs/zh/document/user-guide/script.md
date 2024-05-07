@@ -1,6 +1,6 @@
 # 动态安装卸载脚本使用手册
 
-[Sermant动态安装、卸载脚本](https://github.com/huaweicloud/Sermant/blob/develop/scripts/attach.c)是基于Java Attach API实现的C语言脚本，可以将sermant挂载至**虚拟机上的jvm进程**或**容器上的jvm进程**。
+[Sermant动态安装、卸载脚本](https://github.com/sermant-io/Sermant/blob/develop/scripts/attach.c)是基于Java Attach API实现的C语言脚本，可以将sermant挂载至**虚拟机上的jvm进程**或**容器上的jvm进程**。
 
 > 注：该脚本仅限**linux系统**下使用
 

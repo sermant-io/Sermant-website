@@ -1,6 +1,6 @@
 # Outlier instance removal
 
-This article introduces how to use the [Outlier instance removal plugin](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-removal)。
+This article introduces how to use the [Outlier instance removal plugin](https://github.com/sermant-io/Sermant/tree/develop/sermant-plugins/sermant-service-removal)。
 
 ## Function Introduction
 
@@ -69,8 +69,8 @@ Framework support:
 The following will demonstrate how to use the outlier instance extraction plugin to verify the scenario of using the Zookeeper configuration center to configure outlier extraction rules for SpringCloud applications.
 
 ### Preparation work
-- [Download](https://github.com/huaweicloud/Sermant-examples/tree/main/removal-demo) Removal-demo source code
-- [Download](https://github.com/huaweicloud/Sermant/releases) Or compile the Sermant package
+- [Download](https://github.com/sermant-io/Sermant-examples/tree/main/removal-demo) Removal-demo source code
+- [Download](https://github.com/sermant-io/Sermant/releases) Or compile the Sermant package
 - [Download](https://zookeeper.apache.org/releases#download) And start zookeeper
 
 > **Note:** [Dynamic Configuration Center](../user-guide/configuration-center.md) will be used by default in this scenario. As it is not a core component of this scenario, it will not be further elaborated in this article.

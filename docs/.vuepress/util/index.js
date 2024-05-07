@@ -40,7 +40,7 @@ export function normalize (path) {
 export const getVersions=()=>{
     return new Promise(((resolve, reject) => {
             axios.get(
-                'https://api.github.com/repos/huaweicloud/Sermant-website/git/trees/latest'
+                'https://api.github.com/repos/sermant-io/Sermant-website/git/trees/latest'
             ).then((res) => {
                 const versionsNode = res.data.tree.find(e => {
                     return e.path === 'versions.json';

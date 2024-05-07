@@ -1,6 +1,6 @@
 # 负载均衡
 
-本文介绍如何使用[负载均衡插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-loadbalancer)。
+本文介绍如何使用[负载均衡插件](https://github.com/sermant-io/Sermant/tree/develop/sermant-plugins/sermant-loadbalancer)。
 
 ## 功能介绍
 
@@ -82,8 +82,8 @@ rule: Random
 
 ### 准备工作
 
-- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.4.0/sermant-examples-load-balance-demo-1.4.0.tar.gz) Demo二进制产物压缩包
-- [下载](https://github.com/huaweicloud/Sermant/releases/download/v1.4.0/sermant-1.4.0.tar.gz) Sermant
+- [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v1.4.0/sermant-examples-load-balance-demo-1.4.0.tar.gz) Demo二进制产物压缩包
+- [下载](https://github.com/sermant-io/Sermant/releases/download/v1.4.0/sermant-1.4.0.tar.gz) Sermant
   Release包（当前版本推荐1.4.0版本）
 - [下载](https://zookeeper.apache.org/releases.html#download)并启动ZooKeeper
 

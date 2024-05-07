@@ -8,7 +8,7 @@ Sermant Injector属于变更准入控制器(MutatingAdmissionWebhook), 能够在
 
 ### Sermant Injector的参数配置
 
-本项目采用Helm进行Kubernetes包管理, 部署Sermant Injector相关参数需在[sermant-injector/deployment/release/values.yaml](https://github.com/huaweicloud/Sermant/blob/develop/sermant-injector/deployment/release/injector/values.yaml)中做修改配置。
+本项目采用Helm进行Kubernetes包管理, 部署Sermant Injector相关参数需在[sermant-injector/deployment/release/values.yaml](https://github.com/sermant-io/Sermant/blob/develop/sermant-injector/deployment/release/injector/values.yaml)中做修改配置。
 
 ```yaml
 namespace:
@@ -87,7 +87,7 @@ configMap:
 
 ### 镜像制作脚本的参数配置
 
-**[build-sermant-image.sh](https://github.com/huaweicloud/Sermant/blob/develop/sermant-injector/images/sermant-agent/build-sermant-image.sh)**
+**[build-sermant-image.sh](https://github.com/sermant-io/Sermant/blob/develop/sermant-injector/images/sermant-agent/build-sermant-image.sh)**
 
 | 参数名         | 说明                               | 是否必须 |
 | -------------- | ---------------------------------- | -------- |
@@ -95,7 +95,7 @@ configMap:
 | imageName      | 构建的Sermant Agent镜像名称        | 是       |
 | imageVersion   | 构建的Sermant Agent镜像版本        | 是       |
 
-**[build-injector-image.sh](https://github.com/huaweicloud/Sermant/blob/develop/sermant-injector/images/injector/build-injector-image.sh)**
+**[build-injector-image.sh](https://github.com/sermant-io/Sermant/blob/develop/sermant-injector/images/injector/build-injector-image.sh)**
 
 | 参数名       | 说明                           | 是否必须 |
 | ------------ | ------------------------------ | -------- |
@@ -118,7 +118,7 @@ Sermant Injector当前支持在Kubernetes 1.15及以上版本进行部署，通�
 
 #### 准备Sermant Agent包
 
-点击 [here](https://github.com/huaweicloud/Sermant/releases)下载release包，也可以在项目中自行打包。
+点击 [here](https://github.com/sermant-io/Sermant/releases)下载release包，也可以在项目中自行打包。
 
 #### 制作镜像
 

@@ -1,6 +1,6 @@
 # FlowControl
 
-This article describes how to use [Flow Control Plugin](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-flowcontrol).
+This article describes how to use [Flow Control Plugin](https://github.com/sermant-io/Sermant/tree/develop/sermant-plugins/sermant-flowcontrol).
 
 ## Functions
 
@@ -261,8 +261,8 @@ The following will demonstrate how to use the flow control plugin.
 
 ### Preparation
 
-- [Download](https://github.com/huaweicloud/Sermant-examples/tree/main/flowcontrol-demo/spring-cloud-demo/spring-provider) Demo source code
-- [Download](https://github.com/huaweicloud/Sermant/releases) or build Sermant package
+- [Download](https://github.com/sermant-io/Sermant-examples/tree/main/flowcontrol-demo/spring-cloud-demo/spring-provider) Demo source code
+- [Download](https://github.com/sermant-io/Sermant/releases) or build Sermant package
 - [Download](https://zookeeper.apache.org/releases#download) and start zookeeper
 - [Download](https://github.com/vran-dev/PrettyZoo/releases) PrettyZoo  and connect zookeeper
 

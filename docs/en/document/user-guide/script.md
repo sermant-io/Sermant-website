@@ -1,6 +1,6 @@
 # Dynamic Install and Uninstall Script User Manual
 
-[Sermant dynamic installation and uninstallation scripts](https://github.com/huaweicloud/Sermant/blob/develop/scripts/attach.c) is a C language script implemented based on the Java Attach API, which can mount sermant to **JVM process on a virtual machine** or  **JVM process on a container**.
+[Sermant dynamic installation and uninstallation scripts](https://github.com/sermant-io/Sermant/blob/develop/scripts/attach.c) is a C language script implemented based on the Java Attach API, which can mount sermant to **JVM process on a virtual machine** or  **JVM process on a container**.
 
 > Note: This script is only available for use on **Linux systems**
 

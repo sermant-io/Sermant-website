@@ -1,6 +1,6 @@
 # Graceful Online/Offline
 
-This article introduces how to use the graceful log-in and log-in plugin. Currently, the elegant log-in and log-out function is currently integrated in the [registration plugin](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-registry), Can be used independently.
+This article introduces how to use the graceful log-in and log-in plugin. Currently, the elegant log-in and log-out function is currently integrated in the [registration plugin](https://github.com/sermant-io/Sermant/tree/develop/sermant-plugins/sermant-service-registry), Can be used independently.
 
 ## Functions
 
@@ -72,8 +72,8 @@ The following demonstrates how to use the graceful online and offline plugin.
 
 ### Preparation
 
-- [Download](https://github.com/huaweicloud/Sermant/releases)/Compile the sermant package
-- [Download](https://github.com/huaweicloud/Sermant-examples/tree/main/grace-demo/spring-grace-nacos-demo) Demo source code
+- [Download](https://github.com/sermant-io/Sermant/releases)/Compile the sermant package
+- [Download](https://github.com/sermant-io/Sermant-examples/tree/main/grace-demo/spring-grace-nacos-demo) Demo source code
 - [Download](https://github.com/alibaba/nacos/releases) nacos, and start
 - [Download](https://zookeeper.apache.org/releases.html#download) zookeeper, and start
 

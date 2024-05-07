@@ -1,6 +1,6 @@
 # 注册迁移
 
-本文介绍如何使用[注册迁移插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-registry)。
+本文介绍如何使用[注册迁移插件](https://github.com/sermant-io/Sermant/tree/develop/sermant-plugins/sermant-service-registry)。
 
 ## 功能介绍
 
@@ -74,7 +74,7 @@ nacos.service:
 
 > **说明：**
 > - nacos的group通过[Sermant-agent配置](../user-guide/sermant-agent.md#sermant-agent使用参数配置)的service.meta.application设置。
-> - nacos参数目前仅展示常用参数，其他参数项见[NACOS配置类](https://github.com/huaweicloud/Sermant/blob/develop/sermant-plugins/sermant-service-registry/registry-common/src/main/java/com/huawei/registry/config/NacosRegisterConfig.java)。
+> - nacos参数目前仅展示常用参数，其他参数项见[NACOS配置类](https://github.com/sermant-io/Sermant/blob/develop/sermant-plugins/sermant-service-registry/registry-common/src/main/java/io/sermant/registry/config/NacosRegisterConfig.java)。
 
 ## 关闭原注册中心心跳规则
 
@@ -192,9 +192,9 @@ dubbo:
 
 #### 准备工作
 
-- [下载](https://github.com/huaweicloud/Sermant/releases/download/v1.4.0/sermant-1.4.0.tar.gz) Sermant
+- [下载](https://github.com/sermant-io/Sermant/releases/download/v1.4.0/sermant-1.4.0.tar.gz) Sermant
   Release包（当前版本推荐1.4.0版本）
-- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.4.0/sermant-examples-registry-demo-1.4.0.tar.gz) Demo二进制产物压缩包
+- [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v1.4.0/sermant-examples-registry-demo-1.4.0.tar.gz) Demo二进制产物压缩包
 - [下载](https://github.com/apache/servicecomb-service-center)ServiceComb，并启动
 
 > **注意：** [动态配置中心](../user-guide/configuration-center.md)会在本场景中默认使用，由于非本场景的核心组件，因此在本文中不额外赘述。
@@ -246,9 +246,9 @@ java -Dservicecomb.service.enableDubboRegister=true -javaagent:${path}/sermant-a
 
 #### 准备工作
 
-- [下载](https://github.com/huaweicloud/Sermant/releases)/编译sermant包
+- [下载](https://github.com/sermant-io/Sermant/releases)/编译sermant包
 
-- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.2.1/sermant-examples-registry-demo-1.2.1.tar.gz) Demo二进制产物压缩包
+- [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v1.2.1/sermant-examples-registry-demo-1.2.1.tar.gz) Demo二进制产物压缩包
 
 - [下载](https://github.com/apache/servicecomb-service-center)ServiceComb，并启动
 

@@ -1,6 +1,6 @@
 # Load balancing
 
-This article describes how to use [Load balancing plugin](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-loadbalancer).
+This article describes how to use [Load balancing plugin](https://github.com/sermant-io/Sermant/tree/develop/sermant-plugins/sermant-loadbalancer).
 
 ## Function introduction
 
@@ -82,9 +82,9 @@ The following will demonstrate how to use the load balancing plug-in.
 
 ### Preparations
 
-- [Download](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/demo-register) demo source code
+- [Download](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/demo-register) demo source code
 
-- [Download](https://github.com/huaweicloud/Sermant/releases)/compile the sermant package
+- [Download](https://github.com/sermant-io/Sermant/releases)/compile the sermant package
 
 - [Download](https://zookeeper.apache.org/releases.html#download) And start zookeeper
 

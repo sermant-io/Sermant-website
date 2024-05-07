@@ -1,6 +1,6 @@
 # Service-Registry
 
-This article describes how to use the [service registration plugin](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-registry), as well as the migration capabilities of the registration center based on the [Spring Cloud](#registry-migration-spring-cloud) framework and the [Dubbo](#registry-migration-dubbo) framework.
+This article describes how to use the [service registration plugin](https://github.com/sermant-io/Sermant/tree/develop/sermant-plugins/sermant-service-registry), as well as the migration capabilities of the registration center based on the [Spring Cloud](#registry-migration-spring-cloud) framework and the [Dubbo](#registry-migration-dubbo) framework.
 
 ## Function
 
@@ -67,7 +67,7 @@ The configuration items are described as follows:
 
 > Notice:
 > - group of nacos can setting by [Sermant-agent configuration](#sermant-agent-configuration)'s service.meta.application.
-> - nacos configs current only show normal use type, others see [NACOS config class](https://github.com/huaweicloud/Sermant/blob/develop/sermant-plugins/sermant-service-registry/registry-common/src/main/java/com/huawei/registry/config/NacosRegisterConfig.java).
+> - nacos configs current only show normal use type, others see [NACOS config class](https://github.com/sermant-io/Sermant/blob/develop/sermant-plugins/sermant-service-registry/registry-common/src/main/java/io/sermant/registry/config/NacosRegisterConfig.java).
 
 ## Supported Versions and Limitations
 
@@ -105,9 +105,9 @@ The following will demonstrate how to use the service registration plug-in to ve
 
 ### Preparations
 
-- [Download](https://github.com/huaweicloud/Sermant/releases)/Compile the sermant package
+- [Download](https://github.com/sermant-io/Sermant/releases)/Compile the sermant package
 
-- [Download](https://github.com/huaweicloud/Sermant-examples/tree/main/registry-demo/dubbo-registry-demo) dubbo-registry-demo source code
+- [Download](https://github.com/sermant-io/Sermant-examples/tree/main/registry-demo/dubbo-registry-demo) dubbo-registry-demo source code
 
 - [Download](https://github.com/apache/servicecomb-service-center) ServiceComb (used as a registry), and start
 
@@ -236,9 +236,9 @@ The following will demonstrate how to use the service registration plug-in to ve
 
 #### Preparations
 
-- [Download](https://github.com/huaweicloud/Sermant/releases)/Compile the sermant package
+- [Download](https://github.com/sermant-io/Sermant/releases)/Compile the sermant package
 
-- [Download](https://github.com/huaweicloud/Sermant-examples/tree/main/registry-demo/spring-cloud-registry-demo) spring-cloud-registry-demo source code
+- [Download](https://github.com/sermant-io/Sermant-examples/tree/main/registry-demo/spring-cloud-registry-demo) spring-cloud-registry-demo source code
 
 - [Download](https://github.com/apache/servicecomb-service-center) ServiceComb (used as a registry), and start
 
@@ -387,9 +387,9 @@ The following will demonstrate how to use the service registration plug-in to ve
 
 #### Preparations
 
-- [Download](https://github.com/huaweicloud/Sermant/releases)/Compile the sermant package
+- [Download](https://github.com/sermant-io/Sermant/releases)/Compile the sermant package
 
-- [Download](https://github.com/huaweicloud/Sermant-examples/tree/main/registry-demo/dubbo-registry-demo) dubbo-registry-demo source code
+- [Download](https://github.com/sermant-io/Sermant-examples/tree/main/registry-demo/dubbo-registry-demo) dubbo-registry-demo source code
 
 - [Download](https://github.com/apache/servicecomb-service-center) ServiceComb (used as a registry), and start
 

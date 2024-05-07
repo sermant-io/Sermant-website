@@ -133,7 +133,7 @@ public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
 
 ### Add SPI Configuration That Enhances the Declaration
 
-At the end of developing the plugin, don't forget to add the **SPI** configuration that enhances the declaration, add the `META-INF/services` directory to `resources` directory under `template\template-plugin` in your project, and create **SPI** file named `com.huaweicloud.sermant.core.plugin.agent.declarer.PluginDeclarer`, then add the class name of the bytecode enhanced declaration class to it：
+At the end of developing the plugin, don't forget to add the **SPI** configuration that enhances the declaration, add the `META-INF/services` directory to `resources` directory under `template\template-plugin` in your project, and create **SPI** file named `io.sermant.core.plugin.agent.declarer.PluginDeclarer`, then add the class name of the bytecode enhanced declaration class to it：
 
 ```shell
 com.huaweicloud.sermant.template.TemplateDeclarer

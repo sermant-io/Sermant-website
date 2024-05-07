@@ -1,6 +1,6 @@
 # 监控
 
-本文介绍如何使用[监控插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-monitor)。
+本文介绍如何使用[监控插件](https://github.com/sermant-io/Sermant/tree/develop/sermant-plugins/sermant-monitor)。
 
 ## 功能介绍
 
@@ -143,8 +143,8 @@ monitor.config:                       # 监控插件配置。
 
 ### 准备工作
 
-- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.4.0/sermant-examples-monitor-demo-1.4.0.tar.gz) Demo二进制产物压缩包
-- [下载](https://github.com/huaweicloud/Sermant/releases/download/v1.4.0/sermant-1.4.0.tar.gz) Sermant
+- [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v1.4.0/sermant-examples-monitor-demo-1.4.0.tar.gz) Demo二进制产物压缩包
+- [下载](https://github.com/sermant-io/Sermant/releases/download/v1.4.0/sermant-1.4.0.tar.gz) Sermant
   Release包（当前版本推荐1.4.0版本）
 - [下载](https://github.com/prometheus/prometheus/releases)Prometheus
 

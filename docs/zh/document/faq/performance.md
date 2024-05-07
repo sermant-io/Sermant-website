@@ -4,11 +4,11 @@
 
 ## 标签路由插件
 
-我们使用 [Sermant-examples](https://github.com/huaweicloud/Sermant-examples) 仓库中的作为基准应用进行性能测试，以说明Sermant的[service-router标签路由插件](../plugin/router.md)挂载至应用上的性能表现。
+我们使用 [Sermant-examples](https://github.com/sermant-io/Sermant-examples) 仓库中的作为基准应用进行性能测试，以说明Sermant的[service-router标签路由插件](../plugin/router.md)挂载至应用上的性能表现。
 
 ### 部署场景
 
-本次测试我们将上述仓库中的 [Spring Cloud应用](https://github.com/huaweicloud/Sermant-examples/tree/main/grace-demo/spring-grace-nacos-demo) 部署至容器环境中:
+本次测试我们将上述仓库中的 [Spring Cloud应用](https://github.com/sermant-io/Sermant-examples/tree/main/grace-demo/spring-grace-nacos-demo) 部署至容器环境中:
 
 - nacos-rest-consumer，部署1个Pod，挂载Sermant的service-router插件。该服务作为入口服务，根据动态配置中心下发的标签规则来筛选下游实例进行调用。本次测试将监控该服务的性能表现。
 - nacos-rest-provider，部署3个Pod，挂载Sermant的service-router插件，并且不同的Pod配置的不同的标签以供服务消费者进行筛选。该服务作为nacos-rest-consumer的服务提供者。
@@ -34,7 +34,7 @@ Kubernetes Version: v1.23
 
 K8s中所有应用Pod的规格一致，均为`4vCPUs|8GiB`。
 
-Sermant版本：[`Release v1.1.0`](https://github.com/huaweicloud/Sermant/releases/tag/v1.1.0)
+Sermant版本：[`Release v1.1.0`](https://github.com/sermant-io/Sermant/releases/tag/v1.1.0)
 
 ### 测试结果
 
@@ -51,11 +51,11 @@ Sermant标签路由插件对于宿主应用的CPU占用率、内存占用、吞�
 
 ## 离群实例摘除插件
 
-我们使用 [Sermant-examples](https://github.com/huaweicloud/Sermant-examples) 仓库中的作为基准应用进行性能测试，以说明Sermant的[service-removal离群实例摘除插件](../plugin/removal.md)挂载至应用上的性能表现。
+我们使用 [Sermant-examples](https://github.com/sermant-io/Sermant-examples) 仓库中的作为基准应用进行性能测试，以说明Sermant的[service-removal离群实例摘除插件](../plugin/removal.md)挂载至应用上的性能表现。
 
 ### 部署场景
 
-本次测试我们将上述仓库中的 [Spring Cloud应用](https://github.com/huaweicloud/Sermant-examples/tree/main/grace-demo/spring-grace-nacos-demo) 部署至容器环境中:
+本次测试我们将上述仓库中的 [Spring Cloud应用](https://github.com/sermant-io/Sermant-examples/tree/main/grace-demo/spring-grace-nacos-demo) 部署至容器环境中:
 
 - nacos-rest-consumer，部署1个Pod，挂载Sermant的service-removal插件。该服务作为入口服务，离群实例摘除插件挂载于该插件上，会对异常的nacos-rest-provider实例做摘除操作，避免请求调用至状态异常的实例。本次测试将监控该服务的性能表现。
 - nacos-rest-provider，部署3个Pod，不挂载Sermant。该服务作为nacos-rest-consumer的服务提供者。
@@ -81,7 +81,7 @@ Kubernetes Version: v1.23
 
 K8s中所有应用Pod的规格一致，均为`4vCPUs|8GiB`。
 
-Sermant版本：[`Release v1.1.0`](https://github.com/huaweicloud/Sermant/releases/tag/v1.1.0)
+Sermant版本：[`Release v1.1.0`](https://github.com/sermant-io/Sermant/releases/tag/v1.1.0)
 
 ### 测试结果
 
@@ -120,7 +120,7 @@ Kubernetes Version: v1.23
 
 K8s中所有应用Pod的规格一致，均为`4vCPUs|8GiB`。
 
-Sermant版本：[`Release v1.2.0`](https://github.com/huaweicloud/Sermant/releases/tag/v1.2.0)
+Sermant版本：[`Release v1.2.0`](https://github.com/sermant-io/Sermant/releases/tag/v1.2.0)
 
 ### Http/RPC测试结果 
 
@@ -172,7 +172,7 @@ Kubernetes Version: v1.23
 
 K8s中所有应用Pod的规格一致，均为`4vCPUs|8GiB`。
 
-Sermant版本：[`Release v1.3.0`](https://github.com/huaweicloud/Sermant/releases/tag/v1.3.0)
+Sermant版本：[`Release v1.3.0`](https://github.com/sermant-io/Sermant/releases/tag/v1.3.0)
 
 ### 测试结果 
 
@@ -204,7 +204,7 @@ Kubernetes Version: v1.20.2
 
 K8s中所有应用Pod的规格一致，均为`4vCPUs|8GiB`。
 
-Sermant版本：[`Release v1.4.0`](https://github.com/huaweicloud/Sermant/releases/tag/v1.4.0)
+Sermant版本：[`Release v1.4.0`](https://github.com/sermant-io/Sermant/releases/tag/v1.4.0)
 
 ### 测试结果
 | **被测数据库和场景**       | 达到最大TPS时长（无Sermant/有Sermant/ 差异） | 最大TPS（无Sermant/有Sermant/ 差异） | 平均TPS（无Sermant/有Sermant/ 差异） | CPU占用率增加 | 总内存增加 | 

@@ -1,6 +1,6 @@
 # 标签路由
 
-本文介绍如何使用[标签路由插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-router)。
+本文介绍如何使用[标签路由插件](https://github.com/sermant-io/Sermant/tree/develop/sermant-plugins/sermant-router)。
 
 ## 功能介绍
 标签路由插件通过对服务提供者以服务粒度或者全局粒度配置路由规则，通过将某一个或多个服务的提供者划分到同一个分组，约束流量只在指定分组中流转，从而实现流量隔离的目的，可以作为流量染色、蓝绿发布、灰度发布、全链路灰度、同可用区优先调用等场景的能力基础。
@@ -198,7 +198,7 @@
     - precedence: 2 # 规则的优先级，数字越大，优先级越高，匹配成功后不再匹配低优先级规则
       match: # 请求匹配规则。0..N个，不配置表示匹配
         method: getFoo # dubbo接口方法名，不配置表示匹配
-        path: "com.huaweicloud.bar" # dubbo接口名，不配置表示匹配
+        path: "io.sermant.bar" # dubbo接口名，不配置表示匹配
         protocol: dubbo # 流量入口为dubbo协议，dubbo协议只会匹配attachments/args
         attachments: # dubbo attachments匹配，不配置表示匹配
           id: # 属性名，使用时修改为具体的属性，如果配置了多个属性，那么所有的属性规则都必须和请求匹配
@@ -290,9 +290,9 @@
 
 ### 准备工作
 
-- [下载](https://github.com/huaweicloud/Sermant/releases/download/v1.4.0/sermant-1.4.0.tar.gz) Sermant
+- [下载](https://github.com/sermant-io/Sermant/releases/download/v1.4.0/sermant-1.4.0.tar.gz) Sermant
   Release包（当前版本推荐1.4.0版本）
-- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.4.0/sermant-examples-router-demo-1.4.0.tar.gz) Demo二进制产物压缩包
+- [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v1.4.0/sermant-examples-router-demo-1.4.0.tar.gz) Demo二进制产物压缩包
 - [下载](https://github.com/apache/servicecomb-service-center)ServiceComb（注册中心），并启动
 - [下载](https://zookeeper.apache.org/releases.html#download)ZooKeeper（动态配置中心），并启动
 

@@ -32,4 +32,4 @@ This document describes the common problems encountered when the flow control pl
 
 ## Possible Causes Of The HttpHostConnectException Error Reported During Startup
 
-- The cause is that the Sermant background service sermant-backhend is not started. Find the startup class com.huawei.apm.backend.NettyServerApplication to start the background service and restart the application.
+- The cause is that the Sermant background service sermant-backend is not started. Start the sermant-backend service and restart the application.

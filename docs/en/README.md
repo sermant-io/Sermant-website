@@ -29,7 +29,7 @@ Scan the QR code below to join the Sermant community for communication.
 
 ::: slot Disclaimer
 ## Disclaimer
-Sermant is an open-source project from Huawei Cloud under Apache License 2.0.
+Sermant is an open-source project under Apache License 2.0.
 :::
 
 ::: slot Vision
@@ -38,6 +38,6 @@ Sermant is a proxyless service mesh based on Java bytecode enhancement technolog
 :::
 
 ::: slot footer
-Apache-2.0 Licensed | Copyright © 2021-present A Huawei Cloud Project
+Apache-2.0 Licensed | Copyright © 2021-present | A CNCF Landscape Project
 :::
 

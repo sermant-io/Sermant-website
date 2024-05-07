@@ -1,6 +1,6 @@
 # 无损上下线
 
-本文介绍如何使用无损上下线插件，目前无损上下线功能当前集成在[注册迁移插件](https://github.com/huaweicloud/Sermant/tree/develop/sermant-plugins/sermant-service-registry) 中, 可独立使用。
+本文介绍如何使用无损上下线插件，目前无损上下线功能当前集成在[注册迁移插件](https://github.com/sermant-io/Sermant/tree/develop/sermant-plugins/sermant-service-registry) 中, 可独立使用。
 
 ## 功能介绍
 
@@ -210,8 +210,8 @@ spec:
 ### 准备工作
 
 - 已经部署好kubernetes环境
-- [下载](https://github.com/huaweicloud/Sermant/releases/download/v1.4.0/sermant-1.4.0.tar.gz) Sermant Release包（当前版本推荐1.4.0版本）
-- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.4.0/sermant-examples-grace-demo-1.4.0.tar.gz) Demo二进制产物压缩包
+- [下载](https://github.com/sermant-io/Sermant/releases/download/v1.4.0/sermant-1.4.0.tar.gz) Sermant Release包（当前版本推荐1.4.0版本）
+- [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v1.4.0/sermant-examples-grace-demo-1.4.0.tar.gz) Demo二进制产物压缩包
 - [下载](https://github.com/alibaba/nacos/releases)Nacos（注册中心），并部署
 
 > **注意：** 
