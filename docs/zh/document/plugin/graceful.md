@@ -211,8 +211,7 @@ spec:
 
 - 已经部署好kubernetes环境
 - [下载](https://github.com/huaweicloud/Sermant/releases/download/v1.4.0/sermant-1.4.0.tar.gz) Sermant Release包（当前版本推荐1.4.0版本）
-- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.4.0/sermant-examples-grace-demo-1.3.0.
-  tar.gz) Demo二进制产物压缩包
+- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.4.0/sermant-examples-grace-demo-1.4.0.tar.gz) Demo二进制产物压缩包
 - [下载](https://github.com/alibaba/nacos/releases)Nacos（注册中心），并部署
 
 > **注意：** 
