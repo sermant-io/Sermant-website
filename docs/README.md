@@ -1,7 +1,7 @@
 # Development Guide
 [简体中文](README_zh.md) | [English](README.md)
 
-## How o deploy
+## How to deploy
 First, ensure that the Node.js environment exists. You can download it from the official website. After [Node.js](https://nodejs.org/en/download/) is installed, you can use
 ```shell
 node -v
