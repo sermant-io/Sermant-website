@@ -54,13 +54,6 @@ We encourage new comers actively join in Sermant projects and involving from use
 
 If you find a typo in document, find a bug in code, or want new features, or want to give suggestions, you can [open an issue on GitHub](https://github.com/sermant-io/Sermant/issues/new) to report it.
 
-If you just want to contribute directly you can choose the issue below.
-
--   [Contribution Welcome](https://github.com/sermant-io/Sermant/labels/contribution%20welcome): Heavily needed issue, but currently short of hand.
-    
--   [good first issue](https://github.com/sermant-io/Sermant/labels/good%20first%20issue): Good for newcomers, new comer can pickup one for warm-up.
-    
-
 We strongly value documentation and integration with other projects such as Spring Cloud, Kubernetes, Dubbo, etc. We are very glad to work on any issue for these aspects.
 
 Please note that any PR must be associated with a valid issue. Otherwise the PR will be rejected.
@@ -92,7 +85,7 @@ Now, if you are ready to create PR, here is the workflow for contributors:
 
 When creating pull request:
 
-1.  Please follow [the pull request template](https://github.com/sermant-io/Sermant/tree/develop/.github/PULL_REQUEST_TEMPLATE.md).
+1.  Please follow [the pull request template](https://github.com/sermant-io/Sermant/tree/develop/.github/pull_request_template.md).
     
 2.  Please create the request to **develop** branch.
     
@@ -122,34 +115,19 @@ Some principles:
 -   Testability - 80% of the new code should be covered by unit test cases.
     
 -   Maintainability - to be done.
-    
 
-### Now How About Try Become A Committer?
+### Testing
 
-Generally speaking, contribute 8 non-trivial patches and get at least three different people to review them (you'll need three people to support you). Then ask someone to nominate you. You're demonstrating your:
+There are multiple types of tests.
+The location of the test code varies with type, as do the specifics of the environment needed to successfully run the test:
 
--   at least 8 PR and the associated issues to the project,
-    
--   ability to collaborate with the team,
-    
--   understanding of the projects' code base and coding style, and
-    
--   ability to write good code (last but certainly not least)
-    
+* Unit: These confirm that a particular function behaves as intended. Unit test source code can be found adjacent to the corresponding source code within a given package. These are easily run locally by any developer.
+* Integration: These tests cover interactions of package components or interactions between Sermant components and host applications.
 
-A current committer nominates you by slacking the team on the Sermant issue with label "nomination"
+Continuous integration will run these tests on PRs.
 
--   your first and last name
-    
--   a link to your Git profile
-    
--   an explanation of why you should be a committer,
-    
--   Elaborate the top 3 PR and the associated issues the nominator has worked with you that can demonstrate your ability.
-    
+### Community Expectations
 
-Two other committer need to second your nomination. If no one objects in 5 working days (China), you're a committer. If anyone objects or wants more information, the committers discuss and usually come to a consensus (within the 5 working days). If issues cannot be resolved, there's a vote among current committers.
+Sermant is a community project driven by its community which strives to promote a healthy, friendly and productive environment. The goal of the community is to build a plugin development ecosystem to assist developers in more easily creating service governance functionalities without interfering with the application's source code. It requires the support of a community with similar aspirations.
 
-<MyImage src="/docs-img/contribute.png"/>
-
-In the worst case, this can drag out for two weeks. Keep contributing! Even in the rare cases where a nomination fails, the objection is usually something easy to address like "more patches" or "not enough people are familiar with this person's work."
+- See [Community Membership](https://github.com/sermant-io/Sermant/blob/develop/community-membership.md) for a list of various community roles. With gradual contributions, one can move up in the chain.
