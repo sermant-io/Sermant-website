@@ -121,37 +121,21 @@ Sermant 欢迎任何角色的新参与者，包括用户、贡献者、提交者
 - Testability - 单元测试用例应该覆盖 80% 的新代码。
   
 - Maintainability - 代码可维护性好.
-  
 
-### 现在如何尝试成为commiter?
+### 测试
 
-一般来说，贡献 8 个重要的补丁并让至少三个不同的人来审查它们（你需要三个人来支持你）。然后请人提名你。你在展示你的:
+Sermant有多种类型的测试。测试代码的位置随类型的不同而变化，成功运行测试所需的环境也是如此:
 
-- at least 8 PR and the associated issues to the project,
-  
-- ability to collaborate with the team,
-  
-- understanding of the projects' code base and coding style, and
-  
-- ability to write good code (last but certainly not least)
-  
+* 单元测试:这些测试可以确认一个特定的函数的行为是预期的。单元测试源代码可以在给定包内的相应源代码附近找到。这些都很容易由任何开发人员在本地运行。
+* 集成测试:这些测试用例涵盖Sermant组件与应用程序之间的交互。
 
-当前的提交者通过在 Sermant Issue上用标签提名你
+持续的集成将在每个pr上运行。
 
--   your first and last name
-    
--   a link to your Git profile
-    
--   an explanation of why you should be a committer,
-    
--   Elaborate the top 3 PR and the associated issues the nominator has worked with you that can demonstrate your ability.
-    
+### 社区期望
 
-另外两个提交者需要支持你的提名。如果 5 个工作日内没有人反对（中国），您就是提交者。如果有人反对或想要更多信息，提交者会讨论并通常达成共识（在 5 个工作日内）。如果问题无法解决，则在当前提交者之间进行投票。
+Sermant是一个社区项目，由社区推动，努力促进健康，友好和富有成效的环境。社区的目标是构建一个插件开发生态系统，以帮助开发人员在不干扰应用程序源代码的情况下更轻松地实现服务治理功能。
 
-<MyImage src="/docs-img/contribute.png"/>
-
-在最坏的情况下，这可能会拖延两周。继续贡献！即使在极少数提名失败的情况下，反对意见通常也很容易解决，例如“更多补丁”或“没有足够多的人熟悉此人的工作”。
+- 查看 [Community Membership](https://github.com/sermant-io/Sermant/blob/develop/community-membership.md) 获取各种社区角色的相关描述。
 
 
 
