@@ -5,11 +5,11 @@ blogs: 'Blogs'
 ---
 ::: slot feature1
 ## Non-intrusive
-Based on JavaAgent bytecode enhancement technology, it provides a solution of service grid without intrusion, and 0 code completes service governance.
+Based on Java bytecode enhancement technology, it provides a non-intrusive service mesh solution to implement service governance without code modification.
 :::
 ::: slot feature2
 ## Pluggable
-Service governance function plug-in, free choice of service governance function. Plug-in ecological foundation is perfect, easy to develop.
+The service governance function is pluggable and supports dynamic mounting. The plugin ecological foundation makes it easy to develop new plugins.
 ::: 
 ::: slot feature3
 ## High-Performance
