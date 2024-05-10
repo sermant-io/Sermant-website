@@ -16,7 +16,7 @@ module.exports = {
     "/en/": {
       lang: "en-US",
       title: "Sermant",
-      description: "A Proxyless Service Mesh based on Java Bytecode Enhancement",
+      description: "A Proxyless Service Mesh based on Bytecode Enhancement",
     },
   },
   themeConfig: {
