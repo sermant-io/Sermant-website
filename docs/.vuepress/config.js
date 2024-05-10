@@ -16,7 +16,7 @@ module.exports = {
     "/en/": {
       lang: "en-US",
       title: "Sermant",
-      description: "A Proxyless Service Mesh Solution Based on JavaAgent",
+      description: "A Proxyless Service Mesh based on Java Bytecode Enhancement",
     },
   },
   themeConfig: {
