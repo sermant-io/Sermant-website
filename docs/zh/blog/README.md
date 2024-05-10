@@ -13,6 +13,16 @@ blogArr:
       - 微服务治理
       - 无代理架构
 
+    - name: Sermant在异地多活场景下的实践
+      writer: 戴振宇
+      date: 2024/05/07
+      description: '使用Sermant实现异地多活场景下的消息队列故障切流和保护数据一致性问题'
+      path: 'https://bbs.huaweicloud.com/blogs/427036'
+      tags:
+      - 异地多活
+      - 故障切流
+      - 数据一致性
+
     - name: Sermant热插拔能力在故障注入场景的实践
       writer: 张豪鹏
       date: 2024/04/03
