@@ -12,19 +12,6 @@ jobs:
       - uses: actions/stale@v4.1.0
         name: Auto Close Stale Issues and PRs
         with:
-          # 为不活跃的issue添加的标签
-          stale-issue-label: Stale
-          # issue的不活跃警告评论
-          stale-issue-message: >
-            This issue seems to be **Stale**. We will close it in a few days.
-          # issue的关闭评论
-          close-issue-message: >
-            We close this issue because it hasn't been updated in a while. Remove **Stale** label if you want to reopen it.
-          # issue不活跃判定时间，单位：天
-          days-before-issue-stale: 29
-          # issue最终关闭间隔时间，单位：天，-1不执行自动关闭
-          days-before-issue-close: -1
-
           # 为不活跃的pr添加的标签
           stale-pr-label: Stale
           # pr的不活跃警告评论
