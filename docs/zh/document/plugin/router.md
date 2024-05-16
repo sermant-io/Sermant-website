@@ -276,7 +276,7 @@
 
 - SpringCloud Edgware.SR2 - 2021.0.0
 
-- Dubbo 2.6.x - 2.7.x
+- Dubbo 2.6.x-2.7.x，3.0.x-3.2.x
 
 限制：
 
