@@ -69,6 +69,10 @@
           - weight: 80                   # 权重值为80%
             tags:
               version: 1.0.1             # 满足match条件的实例路由到version标签为1.0.1的实例
+        fallback:                        # 满足match条件，但路由的实例为空时，配置fallback策略，路由到version标签为0.9.0的实例
+          - tags:
+              version: 0.9.0             # 满足fallback条件的实例路由到version标签为0.9.0的实例
+            weight: 100                  # 权重值为100%
       - precedence: 1                    # 优先级，数字越大，优先级越高。
         route:
           - weight: 20                   # 权重值为20%
@@ -77,9 +81,13 @@
           - weight: 80                   # 权重值为80%
             tags:
               group: green               # 满足match条件的实例路由到group标签为green的实例
+        fallback:                        # 满足match条件，但路由的实例为空时，配置fallback策略，路由到group标签为black的实例
+          - tags:
+              group: black               # 满足fallback条件的实例路由到group标签为black的实例
+            weight: 100                  # 权重值为100%
   ```
   
-  **上述路由规则解释：** attachments信息中id属性值为1的请求20%会路由到版本号为1.0.0的服务实例，80%会路由到版本号为1.0.1的服务实例。其他请求20%会路由到group标签为red的服务实例，80%会路由到group标签为green的服务实例。
+  **上述路由规则解释：** attachments信息中id属性值为1的请求20%会路由到版本号为1.0.0的服务实例，80%会路由到版本号为1.0.1的服务实例，当匹配的服务实例为空时，执行fallback策略，100%会路由到版本号为0.9.0的服务实例。其他请求20%会路由到group标签为red的服务实例，80%会路由到group标签为green的服务实例，当匹配的服务实例为空时，执行fallback策略，100%会路由到group为black的服务实例。
   
   **注意：** 新增配置时，请去掉注释，否则会导致新增失败。
   
@@ -91,6 +99,7 @@
   |   route    |            路由规则，包括权重配置以及标签信息配置            |   空   |    是    |
   |   weight   |                            权重值                            |   空   |    是    |
   |    tags    | 表示下游的标签信息，满足match条件的实例路由到该标签的下游实例 |   空   |    是    |
+  | fallback(仅限于流量匹配) | 当流量满足路由规则但匹配的路由实例为空时，执行fallback策略，选择fallback指定的路由实例 |   空   |    否    |
 
 
 - **基于标签匹配的路由规则**
@@ -127,6 +136,7 @@
   ```
   
   **上述路由规则解释：** zone标签配置为hangzhou的消费端实例在调用下游服务时，优先调用zone标签也为hangzhou的下游实例。version标签配置为1.0.0的消费端实例在调用下游服务时，请求的20%会路由到group标签为red的服务实例，80%会路由到group标签为green的服务实例。
+  其他未匹配的流量选择需路由的下游服务时会剔除上述路由规则对应的实例，即zone标签为hangzhou、group标签为red和green的服务实例。
   
   **注意：** 新增配置时，请去掉注释，否则会导致新增失败。
   
