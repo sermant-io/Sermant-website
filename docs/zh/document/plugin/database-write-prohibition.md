@@ -67,7 +67,7 @@
 
   group为**app=${service.meta.application}&environment=${service.meta.environment}&zone=${service.meta.zone}**，
 
-  其中`${service.meta.application}`，`${service.meta.environment}`以及`${service.meta.zone}`在Sermant的配置文件`sermant-agent-x.x.x/agent/config.properties`中配置。group的默认值为`app=default&environment=&zone=`。
+  其中`${service.meta.application}`，`${service.meta.environment}`以及`${service.meta.zone}`在Sermant的配置文件`sermant-agent-x.x.x/agent/config.properties`中配置。group的默认值为`app=default&environment=&zone=default`。
 
 - **key**
 
@@ -185,7 +185,7 @@ Current Collection: [collection-test-1]
 
 配置MongoDB禁写规则，参考[动态配置中心使用手册](../user-guide/configuration-center.md#发布配置)中Zookeeper进行配置发布。
 
-其中key值为**sermant.database.write.globalConfig**，group为**app=default&environment=&zone=**，content为具体的禁止消费规则，如下所示：
+其中key值为**sermant.database.write.globalConfig**，group为**app=default&environment=&zone=default**，content为具体的禁止消费规则，如下所示：
 
 ```yaml
 enableMongoDbWriteProhibition: true
