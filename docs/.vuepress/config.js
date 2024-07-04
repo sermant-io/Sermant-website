@@ -155,7 +155,7 @@ module.exports = {
               children: [
                 "user-guide/",
                 "user-guide/sermant-agent",
-                "user-guide/backend",
+                "user-guide/sermant-backend",
                 "user-guide/configuration-center",
                 "user-guide/injector",
                 "user-guide/script"
