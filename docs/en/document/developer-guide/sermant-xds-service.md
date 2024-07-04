@@ -14,7 +14,7 @@ Istio is deployed with a control plane and a data plane. Traditionally, the data
 
 This development example is based on the project created in the [Creating Your First Plugin](README.md) document and demonstrates how the plugin uses the xDS service discovery capability provided by the Sermant framework to obtain service instances:
 
-1. Add the `xdsServiceDiscovery` variable in the `com.huaweicloud.sermant.template.TemplateDeclarer` class under `template\template-plugin` in the project to get the xDS service discovery service provided by the Sermant framework for obtaining service instances:
+1. Add the `xdsServiceDiscovery` variable in the `com.huaweicloud.sermant.template.TemplateDeclarer` class under `template/template-plugin` in the project to get the xDS service discovery service provided by the Sermant framework for obtaining service instances:
 
    ```java
    XdsServiceDiscovery xdsServiceDiscovery = ServiceManager.getService(XdsCoreService.class).getXdsServiceDiscovery();
@@ -59,7 +59,7 @@ This development example is based on the project created in the [Creating Your F
    # xDS service switch
    agent.service.xds.service.enable=true
    ```
-4. After completing the execution, package the Sermant image and the host microservice image. Start the `service-test`service in the k8s environment and create the corresponding service instances (implemented by the user). Finally, start the host application in Kubernetes and mount Sermant. Refer to the [Sermant Injector User Guide](../user-guide/sermant-injector.md#startup-and-result-validation) for guidance on packaging Sermant and the host image in the Kubernetes environment, as well as mounting Sermant for startup.
+4. After completing the execution, package the Sermant image and the host microservice image. Start the `service-test`service in the k8s environment and create the corresponding service instances (implemented by the user). Finally, start the host application in Kubernetes and mount Sermant. Refer to the [Sermant Injector User Guide](../user-guide/injector.md#startup-and-result-validation) for guidance on packaging Sermant and the host image in the Kubernetes environment, as well as mounting Sermant for startup.
 
 5. After the host microservice pod with Sermant mounted starts successfully, you can execute the following command to obtain the host microservice logs and view the service instances obtained through the xDS service discovery capability:
 
