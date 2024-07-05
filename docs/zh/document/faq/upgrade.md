@@ -4,37 +4,39 @@
 
 ## 字节码增强API兼容性
 
-基于Sermant进行服务治理能力开发所涉及的字节码增强 API 包括类匹配(ClassMatcher)、方法匹配(MethodMatcher)、拦截器(Interceptor)、拦截声明(InterceptDeclarer)、字节码增强(ExecuteContext)等，上述 API保持**向前兼容（在升级 Sermant 框架时无需修改原有插件代码）**，当前最新版本对以往版本开发插件兼容情况：
+基于Sermant进行服务治理能力开发所涉及的字节码增强 API 包括类匹配(ClassMatcher)、方法匹配(MethodMatcher)、拦截器(Interceptor)、拦截声明(InterceptDeclarer)、字节码增强(ExecuteContext)等，上述 API保持**向前兼容**。需要注意的是，**Sermant 2.0.0版本在项目引入依赖时Group ID以及包名发生改变**。因此对于自定义插件的开发者来说，虽然功能上2.0.0及以上版本仍然向前兼容，原有的插件代码无需修改，但是需要修改项目依赖中的最新的Group ID以及修改导入的相关类的名字。具体版本的升级变化参考[2.0.x版本升级注意事项](#_1-4-x版本-向-2-0-x版本升级)。当前最新版本对以往版本开发插件兼容情况：
 
-| LATEST版本（1.4.0） | 类匹配 | 方法匹配 | 拦截器 |        拦截声明         | 字节码增强 |
-| :-----------------: | :----: | :------: | :----: | :---------------------: | :--------: |
-|        1.3.1        |   ✅    |    ✅     |   ✅    | ✅ **部分 API 标注废弃** |     ✅      |
-|        1.3.0        |   ✅    |    ✅     |   ✅    | ✅ **部分 API 标注废弃** |     ✅      |
-|        1.2.1        |   ✅    |    ✅     |   ✅    | ✅ **部分 API 标注废弃** |     ✅      |
-|        1.2.0        |   ✅    |    ✅     |   ✅    | ✅ **部分 API 标注废弃** |     ✅      |
-|        1.1.0        |   ✅    |    ✅     |   ✅    |            ✅            |     ✅      |
-|     1.1.0-beta      |   ✅    |    ✅     |   ✅    |            ✅            |     ✅      |
-|        1.0.7        |   ✅    |    ✅     |   ✅    |            ✅            |     ✅      |
-|        1.0.6        |   ✅    |    ✅     |   ✅    |            ✅            |     ✅      |
-|        1.0.5        |   ✅    |    ✅     |   ✅    |            ✅            |     ✅      |
-|        1.0.4        |   ✅    |    ✅     |   ✅    |            ✅            |     ✅      |
-|        1.0.3        |   ✅    |    ✅     |   ✅    |            ✅            |     ✅      |
-|        1.0.2        |   ✅    |    ✅     |   ✅    |            ✅            |     ✅      |
-|        1.0.1        |   ✅    |    ✅     |   ✅    |            ✅            |     ✅      |
-|        1.0.0        |   ✅    |    ✅     |   ✅    |            ✅            |     ✅      |
-|        0.0.9        |   ✅    |    ✅     |   ✅    |            ✅            |     ✅      |
-|        0.0.8        |   ✅    |    ✅     |   ✅    |            ✅            |     ✅      |
-|        0.0.7        |   ✅    |    ✅     |   ✅    |            ✅            |     ✅      |
-|        0.0.6        |   ✅    |    ✅     |   ✅    |            ✅            |     ✅      |
-|        0.0.5        |   ✅    |    ✅     |   ✅    |            ✅            |     ✅      |
-|        0.0.4        |   ✅    |    ✅     |   ✅    |            ✅            |     ✅      |
-|        0.0.3        |   ✅    |    ✅     |   ✅    |            ✅            |     ✅      |
-|        0.0.2        |   ✅    |    ✅     |   ✅    |            ✅            |     ✅      |
-|        0.0.1        |   ✅    |    ✅     |   ✅    |            ✅            |     ✅      |
+| Latest版本(2.0.0) | 类匹配 | 方法匹配 | 拦截器 |        拦截声明         | 字节码增强 |
+| :---------------: | :----: | :------: | :----: | :---------------------: | :--------: |
+|       1.4.1       |   ✅    |    ✅     |   ✅    | ✅ **部分 API 标注废弃** |     ✅      |
+|       1.4.0       |   ✅    |    ✅     |   ✅    | ✅ **部分 API 标注废弃** |     ✅      |
+|       1.3.1       |   ✅    |    ✅     |   ✅    | ✅ **部分 API 标注废弃** |     ✅      |
+|       1.3.0       |   ✅    |    ✅     |   ✅    | ✅ **部分 API 标注废弃** |     ✅      |
+|       1.2.1       |   ✅    |    ✅     |   ✅    | ✅ **部分 API 标注废弃** |     ✅      |
+|       1.2.0       |   ✅    |    ✅     |   ✅    | ✅ **部分 API 标注废弃** |     ✅      |
+|       1.1.0       |   ✅    |    ✅     |   ✅    |            ✅            |     ✅      |
+|    1.1.0-beta     |   ✅    |    ✅     |   ✅    |            ✅            |     ✅      |
+|       1.0.7       |   ✅    |    ✅     |   ✅    |            ✅            |     ✅      |
+|       1.0.6       |   ✅    |    ✅     |   ✅    |            ✅            |     ✅      |
+|       1.0.5       |   ✅    |    ✅     |   ✅    |            ✅            |     ✅      |
+|       1.0.4       |   ✅    |    ✅     |   ✅    |            ✅            |     ✅      |
+|       1.0.3       |   ✅    |    ✅     |   ✅    |            ✅            |     ✅      |
+|       1.0.2       |   ✅    |    ✅     |   ✅    |            ✅            |     ✅      |
+|       1.0.1       |   ✅    |    ✅     |   ✅    |            ✅            |     ✅      |
+|       1.0.0       |   ✅    |    ✅     |   ✅    |            ✅            |     ✅      |
+|       0.0.9       |   ✅    |    ✅     |   ✅    |            ✅            |     ✅      |
+|       0.0.8       |   ✅    |    ✅     |   ✅    |            ✅            |     ✅      |
+|       0.0.7       |   ✅    |    ✅     |   ✅    |            ✅            |     ✅      |
+|       0.0.6       |   ✅    |    ✅     |   ✅    |            ✅            |     ✅      |
+|       0.0.5       |   ✅    |    ✅     |   ✅    |            ✅            |     ✅      |
+|       0.0.4       |   ✅    |    ✅     |   ✅    |            ✅            |     ✅      |
+|       0.0.3       |   ✅    |    ✅     |   ✅    |            ✅            |     ✅      |
+|       0.0.2       |   ✅    |    ✅     |   ✅    |            ✅            |     ✅      |
+|       0.0.1       |   ✅    |    ✅     |   ✅    |            ✅            |     ✅      |
 
 ## 核心服务及其他API兼容性
 
-基于Sermant进行服务治理能力开发所涉及的关键 API 包括配置管理、核心服务管理、动态配置服务、心跳服务、日志等，上述 API保持**向前兼容（在升级 Sermant 框架时无需修改原有插件代码）**，当前最新版本对以往版本开发插件兼容情况：
+基于Sermant进行服务治理能力开发所涉及的关键 API 包括配置管理、核心服务管理、动态配置服务、心跳服务、日志等，上述 API保持**向前兼容**。需要注意的是，**Sermant 2.0.0版本在项目引入依赖时Group ID以及包名发生改变**，因此对于自定义插件的开发者来说，虽然功能上2.0.0及以上版本仍然向前兼容，原有的插件代码无需修改，但是需要修改项目依赖中的最新的Group ID以及修改导入的相关类的名字。具体版本的升级变化参考[2.0.x版本升级注意事项](#_1-4-x版本-向-2-0-x版本升级)。当前最新版本对以往版本开发插件兼容情况：
 
 | LATEST版本（1.4.0） | 配置管理 | 服务管理 | 动态配置 | 心跳服务 | 日志 |
 | :-----------------: | :------: | :------: | :------: | :------: | :--: |
@@ -79,6 +81,88 @@
 --add-opens java.base/sun.net.www=ALL-UNNAMED
 --add-opens java.base/sun.net.www.protocol.http=ALL-UNNAMED
 ```
+## 1.4.x版本 向 2.0.x版本升级
+
+### 对于Release包的直接使用者
+
+您可以直接下载Sermant的最新2.0.x release包并挂载在您的应用程序上。使用方式无变化。
+
+> **注意：由于Group ID和包名变更导致SPI定义的变化，2.0.x及以上版本和1.4.x及更早版本不能跨版本交叉使用sermant-agent以及插件。例如，sermant-agent版本为2.0.0, 加载的插件版本为1.4.1，会导致插件无法正常使用，反之亦然。建议您将sermant-agent以及插件都升级至最新版本并保持一致，以确保正常使用。**
+
+### 对于引入Sermant依赖的开发者
+
+#### 差异
+
+由于项目的结构调整，我们把Sermant 1.4.x及更早版本的Group ID从`com.huaweicloud.sermant`修改为`io.sermant`。类似地，Sermant中所有的类的包名都由`com.huaweicloud.sermant`等修改为`io.sermant`。因此对于插件开发者来说, 在Sermant的项目依赖从1.4.x版本升级至2.0.x及以上版本时，需要做相关调整。
+
+#### 影响
+
+基于`com.huaweicloud.sermant`的 1.4.x及更早版本此后仅修复重要漏洞和Bug发布补丁版本。所有新开发特性都仅在基于`io.sermant`的2.0.x及以上版本中支持。如果您想要第一时间体验Sermant的最新能力，建议您尽早升级至2.0.x及以上版本。
+
+#### 变更
+
+##### POM引入依赖
+
+开发者需要引入的Sermant框架以及插件的依赖需要将`<groupId>com.huaweicloud.sermant</groupId>`修改为`<groupId>io.sermant</groupId>`，版本修改为`<version>2.0.0</version>`，以下以sermant-agentcore-core举例。
+
+修改前：
+
+```Java
+<dependency>
+    <groupId>com.huaweicloud.sermant</groupId>
+    <artifactId>sermant-agentcore-core</artifactId>
+    <version>1.4.1</version>
+    <scope>provided</scope>
+</dependency>
+```
+
+修改后：
+
+```Java
+<dependency>
+    <groupId>io.sermant</groupId>
+    <artifactId>sermant-agentcore-core</artifactId>
+    <version>2.0.0</version>
+    <scope>provided</scope>
+</dependency>
+```
+
+##### 包名修改
+
+开发者引入POM依赖后，代码中原有的依赖类的导入也需要做相应的修改。
+
+修改前
+
+```
+package com.example.template;
+
+import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
+import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
+import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
+import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
+```
+
+修改后：
+
+```
+package com.example.template;
+
+import io.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
+import io.sermant.core.plugin.agent.declarer.InterceptDeclarer;
+import io.sermant.core.plugin.agent.entity.ExecuteContext;
+import io.sermant.core.plugin.agent.interceptor.Interceptor;
+import io.sermant.core.plugin.agent.matcher.ClassMatcher;
+import io.sermant.core.plugin.agent.matcher.MethodMatcher;
+```
+
+开发者的原有代码逻辑无需修改。
+
+### 对于Sermant社区的贡献者
+
+由于上述描述的结构调整，如果您需要向社区共享代码，请尽快拉取最新的develop分支。未及时同步仓库代码的情况下提交将可能带来较多的代码冲突。
+
 ## 1.3.x版本 向 1.4.x版本升级
 
 1.4.x版本相对1.3.x版本使用方式无变化，无需做任何配置的修改。建议您使用最新版本的Sermant Agent以及Sermant Backend、Sermant Injector以获得更好的体验。

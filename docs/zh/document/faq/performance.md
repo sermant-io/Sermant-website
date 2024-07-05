@@ -222,3 +222,41 @@ Sermant版本：[`Release v1.4.0`](https://github.com/sermant-io/Sermant/release
 1. 挂载数据库禁写插件后各场景内存增加总量在22M左右，最大TPS、平均TPS下降和CPU占用不超过5%，影响较小。
 2. MySQL和MongoDB在插入场景下，执行了禁写策略，不会和数据库进行数据交互，MongoDB和MySQL执行写入数据库耗时较久，且测试Demo写操作占接口方法执行时间比重大，因此TPS增加较多；
    PostgreSQL和OpenGauss写入数据库执行时间较短，同时测试Demo写操作占接口方法时间比重较小，因此写场景下挂载SermantTPS增加不明显。
+
+## 预过滤启动加速机制
+
+在Sermant 2.0.0 版本开始支持了通过首次运行生成预过滤名单的方式来帮助后续启动时降低启动耗时。该方式可减少启动过程中的字节码增强的类和方法的匹配耗时，大幅缩减启动时间。
+
+### 部署场景
+
+本次测试使用[示例仓库中的demo应用](https://github.com/sermant-io/Sermant-examples/releases/download/v1.4.0/sermant-examples-flowcontrol-demo-1.4.0.tar.gz)来对启动时长进行测试，启动命令为`java -Dspring.cloud.zookeeper.enabled=false -Dagent.service.dynamic.config.enable=false -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar -jar spring-provider.jar`，关闭所有Sermant核心服务进行测试。
+
+测试分为三组，第一组为被测微服务不挂载Sermant启动，第二组为被测微服务不使用预过滤方式启动，第三组为被测微服务使用预过滤方式启动。另外分别限制不同的规格来验证资源大小对启动时长的影响。分别测试整体JVM启动时长、应用启动时长以及Sermant启动时长以作分析。
+
+### 部署环境
+
+本次测试使用华为云容器引擎CCE进行应用部署，K8s集群的ECS节点数量为2个，规格如下：
+
+```
+规格：通用计算型｜16vCPUs｜32GiB｜s2.4xlarge.2
+Docker Version: v24.0.9
+Kubernetes Version: v1.25.3
+```
+
+K8s中所有被测应用的Pod的规格一致，按实验组别分为`1vCPUs|2GiB`，`2vCPUs|4GiB`以及`4vCPUs|8GiB`。
+
+Sermant版本：[`Release v2.0.0`](https://github.com/sermant-io/Sermant/releases/tag/v2.0.0)
+
+### 测试结果
+
+| 规格/场景<br>（单位：s） | 应用启动时长<br>(不挂载Sermant) | JVM启动时长<br/>(不挂载Sermant) | 应用启动时长<br/>(挂载Sermant预过滤关) | JVM启动时长<br/>(挂载Sermant预过滤关) | 应用启动时长<br/>(挂载Sermant预过滤开) | JVM启动时长<br/>(挂载Sermant预过滤开) |
+| ------------------------ | ------------------------------- | ------------------------------- | -------------------------------------- | ------------------------------------- | -------------------------------------- | ------------------------------------- |
+| `1vCPUs|2GiB`            | 6.668                           | 7.571                           | 12.375                                 | 18.528                                | 7.034                                  | 10.276                                |
+| `2vCPUs|4GiB`            | 3.233                           | 3.721                           | 5.476                                  | 10.465                                | 3.116                                  | 5.750                                 |
+| `4vCPUs|8GiB`            | 2.445                           | 2.894                           | 4.175                                  | 9.015                                 | 2.557                                  | 5.118                                 |
+
+### 总结
+
+应用整体的JVM启动时长在预过滤开启前受到一定影响，主要耗时开销在于Sermant本身启动过程中的处理耗时以及应用在启动过程中字节码增强的类和方法的匹配耗时。其中前者较为固定，后者受应用加载过程中的涉及类的数量的影响较大。
+
+通过开启预过滤来启动应用我们可以看到，由Sermant带来的额外的JVM启动时长在`4vCPUs|8GiB`时降低超过65%，`2vCPUs|4GiB`时降低超过70%，`1vCPUs|2GiB`降低超过75%。应用自身的启动时长降低超过90%。值得注意的是，资源越小，启动时长越长，通过预过滤方式来启动的优化效果更加明显。
