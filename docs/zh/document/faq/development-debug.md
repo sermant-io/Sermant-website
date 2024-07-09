@@ -9,7 +9,7 @@
 ### 解决方式
 **不使用流控和负载均衡插件（适用于JAR包或IDEA启动）：**
 1. 宿主微服务通过JAR包方式挂载Sermant Agent启动
-2. 从`${Sermant-path}/config/plugin.yaml`文件中移除流控和负载均衡插件，然后在IDEA中挂载Sermant Agent启动宿主微服务。
+2. 从`${Sermant-path}/config/plugins.yaml`文件中移除流控和负载均衡插件，然后在IDEA中挂载Sermant Agent启动宿主微服务。
 
 **使用流控或负载均衡插件：**
 

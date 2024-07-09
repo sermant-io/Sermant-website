@@ -81,9 +81,8 @@ Sermant Backend使用JDK 1.8版本开发，因此运行环境需JDK 1.8及以上
 
 ### 1 准备工作
 
-- [下载](https://github.com/sermant-io/Sermant/releases/download/v2.0.0/sermant-2.0.0.tar.gz) Sermant
-  Release包（当前版本推荐2.0.0版本）
-- [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v1.4.0/sermant-examples-springboot-registry-demo-1.4.0.tar.gz) Demo二进制产物压缩包
+- [下载](https://github.com/sermant-io/Sermant/releases/download/v2.0.0/sermant-2.0.0.tar.gz) Sermant Release包（当前版本推荐2.0.0版本）
+- [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v2.0.0/sermant-examples-springboot-registry-demo-2.0.0.tar.gz) Demo二进制产物压缩包
 - [下载](https://zookeeper.apache.org/releases.html#download)ZooKeeper（动态配置中心&注册中心），并启动
 
 ### 2 修改Sermant Agent参数配置

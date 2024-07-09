@@ -13,6 +13,15 @@ blogArr:
       - 微服务治理
       - 无代理架构
 
+    - name: Sermant标签路由能力在同城双活场景的应用
+      writer: 聂子雄
+      date: 2024/06/18
+      description: '通过Sermant的标签路由能力来快速助力同城双活方案的落地'
+      path: 'https://bbs.huaweicloud.com/blogs/429223'
+      tags:
+      - 标签路由
+      - 同城双活
+
     - name: Sermant在异地多活场景下的实践
       writer: 戴振宇
       date: 2024/05/07

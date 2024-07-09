@@ -132,7 +132,8 @@ groupKey1=groupValue1[&groupKey2=groupVaue2...]
 本教程使用[Sermant-examples](https://github.com/sermant-io/Sermant-examples/tree/main/first-plugin-demo)仓库中的Demo插件和微服务来进行动态配置能力的演示，该插件中配置了监听器以监听动态配置变化。
 
 ### 准备工作
-- [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v1.4.0/sermant-examples-first-plugin-demo-1.4.0.tar.gz) Demo二进制产物压缩包
+- [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v2.
+  0.0/sermant-examples-first-plugin-demo-2.0.0.tar.gz) Demo二进制产物压缩包
 - [下载](https://zookeeper.apache.org/releases.html#download) ZooKeeper服务端
 - [下载](https://servicecomb.apache.org/cn/release/kie-downloads) Kie服务端
 - [下载](https://github.com/alibaba/nacos/releases/download/2.1.0/nacos-server-2.1.0.tar.gz) Nacos服务端

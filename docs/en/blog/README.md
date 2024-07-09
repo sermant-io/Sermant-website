@@ -23,6 +23,15 @@ blogArr:
       - Traffic Switching
       - Data Consistency
 
+    - name: Application of Sermant's Tag Routing Capability in Active-Active Scenarios
+      writer: 聂子雄
+      date: 2024/06/18
+      description: 'Quickly facilitate the implementation of active-active solution by Sermant'
+      path: 'https://bbs.huaweicloud.com/blogs/429223'
+      tags:
+      - Tag Router
+      - Active-Active
+
     - name: Practice of Sermant hot-swappable capability in fault injection scenarios
       writer: 张豪鹏
       date: 2024/04/03
