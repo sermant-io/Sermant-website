@@ -14,7 +14,7 @@ Istio 的部署分为控制平面和数据平面。传统的数据平面通常�
 
 本开发示例基于[创建首个插件](README.md)文档中创建的工程，演示插件如何通过Sermant框架提供的xDS服务发现能力获取服务实例：
 
-1. 在工程中`template\template-plugin`下的`io.sermant.template.TemplateDeclarer` 类中新增变量`xdsServiceDiscovery`获取Sermant框架提供的xDS服务发现服务，用于获取服务实例：
+1. 在工程中`template/template-plugin`下的`io.sermant.template.TemplateDeclarer` 类中新增变量`xdsServiceDiscovery`获取Sermant框架提供的xDS服务发现服务，用于获取服务实例：
 
    ```java
    XdsServiceDiscovery xdsServiceDiscovery = ServiceManager.getService(XdsCoreService.class).getXdsServiceDiscovery();
