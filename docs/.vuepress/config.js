@@ -26,7 +26,7 @@ module.exports = {
     sidebarDepth: 1,
     locales: {
       "/zh/": {
-        selectText: "选择语言",
+        selectText: "Languages",
         label: "简体中文",
         lastUpdated: "上次更新",
         nav: [
@@ -116,12 +116,12 @@ module.exports = {
               sidebarDepth: 1,
               children: [
                 "faq/",
+                "faq/upgrade",
+                "faq/performance",
                 "faq/development-debug",
                 "faq/framework",
                 "faq/flowcontrol",
                 "faq/registry",
-                "faq/upgrade",
-                "faq/performance",
               ],
             },
           ],

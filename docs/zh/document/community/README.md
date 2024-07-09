@@ -35,8 +35,8 @@
         <td style="background-color:white">若需要，新增用户使用手册</td>
     </tr>
     <tr>
-        <td style="background-color:white">Seramnt Agent框架功能和使用是否发生变化</td>
-        <td style="background-color:white">若变化，修改Seramnt Agent的使用手册</td>
+        <td style="background-color:white">Sermant Agent框架功能和使用是否发生变化</td>
+        <td style="background-color:white">若变化，修改Sermant Agent的使用手册</td>
     </tr>
     <tr>
         <td style="background-color:white">Sermant Backend功能和使用是否发生变化</td>
