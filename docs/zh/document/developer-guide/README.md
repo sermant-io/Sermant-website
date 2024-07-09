@@ -189,4 +189,4 @@ Good night!
 ```
 
 可以看到，在插件中定义的执行逻辑已被增强到测试应用中，至此你的首个插件就开发成功了，下面开始进行Sermant插件的进阶开发吧。
-> 若需要对Sermant Agent进行Debug调试请参考FAQ的[Seramnt Agent Debug指南](../faq/development-debug.md)
+> 若需要对Sermant Agent进行Debug调试请参考FAQ的[Sermant Agent Debug指南](../faq/development-debug.md)

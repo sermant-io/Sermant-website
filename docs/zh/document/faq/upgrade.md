@@ -101,7 +101,7 @@
 
 #### 变更
 
-##### POM引入依赖
+- **POM引入依赖**
 
 开发者需要引入的Sermant框架以及插件的依赖需要将`<groupId>com.huaweicloud.sermant</groupId>`修改为`<groupId>io.sermant</groupId>`，版本修改为`<version>2.0.0</version>`，以下以sermant-agentcore-core举例。
 
@@ -127,11 +127,11 @@
 </dependency>
 ```
 
-##### 包名修改
+- **包名修改**
 
 开发者引入POM依赖后，代码中原有的依赖类的导入也需要做相应的修改。
 
-修改前
+修改前：
 
 ```
 package com.example.template;
@@ -158,6 +158,18 @@ import io.sermant.core.plugin.agent.matcher.MethodMatcher;
 ```
 
 开发者的原有代码逻辑无需修改。
+
+- **SPI文件名修改**
+
+SPI的文件名是由定义接口名字决定的，因此，在使用Sermant的SPI接口定义时，也需要做相应的修改。
+
+在src/main/resources/META-INF/services目录的以下文件需要按照以下方式重命名：
+
+| 修改前                                                       | 修改后                                               |
+| ------------------------------------------------------------ | ---------------------------------------------------- |
+| com.huaweicloud.sermant.core.plugin.agent.declarer.PluginDeclarer | io.sermant.core.plugin.agent.declarer.PluginDeclarer |
+| com.huaweicloud.sermant.core.plugin.service.PluginService    | io.sermant.core.plugin.service.PluginService         |
+| com.huaweicloud.sermant.core.plugin.config.PluginConfig      | io.sermant.core.plugin.config.PluginConfig           |
 
 ### 对于Sermant社区的贡献者
 
