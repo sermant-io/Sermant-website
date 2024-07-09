@@ -223,6 +223,82 @@ Sermant版本：[`Release v1.4.0`](https://github.com/sermant-io/Sermant/release
 2. MySQL和MongoDB在插入场景下，执行了禁写策略，不会和数据库进行数据交互，MongoDB和MySQL执行写入数据库耗时较久，且测试Demo写操作占接口方法执行时间比重大，因此TPS增加较多；
    PostgreSQL和OpenGauss写入数据库执行时间较短，同时测试Demo写操作占接口方法时间比重较小，因此写场景下挂载SermantTPS增加不明显。
 
+## xDS服务发现
+
+**Sermant基于xDS协议的服务发现能力性能测试分为两组：**
+
+1. 基线应用性能对比：测试Java应用挂载Sermant，静态场景下的cpu和内存损耗。
+
+2. Sidecar性能对比：测试Java应用在恒定TPS下使用Sermant xDS服务发现能力或Sidecar（Envoy）相较于基线应用的性能对比，包括Pod的CPU占用、内存和服务调用时延指标。测试场景为spring-client应用调用spring-server应用，采集spring-client应用所在Pod的性能指标。
+
+   > 说明：使用 [xds-service-discovery-demo](https://github.com/sermant-io/Sermant-examples/releases/download/v2.0.0/sermant-examples-xds-service-discovery-demo-2.0.0.tar.gz) 作为本次的基准应用进行性能测试
+
+### 第一组测试：基线应用性能对比
+
+#### 部署环境
+
+本次测试使用华为云容器引擎CCE进行应用部署，K8s集群的ECS节点数量为2个，规格如下：
+
+```
+规格：通用计算型｜8vCPUs｜24GiB
+Docker Version: v18.09.0
+Kubernetes Version: v1.21.7
+Istio Version：v1.14.3
+```
+
+K8s中所有应用Container的规格一致，均为`4vCPUs|8GiB`。
+
+Sermant版本：[`Release v2.0.0`](https://github.com/sermant-io/Sermant/releases/tag/v2.0.0)
+
+#### 测试结果
+
+| 测试场景             | 内存增加总量 | 堆内存增加 | 堆外内存增加 | class增加量 | CPU占用率增加 |
+| -------------------- | ------------ | ---------- | ------------ | ----------- | ------------- |
+| 挂载Sermant不开启xDS | 13.45M       | 0.45M      | 13M          | 1902        | 0%            |
+| 挂载Sermant开启xDS   | 35.37M       | 2.37M      | 33M          | 3837        | 0%            |
+
+#### 总结
+
+1. 宿主服务只挂载Sermant，不开启xDS服务时，Sermant框架共增加13.45M内存。其中，堆外内存中增加1902个class对象
+2. 宿主服务挂载Sermant开启xDS服务堆外内存共增加33M，相较于仅挂载Sermant堆外内存增加20M，主要为堆外内存新增1935个class对象，和xDS依赖和grpc依赖相关。同时，我们和主流的无代理服务治理框架进行了参考对比，开启xDS服务时增加的堆外内存属于正常范围。
+
+### 第二组测试：Sidecar性能对比
+
+#### 部署环境
+
+本次测试使用华为云容器引擎CCE进行应用部署，K8s集群的ECS节点数量为2个，规格如下：
+
+```
+规格：通用计算型｜8vCPUs｜24GiB
+Docker Version: v18.09.0
+Kubernetes Version: v1.21.7
+Istio Version：v1.14.3
+```
+
+K8s中所有应用Container的规格一致，均为`2vCPUs|4GiB`，Envoy 的Container规格同样为`2vCPUs|4GiB`。
+
+Sermant版本：[`Release v2.0.0`](https://github.com/sermant-io/Sermant/releases/tag/v2.0.0)
+
+#### 测试结果
+
+| 测试场景：1000TPS | CPU占用增加 | 内存占用增加 | 平均调用时延增加 | p90增加 | p99增加 |
+| ----------------- | ----------- | ------------ | ---------------- | ------- | ------- |
+| Sermant           | 3.70%       | 0.05G        | +0ms             | +0ms    | +0ms    |
+| Envoy             | 326%        | 0.06G        | +3ms             | +5ms    | +3ms    |
+
+
+| 测试场景：2000TPS | CPU占用增加 | 内存占用增加 | 平均调用时延增加 | p90增加 | p99增加 |
+| ----------------- | ----------- | ------------ | ---------------- | ------- | ------- |
+| Sermant           | 2.17%       | 0.06G        | +0ms             | +0ms    | +0ms    |
+| Envoy             | 339%        | 0.06G        | +5ms             | +9ms    | +10ms   |
+
+
+#### 总结
+
+1. 1000TPS下，基线应用挂载Sermant进行服务发现和调用CPU增加3.7%，调用时延没有增长；使用Envoy，CPU占用相比基线应用增加超过300%，平均调用时延增加3ms，p90更是增加了5ms，资源损耗较大。
+2. 2000TPS下，基线应用挂载Sermant进行服务调用性能损耗基本和1000TPS场景下持平；使用Envoy时，CPU占用相比基线应用增加达到339%，平均调用时延增加扩大至5ms，p99增加了10ms。随着TPS的增大，使用Envoy的性能损耗持续扩大，尤其是服务调用时延。
+3. 通过性能测试对比，Sermant基于xDS协议的服务发现能力无论是CPU损耗还是调用时延等方面性能均远超Envoy。
+
 ## 预过滤启动加速机制
 
 在Sermant 2.0.0 版本开始支持了通过首次运行生成预过滤名单的方式来帮助后续启动时降低启动耗时。该方式可减少启动过程中的字节码增强的类和方法的匹配耗时，大幅缩减启动时间。
