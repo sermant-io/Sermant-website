@@ -116,11 +116,10 @@
 
 ### 准备工作
 
-- [下载 ](https://github.com/sermant-io/Sermant/releases/download/v1.4.0/sermant-1.4.0.tar.gz)Sermant Release包
-
+- [下载 ](https://github.com/sermant-io/Sermant/releases/download/v2.0.0/sermant-2.0.0.tar.gz) Sermant Release包（当前版本推荐2.0.0版本）
 - [下载](https://zookeeper.apache.org/releases.html#download) ZooKeeper Release包
 - [下载](https://www.mongodb.com/try/download/community)MongoDB 安装包并安装
-- [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v1.4.0/sermant-examples-database-write-prohibition-demo-1.4.0.tar.gz) Demo二进制产物压缩包
+- [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v2.0.0/sermant-examples-database-write-prohibition-demo-2.0.0.tar.gz) Demo二进制产物压缩包
 
 ### 步骤一：获取Demo二进制产物
 

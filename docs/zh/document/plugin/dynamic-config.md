@@ -124,8 +124,8 @@ public class ValueConfig {
 
 ### 准备工作
 
-- [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v1.4.0/sermant-examples-dynamic-demo-1.4.0.tar.gz) Demo二进制产物压缩包
-- [下载](https://github.com/sermant-io/Sermant/releases/download/v1.4.0/sermant-1.4.0.tar.gz) Sermant Release包（当前版本推荐1.4.0版本）
+- [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v2.0.0/sermant-examples-dynamic-demo-2.0.0.tar.gz) Demo二进制产物压缩包
+- [下载](https://github.com/sermant-io/Sermant/releases/download/v2.0.0/sermant-2.0.0.tar.gz) Sermant Release包（当前版本推荐2.0.0版本）
 - [下载](https://zookeeper.apache.org/releases#download) 并启动ZooKeeper
 
 ### 步骤一：获取Demo二进制产物
