@@ -12,21 +12,21 @@ This article is for guidance on how to develop your first plugin locally.
 Execute the following Maven commands locally：
 
 ```shell
-$ mvn archetype:generate -DarchetypeGroupId=com.huaweicloud.sermant -DarchetypeArtifactId=sermant-template-archetype -DarchetypeVersion=1.2.0 -DgroupId=com.huaweicloud.sermant -Dversion=1.2.0 -Dpackage=com.huaweicloud -DartifactId=first-plugin
+$ mvn archetype:generate -DarchetypeGroupId=io.sermant -DarchetypeArtifactId=sermant-template-archetype -DarchetypeVersion=2.0.0 -DgroupId=io.sermant -Dversion=2.0.0 -Dpackage=io.sermant -DartifactId=first-plugin
 ```
 
 After executing the above command, press Enter for confirmation when the following log is displayed：
 
 ```shell
-[INFO] Using property: groupId = com.huaweicloud.sermant
+[INFO] Using property: groupId = io.sermant
 [INFO] Using property: artifactId = first-plugin
-[INFO] Using property: version = 1.2.0
-[INFO] Using property: package = com.huaweicloud
+[INFO] Using property: version = 2.0.0
+[INFO] Using property: package = io.sermant
 Confirm properties configuration:
-groupId: com.huaweicloud.sermant
+groupId: io.sermant
 artifactId: first-plugin
-version: 1.2.0
-package: com.huaweicloud
+version: 2.0.0
+package: io.sermant
  Y: :
 ```
 
@@ -67,24 +67,24 @@ The template project directory generated based on Archetype is as follows：
 
 ## Develop Plugin
 
-First find the `com.huaweicloud.sermant.template.TemplateDeclarer` class of template project `template\template-plugin`, there we can declare the class we expect to enhance, specify the methods in that class we expect to enhance, and define enhancement logic for it.
+First find the `io.sermant.template.TemplateDeclarer` class of template project `template\template-plugin`, there we can declare the class we expect to enhance, specify the methods in that class we expect to enhance, and define enhancement logic for it.
 
 ### Declares the Class to Be Enhanced
 
-The `getClassMatcher()` method of `com.huaweicloud.sermant.template.TemplateDeclarer` class need to be  implement the following logic to enhance the class：
+The `getClassMatcher()` method of `io.sermant.template.TemplateDeclarer` class need to be  implement the following logic to enhance the class：
 
-1. Define [Class matcher](bytecode-enhancement.md#Class-Matcher)`ClassMatcher.nameEquals("com.huaweicloud.template.Application")`, the matcher matches `com.huaweicloud.template.Application` class by class name.
+1. Define [Class matcher](bytecode-enhancement.md#Class-Matcher)`ClassMatcher.nameEquals("io.demo.template.Application")`, the matcher matches `io.demo.template.Application` class by class name.
 
 ```java
 @Override
 public ClassMatcher getClassMatcher() {
-    return ClassMatcher.nameEquals("com.huaweicloud.template.Application");
+    return ClassMatcher.nameEquals("io.demo.template.Application");
 }
 ```
 
 > Note：The above logic is implemented in the template code
 >
-> `com.huaweicloud.template.Application`logic is as follows：
+> `io.demo.template.Application`logic is as follows：
 >
 > ```java
 > public class Application {
@@ -98,9 +98,9 @@ public ClassMatcher getClassMatcher() {
 
 ### Declare the Methods That Need to Be Enhanced
 
-After you specify the class that you want to enhance, you need to specify the method in that class that you want to enhance and define the enhancement logic for that method, the above steps require the following logic to be added to the getInterceptDeclarers(ClassLoader classLoader) method in the com.huaweicloud.sermant.template.TemplateDeclarer class：
+After you specify the class that you want to enhance, you need to specify the method in that class that you want to enhance and define the enhancement logic for that method, the above steps require the following logic to be added to the `getInterceptDeclarers(ClassLoader classLoader)` method in the `io.sermant.template.TemplateDeclarer` class：
 
-1. Define [Method matcher](bytecode-enhancement.md#Method-Matcher) `MethodMatcher.nameEquals("main")`，the matcher matches the `main` method of `com.huaweicloud.template.Application` class by method name.
+1. Define [Method matcher](bytecode-enhancement.md#Method-Matcher) `MethodMatcher.nameEquals("main")`，the matcher matches the `main` method of `io.demo.template.Application` class by method name.
 2. Define an [interceptor](bytecode-enhancement.md#Interceptor) for the 'main' method, add `System.out.println("Good morning!")` to the `before` method , and add `System.out.println("Good morning!")` logic to the `after` method, `before` and `after` method will take effect before and after the `main` method is executed.
 
 ```java
@@ -136,7 +136,7 @@ public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
 At the end of developing the plugin, don't forget to add the **SPI** configuration that enhances the declaration, add the `META-INF/services` directory to `resources` directory under `template\template-plugin` in your project, and create **SPI** file named `io.sermant.core.plugin.agent.declarer.PluginDeclarer`, then add the class name of the bytecode enhanced declaration class to it：
 
 ```shell
-com.huaweicloud.sermant.template.TemplateDeclarer
+io.sermant.template.TemplateDeclarer
 ```
 
 ## Packaged Build

@@ -12,21 +12,21 @@
 本地执行如下Maven指令：
 
 ```shell
-$ mvn archetype:generate -DarchetypeGroupId=com.huaweicloud.sermant -DarchetypeArtifactId=sermant-template-archetype -DarchetypeVersion=1.2.0 -DgroupId=com.huaweicloud.sermant -Dversion=1.2.0 -Dpackage=com.huaweicloud -DartifactId=first-plugin
+$ mvn archetype:generate -DarchetypeGroupId=io.sermant -DarchetypeArtifactId=sermant-template-archetype -DarchetypeVersion=2.0.0 -DgroupId=io.sermant -Dversion=2.0.0 -Dpackage=io.sermant -DartifactId=first-plugin
 ```
 
 执行上述指令后，出现下述日志后回车进行确认：
 
 ```shell
-[INFO] Using property: groupId = com.huaweicloud.sermant
+[INFO] Using property: groupId = io.sermant
 [INFO] Using property: artifactId = first-plugin
-[INFO] Using property: version = 1.2.0
-[INFO] Using property: package = com.huaweicloud
+[INFO] Using property: version = 2.0.0
+[INFO] Using property: package = io.sermant
 Confirm properties configuration:
-groupId: com.huaweicloud.sermant
+groupId: io.sermant
 artifactId: first-plugin
-version: 1.2.0
-package: com.huaweicloud
+version: 2.0.0
+package: io.sermant
  Y: :
 ```
 
@@ -67,29 +67,30 @@ package: com.huaweicloud
 
 ## 开发插件
 
-首先找到模板工程`template\template-plugin`下的`com.huaweicloud.sermant.template.TemplateDeclarer`类，我们可以在其中声明我们期望增强的类，指定该类中我们期望增强的方法，并为其定义增强逻辑。
+首先找到模板工程`template\template-plugin`下的`io.sermant.template.TemplateDeclarer`类，我们可以在其中声明我们期望增强的类，指定该类中我们期望增强的方法，并为其定义增强逻辑。
 
 ### 声明需增强的类
 
-指定期望增强的类，需在`com.huaweicloud.sermant.template.TemplateDeclarer`中的`getClassMatcher()`方法实现如下逻辑：
+指定期望增强的类，需在`io.sermant.template.TemplateDeclarer`中的`getClassMatcher()`方法实现如下逻辑：
 
-1. 定义[类匹配器](bytecode-enhancement.md#类匹配器)`ClassMatcher.nameEquals("com.huaweicloud.template.Application")`，该匹配器通过类名称匹配`com.huaweicloud.template.Application`类。
+1. 定义[类匹配器](bytecode-enhancement.md#类匹配器)`ClassMatcher.nameEquals("io.demo.template.Application")`，该匹配器通过类名称匹配`io.demo.template.Application`类。
 
 ```java
 @Override
 public ClassMatcher getClassMatcher() {
-		return ClassMatcher.nameEquals("com.huaweicloud.template.Application");
+		return ClassMatcher.nameEquals("io.demo.template.Application");
 }
 ```
 
 > 注：上述逻辑已在模版代码中实现
 >
-> `com.huaweicloud.template.Application`逻辑如下：
+> `io.demo.template.Application`逻辑如下：
 >
 > ```java
 > public class Application {
 >     public static void main(String[] args) {
 >         System.out.println("Good afternoon!");
+>         SimulateServer.handleRequest(new HashMap<>());
 >     }
 > }
 > ```
@@ -98,9 +99,9 @@ public ClassMatcher getClassMatcher() {
 
 ### 声明需增强的方法
 
-指定需要增强的类后，需要指定该类中你期望增强的方法，并为该方法定义增强逻辑，上述步骤需要在`com.huaweicloud.sermant.template.TemplateDeclarer`中的`getInterceptDeclarers(ClassLoader classLoader)`方法中添加如下逻辑：
+指定需要增强的类后，需要指定该类中你期望增强的方法，并为该方法定义增强逻辑，上述步骤需要在`io.sermant.template.TemplateDeclarer`中的`getInterceptDeclarers(ClassLoader classLoader)`方法中添加如下逻辑：
 
-1. 定义一个[方法匹配器](bytecode-enhancement.md#方法匹配器)`MethodMatcher.nameEquals("main")`，该匹配器通过方法名称匹配`com.huaweicloud.template.Application`类中的`main`方法。
+1. 定义一个[方法匹配器](bytecode-enhancement.md#方法匹配器)`MethodMatcher.nameEquals("main")`，该匹配器通过方法名称匹配`io.demo.template.Application`类中的`main`方法。
 2. 定义针对`main`方法的[拦截器](bytecode-enhancement.md#拦截器)，并在其`before`方法中补充`System.out.println("Good morning!")`逻辑，`after`方法中补充`System.out.println("Good night!")`逻辑，`before`方法和`after`方法将会在`main`方法执行前后生效。
 
 ```java
@@ -133,10 +134,10 @@ public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
 
 ### 添加增强声明的SPI配置
 
-开发插件的最后，不要忘记添加增强声明的**SPI**配置，在工程中`template\template-plugin`下的资源目录`resources`中添加`META-INF/services`目录，并在其中创建名为` io.sermant.core.plugin.agent.declarer.PluginDeclarer`的**SPI**文件，并向其中添加字节码增强声明类的类名：
+开发插件的最后，不要忘记添加增强声明的**SPI**配置，在工程中`template\template-plugin`下的资源目录`resources`中添加`META-INF/services`目录，并在其中创建名为`io.sermant.core.plugin.agent.declarer.PluginDeclarer`的**SPI**文件，并向其中添加字节码增强声明类的类名：
 
 ```shell
-com.huaweicloud.sermant.template.TemplateDeclarer
+io.sermant.template.TemplateDeclarer
 ```
 
 ## 打包构建
