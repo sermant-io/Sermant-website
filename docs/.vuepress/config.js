@@ -40,29 +40,28 @@ module.exports = {
               title: "开始",
               path: "",
               collapsable: true,
-              sidebarDepth: 1,
+              sidebarDepth: 2,
               children: ["", "QuickStart"],
             },
             {
               title: "用户使用手册",
               path: "",
               collapsable: true,
-              sidebarDepth: 1,
+              sidebarDepth: 2,
               children: [
                 "user-guide/",
                 "user-guide/sermant-agent",
                 "user-guide/sermant-backend",
                 "user-guide/sermant-injector",
                 "user-guide/configuration-center",
-                "user-guide/sermant-xds",
-                "user-guide/script"
+                "user-guide/sermant-xds"
               ],
             },
             {
               title: "插件使用手册",
               path: "",
               collapsable: true,
-              sidebarDepth: 1,
+              sidebarDepth: 2,
               children: [
                 "plugin/",
                 "plugin/dynamic-config",
@@ -160,8 +159,7 @@ module.exports = {
                 "user-guide/sermant-backend",
                 "user-guide/configuration-center",
                 "user-guide/sermant-xds",
-                "user-guide/injector",
-                "user-guide/script"
+                "user-guide/injector"
               ],
             },
             {
@@ -222,6 +220,7 @@ module.exports = {
               children: [
                 "faq/",
                 "faq/framework",
+                "faq/script",
                 "faq/registry",
                 "faq/flowcontrol",
               ],

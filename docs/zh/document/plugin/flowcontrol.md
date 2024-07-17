@@ -5,10 +5,12 @@
 
 流控插件基于[resilience4j](https://github.com/resilience4j) 框架实现，以"流量"为切入点，实现"非侵入式"流量控制；当前支持[限流](#限流)、[熔断](#熔断)、[隔离](#隔离)、[错误注入](#错误注入)、[重试](#重试)、[系统规则](#系统级流控)，并且支持通过配置中心动态下发流控规则，实时生效。
 
+
 ### 快速开始
 本插件的快速上手使用教程可参考[操作和结果验证](#操作和结果验证)。
 
-## 限流
+## 流控功能使用示例
+### 限流
 **限流能力对指定接口限制1S秒内通过的QPS，当1S内流量超过指定阈值，将触发限流，限制请求流量，在客户端和服务端都可生效。**
 
 执行限流策略需要通过配置中心下发流量匹配规则和限流规则，主要分为两步：
@@ -17,11 +19,11 @@
 
 **下发限流规则：** 下发限流规则对匹配的流量执行限流策略。
 
-### 示例 
+#### 示例 
 
 现有如下场景：在名称为flowcontrol的微服务中，对于API访问路径为/rateLimiting的流量，如果每秒请求数超过2次，将触发限流机制。具体下发的规则如下所示：
 
-#### 下发流量匹配规则
+##### 下发流量匹配规则
 为实现上述限流场景，首先下发流量匹配规则来匹配需要执行限流策略的流量。根据动态配置中心的配置模型，流量匹配规则由group、key和content组成，group用来约束流量匹配规则生效的微服务，key用来约束流量匹配规则生效的场景，content为具体的流量匹配规则，其内容如下所示：
 * **group：** service=flowcontrol
 * **key：** servicecomb.matchGroup.rateLimitingScene
@@ -37,7 +39,7 @@
 > 说明1：流量匹配规则的group由`service=`和`${service.name}`组成，其中`${service.name}`为微服务的名称，由微服务配置文件的`dubbo.application.name`、`spring.applicaton.name`或`application`确定，优先级`dubbo.application.name` > `spring.applicaton.name` > `application`，本示例设定微服务名称为flowcontrol。
 
 > 说明2：流量匹配规则的key由前缀`servicecomb.matchGroup`和自定义场景名称组成，本示例设定场景名称为`rateLimitingScene`。流量匹配规则和限流规则的key的自定义场景名称需保持一致，才能对匹配的流量执行限流策略。
-#### 下发限流规则
+##### 下发限流规则
 下发流量匹配规则后，对匹配的流量执行限流策略还需要下发限流规则。根据动态配置中心的配置模型，限流规则由group、key和content三部分组成，group用来约束限流规则生效的微服务，key用来约束限流规则生效的场景，需和流量匹配规则的场景名称保持一致，content为具体的限流规则，其内容如下所示：
 * **group：** service=flowcontrol
 * **key：** servicecomb.rateLimiting.rateLimitingScene
@@ -52,7 +54,7 @@
 
 > 说明2：限流规则的key由前缀`servicecomb.rateLimiting`和自定义场景名称组成，本示例设定场景名称为`rateLimitingScene`。流量匹配规则和限流规则的key的自定义场景名称需保持一致，才能对匹配的流量执行限流策略。
 
-## 熔断
+### 熔断
 **熔断指对指定接口配置熔断策略，可从单位统计时间窗口内的错误率或者慢请求率进行统计，当请求错误率或者慢请求率达到指定比例阈值，即触发熔断，在时间窗口重置前，隔离所有请求，在客户端和服务端都可生效。**
 
 执行熔断策略需要通过配置中心下发流量匹配规则和熔断规则，主要分为两步：
@@ -61,11 +63,11 @@
 
 **下发熔断规则：** 下发熔断规则对匹配的流量执行熔断策略。
 
-### 示例 
+#### 示例 
 
 现有如下场景：在名称为flowcontrol的微服务中，对api访问路径为/circuitBreaker的流量，在10秒内，若流量标记的接口请求次数超过3次，且错误率超过90%或者慢请求占比超过80%则触发熔断。具体下发的规则如下所示：
 
-#### 下发流量匹配规则
+##### 下发流量匹配规则
 为实现上述熔断场景，首先下发流量匹配规则来匹配需要执行熔断策略的流量。根据动态配置中心的配置模型，流量匹配规则由group、key和content组成，group用来约束流量匹配规则生效的微服务，key用来约束流量匹配规则生效的场景，content为具体的流量匹配规则，其内容如下所示：
 * **group：** service=flowcontrol 
 * **key：** servicecomb.matchGroup.circuitBreakerScene
@@ -82,7 +84,7 @@
 
 > 说明2：流量匹配规则的key由前缀`servicecomb.matchGroup`和自定义场景名称组成，本示例设定场景名称为`circuitBreakerScene`。流量匹配规则和熔断规则的key的自定义场景名称需保持一致，才能对匹配的流量执行熔断策略。
 
-#### 下发熔断规则
+##### 下发熔断规则
 下发流量匹配规则后，对匹配的流量执行熔断策略还需要下发熔断规则。根据动态配置中心的配置模型，熔断规则由group、key和content三部分组成，group用来约束熔断规则生效的微服务，key用来约束熔断规则生效的场景，需和流量匹配规则的场景名称保持一致，content为具体的熔断规则，其内容如下所示：
 * **group：** service=flowcontrol
 * **key：** servicecomb.circuitBreaker.circuitBreakerScene
@@ -100,7 +102,7 @@
 
 > 说明2：熔断规则的key由前缀`servicecomb.circuitBreaker`和自定义场景名称组成，本示例设定场景名称为`circuitBreakerScene`。流量匹配规则和熔断规则的key的自定义场景名称需保持一致，才能对匹配的流量执行熔断策略。
 
-### 熔断指标采集
+#### 熔断指标采集
 服务配置了[熔断策略](#熔断)后，可以开启监控开关，插件会异步采集[熔断指标](./monitor.md#熔断指标)，并通过[监控插件](./monitor.md)进行指标上报。
 在`${sermant-path}/agent/pluginPackage/flowcontrol/config/config.yaml`配置文件中开启监控开关：
 ```yaml
@@ -109,7 +111,7 @@
   ```
 > 说明：${sermant-path}为sermant包路径。
 
-## 隔离
+### 隔离
 **隔离对指定接口设置允许的最大并发量，当超过最大并发量时，对并发流量进行排队等待控制，等待超过最大等待时间则拒绝调用，避免瞬时并发流量过大导致服务崩溃，在客户端和服务端都可生效。**
 
 执行隔离策略需要通过配置中心下发流量匹配规则和限流规则，主要分为两步：
@@ -118,11 +120,11 @@
 
 **下发隔离规则：** 下发隔离规则对匹配的流量执行隔离策略。
 
-### 示例
+#### 示例
 
 现有如下场景：在名称为flowcontrol的微服务中，对api访问路径为/bulkhead的流量，若最大并发数超过5，且新的请求等待10S，还未获取资源，则触发隔离异常。
 
-#### 下发流量匹配规则
+##### 下发流量匹配规则
 为实现上述隔离场景，首先下发流量匹配规则来匹配需要执行隔离策略的流量。根据动态配置中心的配置模型，流量匹配规则由group、key和content组成，group用来约束流量匹配规则生效的微服务，key用来约束流量匹配规则生效的场景，content为具体的流量匹配规则，其内容如下所示：
 * **group：** service=flowcontrol
 * **key：** servicecomb.matchGroup.bulkheadScene
@@ -137,7 +139,7 @@
 > 说明1：流量匹配规则的group由`service=`和`${service.name}`组成，其中`${service.name}`为微服务的名称，由微服务配置文件的`dubbo.application.name`、`spring.applicaton.name`或`application`确定，优先级`dubbo.application.name` > `spring.applicaton.name` > `application`，本示例设定微服务名称为flowcontrol。
 
 > 说明2：流量匹配规则的key由前缀`servicecomb.matchGroup`和自定义场景名称组成，本示例设定场景名称为`bulkheadScene`。流量匹配规则和隔离规则的key的自定义场景名称需保持一致，才能对匹配的流量执行隔离策略。
-#### 下发隔离规则
+##### 下发隔离规则
 下发流量匹配规则后，对匹配的流量执行隔离策略还需要下发隔离规则。根据动态配置中心的配置模型，隔离规则由group、key和content三部分组成，group用来约束隔离规则生效的微服务，key用来约束隔离规则生效的场景，需和流量匹配规则的场景名称保持一致，content为具体的隔离规则，其内容如下所示：
 * **group：** service=flowcontroll
 * **key：** servicecomb.bulkhead.bulkheadScene
@@ -151,7 +153,7 @@
 > 说明1：隔离规则的group由`service=`和`${service.name}`组成，其中`${service.name}`为微服务的名称，由微服务配置文件的`dubbo.application.name`、`spring.applicaton.name`或`application`确定，优先级`dubbo.application.name` > `spring.applicaton.name` > `application`，本示例设定微服务名称为flowcontrol。
 
 > 说明2：隔离规则的key由前缀`servicecomb.bulkhead`和自定义场景名称组成，本示例设定场景名称为`bulkheadScene`。流量匹配规则和隔离规则的key的自定义场景名称需保持一致，才能对匹配的流量执行隔离策略。
-## 错误注入
+### 错误注入
 **错误注入指在服务运行时，给指定服务配置错误注入策略，在客户端访问目标服务前，以指定策略模式返回。该策略多用于减少目标服务的访问负载，可作为降级的一种措施。**
 
 执行错误注入策略需要通过配置中心下发流量匹配规则和限流规则，主要分为两步：
@@ -160,11 +162,11 @@
 
 **下发错误注入规则：** 下发错误注入规则对匹配的流量执行错误注入策略。
 
-### 示例 
+#### 示例 
 
 现有如下场景：在名称为flowcontrol的微服务中，对api访问路径为/faultInjection的流量，访问接口时100%将返回空值。 
 
-#### 下发流量匹配规则
+##### 下发流量匹配规则
 为实现上述错误注入场景，首先下发流量匹配规则来匹配需要执行错误注入策略的流量。根据动态配置中心的配置模型，流量匹配规则由group、key和content组成，group用来约束流量匹配规则生效的微服务，key用来约束流量匹配规则生效的场景，content为具体的流量匹配规则，其内容如下所示：
 * **group：** service=flowcontrol
 * **key：** servicecomb.matchGroup.faultInjectionScene
@@ -180,7 +182,7 @@
 > 说明1：流量匹配规则的group由`service=`和`${service.name}`组成，其中`${service.name}`为微服务的名称，由微服务配置文件的`dubbo.application.name`、`spring.applicaton.name`或`application`确定，优先级`dubbo.application.name` > `spring.applicaton.name` > `application`，本示例设定微服务名称为flowcontrol。
 
 > 说明2：流量匹配规则的key由前缀`servicecomb.matchGroup`和自定义场景名称组成，本示例设定场景名称为`faultInjectionScene`。流量匹配规则和错误注入规则的key的自定义场景名称需保持一致，才能对匹配的流量执行错误注入策略。
-#### 下发错误注入规则
+##### 下发错误注入规则
 下发流量匹配规则后，对匹配的流量执行错误注入策略还需要下发错误注入规则。根据动态配置中心的配置模型，错误注入规则由group、key和content三部分组成，group用来约束错误注入规则生效的微服务，key用来约束错误注入规则生效的场景，需和流量匹配规则的场景名称保持一致，content为具体的错误注入规则，其内容如下所示：
 * **group：** service=flowcontrol
 * **key：** servicecomb.faultInjection.faultInjectionScene
@@ -197,7 +199,7 @@
 > 说明1：错误注入规则的group由`service=`和`${service.name}`组成，其中`${service.name}`为微服务的名称，由微服务配置文件的`dubbo.application.name`、`spring.applicaton.name`或`application`确定，优先级`dubbo.application.name` > `spring.applicaton.name` > `application`，本示例设定微服务名称为flowcontrol。
 
 > 说明2：错误注入规则的key由前缀`servicecomb.faultInjection`和自定义场景名称组成，本示例设定场景名称为`faultInjectionScene`。流量匹配规则和错误注入规则的key的自定义场景名称需保持一致，才能对匹配的流量执行错误注入策略。
-## 重试
+### 重试
 **重试策略指当服务遇到非致命的错误时，可以通过重试的方式避免服务的最终失败。**
 
 执行重试策略需要通过配置中心下发流量匹配规则和限流规则，主要分为两步：
@@ -206,11 +208,11 @@
 
 **下发重试规则：** 下发重试规则对匹配的流量执行重试策略。
 
-### 示例 
+#### 示例 
 
 现有如下场景：在名称为flowcontrol的微服务中，对api访问路径为/retry的流量，访问接口时，当请求抛出500异常时进行重试，直到重试成功或者达到最大重试次数。 
 
-#### 下发流量匹配规则
+##### 下发流量匹配规则
 为实现上述重试场景，首先下发流量匹配规则来匹配需要执行重试策略的流量。根据动态配置中心的配置模型，流量匹配规则由group、key和content组成，group用来约束流量匹配规则生效的微服务，key用来约束流量匹配规则生效的场景，content为具体的流量匹配规则，其内容如下所示：
 * **group：** service=flowcontrol
 * **key：** servicecomb.matchGroup.retryScene
@@ -226,7 +228,7 @@
 > 说明1：流量匹配规则的group由`service=`和`${service.name}`组成，其中`${service.name}`为微服务的名称，由微服务配置文件的`dubbo.application.name`、`spring.applicaton.name`或`application`确定，优先级`dubbo.application.name` > `spring.applicaton.name` > `application`，本示例设定微服务名称为flowcontrol。
 
 > 说明2：流量匹配规则的key由前缀`servicecomb.matchGroup`和自定义场景名称组成，本示例设定场景名称为`retryScene`。流量匹配规则和重试规则的key的自定义场景名称需保持一致，才能对匹配的流量执行重试策略。
-#### 下发重试规则
+##### 下发重试规则
 下发流量匹配规则后，对匹配的流量执行重试策略还需要下发重试规则。根据动态配置中心的配置模型，重试规则由group、key和content三部分组成，group用来约束重试规则生效的微服务，key用来约束重试规则生效的场景，需和流量匹配规则的场景名称保持一致，content为具体的重试规则，其内容如下所示：
 * **group：** service=flowcontrol
 * **key：** servicecomb.retry.retryScene
@@ -244,7 +246,7 @@
 
 > 说明2：重试规则的key由前缀`servicecomb.retry`和自定义场景名称组成，本示例设定场景名称为`retryScene`。流量匹配规则和重试规则的key的自定义场景名称需保持一致，才能对匹配的流量执行重试策略。
 
-## 系统级流控
+### 系统级流控
 **系统级别的流控策略是指，在服务运行过程中，当系统的负载、CPU使用率、并发线程数、请求的平均响应时间或请求的每秒数量（qps）任何一个指标超过预设阈值时，将会启动流控机制，对请求流量进行限制。**
 
 使用系统级流控能力，需要在`${sermant-path}/agent/pluginPackage/flowcontrol/config/config.yaml`配置文件中开启系统级流控开关：
@@ -260,10 +262,10 @@
 
 **下发系统级流控规则：** 下发系统级流控规则对匹配的流量执行系统级流控策略。
 
-### 示例 
+#### 示例 
 
 现有如下场景：在名称为flowcontrol的微服务中，对api访问路径为/system的流量，当系统负载超过5，或cpu使用率超过0.6，或qps超过1000，或请求响应时间小于100ms，或并发线程数大于200时，即触发限流，返回对应异常信息。
-#### 下发流量匹配规则
+##### 下发流量匹配规则
 为实现上述系统规则场景，首先下发流量匹配规则来匹配需要执行系统规则策略的流量。根据动态配置中心的配置模型，流量匹配规则由group、key和content组成，group用来约束流量匹配规则生效的微服务，key用来约束流量匹配规则生效的场景，content为具体的流量匹配规则，其内容如下所示：
 * **group：** service=flowcontrol
 * **key：** servicecomb.matchGroup.systemScene
@@ -279,7 +281,7 @@
 > 说明1：流量匹配规则的group由`service=`和`${service.name}`组成，其中`${service.name}`为微服务的名称，由微服务配置文件的`dubbo.application.name`、`spring.applicaton.name`或`application`确定，优先级`dubbo.application.name` > `spring.applicaton.name` > `application`，本示例设定微服务名称为flowcontrol。
 
 > 说明2：流量匹配规则的key由前缀`servicecomb.matchGroup`和自定义场景名称组成，本示例设定场景名称为`systemScene`。流量匹配规则和系统规则的key的自定义场景名称需保持一致，才能对匹配的流量执行系统规则策略。
-#### 下发系统级流控规则
+##### 下发系统级流控规则
 下发流量匹配规则后，对匹配的流量执行系统规则策略还需要下发系统规则。根据动态配置中心的配置模型，系统规则由group、key和content三部分组成，group用来约束系统规则生效的微服务，key用来约束系统规则生效的场景，需和流量匹配规则的场景名称保持一致，content为具体的系统规则，其内容如下所示：
 * **group：** service=flowcontrol
 * **key：** servicecomb.system.systemScene
@@ -297,7 +299,7 @@ md#sermant动态配置中心模型)。如何使用不同的动态配置中心请
 > 说明1：系统规则的group由`service=`和`${service.name}`组成，其中`${service.name}`为微服务的名称，由微服务配置文件的`dubbo.application.name`、`spring.applicaton.name`或`application`确定，优先级`dubbo.application.name` > `spring.applicaton.name` > `application`，本示例设定微服务名称为flowcontrol。
 
 > 说明2：系统规则的key由前缀`servicecomb.system`和自定义场景名称组成，本示例设定场景名称为`systemScene`。流量匹配规则和系统规则的key的自定义场景名称需保持一致，才能对匹配的流量执行系统规则策略。
-### 系统自适应
+#### 系统自适应
 **系统自适应指在服务运行时，根据系统当前负载状态，以及过去一段时间内系统数据，对请求进行自适应流控。**
 
 使用系统自适应规则，需要在`${sermant-path}/agent/pluginPackage/flowcontrol/config/config.yaml`配置文件中开启系统规则开关和系统自适应开关，并下发[系统级流控规则](#下发系统级流控规则)。根据上述下发的系统级流控规则，系统自适应的规则为当系统负载大于5时，若当前并发线程数大于系统容量（系统容量由qps * minRt计算得出），则触发限流：
@@ -307,7 +309,7 @@ md#sermant动态配置中心模型)。如何使用不同的动态配置中心请
     enable-system-adaptive: true
   ```
 > 说明1：${sermant-path}为sermant包路径。
-## 多流控能力配置
+### 多流控能力配置
 **上述文档介绍了如何针对单个流控能力进行配置，本节介绍对于匹配的流量如何执行多个流控策略的配置。**
 
 执行多个流控策略需要通过配置中心下发流量匹配规则和流控规则，主要分为两步：
@@ -316,11 +318,11 @@ md#sermant动态配置中心模型)。如何使用不同的动态配置中心请
 
 **下发流控规则：** 下发多个流控规则对匹配的流量执行流控规则策略。
 
-### 示例
+#### 示例
 
 现有如下场景：在名称为flowcontrol的微服务中，对api访问路径为/mutliCapability的流量，若1秒内超过2个请求，则触发限流能力，或者访问接口时，当请求抛出500异常时进行重试，直到重试成功或者达到最大重试次数。
 
-#### 下发流量匹配规则
+##### 下发流量匹配规则
 为实现上述流控策略场景，首先下发流量匹配规则来匹配需要执行流控策略的流量。根据动态配置中心的配置模型，流量匹配规则由group、key和content组成，group用来约束流量匹配规则生效的微服务，key用来约束流量匹配规则生效的场景，content为具体的流量匹配规则，其内容如下所示：
 * **group：** service=flowcontrol
 * **key：** servicecomb.matchGroup.mutliCapabilityScene
@@ -336,7 +338,7 @@ md#sermant动态配置中心模型)。如何使用不同的动态配置中心请
 > 说明1：流量匹配规则的group由`service=`和`${service.name}`组成，其中`${service.name}`为微服务的名称，由微服务配置文件的`dubbo.application.name`、`spring.applicaton.name`或`application`确定，优先级`dubbo.application.name` > `spring.applicaton.name` > `application`，本示例设定微服务名称为flowcontrol。
 
 > 说明2：流量匹配规则的key由前缀`servicecomb.matchGroup`和自定义场景名称组成，本示例设定场景名称为`mutliCapabilityScene`。流量匹配规则和多个流控规则的key的自定义场景名称需保持一致，才能对匹配的流量执行多个流控策略。
-#### 下发限流规则
+##### 下发限流规则
 下发流量匹配规则后，对匹配的流量执行限流策略还需要下发限流规则。根据动态配置中心的配置模型，限流规则由group、key和content三部分组成，group用来约束限流规则生效的微服务，key用来约束限流规则生效的场景，需和流量匹配规则的场景名称保持一致，content为具体的限流规则，其内容如下所示：
 * **group：** service=flowcontrol
 * **key：** servicecomb.rateLimiting.mutliCapabilityScene
@@ -350,7 +352,7 @@ md#sermant动态配置中心模型)。如何使用不同的动态配置中心请
 > 说明1：限流规则的group由`service=`和`${service.name}`组成，其中`${service.name}`为微服务的名称，由微服务配置文件的`dubbo.application.name`、`spring.applicaton.name`或`application`确定，优先级`dubbo.application.name` > `spring.applicaton.name` > `application`，本示例设定微服务名称为flowcontrol。
 
 > 说明2：限流规则的key由前缀`servicecomb.rateLimiting`和自定义场景名称组成，本示例设定场景名称为`mutliCapabilityScene`。流量匹配规则和限流规则的key的自定义场景名称需保持一致，才能对匹配的流量执行限流策略。
-#### 下发重试规则
+##### 下发重试规则
 下发流量匹配规则后，对匹配的流量执行重试策略还需要下发重试规则。根据动态配置中心的配置模型，重试规则由group、key和content三部分组成，group用来约束重试规则生效的微服务，key用来约束重试规则生效的场景，需和流量匹配规则的场景名称保持一致，content为具体的重试规则，其内容如下所示：
 * **group：** service=flowcontrol
 * **key：** servicecomb.retry.mutliCapabilityScene
@@ -505,13 +507,13 @@ servicecomb:
 
 ## 操作和结果验证
 下面我们通过限流场景开始使用流控插件，通过简单的几个步骤，就可以开始对微服务执行限流。本次示例使用ZooKeeper作为动态配置中心。
-### 准备工作
+### 1 准备工作
 
 - [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v2.0.0/sermant-examples-dynamic-demo-2.0.0.tar.gz)流控Demo二进制产物压缩包
 - [下载](https://github.com/sermant-io/Sermant/releases/download/v2.0.0/sermant-2.0.0.tar.gz)Sermant Release包（当前版本推荐2.0.0版本）
 - [下载](https://zookeeper.apache.org/releases#download)并启动ZooKeeper
 
-### 限流示例
+### 2 限流示例
 #### 步骤一：启动流控Demo
 
 解压准备工作下载的流控Demo获得可执行JAR包，即spring-provider.jar文件，参考如下命令启动Demo
@@ -586,7 +588,7 @@ rate: 4"
 
 > 说明：${zookeeper-path}为ZooKeeper的安装目录。
 
-### 验证
+### 3 验证
 
 通过浏览器多次请求`localhost:8003/flow`若在2秒内请求数超过4个时返回`rate limited`，则触发流控成功，效果如下：
 <MyImage src="/docs-img/flowcontrol-verity.jpg"/>

@@ -10,9 +10,7 @@ Sermant Agent支持Linux、Windows，基于JDK 1.8开发，建议使用JDK 1.8�
 
 - [HuaweiJDK 1.8](https://gitee.com/openeuler/bishengjdk-8) / [OpenJDK 1.8](https://github.com/openjdk/jdk) / [OracleJDK 1.8](https://www.oracle.com/java/technologies/downloads/)
 
-## Agent启动
-
-#### premain方式
+## premain方式启动：静态挂载
 
 通过为宿主服务配置`-javaagent`指令来利用`premain`方式启动Sermant Agent ，基于[快速开始](../QuickStart.md)所构建环境，执行以下命令启动Sermant Agent:
 
@@ -38,7 +36,9 @@ java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar -jar spring-
 
 <MyImage src="/docs-img/backend_sermant_info.jpg"></MyImage>
 
-#### agentmain方式
+## agentmain方式启动：动态挂载
+
+### Agent挂载
 
 - 基于[快速开始](../QuickStart.md)所构建环境，首先启动宿主服务`spring-provider.jar`
 
@@ -94,11 +94,11 @@ $ java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
 
 <MyImage src="/docs-img/sermant-agent-agentmain-start.png"></MyImage>
 
-## Agent卸载
+### Agent卸载
 
 > 注：为避免部分基于premain启动方式开发的服务治理能力在卸载时引发不可预知的异常，Sermant Agent对卸载进行限制，通过agentmain方式启动的Sermant Agent才支持卸载，通过premain方式启动的Sermant Agent不支持。
 
-在通过[agentmain方式](#agentmain方式)启动后，可以对Sermant Agent进行卸载，再次运行`AgentLoader`，并通过传入参数下发卸载Sermant Agent的指令`command=UNINSTALL-AGENT`：
+在通过[agentmain方式](#Agent挂载)启动后，可以对Sermant Agent进行卸载，再次运行`AgentLoader`，并通过传入参数下发卸载Sermant Agent的指令`command=UNINSTALL-AGENT`：
 
 ```shell
 # 运行指令根据所使用操作系统进行选择，此处以Linux、MacOS指令编写
@@ -127,9 +127,9 @@ $ java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
 
 > 注：该能力可以在开发态通过调用sermant-agentcore-core所提供 [AgentCoreEntrance](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/AgentCoreEntrance.java)::uninstall()接口来实现
 
-## 动态安装插件
+### 动态安装插件
 
-在通过[agentmain方式](#agentmain方式)启动后，可以动态的安装服务治理插件（需要插件支持动态安装和卸载），再次运行`AgentLoader`，并通过传入参数下发动态安装插件的指令`command=INSTALL-PLUGINS:pluginA/pluginB`：
+在通过[agentmain方式](#Agent挂载)启动后，可以动态的安装服务治理插件（需要插件支持动态安装和卸载），再次运行`AgentLoader`，并通过传入参数下发动态安装插件的指令`command=INSTALL-PLUGINS:pluginA/pluginB`：
 
 > 注：可以一次安装多个插件，插件名通过 '/' 进行分隔，pluginA、pluginB为插件名，需要按照实际实际填写，本示例使用[monitor](../plugin/monitor.md)插件
 
@@ -179,9 +179,9 @@ command=INSTALL-PLUGINS:pluginA#FIRST
 > 注：当卸载插件时，如果想卸载通过携带编码安装的插件，在卸载指令中也需要配置携带编码的插件名。
 
 
-## 动态卸载插件
+### 动态卸载插件
 
-在通过[agentmain方式](#agentmain方式)启动并[动态安装插件](#动态安装插件)后，可以动态的卸载服务治理插件（需要插件支持动态安装和卸载），再次运行`AgentLoader`，并通过传入参数下发动态卸载插件的指令`command=UNINSTALL-PLUGINS:pluginA/pluginB`：
+在通过[agentmain方式](#Agent挂载)启动并[动态安装插件](#动态安装插件)后，可以动态的卸载服务治理插件（需要插件支持动态安装和卸载），再次运行`AgentLoader`，并通过传入参数下发动态卸载插件的指令`command=UNINSTALL-PLUGINS:pluginA/pluginB`：
 
 > 注：可以一次卸载多个插件，插件名通过 '/' 进行分隔，pluginA、pluginB为插件名，需要按照实际实际填写，本示例使用[monitor](../plugin/monitor.md)插件
 
@@ -222,8 +222,51 @@ $ java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
 
 > 注：该能力可以在开发态通过调用sermant-agentcore-core所提供[PluginManager](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/plugin/PluginManager.java)::uninstall(Set pluginNames)方法来实现
 
+### 一键挂载Agent和插件
+
+[Sermant动态安装、卸载脚本](https://github.com/sermant-io/Sermant/blob/develop/scripts/attach.c)是基于Java Attach API实现的C语言脚本，可以将sermant挂载至**虚拟机上的jvm进程**或**容器上的jvm进程**。
+
+> 注：该脚本仅限**linux系统**下使用
+
+#### 参数配置
+
+- `-path=`：必填参数，后接sermant-agent.jar的**绝对路径**
+
+- `-pid=`：必填参数，后接宿主应用的pid，可使用`ps -ef`等命令查看
+
+- `-command=`：必填参数，后接挂载Sermant的命令，支持的指令见[Sermant指令说明](#Sermant指令说明)。
+
+- `-nspid=`：当宿主应用容器运行时为必填参数，后接宿主应用的nspid，可使用`cat /proc/{pid}/status`命令查看。当宿主应用非容器运行时，此参数请勿填写
+
+#### 脚本使用步骤
+
+##### 步骤1. 编译`jvm_attach.c`
+
+```bash
+gcc attach.c -o attach
+```
+
+> 注：请确保已经安装gcc
+
+##### 步骤2. 执行attach脚本
+
+```bash
+./attach -path={sermant-path}/sermant-agent.jar -pid={pid} -command={COMMAND}
+```
+
+脚本执行情况如下所示：
+
+```shell
+[root@b6b9af8e5610 root]# ./attach -path=/home/sermant-agent-1.0.0/agent/sermant-agent.jar -pid=494 -command=INSTALL-PLUGINS:database-write-prohibition
+[INFO]: PATH: /home/sermant-agent-1.0.0/agent/sermant-agent.jar
+[INFO]: PID: 494
+[INFO]: COMMAND: INSTALL-PLUGINS:database-write-prohibition
+[INFO]: Connected to remote JVM of pid 494
+[INFO]: ret code is 0, Attach success!
+```
+
 ## 增强信息查询
-在sermant通过任意方式启动成功后，可以通过运行`AgentLoader`，并通过传入参数下发查询增强信息的指令`command=CHECK_ENHANCEMENT`：
+在Sermant通过任意方式启动成功后，可以通过运行`AgentLoader`，并通过传入参数下发查询增强信息的指令`command=CHECK_ENHANCEMENT`：
 
 > 注：增强信息查询将以**INFO级别**打印到log中，如使用该功能，请事先配置日志级别，修改方式见[日志配置](../developer-guide/log-func.md#配置)
 
@@ -265,6 +308,19 @@ test-plugin-A:1.0.0
 xxxxx.xxxx.TestClassA#testFunctionA(boolean,java.lang.String,java.lang.String,java.lang.String)@sun.misc.Launcher$AppClassLoader@5c647e05 [xxxx.xxxx.TestInterceptorA]
 xxxxx.xxxx.TestClassB#testFunctionB(boolean,java.lang.String,java.lang.String,java.lang.String)@sun.misc.Launcher$AppClassLoader@5c647e05 [xxxx.xxxx.TestInterceptorB,xxxx.xxxx.TestInterceptorC]
 ```
+
+## Sermant指令说明
+
+Sermant可以通过运行`AgentLoader`并传入下述指令实现Sermant的热插拔能力；同时，Sermant通过任意方式启动成功后，可以通过运行`AgentLoader`并传入指令查询增强信息。具体的指令如下所示：
+
+| 指令类型     | 指令示例                                            |
+| ------------ | --------------------------------------------------- |
+| Agent挂载    | 指令为空默认为Agent挂载                             |
+| Agent卸载    | command=UNINSTALL-AGENT                             |
+| 插件安装     | command=INSTALL-PLUGINS:${插件名}                   |
+| 插件卸载     | command=UNINSTALL-PLUGINS:${插件名}                 |
+| 插件重复安装 | command=INSTALL-PLUGINS:${插件名}#${自定义插件编码} |
+| 增强信息查询 | command=CHECK_ENHANCEMENT                           |
 
 ## 配置规范
 
@@ -311,9 +367,9 @@ Sermant Agent将从上至下依次检索各项配置值是否通过启动参数�
     value: "127.0.0.2"
 ```
 
-### 附件
+## 附件
 
-#### AgentLoader.java
+### AgentLoader.java
 
 ```java
 import com.sun.tools.attach.AgentInitializationException;

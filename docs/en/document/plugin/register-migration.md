@@ -1,4 +1,4 @@
-# Service-Registry
+# Service Registry
 
 This article describes how to use the [service registration plugin](https://github.com/sermant-io/Sermant/tree/develop/sermant-plugins/sermant-service-registry), as well as the migration capabilities of the registration center based on the [Spring Cloud](#registry-migration-spring-cloud) framework and the [Dubbo](#registry-migration-dubbo) framework.
 

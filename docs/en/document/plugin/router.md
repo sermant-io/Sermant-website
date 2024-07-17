@@ -4,7 +4,7 @@ This document is used to introduce the usage of [tag router](https://github.com/
 
 ## Function
 
-The tag routing plug-in implements the configuration and management of routing rules between microservices in a non-intrusive way. In the case of multiple versions and instances of microservices, the label routing plug-in can manage the routing between services by configuring routing rules to achieve lossless upgrade, application dial test and other business purposes.
+The tag routing plugin implements the configuration and management of routing rules between microservices in a non-intrusive way. In the case of multiple versions and instances of microservices, the tag routing plugin can manage the routing between services by configuring routing rules to achieve lossless upgrade, application dial test and other business purposes.
 
 ## Parameter Configuration
 
@@ -53,16 +53,16 @@ The content is the specific routing rule.
         group: green # Instance tagging. Instances that meet the tagging criteria are placed in this group.
 ```
 
-| Parameter key |                                                         Description                                                         | Default value | Required |
-|:-------------:|:---------------------------------------------------------------------------------------------------------------------------:|:-------------:|:--------:|
-|   priority    |                                  priority, the higher the number, the higher the priority.                                  |     Empty     |   yes    |
-|     match     |        Matching rules, support attachments (attachments parameter of the dubbo application)/headers (request header)        |     Empty     |    no    |
+| Parameter key |                         Description                          | Default value | Required |
+| :-----------: | :----------------------------------------------------------: | :-----------: | :------: |
+|   priority    |  priority, the higher the number, the higher the priority.   |     Empty     |   yes    |
+|     match     | Matching rules, support attachments (attachments parameter of the dubbo application)/headers (request header) |     Empty     |    no    |
 |     exact     | Configuration policy. For detailed configuration policy, refer to [Configuration Policy Table](#configuration-policy-table) |     Empty     |    no    |
-|     route     |                      routing rule, Including weight configuration and label information configuration                       |     Empty     |   yes    |
-|    weight     |                                                        weight value                                                         |     Empty     |   yes    |
-|     tags      |                    Tag information. The instances that meet the tag conditions are placed in this group                     |     Empty     |   yes    |
+|     route     | routing rule, Including weight configuration and tag information configuration |     Empty     |   yes    |
+|    weight     |                         weight value                         |     Empty     |   yes    |
+|     tags      | Tag information. The instances that meet the tag conditions are placed in this group |     Empty     |   yes    |
 
-**Label routing rule interpretation**
+**Tag routing rule interpretation**
 
 - 80% of the requests with the id attribute value of 1 in the attachments information will be routed to the service instance with the version number of 1.0.1, and 20% will be routed to the service instance with the version number of 1.0.0. 80% of other requests will be routed to the service instance with the group name green, and 20% will be routed to the service instance with the group name red.
 
@@ -94,7 +94,7 @@ Limitations:
 
 ## Operation and Result Verification
 
-Take the Spring Cloud scenario as an example to demonstrate the use of label routing plug-ins.
+Take the Spring Cloud scenario as an example to demonstrate the use of tag routing plugins.
 
 ### Preparations
 
@@ -203,7 +203,7 @@ The key value is **servicecomb.routeRule.spring-cloud-router-provider**, the gro
       weight: 100
 ```
 
-**Label routing rule interpretation**
+**Tag routing rule interpretation**
 
 - The request with the id attribute value of 1 in the request header information will be routed to the service instance with the group name of gray, and the request with the id attribute value of 2 will be routed to the service instance with the version number of 1.0.1.
 

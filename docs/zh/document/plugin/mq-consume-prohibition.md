@@ -78,18 +78,18 @@
 
 本节内容以包含Kafka消费者的示例微服务来演示消息队列禁止消费插件的能力。示例中通过在ZooKeeper中下发动态配置，指定需禁止消费的Topic，通过日志以及Kafka官方提供的消费者组查询脚本验证禁止消费生效。
 
-### 准备工作
+### 1 准备工作
 
 - [下载 ](https://github.com/sermant-io/Sermant/releases/download/v2.0.0/sermant-2.0.0.tar.gz) Sermant Release包（当前版本推荐2.0.0版本）
 - [下载](https://zookeeper.apache.org/releases.html#download) ZooKeeper Release包（作为动态配置中心）
 - [下载](https://kafka.apache.org/downloads) Kafka Release包
 - [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v2.0.0/sermant-examples-mq-consume-prohibition-demo-2.0.0.tar.gz) Demo二进制产物压缩包
 
-### 步骤一：获取Demo二进制产物
+### 2 获取Demo二进制产物
 
 解压Demo二进制产物压缩包，即可得到`kafka-demo.jar`。
 
-### 步骤二：部署动态配置中心ZooKeeper
+### 3 部署动态配置中心ZooKeeper
 
 解压ZooKeeper Release包，将`conf/zoo_sample.cfg`拷贝至`conf/zoo.cfg`后，通过执行以下脚本即可启动ZooKeeper:
 
@@ -99,7 +99,7 @@ sh bin/zkServer.sh start
 
 ZooKeeper的使用说明可参阅[官网](https://zookeeper.apache.org/doc/current/zookeeperStarted.html)。
 
-### 步骤三：部署消息队列Kafka
+### 4 部署消息队列Kafka
 
 解压Kafka Release包，通过执行以下脚本即可启动Kafka:
 
@@ -109,7 +109,7 @@ sh bin/kafka-server-start.sh  -daemon ../config/server.properties
 
 Kafka的使用说明可参阅[官网](https://kafka.apache.org/quickstart)。
 
-### 步骤四：部署应用
+### 5 部署应用
 
 执行以下命令挂载Sermant启动Demo应用:
 
@@ -121,7 +121,7 @@ java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar -jar kafka-d
 
 该Demo将会启动一个Kafka消费者，它订阅了名称为"demo-test-topic"的Topic，并会轮询消费该Topic。
 
-### 步骤五：发布配置
+### 6 发布配置
 
 配置kafka禁止消费规则，参考[动态配置中心使用手册](../user-guide/configuration-center.md#发布配置)中Zookeeper进行配置发布。
 
@@ -137,7 +137,7 @@ kafkaTopics:
 
 发布配置后Demo创建的Kafka消费者将停止对demo-test-topic的订阅和消费。
 
-### 结果验证
+### 7 结果验证
 
 #### 发布配置前查看消费者组状态
 

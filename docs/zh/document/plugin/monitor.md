@@ -141,7 +141,7 @@ monitor.config:                       # 监控插件配置。
 
 下面将演示如何使用监控插件，验证springboot应用挂载监控插件对接Prometheus场景。
 
-### 准备工作
+### 1 准备工作
 
 - [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v2.0.0/sermant-examples-monitor-demo-2.0.0.tar.gz) Demo二进制产物压缩包
 - [下载](https://github.com/sermant-io/Sermant/releases/download/v2.0.0/sermant-2.0.0.tar.gz) Sermant Release包（当前版本推荐2.0.0版本）
@@ -149,11 +149,11 @@ monitor.config:                       # 监控插件配置。
 
 > 注意：[动态配置中心](../user-guide/configuration-center.md)会在本场景中默认使用，由于非本场景的核心组件，因此在本文中不额外赘述。
 
-### 步骤一：获取Demo二进制产物
+### 2 获取Demo二进制产物
 
 解压Demo二进制产物压缩包，即可得到`monitor-demo.jar`。
 
-### 步骤二：修改配置
+### 3 修改配置
 
 - 修改监控插件配置，可在`${path}/sermant-agent-x.x.x/agent/pluginPackage/monitor/config/config.yaml`找到该配置文件。
 
@@ -182,7 +182,7 @@ scrape_configs:
       - targets: ["127.0.0.1:12345"]  # 采集指标的主机地址。此处的IP、端口信息与监控插件配置保持一致
 ```
 
-### 步骤三：启动应用
+### 4 启动应用
 
 - 参考如下命令启动Demo应用
 
@@ -200,7 +200,7 @@ java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=defa
 
 - 启动 Prometheus
 
-### 验证
+### 5 验证
 
 打开Prometheus（默认为`http://127.0.0.1:9090`），查询指标。例如：查询`heap_memory_used`，能查询到信息则标示插件生效。
 

@@ -83,16 +83,16 @@ x-sermant-version: v1          // 自定义header，此处表示通过流量染�
 
 本节内容以SpringBoot示例微服务来介绍如何使用Sermant流量标签透传插件以及验证结果，本示例使用curl命令携带流量标签发起入口请求调用HTTP客户端应用，HTTP客户端应用再调用HTTP的服务端应用。在HTTP的服务端的返回结果中查看标签是否透传成功。
 
-### 准备工作
+### 1 准备工作
 
 - [下载](https://github.com/sermant-io/Sermant/releases/download/v2.0.0/sermant-2.0.0.tar.gz) Sermant Release包（当前版本推荐2.0.0版本）
 - [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v2.0.0/sermant-examples-tag-transmission-demo-2.0.0.tar.gz) Demo二进制产物压缩包
 
-### 步骤一：获取Demo二进制产物
+### 2 获取Demo二进制产物
 
 解压Demo二进制产物压缩包，即可得到`http-client-demo.jar`和`http-server-demo.jar`。
 
-### 步骤二：部署应用
+### 3 部署应用
 
 （1）启动HTTP客户端应用
 
@@ -116,7 +116,7 @@ java -Dagent_service_dynamic_config_enable=false -javaagent:${path}/sermant-agen
 
 > 说明：此处${path}为sermant-agent包所在路径。
 
-### 步骤三：发起入口调用
+### 4 验证
 
 执行下面的命令，携带流量标签`id: 888`发起入口调用，以HTTP方式调用http-client-demo，http-client-demo将调用http-server-demo，最后返回输出结果。
 

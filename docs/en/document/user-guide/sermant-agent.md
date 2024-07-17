@@ -1,4 +1,4 @@
-# Sermant-agent User Manual
+# Sermant Agent User Manual
 
 Sermant-agent is the essential core component of Sermant, which contains bytecode enhancements of [sermant-agentcore](https://github.com/sermant-io/Sermant/tree/develop/sermant-agentcore), [sermant-plugins](https://github.com/sermant-io/Sermant/tree/develop/sermant-plugins), [sermant-common](https://github.com/sermant-io/Sermant/tree/develop/sermant-common). The modules of the sermant-agent component are found in the `sermant-agent-x.x.x/agent` directory described in the [Sermant Introduction](readme.md). This article describes how to use sermant-agent.
 

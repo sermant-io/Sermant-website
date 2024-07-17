@@ -1,4 +1,4 @@
-# Sermant-injector User Manual
+# Sermant Injector User Manual
 
 Sermant-injector is based on the **Kubernetes Admission Controllers.** The admission controller is located in the K8s API Server and is able to intercept requests to the API Server to complete operations such as authentication, authorization, and mutation. This article introduces how to use the sermant-injector component to realize the rapid deployment of the host application to automatically mount the sermant-agent package in the k8s environment.
 

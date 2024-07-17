@@ -8,9 +8,9 @@ Spring Cloud Config动态配置已广泛应用于企业开发项目，为用户�
 
 ## 参数配置
 
-### Sermant-agent配置
+### Sermant Agent配置
 
-动态配置插件依赖动态配置中心，需要在Sermant-agent中配置动态配置中心的地址（`dynamic.config.serverAddress`），动态配置中心的类型（`dynamic.config.dynamicConfigType`）,具体参考[Sermant-agent使用手册](../user-guide/sermant-agent.md#sermant-agent使用参数配置)。
+动态配置插件依赖动态配置中心，需要在Sermant Agent中配置动态配置中心的地址（`dynamic.config.serverAddress`），动态配置中心的类型（`dynamic.config.dynamicConfigType`）,具体参考[Sermant-agent使用手册](../user-guide/sermant-agent.md#sermant-agent使用参数配置)。
 
 ### 插件配置
 
@@ -122,17 +122,17 @@ public class ValueConfig {
 
 下面将演示如何使用动态配置插件，验证使用Sermant动态配置中心（ZooKeeper）更新SpringBoot应用配置的场景。
 
-### 准备工作
+### 1 准备工作
 
 - [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v2.0.0/sermant-examples-dynamic-demo-2.0.0.tar.gz) Demo二进制产物压缩包
 - [下载](https://github.com/sermant-io/Sermant/releases/download/v2.0.0/sermant-2.0.0.tar.gz) Sermant Release包（当前版本推荐2.0.0版本）
 - [下载](https://zookeeper.apache.org/releases#download) 并启动ZooKeeper
 
-### 步骤一：获取Demo二进制产物
+### 2 获取Demo二进制产物
 
 解压Demo二进制产物压缩包，即可得到`spring-provider.jar`。
 
-### 步骤二：修改插件配置
+### 3 修改插件配置
 
 参考[插件配置](#插件配置) 修改`${path}/sermant-agent-x.x.x/agent/pluginPackage/dynamic-config/config/config.yaml`文件为以下内容：
 ```shell
@@ -144,7 +144,7 @@ dynamic.config.plugin:
 
 > **说明**：${path}为sermant所在路径。
 
-### 步骤三：启动Demo应用
+### 4 启动Demo应用
 
 参考如下命令启动Demo应用
 
@@ -158,7 +158,7 @@ java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar -Dspring.app
 
 > **说明：** ${path}为sermant实际安装路径，x.x.x代表sermant某个版本号。
 
-### 步骤四：查看原配置
+### 5 查看原配置
 
 浏览器或curl工具访问`localhost:8003/flow`,查看控制台日志是否打印`sermant`日志
 
@@ -183,7 +183,7 @@ spring:
 Hello, I am zk rest template provider, my port is 8003, sermant value is sermant
 ```
 
-### 步骤五：修改应用配置
+### 6 修改应用配置
 
 参考使用[动态配置中心使用手册](../user-guide/configuration-center.md#发布配置) 进行配置发布
 
@@ -211,7 +211,7 @@ zkCli.cmd -server localhost:2181 create /service=spring-flow-provider/config "se
 
 > 说明：${path}为ZooKeeper的安装目录。
 
-### 验证
+### 7 验证
 
 再次通过浏览器或curl工具访问`localhost:8003/flow`，Demo应用将返回如下信息，此时返回sermant的值为"sermant1"：
 ```text

@@ -56,17 +56,17 @@ Sermant是基于Java Agent的云原生无代理服务网格，仅支持Java语�
 
 本教程使用[Sermant-examples](https://github.com/sermant-io/Sermant-examples/tree/main/xds-service-discovery-demo)仓库中的xds-service-discovery-demo演示Sermant的xDS服务发现能力。本Demo中包括spring-client微服务、spring-server微服务和Sermant示例插件，该插件拦截spring-client的`hello`方法，在`hello`方法执行前通过Sermant的xDS服务发现能力获取spring-server服务的具体实例信息，并替换入参为正确的sprng-server地址。
 
-### 准备工作
+### 1 准备工作
 
 - [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v2.0.0/sermant-examples-xds-service-discovery-demo-2.0.0.tar.gz) Demo二进制产物压缩包
 - [准备](https://kubernetes.io/zh-cn/docs/tutorials/hello-minikube/) Kubenetes环境
 - 安装[Istio](https://istio.io/latest/zh/docs/setup/getting-started/)并启动
 
-### 获取Demo二进制产物
+### 2 获取Demo二进制产物
 
 解压Demo二进制产物压缩包，即可得到`product/`目录文件。
 
-### 启动spring-server
+### 3 启动spring-server
 
 进入product/spring-server目录：
 
@@ -82,7 +82,7 @@ Sermant是基于Java Agent的云原生无代理服务网格，仅支持Java语�
    kubectl apply -f spring-server.yaml
    ```
 
-### 启动spring-client
+### 4 启动spring-client
 
 进入product/spring-client目录：
 
@@ -98,7 +98,7 @@ Sermant是基于Java Agent的云原生无代理服务网格，仅支持Java语�
    kubectl apply -f spring-client.yaml
    ```
 
-### 验证
+### 5 验证
 
 通过网页访问spring-client微服务，入参address设置为空，验证Sermant是否能成功调用上游服务spring-server：
 
