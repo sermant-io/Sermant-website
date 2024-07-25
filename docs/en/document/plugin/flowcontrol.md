@@ -1,4 +1,4 @@
-# FlowControl
+# Flow Control
 
 This article describes how to use [Flow Control Plugin](https://github.com/sermant-io/Sermant/tree/develop/sermant-plugins/sermant-flowcontrol).
 
@@ -35,7 +35,7 @@ flow.control.plugin:
 
 | Key in Input Parameters       | Description                     | Default Value | Required |
 | ----------  | ----------------------- | ----- | ------ |
-| useCseRule  | If adaptation is enabled, the plugin subscribes to the configuration center based on the application configuration, service configuration, and customized tag configuration.If useCseRule is set to false, the flow control plugin configures subscription based on the service name of the current instance. For example, if spring.application.name is set to flowControlDemo, the flow control plugin receives configuration based on the service=flowControlDemo tag during actual subscription.  | true  | true |
+| useCseRule  | If adaptation is enabled, the plugin subscribes to the configuration center based on the application configuration, service configuration, and customized tag configuration.If useCseRule is set to false, the flow control plugin configures subscription based on the service name of the current instance. For example, if spring.application.name is set to flowControlDemo, the flow control plugin receives configuration based on the service=flowControlDemo tag during actual subscription. | true  | true |
 | enable-start-monitor | Indicator monitoring switch | false | false |
 | enable-system-adaptive | Whether to turn on the system adaptive flow control switch. To turn on this switch, the **enable-system-rule** configuration item should also be turned on, set to true, and after the corresponding flow control strategy is issued, adaptive flow control will be performed on the request flow according to the system load status | false | false |
 | enable-system-rule | Whether to turn on the system rule flow control switch, set it to true and issue the corresponding flow control policy, then the request flow will be controlled according to the system parameter threshold set in the policy | false | false |

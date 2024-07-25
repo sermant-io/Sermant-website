@@ -114,7 +114,7 @@ Sermant Injector当前支持在Kubernetes 1.15及以上版本进行部署，通�
 
 在部署Sermant Injector前需要先构建Sermant Agent镜像以及Sermant Injector镜像。
 
-### 构建Sermant Agent镜像
+### 1 构建Sermant Agent镜像
 
 #### 准备Sermant Agent包
 
@@ -132,7 +132,7 @@ sh build-sermant-image.sh
 
 如需将镜像推送至镜像仓库，请执行`docker push ${imageName}:{imageVerison}` 命令。
 
-### 构建Sermant Injector镜像
+### 2 构建Sermant Injector镜像
 
 #### 准备Sermant Injector包
 
@@ -150,7 +150,7 @@ sh build-injector-image.sh
 
 如需将镜像推送至镜像仓库，请执行`docker push ${imageName}:{imageVerison}` 命令。
 
-### 部署Sermant Injector实例
+### 3 部署Sermant Injector实例
 
 在宿主应用容器化部署前，需要先部署Sermant Injector实例。本项目采用Helm进行Kubernetes包管理，使用`sermant-injector/deployment/release`下的`injector`Chart模版。
 
@@ -164,7 +164,7 @@ helm install sermant-injector sermant-injector/deployment/release/injector
 
 至此，宿主应用部署前的环境配置工作完成。
 
-### 部署宿主应用
+### 4 部署宿主应用
 
 **自动挂载Sermant**
 
@@ -208,7 +208,7 @@ spec:
 
 若pod无法创建，请检查Sermant Injector是否正确部署以及Sermant Agent镜像是否正确构建。
 
-### 验证
+### 5 验证
 
 pod创建成功后，执行如下命令，其中`${pod_name}`为宿主应用的pod名称
 

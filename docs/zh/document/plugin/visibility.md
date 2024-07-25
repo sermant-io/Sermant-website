@@ -56,17 +56,17 @@ visibility.config:
 
 下面将演示如何使用服务可见性插件，验证采集Dubbo应用的契约和调用依赖关系信息场景。
 
-### 准备工作
+### 1 准备工作
 
 - [下载](https://github.com/sermant-io/Sermant/releases/download/v2.0.0/sermant-2.0.0.tar.gz) Sermant Release包（当前版本推荐2.0.0版本）
 - [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v2.0.0/sermant-examples-visibility-demo-2.0.0.tar.gz) Demo二进制产物压缩包
 - [下载](https://zookeeper.apache.org/releases.html#download)ZooKeeper（动态配置中心&注册中心），并启动
 
-### 步骤一：获取Demo二进制产物
+### 2 获取Demo二进制产物
 
 解压Demo二进制产物压缩包，即可得到`dubbo-integration-consumer.jar`和`dubbo-integration-provider.jar`。
 
-### 步骤二：修改配置
+### 3 修改配置
 
 - 修改Sermant Agent配置
 在`${path}/sermant-agent-x.x.x/agent/config/config.properties`找到该配置文件，修改的配置项如下所示：
@@ -85,7 +85,7 @@ visibility.config:
   startFlag: true        # 服务可见性采集开关。为true时进行数据采集上报。
 ```
 
-### 步骤三：启动应用
+### 4 启动应用
 
 - 参考如下命令, 启动backend应用。
 
@@ -125,7 +125,7 @@ java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=prov
 
 > **说明：** ${path}为sermant实际安装路径，x.x.x代表sermant某个版本号。
 
-### 验证
+### 5 验证
 
 访问可见性信息查询接口`http://127.0.0.1:8900/visibility/getCollectorInfo`可以看到采集的信息，则说明插件生效。
 

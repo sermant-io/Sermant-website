@@ -15,9 +15,9 @@
 
 ## 参数配置
 
-### Sermant-agent配置
+### Sermant Agent配置
 
-注册迁移插件需要在Sermant-agent中配置服务元数据（应用名、命名空间、版本号、环境、其它元数据），参考[Sermant-agent使用手册](../user-guide/sermant-agent.md#sermant-agent使用参数配置)。
+注册迁移插件需要在Sermant Aagent中配置服务元数据（应用名、命名空间、版本号、环境、其它元数据），参考[Sermant Agent使用手册](../user-guide/sermant-agent.md#sermant-agent使用参数配置)。
 
 - service.meta.application: 应用名/组名，属于同一组的微服务才能进行服务发现。
 
@@ -186,7 +186,7 @@ dubbo:
 
 ## 操作和结果验证
 
-### 单注册模式
+### 1 单注册模式
 
 下面将演示如何使用注册迁移插件，验证dubbo应用在单注册模式下注册至新注册中心（ServiceComb）场景。
 
@@ -198,7 +198,7 @@ dubbo:
 
 > **注意：** [动态配置中心](../user-guide/configuration-center.md)会在本场景中默认使用，由于非本场景的核心组件，因此在本文中不额外赘述。
 
-### 步骤一：获取Demo二进制产物
+#### 步骤一：获取Demo二进制产物
 
 解压Demo二进制产物压缩包，即可得到`dubbo-registry-consumer.jar`和`dubbo-registry-provider.jar`。
 
@@ -239,7 +239,7 @@ java -Dservicecomb.service.enableDubboRegister=true -javaagent:${path}/sermant-a
 
 <MyImage src="/docs-img/registry-request-result.png"/>
 
-### 双注册模式
+### 2 双注册模式
 
 下面将演示如何使用注册迁移插件，验证SpringCloud应用在双注册模式下的从旧注册中心（ZooKeeper）迁移到新注册中心（ServiceComb）场景。
 
@@ -255,7 +255,7 @@ java -Dservicecomb.service.enableDubboRegister=true -javaagent:${path}/sermant-a
 
 > **注意：** [动态配置中心](../user-guide/configuration-center.md)会在本场景中默认使用，由于非本场景的核心组件，因此在本文中不额外赘述。
 
-### 步骤一：获取Demo二进制产物
+#### 步骤一：获取Demo二进制产物
 
 解压Demo二进制产物压缩包，即可得到`spring-cloud-registry-consumer.jar`和`spring-cloud-registry-provider.jar`。
 

@@ -80,17 +80,17 @@ rule: Random
 
 下面将演示如何使用负载均衡插件，验证SpringBoot应用采用ZooKeeper配置中心，动态更新宿主应用的负载均衡策略场景。
 
-### 准备工作
+### 1 准备工作
 
 - [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v2.0.0/sermant-examples-load-balance-demo-2.0.0.tar.gz) Demo二进制产物压缩包
 - [下载](https://github.com/sermant-io/Sermant/releases/download/v2.0.0/sermant-2.0.0.tar.gz) Sermant Release包（当前版本推荐2.0.0版本）
 - [下载](https://zookeeper.apache.org/releases.html#download)并启动ZooKeeper
 
-### 步骤一：获取Demo二进制产物
+### 2 获取Demo二进制产物
 
 解压Demo二进制产物压缩包，即可得到`resttemplate-consumer.jar`和`resttemplate-provider.jar`。
 
-### 步骤二：发布流量标记
+### 3 发布流量标记
 参考使用[动态配置中心使用手册](../user-guide/configuration-center.md#发布配置)进行配置发布，发布如下配置
 
 ```json
@@ -129,8 +129,8 @@ matches:
 - serviceName: zk-rest-provider"
 ```
 
-### 步骤三：发布匹配的负载均衡规则（以Random为例）
-参考使用[动态配置中心使用手册](../user-guide/configuration-center.md#发布配置)进行配置发布， 发布如下配置
+### 4 发布匹配的负载均衡规则
+参考使用[动态配置中心使用手册](../user-guide/configuration-center.md#发布配置)进行配置发布，以Random负载均衡规则为例，发布如下配置
 
 ```json
 {
@@ -152,7 +152,7 @@ matches:
 zkCli.cmd -server localhost:2181 create /app=default&environment=&service=zk-rest-consumer/servicecomb.loadbalance.testLb "rule: Random"
 ```
 
-### 步骤四：启动Demo应用
+### 5 启动Demo应用
 
 参考如下命令启动两个生产者
 
@@ -191,7 +191,7 @@ java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=defa
 ```
 > **说明：** ${path}为sermant实际安装路径，x.x.x代表sermant某个版本号。
 
-### 验证
+### 6 验证
 
 上面步骤全部完成后，访问接口 `http://localhost:8005/hello`, 多次调用，如果返回的端口信息中8006、8007随机展示则表示随机负载均衡规则（默认为轮询）已生效。
 

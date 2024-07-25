@@ -35,7 +35,7 @@ Sermant支持在容器环境下通过Sermant Injector实现宿主应用自动挂
 
 ## 编译构建
 
-### 方式
+### 编译打包Sermant Agent
 
 **Sermant**项目基于Maven进行编译构建，其中包含以下几种profile，对应不同使用场景：
 
@@ -51,7 +51,7 @@ mvn clean package -DskipTests -Pagent
 
 命令执行完毕后，工程目录下将生成一个形如`sermant-agent-x.x.x`的文件夹和形如`sermant-agent-x.x.x.tar.gz`的压缩文件，后者为**Sermant**的产品包，前者则为产品包解压后的内容。
 
-### 产品目录说明
+### Sermant Agent产品目录说明
 
 `sermant-agent-x.x.x`目录下包含以下内容
 

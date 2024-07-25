@@ -131,18 +131,17 @@ groupKey1=groupValue1[&groupKey2=groupVaue2...]
 
 本教程使用[Sermant-examples](https://github.com/sermant-io/Sermant-examples/tree/main/first-plugin-demo)仓库中的Demo插件和微服务来进行动态配置能力的演示，该插件中配置了监听器以监听动态配置变化。
 
-### 准备工作
-- [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v2.
-  0.0/sermant-examples-first-plugin-demo-2.0.0.tar.gz) Demo二进制产物压缩包
+### 1 准备工作
+- [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v2.0.0/sermant-examples-first-plugin-demo-2.0.0.tar.gz) Demo二进制产物压缩包
 - [下载](https://zookeeper.apache.org/releases.html#download) ZooKeeper服务端
 - [下载](https://servicecomb.apache.org/cn/release/kie-downloads) Kie服务端
 - [下载](https://github.com/alibaba/nacos/releases/download/2.1.0/nacos-server-2.1.0.tar.gz) Nacos服务端
 
-### 获取Demo二进制产物
+### 2 获取Demo二进制产物
 
 解压Demo二进制产物压缩包，即可得到`agent\`目录文件。
 
-### ZooKeeper
+### 3 验证ZooKeeper
 启动ZooKeeper服务端
 #### Demo微服务启动
 
@@ -183,7 +182,7 @@ create /app=default/demo "test"
 
 如果日志输出无误，则说明动态配置发布成功，Sermant Agent已监听到动态配置。
 
-### Kie
+### 4 验证Kie
 
 启动Kie服务端。
 
@@ -232,7 +231,7 @@ java -javaagent:sermant-agent.jar -jar Application.jar
 
 如果日志输出无误，则说明动态配置发布成功，Sermant Agent已监听到动态配置。
 
-### Nacos
+### 5 验证Nacos
 
 启动Nacos服务端
 

@@ -207,7 +207,7 @@ spec:
 
 下面演示如何使用无损上下线插件，在容器场景下，验证SpringCloud应用的延迟注册、预热和延迟下线场景。
 
-### 准备工作
+### 1 准备工作
 
 - 已经部署好kubernetes环境
 - [下载](https://github.com/sermant-io/Sermant/releases/download/v2.0.0/sermant-2.0.0.tar.gz) Sermant Release包（当前版本推荐2.0.0版本）
@@ -218,7 +218,7 @@ spec:
 > 1. [动态配置中心](../user-guide/configuration-center.md)会在本场景中默认使用，由于非本场景的核心组件，因此在本文中不额外赘述。
 > 2. 容器环境需提前部署好[injector组件](../user-guide/injector.md)。
 
-### 步骤一：制作Demo应用镜像
+### 2 制作Demo应用镜像
 
 **1.编译打包Demo应用**
 
@@ -252,7 +252,7 @@ docker push ${imageName}:{imageVerison}
 ```
 
 
-### 步骤二：部署应用
+### 3 部署应用
 
 我们将部署一个consumer实例，2个provider实例， 一个data实例(不挂sermant)。三个服务之间的依赖关系如下:
 
@@ -465,7 +465,7 @@ spec:
 
 <MyImage src="/docs-img/nacos-rest-services.png"/>
 
-### 验证
+### 4 验证
 
 #### 预热能力验证
 

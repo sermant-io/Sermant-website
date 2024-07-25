@@ -94,17 +94,17 @@ value: service-b,service-c # 白名单服务集合，仅当strategy配置为whit
 
 下面将演示如何使用SpringBoot注册插件，验证纯SpringBoot应用快速接入注册中心（ZooKeeper）场景。
 
-### 准备工作
+### 1 准备工作
 
 - [下载](https://github.com/sermant-io/Sermant/releases/download/v2.0.0/sermant-2.0.0.tar.gz) Sermant Release包（当前版本推荐2.0.0版本）
 - [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v2.0.0/sermant-examples-springboot-registry-demo-2.0.0.tar.gz) Demo二进制产物压缩包
 - [下载](https://zookeeper.apache.org/releases.html#download)ZooKeeper（动态配置中心&注册中心），并启动
 
-### 步骤一：获取Demo二进制产物
+### 2 获取Demo二进制产物
 
 解压Demo二进制产物压缩包，即可得到`service-a.jar`和`service-b.jar`。
 
-### 步骤二：部署应用
+### 3 部署应用
 
 （1）启动service-a
 
@@ -130,7 +130,7 @@ java -Dserver.port=9999 -Dsermant.springboot.registry.enableRegistry=true -javaa
 
 > **注意：** 此时配置的域名(www.domain.com)不是真实域名，配置白名单之后才能正常调用。
 
-### 步骤三：配置白名单
+### 4 配置白名单
 
 配置白名单，请参考[详细治理规则](#详细治理规则)。
 
@@ -160,7 +160,7 @@ zkCli.cmd -server localhost:2181 create /app=default&environment=&service=servic
 zkCli.cmd -server localhost:2181 create /app=default&environment=&service=service-a/sermant.plugin.registry "strategy: all"
 ```
 
-### 验证
+### 5 验证
 
 调用接口`localhost:8989/httpClientGet`，判断接口是否成功返回，若成功返回则说明插件已成功生效。
 

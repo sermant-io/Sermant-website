@@ -114,18 +114,18 @@
 
 本节内容以操作MongoDB数据库的示例微服务来演示数据库禁写插件的能力。示例中通过在ZooKeeper中下发动态配置，指定禁写的数据库类型和名称，通过调用实例微服务接口创建和查询MongoDB集合来验证数据库禁写插件的能力。
 
-### 准备工作
+### 1 准备工作
 
 - [下载 ](https://github.com/sermant-io/Sermant/releases/download/v2.0.0/sermant-2.0.0.tar.gz) Sermant Release包（当前版本推荐2.0.0版本）
 - [下载](https://zookeeper.apache.org/releases.html#download) ZooKeeper Release包
 - [下载](https://www.mongodb.com/try/download/community)MongoDB 安装包并安装
 - [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v2.0.0/sermant-examples-database-write-prohibition-demo-2.0.0.tar.gz) Demo二进制产物压缩包
 
-### 步骤一：获取Demo二进制产物
+### 2 获取Demo二进制产物
 
 解压Demo二进制产物压缩包，即可得到`mongodb-demo.jar`。
 
-### 步骤二：部署动态配置中心ZooKeeper
+### 3 部署动态配置中心ZooKeeper
 
 解压ZooKeeper Release包，将`conf/zoo_sample.cfg`拷贝至`conf/zoo.cfg`后，通过执行以下脚本即可启动ZooKeeper:
 
@@ -135,7 +135,7 @@ sh bin/zkServer.sh start
 
 ZooKeeper的使用说明可参阅[官网](https://zookeeper.apache.org/doc/current/zookeeperStarted.html)。
 
-### 步骤三：启动MongoDB
+### 4 启动MongoDB
 
 安装MongoDB数据库后，通过执行以下脚本即可启动MongoDB:
 
@@ -145,7 +145,7 @@ sudo systemctl start mongod
 
 MongoDB的安装可参阅[官网](https://www.mongodb.com/docs/v4.2/installation/#mongodb-community-edition-installation-tutorials)。
 
-### 步骤四：部署应用
+### 5 部署应用
 
 执行以下命令挂载Sermant启动Demo应用:
 
@@ -155,7 +155,7 @@ java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar -jar mongodb
 
 > 说明：此处${path}为sermant-agent包所在路径。
 
-### 步骤五：创建MongoDB集合
+### 6 创建MongoDB集合
 
 执行以下命令调用Demo接口创建集合:
 
@@ -180,7 +180,7 @@ Current Collection: [collection-test-1]
 > 说明：此处${path}为sermant-agent包所在路径。
 
 
-### 步骤六：发布配置
+### 7 发布配置
 
 配置MongoDB禁写规则，参考[动态配置中心使用手册](../user-guide/configuration-center.md#发布配置)中Zookeeper进行配置发布。
 
@@ -212,7 +212,7 @@ mongoDbDatabases:
 ```
 > 说明：${zookeeper-path}为ZooKeeper的安装目录。
 
-### 结果验证
+### 8 结果验证
 
 #### 禁写配置下发后创建集合
 

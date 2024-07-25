@@ -17,7 +17,6 @@ npm run dev
 ```
 Project packaging instruction is
 ```shell
-npm run build
 ```
 ## Structure
 ```

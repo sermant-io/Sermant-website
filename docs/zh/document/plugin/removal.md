@@ -70,7 +70,7 @@ rules:                  # 离群实例摘除规则，key：服务名称（为def
 
 下面将演示如何使用离群实例摘除插件，验证采用ZooKeeper配置中心为SpringCloud应用配置离群摘除规则场景。
 
-### 准备工作
+### 1 准备工作
 
 - [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v2.0.0/sermant-examples-removal-demo-2.0.0.tar.gz) Demo二进制产物压缩包
 - [下载](https://github.com/sermant-io/Sermant/releases/download/v2.0.0/sermant-2.0.0.tar.gz) Sermant Release包（当前版本推荐2.0.0版本）
@@ -78,11 +78,11 @@ rules:                  # 离群实例摘除规则，key：服务名称（为def
 
 > **注意：** [动态配置中心](../user-guide/configuration-center.md)会在本场景中默认使用，由于非本场景的核心组件，因此在本文中不额外赘述。
 
-### 步骤一：获取Demo二进制产物
+### 2 获取Demo二进制产物
 
 解压Demo二进制产物压缩包，即可得到`rest-consumer.jar`和`rest-provider.jar`。
 
-### 步骤二：修改配置
+### 3 修改配置
 
 - 修改离群摘除插件配置，可在`${path}/sermant-agent-x.x.x/agent/pluginPackage/service-removal/config/config.yaml`找到该配置文件。
 
@@ -100,7 +100,7 @@ removal.config:
     - { key: default-rule, scaleUpLimit: 0.6, minInstanceNum: 1, errorRate: 0.6 }
 ```
 
-### 步骤三：启动应用
+### 4 启动应用
 
 - 参考如下命令启动Demo应用
 
@@ -132,7 +132,7 @@ java -Dtimeout=2000 -Dserver.port=8006 -jar rest-provider.jar
 
 > **注意：** ${path}为sermant实际安装路径，x.x.x代表sermant某个版本号。
 
-### 验证
+### 5 验证
 
 通过浏览器一直访问`http://localhost:8005/hello`，刚开始会出现服务请求成功和请求异常两种情况。30秒后异常实例会被摘除，摘除后会一直请求成功。30秒后摘除的异常实例会恢复，会重新出现请求异常。
 

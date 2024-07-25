@@ -1,57 +1,57 @@
-# Graceful Online/Offline
+# Graceful Startup/Shutdown
 
 This article introduces how to use the graceful log-in and log-in plugin. Currently, the elegant log-in and log-out function is currently integrated in the [registration plugin](https://github.com/sermant-io/Sermant/tree/develop/sermant-plugins/sermant-service-registry), Can be used independently.
 
 ## Functions
 
-For any online application, operations such as release, expansion, reduction, and restart are unavoidable, and the following problems are often encountered in the process:
+For any startup application, operations such as release, expansion, reduction, and restart are unavoidable, and the following problems are often encountered in the process:
 
 - For a newly launched instance, due to excessive traffic, the instance is accessed by a large amount of traffic when it is initialized, resulting in request blocking or even downtime, such as lazy loading scenarios.
-- When the instance goes offline, due to the delayed refresh problem found in the registration, the upstream cannot be notified in time, resulting in traffic loss or errors.
+- When the instance goes shutdown, due to the delayed refresh problem found in the registration, the upstream cannot be notified in time, resulting in traffic loss or errors.
 
 In order to solve the above problems, graceful log-off came into being. For the above two problems, the plug-in provides **preheating** and **graceful log-off** capabilities to provide protection for the above-mentioned scenario problems.
 
 **Warm up**, as the name suggests, uses a small amount of traffic to access the instance first, and gradually increases the traffic based on time to ensure that the newly started instance can successfully transition.
 
-**Graceful offline**,  The plugin quickly updates the upstream cache based on the **real-time notification** + **cache update mechanism**. In addition, traffic statistics are collected to ensure that the instances that are about to go offline can process traffic as much as possible, preventing traffic loss to the greatest extent.
+**Graceful shutdown**,  The plugin quickly updates the upstream cache based on the **real-time notification** + **cache update mechanism**. In addition, traffic statistics are collected to ensure that the instances that are about to go shutdown can process traffic as much as possible, preventing traffic loss to the greatest extent.
 
 ## Supported Versions and Limitations
 
-Currently, the graceful online/offline capability **supports only SpringCloud applications**. Ensure that the SpringCloud version is `Edgware.SR2` or later.
+Currently, the graceful startup/shutdown capability **supports only SpringCloud applications**. Ensure that the SpringCloud version is `Edgware.SR2` or later.
 
 Regitry Center Support：Zookeeper、Consul、Nacos、Eureka、Service Center
 
-**Notice**：The graceful online/offline capability is developed based on the default load balancing capability of SpringCloud. If you have implemented the custom load balancing capability, this capability is no longer applicable.
+**Notice**：The graceful startup/shutdown capability is developed based on the default load balancing capability of SpringCloud. If you have implemented the custom load balancing capability, this capability is no longer applicable.
 
 ## Parameter configuration
 
-### Enabling Graceful Online and Offline
+### Enabling Graceful Startup/Shutdown
 
 The graceful log-in plug-in needs to enable the graceful log-in switch (`grace.rule.enableSpring`), configure the startup delay time (`grace.rule.startDelayTime`), enable the warm-up (`grace.rule.enableWarmUp`), and other configurations. Find the configuration file of the plugin in `${path}/sermant-agent-x.x.x/agent/pluginPackge/service-registry/config/config.yaml`, the configuration is as follows:
 
 ```yaml
 grace.rule:
-  enableSpring: true # SpringCloud graceful online/offline switch
-  startDelayTime: 0  # Graceful online/offline start delay, unit is seconds
+  enableSpring: true # SpringCloud graceful startup/shutdown switch
+  startDelayTime: 0  # Graceful startup/shutdown start delay, unit is seconds
   enableWarmUp: true # Whether to enable warm up
   warmUpTime: 120    # Warm up time unit is seconds
-  enableGraceShutdown: true # Whether to enable graceful offline
+  enableGraceShutdown: true # Whether to enable graceful shutdown
   shutdownWaitTime: 30  # The maximum waiting time before traffic detection is disabled. Unit: s. This parameter takes effect only after enabledGraceShutdown is enabled.
-  enableOfflineNotify: true # Whether to enable proactive offline notification.
-  httpServerPort: 16688 # Enable the http server port for proactive offline notification.
+  enableOfflineNotify: true # Whether to enable proactive shutdown notification.
+  httpServerPort: 16688 # Enable the http server port for proactive shutdown notification.
   upstreamAddressMaxSize: 500 # Default size of the cache upstream address
   upstreamAddressExpiredTime: 60 # Expiration time of the cached upstream address. Unit: s.
 ```
 
 | Parameter key                        | Description                                                             | Default value | Required |
 | :----------------------------------- | :---------------------------------------------------------------------- | :------------| :------- |
-| grace.rule.enableSpring              | springCloud elegant online and offline switch                           | false         | YES    |
-| grace.rule.startDelayTime            | Graceful online and offline startup delay time, unit S                  | 0             | YES    |
+| grace.rule.enableSpring              | springCloud elegant startup/shutdown switch          | false         | YES    |
+| grace.rule.startDelayTime            | Graceful startup/shutdown startup delay time, unit S | 0             | YES    |
 | grace.rule.enableWarmUp              | Whether to enable preheating                                            | false         | YES    |
-| grace.rule.enableGraceShutdown       | Whether to enable graceful offline                                      | false         | YES    |
+| grace.rule.enableGraceShutdown       | Whether to enable graceful shutdown                                     | false         | YES    |
 | grace.rule.shutdownWaitTime          | The maximum waiting time for related traffic detection before shutdown, unit S. EnabledGraceShutdown needs to be enabled to take effect  | 30            | YES    |
-| grace.rule.enableOfflineNotify       | Whether to open the offline active notification                         | false         | YES    |
-| grace.rule.httpServerPort            | The httpServer port for active offline notification is enabled          | 16688          | YES    |
+| grace.rule.enableOfflineNotify       | Whether to open the active shutdown  notification           | false         | YES    |
+| grace.rule.httpServerPort            | The httpServer port for active shutdown notification is enabled   | 16688          | YES    |
 | grace.rule.upstreamAddressMaxSize    | The default size of cached upstream addresses                           | 5000           | YES    |
 | grace.rule.upstreamAddressExpiredTime| Expiration time of cache upstream address, unit S                       | 60            | YES    |
 
@@ -64,11 +64,11 @@ Framework support:
 
 Limit:
 
-- The ability to go online and offline gracefully is developed based on SpringCloud's default load balancing capability. If you implement a custom load balancing capability, this capability will no longer apply
+- The ability to go to start up and shutdown gracefully is developed based on SpringCloud's default load balancing capability. If you implement a custom load balancing capability, this capability will no longer apply
 
 ## Operation and result validation
 
-The following demonstrates how to use the graceful online and offline plugin.
+The following demonstrates how to use the graceful startup/shutdown plugin.
 
 ### Preparation
 
@@ -149,12 +149,8 @@ java -Dgrace.rule.enableSpring=true -Dgrace.rule.enableWarmUp=true -Dgrace.rule.
 
 #### Preheating capability verification
 
-<MyImage src="/docs-img/springcloud-grace-warm-up.png"/>
-
 Access the interface `localhost:8800/graceHot`, and judge whether the preheating is effective according to the ip and port returned by the interface. If during the warm-up period (default 120s) the access is biased towards the provider whose port is `8880`, and the traffic becomes **average** over time, it means that the pre-heating takes effect.
 
-#### Elegant offline verification
+#### Graceful shutdown verification
 
-<MyImage src="/docs-img/springcloud-grace-graceful-offline.png"/>
-
-Continue to access the interface `localhost:8800/graceDownOpen`, and then log off one of the provider instances to observe whether there is an error in the request. If there is no error, the graceful offline capability verification is successful.
+Continue to access the interface `localhost:8800/graceDownOpen`, and then log off one of the provider instances to observe whether there is an error in the request. If there is no error, the graceful shutdown capability verification is successful.

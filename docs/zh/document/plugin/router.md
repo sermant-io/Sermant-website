@@ -298,18 +298,18 @@
 
 下面将演示如何使用标签路由插件，验证使用Sermant动态配置中心（ZooKeeper）为SpringCloud服务配置标签路由场景。
 
-### 准备工作
+### 1 准备工作
 
 - [下载](https://github.com/sermant-io/Sermant/releases/download/v2.0.0/sermant-2.0.0.tar.gz) Sermant Release包（当前版本推荐2.0.0版本）
 - [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v2.0.0/sermant-examples-router-demo-2.0.0.tar.gz) Demo二进制产物压缩包
 - [下载](https://github.com/apache/servicecomb-service-center)ServiceComb（注册中心），并启动
 - [下载](https://zookeeper.apache.org/releases.html#download)ZooKeeper（动态配置中心），并启动
 
-### 步骤一：获取Demo二进制产物
+### 2 获取Demo二进制产物
 
 解压Demo二进制产物压缩包，即可得到`spring-cloud-router-consumer.jar`、`spring-cloud-router-provider.jar`和`spring-cloud-router-zuul.jar`。
 
-### 步骤二：部署应用
+### 3 部署应用
 
 （1）启动zuul网关
 
@@ -353,13 +353,13 @@ java -Dservicecomb_service_enableSpringRegister=true -Dservice_meta_version=1.0.
 
 > **说明：** ${path}为sermant实际安装路径，x.x.x代表sermant某个版本号。
 
-### 步骤三：查看服务注册情况
+### 4 查看服务注册情况
 
 登录[ServiceComb](http://127.0.0.1:30103/)后台，查看服务是否注册成功。
 
 <MyImage src="/docs-img/router-registry.png"/>
 
-### 步骤四：发布配置
+### 5 发布配置
 
 配置路由规则，参考[动态配置中心使用手册](../user-guide/configuration-center.md#发布配置)进行配置发布。
 
@@ -463,7 +463,7 @@ zkCli.cmd -server localhost:2181 create /app=default&environment=/servicecomb.ro
 
 > 说明：`${path}`为ZooKeeper的安装目录。
 
-### 验证
+### 6 验证
 
 <MyImage src="/docs-img/router-result.png"/>
 
