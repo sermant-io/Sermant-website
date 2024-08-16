@@ -1,251 +1,441 @@
 # Sermant Agent User Manual
 
-Sermant-agent is the essential core component of Sermant, which contains bytecode enhancements of [sermant-agentcore](https://github.com/sermant-io/Sermant/tree/develop/sermant-agentcore), [sermant-plugins](https://github.com/sermant-io/Sermant/tree/develop/sermant-plugins), [sermant-common](https://github.com/sermant-io/Sermant/tree/develop/sermant-common). The modules of the sermant-agent component are found in the `sermant-agent-x.x.x/agent` directory described in the [Sermant Introduction](readme.md). This article describes how to use sermant-agent.
+Sermant Agent is the core component providing bytecode enhancement capabilities and various service governance functionalities. The content under the `sermant-agent-x.x.x/agent` directory described in the [Sermant Introduction](readme.md) outlines the modules of the Sermant Agent component. The main body of Sermant Agent offers foundational bytecode enhancement capabilities and a development framework, while also supporting essential features such as heartbeat functionality, dynamic configuration, logging, and event reporting. It currently supports both `premain` and `agentmain`startup methods.
 
-The framework body of sermant-agent provides bytecode enhanced implementation logic for Sermant, and supports common core capabilities such as heartbeat function, dynamic configuration function and log function. In the sermant-agent plugin package, the extension plugins provide the service governance capabilities such as label routing, flow control and double registration.
+The Sermant Agent plugin directory includes plugins that provide service governance capabilities such as tag routing, rate limiting and degradation, and dual registration. It now supports the dynamic installation and uninstallation of service governance plugins while the host service is running, provided the plugins support dynamic installation and uninstallation.
 
-## Parameter Configuration
+## Supported Version
 
-Specify `sermant-agent.jar` via the `-javaagent` parameter when a Java program (Java class with a main function) is running. `sermant-agent.jar` is deposited in `agent/sermant-agent.jar` of sermant-agent pruduct package.
+Sermant Agent supports Linux and Windows, and is developed based on JDK 1.8. It is recommended to use JDK 1.8 or higher versions.
+
+- [HuaweiJDK 1.8](https://gitee.com/openeuler/bishengjdk-8) / [OpenJDK 1.8](https://github.com/openjdk/jdk) / [OracleJDK 1.8](https://www.oracle.com/java/technologies/downloads/)
+
+## Premain Startup: Static Attachment
+
+To start Sermant Agent using the `premain` method via static attachment, configure the host service with the `-javaagent`option. Based on the environment set up in the [Quick Start Guide](../QuickStart.md), execute the following command to launch Sermant Agent:
 
 ```shell
--javaagent:sermant-agent.jar[=${options}]
+# linux mac
+java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar -jar spring-provider.jar
+
+# windows
+java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar -jar spring-provider.jar
 ```
 
-Where `${options}` is the launch input parameter, which will be transferred as the parameter `agentArgs` to the `premain` method.
+Check the beginning of the `spring-provider.jar` log to see if it contains the following content:
 
-```java
-public static void premain(String agentArgs, Instrumentation inst);
+```shell
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Loading god library into BootstrapClassLoader.
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Building argument map by agent arguments.
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Loading core library into SermantClassLoader.
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Loading sermant agent, artifact is: default
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Load sermant done, artifact is: default
 ```
 
-The format of the `agentArgs` parameter should look like `key1=value1,key2=value2[(,keyN=valueN)...]`, which splits key/value pairs with `','`, and splits between key and value with `'='` 'to form a `Map` structure.
+If the log outputs as shown above, it indicates that Sermant Agent has started successfully. Open your browser and navigate to `http://localhost:8900`, where you should see a Sermant Agent instance. The expected result is shown in the image below:
 
-### Sermant-agent Startup Parameters
+<MyImage src="/docs-img/backend_sermant_info.jpg"></MyImage>
 
-The **startup parameters** are listed as follows:
+## Agentmain Startup：Dynamic Attachment
 
-|Key in Input Parameters|Description|Default Value|Required|
-|:-:|:-:|:-:|:-:|
-|appName|The name of host application, can be used for instance heartbeat sending, etc|default|False|
-|instanceName|The name of the specific instance, can be used for instance heartbeat sending, etc|default|False|
-|appType|The type of host application, can be used for instance heartbeat sending, etc|0|False|
+### Agent Installation
 
-The `agentArgs` parameter allows you to configure more custom values for **startup parameters**.
+- Based on the environment set up in the [Quick Start Guide](../QuickStart.md), first start the host service `spring-provider.jar`.
 
-In addition, the startup parameters can also be configured in ` agent/config/bootstrap properties ` in the product package of sermant-agent, which are consistent with the parameters above and also supports custom startup parameters.
+```shell
+java -jar spring-provider.jar
+```
 
-### Sermant-agent Parameter Configuration
+- To start by `agentmain`,  you need to use the `Attach API`. First, create a Java file using the [AgentLoader.java](#attachments) and compile it with `javac`:
 
-All other configurations beside plugin configurations are configured in the `agent/config/config.properties` of the sermant-agent product package. Please refer to the [Plugin Guide](https://sermant.io/zh/document/plugin/) for configurations of each plugin.
+```shell
+# Linux、MacOS
+javac -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader.java
+
+# Windows has correctly configured the environment variables required for JAVA.
+javac -cp "%JAVA_HOME%\lib\tools.jar" AgentLoader.java -encoding utf-8
+```
+
+- After compilation, an `AgentLoader.class` file will be generated in the directory. Run `AgentLoader` using the following command:
+
+
+```shell
+# Linux、MacOS
+java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
+
+# Windows has correctly configured the environment variables required for JAVA.
+java AgentLoader
+```
+
+```shell
+# Choose the command to run based on the operating system you are using. Below are the commands for Linux and MacOS:
+$ java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
+Please select the Java process you wish to use with Sermant Agent:
+0: xxxxx AgentLoader # xxxxx represents the process ID, which is obscured here.
+1: xxxxx spring-provider.jar # xxxxx represents the process ID, which is obscured here.
+2: xxxxx sermant-backend-1.2.0.jar # xxxxx represents the process ID, which is obscured here.
+Please enter the Java process number you wish to use with Sermant Agent: 1 # Select the process number of spring-provider.
+The process ID you selected: xxxxx # xxxxx represents the process ID, which is obscured here.
+Please enter the directory where Sermant Agent is located (by default, it uses sermant-agent.jar in this directory as the entry point): ${path}/sermant-agent-x.x.x/agent # Enter the directory where Sermant Agent is located.
+Please enter the parameters to pass to Sermant Agent (can be empty, default configuration parameter is agentPath): # Configure Sermant Agent parameters (can be empty)
+```
+
+After completing the input according to the instructions, you can see the following content in the `spring-provider.jar`log: 
+
+```shell
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Loading god library into BootstrapClassLoader.
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Building argument map by agent arguments.
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Loading core library into SermantClassLoader.
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Loading sermant agent, artifact is: default
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Load sermant done, artifact is: default
+```
+
+If the log outputs as shown above, it indicates that Sermant Agent successfully read the startup command and began the installation. Open your browser and navigate to `http://localhost:8900`, where you should see a Sermant Agent instance. The expected result is shown in the image below: 
+
+<MyImage src="/docs-img/sermant-agent-agentmain-start.png"></MyImage>
+
+### Agent Uninstallation
+
+> Note: To avoid potential unpredictable exceptions when uninstalling service governance capabilities developed based on the premain startup method, Sermant Agent imposes restrictions on uninstallation. Only Sermant Agents started via the agentmain method support uninstallation; those started via the premain method do not support uninstallation.
+
+After [dynamically attaching the Agent](#agent-installation), you can uninstall Agent. Run `AgentLoader` again and pass the parameter to issue the uninstall command for Sermant Agent using `command=UNINSTALL-AGENT`:
+
+```shell
+# Choose the command to run based on the operating system you are using. Below are the commands for Linux and MacOS:
+$ java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
+Please select the Java process you wish to use with Sermant Agent:
+0: xxxxx AgentLoader # xxxxx represents the process ID, which is obscured here.
+1: xxxxx spring-provider.jar # xxxxx represents the process ID, which is obscured here.
+2: xxxxx sermant-backend-1.2.0.jar # xxxxx represents the process ID, which is obscured here.
+Please enter the Java process number you wish to use with Sermant Agent: 1 # Select the process number of spring-provider.
+The process ID you selected: xxxxx # xxxxx represents the process ID, which is obscured here.
+Please enter the directory where Sermant Agent is located (by default, it uses sermant-agent.jar in this directory as the entry point): ${path}/sermant-agent-x.x.x/agent # Enter the directory where Sermant Agent is located.
+Please enter the parameters to pass to Sermant Agent (can be empty, default configuration parameter is agentPath):command=UNINSTALL-AGENT # Pass the parameter here to issue the uninstall command.
+```
+
+After completing the input according to the instructions, you can see the following content in the `spring-provider.jar`log:
+
+```shell
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Building argument map by agent arguments.
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Sermant for artifact is running, artifact is: default
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Execute command: UNINSTALL-AGENT
+```
+
+If the log outputs as shown above, open your browser and navigate to `http://localhost:8900`. You should see that the Sermant Agent instance has been shut down (**status is gray**), indicating that Sermant Agent has been successfully uninstalled. The expected result is shown in the image below:
+
+<MyImage src="/docs-img/sermant-agent-agentmain-uninstall-success.png"></MyImage>
+
+> Note: This capability can be implemented in the development mode by calling the `uninstall` interface provided by [AgentCoreEntrance](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/AgentCoreEntrance.java) in the sermant-agentcore-core module.
+
+### Dynamic Plugin Installation
+
+After [dynamically attaching the Agent](#agent-installation), you can dynamically install service governance plugins (provided the plugins support dynamic installation and uninstallation). Run `AgentLoader` again and pass the parameter to issue the dynamic plugin installation command using `command=INSTALL-PLUGINS:pluginA/pluginB`:
+
+> Note: Multiple plugins can be installed at once, separated by '/'. `pluginA` and `pluginB` are placeholders for actual plugin names. In this example, we use the [monitor](../plugin/monitor.md) plugin.
+
+```shell
+# Choose the command to run based on the operating system you are using. Below are the commands for Linux and MacOS:
+$ java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
+Please select the Java process you wish to use with Sermant Agent:
+0: xxxxx AgentLoader # xxxxx represents the process ID, which is obscured here.
+1: xxxxx spring-provider.jar # xxxxx represents the process ID, which is obscured here.
+2: xxxxx sermant-backend-1.2.0.jar # xxxxx represents the process ID, which is obscured here.
+Please enter the Java process number you wish to use with Sermant Agent: 1 # Select the process number of spring-provider.
+The process ID you selected: xxxxx # xxxxx represents the process ID, which is obscured here.
+Please enter the directory where Sermant Agent is located (by default, it uses sermant-agent.jar in this directory as the entry point): ${path}/sermant-agent-x.x.x/agent # Enter the directory where Sermant Agent is located.
+Please enter the parameters to pass to Sermant Agent (can be empty, default configuration parameter is agentPath):command=INSTALL-PLUGINS:monitor # Pass the parameter here to issue the install plugin command. This example demonstrates using the monitor plugin.
+```
+
+After completing the input according to the instructions, you can see the following content in the `spring-provider.jar`log:
+
+```shell
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Building argument map by agent arguments.
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Sermant for artifact is running, artifact is: default
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Execute command: INSTALL-PLUGINS:monitor # This example demonstrates using the monitor plugin.
+```
+
+If the log outputs as shown above, it indicates that the plugin was installed successfully. Open your browser and navigate to `http://localhost:8900`, where you should see that the plugin has been successfully installed. The plugins list will display the currently installed plugins, as shown in the image below:
+
+**Before dynamically installing plugin**
+
+<MyImage src="/docs-img/sermant-agent-dynamic-install-plugin-before.png"></MyImage>
+
+**After dynamically installing plugin**
+
+<MyImage src="/docs-img/sermant-agent-dynamic-install-plugin-success.png"></MyImage>
+
+> Note: This capability can be implemented in the development mode by calling the `install(Set pluginNames)` method provided by [PluginManager](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/plugin/PluginManager.java) in the sermant-agentcore-core module.
+
+### Repeated Plugin Installation
+The introduction of this capability is mainly due to the need for dynamically extending the effective scope of plugins in certain scenarios, primarily expanding the enhanced classes and methods, while ensuring that the already effective parts remain unaffected. In such cases, uninstalling and reinstalling plugins after adjusting configurations cannot address the issue.For example, in fault injection scenarios, different faults may require bytecode enhancement for different classes, and various fault scenarios need to be gradually injected according to the test plan's orchestration. In such cases, we cannot complete this task by uninstalling and reinstalling the plugin. Instead, we must install the fault injection plugin multiple times to solve this problem. This requires the capability of repeated plugin installation. Repeated plugin installation will reuse static resources, and Sermant internally isolates the repeatedly installed plugins through plugin management.
+
+### How to Implement Repeated Plugin Installation?
+
+To install plugins repeatedly, you need to add a unique identifier to the plugin name using the `#` symbol when performing dynamic plugin installation. For example:
+```shell
+command=INSTALL-PLUGINS:pluginA#FIRST
+```
+In this way, the plugin can be installed repeatedly.
+
+> Note: When uninstalling a plugin, if you want to uninstall a plugin that was installed with an identifier, you need to specify the plugin name with the identifier in the uninstall command as well.
+
+
+### Dynamic Plugin Uninstallation
+
+After [dynamically attaching the Agent](#agent-installation) and [dynamically installing the plugin](#dynamic-plugin-installation), you can dynamically uninstall service governance plugins (provided the plugins support dynamic installation and uninstallation). Run `AgentLoader` again and pass the parameter to issue the dynamic plugin uninstallation command using `command=UNINSTALL-PLUGINS:pluginA/pluginB`:
+
+> Note: Multiple plugins can be uninstalled at once, separated by '/'. `pluginA` and `pluginB` are placeholders for actual plugin names. In this example, we use the [monitor](../plugin/monitor.md) plugin.
+
+```shell
+# Choose the command to run based on the operating system you are using. Below are the commands for Linux and MacOS:
+$ java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
+Please select the Java process you wish to use with Sermant Agent:
+0: xxxxx AgentLoader # xxxxx represents the process ID, which is obscured here.
+1: xxxxx spring-provider.jar # xxxxx represents the process ID, which is obscured here.
+2: xxxxx sermant-backend-1.2.0.jar # xxxxx represents the process ID, which is obscured here.
+Please enter the Java process number you wish to use with Sermant Agent: 1 # Select the process number of spring-provider.
+The process ID you selected: xxxxx # xxxxx represents the process ID, which is obscured here.
+Please enter the directory where Sermant Agent is located (by default, it uses sermant-agent.jar in this directory as the entry point): ${path}/sermant-agent-x.x.x/agent # Enter the directory where Sermant Agent is located.
+Please enter the parameters to pass to Sermant Agent (can be empty, default configuration parameter is agentPath):command=UNINSTALL-PLUGINS:monitor # Pass the parameter here to issue the uninstall plugin command.
+```
+
+After completing the input according to the instructions, you can see the following content in the `spring-provider.jar`log:
+
+```shell
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Building argument map by agent arguments.
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Sermant for artifact is running, artifact is: default
+[xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Execute command: UNINSTALL-PLUGINS:monitor #This example demonstrates using "monitor" plugin.
+# The log will show how many bytecode-enhanced classes were restored during the uninstallation.
+[Byte Buddy] REDEFINE BATCH #0 [1 of 1 type(s)]
+[Byte Buddy] REDEFINE COMPLETE 1 batch(es) containing 1 types [0 failed batch(es)]
+[Byte Buddy] REDEFINE COMPLETE 1 batch(es) containing 0 types [0 failed batch(es)]
+```
+
+If the log outputs as shown above, open your browser and navigate to `http://localhost:8900`. You should see that the plugin has been successfully uninstalled. The plugins list will display the currently installed plugins, as shown in the image below:
+
+**Before dynamically installing plugin**
+
+<MyImage src="/docs-img/sermant-agent-dynamic-uninstall-plugin-before.png"></MyImage>
+
+**After dynamically installing plugin**
+
+<MyImage src="/docs-img/sermant-agent-dynamic-uninstall-plugin-success.png"></MyImage>
+
+> Note: This capability can be implemented in development mode by calling the `uninstall(Set pluginNames)` method provided by [PluginManager](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/plugin/PluginManager.java) in the sermant-agentcore-core module.
+
+### One-Click Agent and Plugin Attachment
+
+The [Sermant Dynamic Installation and Uninstallation Script](https://github.com/sermant-io/Sermant/blob/develop/scripts/attach.c) is a C language script based on the Java Attach API. It can attach Sermant Agent to JVM processes on either **virtual machines** or **containers**.
+
+> Note: This script is only for use on **Linux systems**.
+
+#### Parameter Configuration
+
+- `-path=`：required parameter, followed by the **absolute path** of sermant-agent.jar.
+
+- `-pid=`：required parameter, followed by the PID of the host microservice, which can be found using commands like `ps -ef`.
+
+- `-command=`：required parameter, followed by the command to attach Sermant Agent. Supported commands can be found in the [Sermant Command Instructions](#sermant-command-instructions).
+
+- `-nspid=`：when the host microservice is running in a container, this parameter is required and should be followed by the host microservice's nspid, which can be found using the `cat /proc/{pid}/status` command. If the host microservice is not running in a container, do not include this parameter.
+
+#### Script Usage Steps
+
+##### Step 1. Compile `jvm_attach.c`
+
+```bash
+gcc attach.c -o attach
+```
+
+> Note: Please ensure that `gcc` is already installed.
+
+##### Step 2. Execute the Attach Script
+
+```bash
+./attach -path={sermant-path}/sermant-agent.jar -pid={pid} -command={COMMAND}
+```
+
+The script execution will display as follows:
+
+```shell
+[root@b6b9af8e5610 root]# ./attach -path=/home/sermant-agent-1.0.0/agent/sermant-agent.jar -pid=494 -command=INSTALL-PLUGINS:database-write-prohibition
+[INFO]: PATH: /home/sermant-agent-1.0.0/agent/sermant-agent.jar
+[INFO]: PID: 494
+[INFO]: COMMAND: INSTALL-PLUGINS:database-write-prohibition
+[INFO]: Connected to remote JVM of pid 494
+[INFO]: ret code is 0, Attach success!
+```
+
+## Enhancement Information Query
+After Sermant has been successfully started by any method, you can run `AgentLoader` and pass the parameter to issue the query enhancement information command using `command=CHECK_ENHANCEMENT`:
+
+> Note: The enhancement information query will be printed to the log at the **INFO level**. If you use this feature, please configure the log level in advance. For modification instructions, see [Log Configuration](../developer-guide/log-func.md#configuration)
+
+```shell
+# Choose the command to run based on the operating system you are using. Below are the commands for Linux and MacOS:
+$ java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
+Please select the Java process you wish to use with Sermant Agent:
+0: xxxxx AgentLoader # xxxxx represents the process ID, which is obscured here.
+1: xxxxx spring-provider.jar # xxxxx represents the process ID, which is obscured here.
+2: xxxxx sermant-backend-1.2.0.jar # xxxxx represents the process ID, which is obscured here.
+Please enter the Java process number you wish to use with Sermant Agent: 1 # Select the process number of spring-provider.
+The process ID you selected: xxxxx # xxxxx represents the process ID, which is obscured here.
+Please enter the directory where Sermant Agent is located (by default, it uses sermant-agent.jar in this directory as the entry point): ${path}/sermant-agent-x.x.x/agent # Enter the directory where Sermant Agent is located.
+Please enter the parameters to pass to Sermant Agent (can be empty, default configuration parameter is agentPath):command=CHECK_ENHANCEMENT # Pass the parameter here to issue the query enhancement information command.
+```
+
+After completing the input according to the instructions, you can see the following content in the Sermant log:
+```shell
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [io.sermant.core.command.CheckEnhancementsCommandExecutor] [execute:42] [Attach Listener] ---------- PLUGINS ----------
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [io.sermant.core.command.CheckEnhancementsCommandExecutor] [execute:44] [Attach Listener] test-plugin-A:1.0.0
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [io.sermant.core.command.CheckEnhancementsCommandExecutor] [execute:44] [Attach Listener] test-plugin-B:1.0.0
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [io.sermant.core.command.CheckEnhancementsCommandExecutor] [execute:46] [Attach Listener] ---------- ENHANCEMENT ----------
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [io.sermant.core.command.CheckEnhancementsCommandExecutor] [execute:58] [Attach Listener] test-plugin-A:1.0.0
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [io.sermant.core.command.CheckEnhancementsCommandExecutor] [execute:65] [Attach Listener] xxxxx.xxxx.TestClassA#testFunctionA(boolean,java.lang.String,java.lang.String,java.lang.String)@sun.misc.Launcher$AppClassLoader@5c647e05 [xxxx.xxxx.TestInterceptorA]
+xxxx-xx-xx xx:xx:xx.xxx [INFO] [io.sermant.core.command.CheckEnhancementsCommandExecutor] [execute:65] [Attach Listener] xxxxx.xxxx.TestClassB#testFunctionB(boolean,java.lang.String,java.lang.String,java.lang.String)@sun.misc.Launcher$AppClassLoader@5c647e05 [xxxx.xxxx.TestInterceptorB,xxxx.xxxx.TestInterceptorC]
+```
+
+The format of the printed content is as follows:
+```shell
+---------- PLUGINS ----------
+\\ List of installed plugins, formatted as: PluginName: PluginVersion
+test-plugin-A:1.0.0
+test-plugin-B:1.0.0
+---------- ENHANCEMENT ----------
+\\ Plugins that successfully completed enhancement processing, formatted as: PluginName: PluginVersion
+test-plugin-A:1.0.0
+\\ Information on plugins that successfully completed enhancement processing:
+\\ Formatted as: EnhancedFullQualifiedClassName#EnhancedMethodName(ParameterType)@ClassLoaderInformation [InterceptorList]
+xxxxx.xxxx.TestClassA#testFunctionA(boolean,java.lang.String,java.lang.String,java.lang.String)@sun.misc.Launcher$AppClassLoader@5c647e05 [xxxx.xxxx.TestInterceptorA]
+xxxxx.xxxx.TestClassB#testFunctionB(boolean,java.lang.String,java.lang.String,java.lang.String)@sun.misc.Launcher$AppClassLoader@5c647e05 [xxxx.xxxx.TestInterceptorB,xxxx.xxxx.TestInterceptorC]
+```
+
+## Sermant Command Instructions
+
+Sermant can achieve hot-plugging capabilities by running `AgentLoader` and passing in the following commands. Additionally, after Sermant Agent has been successfully started by any method, you can run `AgentLoader` and pass in commands to query enhancement information. The specific commands are as follows:
+
+| Command Type                  | Command Example                                              |
+| ----------------------------- | ------------------------------------------------------------ |
+| Agent Installation            | If the command is empty, it defaults to Agent installation.  |
+| Agent Uninstallation          | command=UNINSTALL-AGENT                                      |
+| Plugin Installation           | command=INSTALL-PLUGINS:${PluginName}                        |
+| Plugin Uninstallation         | command=UNINSTALL-PLUGINS:${PluginName}                      |
+| Repeated Plugin Installation  | command=INSTALL-PLUGINS:${PluginName}#${CustomPluginIdentifier} |
+| Enhancement Information Query | command=CHECK_ENHANCEMENT                                    |
+
+## Configuration Specifications
+
+The properties configuration files of the Sermant project and the YAML configuration files of each plugin support the following parameter configuration methods. For example, in the configuration file, `gateway.nettyIp=127.0.0.1`:
+
+1. Directly modify the configuration file by changing `gateway.nettyIp=127.0.0.1` in the file.
+2. Configure it via the -D parameter when starting the microservice, i.e., `-Dgateway.nettyIp=127.0.0.1`.
+3. Configure it via an environment variable by adding `gateway.nettyIp=127.0.0.1` to the environment variables.
+4. Configure it via Sermant Agent startup parameters, i.e., `-javaagent:sermant-agent.jar=gateway.nettyIp=127.0.0.1`.
+
+The four methods listed above, arranged in order of priority from highest to lowest, are: 4 > 3 > 2 > 1.
+
+Among these, the values for the last three parameter configuration methods support multiple formats. For example, for `gateway.nettyIp=127.0.0.1` in the configuration file, the following formats are all recognizable:
 
 ```properties
-# agent config
-agent.config.isEnhanceBootStrapEnable=false
-agent.config.ignoredPrefixes=io.sermant
-agent.config.ignoredInterfaces=org.springframework.cglib.proxy.Factory
-agent.config.combineStrategy=ALL
-agent.config.serviceBlackList=io.sermant.implement.service.heartbeat.HeartbeatServiceImpl,io.sermant.implement.service.send.NettyGatewayClient,io.sermant.implement.service.tracing.TracingServiceImpl
-agent.config.serviceInjectList=io.sermant.discovery.service.lb.filter.NopInstanceFilter,io.sermant.discovery.service.lb.DiscoveryManager
-agent.config.isShowEnhanceLogEnable=false
-agent.config.enhancedClassOutputPath=
-
-# dynamic config
-dynamic.config.timeoutValue=30000
-dynamic.config.defaultGroup=sermant
-dynamic.config.serverAddress=127.0.0.1:2181
-dynamic.config.dynamicConfigType=ZOOKEEPER
-dynamic.config.connectRetryTimes=5
-dynamic.config.connectTimeout=1000
-dynamic.config.userName=
-dynamic.config.password=
-dynamic.config.privateKey=
-dynamic.config.enableAuth=false
-
-# heartbeat config
-heartbeat.interval=30000
-
-# backend config
-backend.nettyIp=127.0.0.1
-backend.nettyPort=6888
-
-# service meta config
-service.meta.application=default
-service.meta.version=1.0.0
-service.meta.project=default
-service.meta.environment=
-service.meta.zone=
-service.meta.parameters=
-
-# service visibility config
-visibility.service.enableStart=false
+gateway.nettyIp=127.0.0.1
+gateway_nettyIp=127.0.0.1
+gateway-nettyIp=127.0.0.1
+GATEWAY.NETTYIP=127.0.0.1
+GATEWAY_NETTYIP=127.0.0.1
+GATEWAY-NETTYIP=127.0.0.1
+gateway.nettyip=127.0.0.1
+gateway_nettyip=127.0.0.1
+gateway-nettyip=127.0.0.1
+gateway.netty.ip=127.0.0.1
+gateway_netty_ip=127.0.0.1
+gateway-netty-ip=127.0.0.1
+GATEWAY.NETTY.IP=127.0.0.1
+GATEWAY_NETTY_IP=127.0.0.1
+GATEWAY-NETTY-IP=127.0.0.1
 ```
 
-The parameters involved are associated with sermant-agent, Backend, Dynamic Configuration Center, etc. Refer to the following tables for specific parameter configurations.
+The Sermant Agent will sequentially check each configuration value from top to bottom to see if it is configured via startup parameters, environment variables, or -D parameters.
 
-#### Parameters Related to Agent Framework
+> **Note:** When modifying configurations through container scenarios using `env`, replace point (.) with underscore (_).
+>
+> Reason: Some OS images cannot recognize `env` variables with point.
 
-| <span style="display:inline-block;width:100px">Parameter Key</span> | <span style="display:inline-block;width:120px">Description</span> | <span style="display:inline-block;width:70px">Parameter Category</span> |                        Default Value                         | Required |
-| :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :------: |
-|            agent.config.isEnhanceBootStrapEnable             | Switch for enhancement of classes loaded by the bootstrap classloader |                            Agent                             |                            false                             |  False   |
-|                 agent.config.ignoredPrefixes                 | Ignored class set, where the fully qualified name prefixes defined in this set are used to exclude classes that are ignored during the enhancement process |                            Agent                             |          io.sermant          |  False   |
-|                agent.config.ignoredInterfaces                | Ignored interface set, where the fully qualified name prefixes defined in this set are used to exclude interfaces that are ignored during the enhancement process |                            Agent                             |           org.springframework.cglib.proxy.Factory            |  False   |
-|                 agent.config.combineStrategy                 | Plugin declarator merge policy: NONE, no merge; BY_NAME, coalesced by matching class names; ALL, all merge |                            Agent                             |                             ALL                              |  False   |
-|                agent.config.serviceBlackList                 | Sermant-agent core functionality blacklist to disable related services |                            Agent                             | io.sermant.implement.service.heartbeat.HeartbeatServiceImpl<br>,io.sermant.implement.service.send.NettyGatewayClient<br>,io.sermant.implement.service.tracing.TracingServiceImpl |  False   |
-|                agent.config.serviceInjectList                |         List of service in plugin to be intercepted          |                            Agent                             | io.sermant.discovery.service.lb.filter.NopInstanceFilter<br>,io.sermant.discovery.service.lb.DiscoveryManager |  False   |
-|             agent.config.isShowEnhanceLogEnable              |     Whether to output retrieval logs during enhancement      |                            Agent                             |                            false                             |  False   |
-|             agent.config.enhancedClassOutputPath             |           The output path of the enhanced classed            |                            Agent                             |                              -                               |  False   |
+For example：To modify the configuration `gateway.nettyIp=127.0.0.1` through the pod's `env`, use:
 
-#### Parameters Related to Dynamic Configuration Center
-
-| <span style="display:inline-block;width:100px">Parameter Key</span> | <span style="display:inline-block;width:80px">Description</span> |      Parameter Category      | Default Value  | Required |
-| :----------------------------------------------------------: | :----------------------------------------------------------: | :--------------------------: | :------------: | :------: |
-|                 dynamic.config.timeoutValue                  | Dynamic configuration center server connection timeout, in ms | Dynamic Configuration Center |     30000      |   True   |
-|                 dynamic.config.defaultGroup                  |             Dynamic configuration default group              | Dynamic Configuration Center |    sermant     |   True   |
-|                 dynamic.config.serverAddress                 | Dynamic configuration center server address, configured like: {@code host:port[(,host:port)...]} | Dynamic Configuration Center | 127.0.0.1:2181 |   True   |
-|               dynamic.config.dynamicConfigType               |           Dynamic config type: NOP、ZOOKEEPER、KIE           | Dynamic Configuration Center |   ZOOKEEPER    |   True   |
-|               dynamic.config.connectRetryTimes               | Dynamic configuration center ZOOKEEPER: the number of configuration center reconnects when starting the Sermant | Dynamic Configuration Center |       5        |   True   |
-|                dynamic.config.connectTimeout                 | Dynamic configuration center ZOOKEEPER: connection timeout to the configuration center when starting the Sermant | Dynamic Configuration Center |      1000      |   True   |
-|                   dynamic.config.userName                    |      Dynamic configuration center ZOOKEEPER：user name       | Dynamic Configuration Center |       -        |  False   |
-|                   dynamic.config.password                    | Dynamic configuration center ZOOKEEPER：password after encryption | Dynamic Configuration Center |       -        |  False   |
-|                  dynamic.config.privateKey                   |    Dynamic configuration center ZOOKEEPER：decryption key    | Dynamic Configuration Center |       -        |  False   |
-|                  dynamic.config.enableAuth                   | Dynamic configuration center ZOOKEEPER：authorization switch | Dynamic Configuration Center |     false      |  False   |
-
-#### Parameters Related to Backend
-
-| <span style="display:inline-block;width:100px">Parameter Key</span> | <span style="display:inline-block;width:200px">Description</span> | Parameter Category | Default Value | Required |
-| :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------: | :-----------: | :------: |
-|                      heartbeat.interval                      |            Heartbeat send interval in millisecond            |      Backend       |     30000     |  False   |
-|                       backend.nettyIp                        |              Backend message receiving address               |      Backend       |   127.0.0.1   |  False   |
-|                      backend.nettyPort                       |                Backend message receiving port                |      Backend       |     6888      |  False   |
-
-#### Parameters Related to Service Metadata
-
-| <span style="display:inline-block;width:100px">Parameter Key</span> | <span style="display:inline-block;width:200px">Description</span> | Parameter Category | Default Value | Required |
-| :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------: | :-----------: | :------: |
-|                   service.meta.application                   | Application name, can be used in service governance scenarios such as service registration. |  Service Metadata  |    default    |  False   |
-|                     service.meta.version                     | Service version, can be used in service governance scenarios such as service registration and label routing. |  Service Metadata  |     1.0.0     |  False   |
-|                     service.meta.project                     | Service namespace, can be used in service governance scenarios such as service registration. |  Service Metadata  |    default    |  False   |
-|                   service.meta.environment                   | Service environment, can be used in service governance scenarios such as service registration. |  Service Metadata  |       -       |  False   |
-|                      service.meta.zone                       | Az that service locates, can be used in service governance scenarios such as service registration and label routing. |  Service Metadata  |       -       |  False   |
-|                   service.meta.parameters                    | Service extra parameters.The value is in the form of key:value. Multiple key-value pairs are separated by commas (,). It is used in service governance scenarios, such as service registration and label routing. |  Service Metadata  |       -       |  False   |
-
-#### Plugin related parameters
-| <span style="display:inline-block;width:100px">Parameter Key</span> |  <span style="display:inline-block;width:200px">Description</span>  | Parameter Category | Default Value  | Required |
-| :----------------------------------------------------------: | :----------------------------------------------------------: | :------------: | ------- | :------: |
-|                visibility.service.enableStart                |             Service visibility information reset switch, when agentCore reconnects with Netty, it will push full service visibility data             | Plugin parameters | False |    False   |
-
-### Sermant-agent Mounted Plugins Configuration
-
-You can configure which plugins to be mounted by Sermant in `agent/config/plugins.yaml` of sermant-agent product package.For example:
-
-```yaml
-plugins:                 # You can customize the plugins to be mounted by default
-  - flowcontrol
-  - service-router
-  - service-registry
-  - loadbalancer
-  - dynamic-config
-  - monitor
-  - springboot-registry
-  - mq-consume-deny
-profiles:                # You can configure the list of plugins mounted of each profile
-  cse:
-    - flowcontrol
-    - service-router
-    - service-registry
-    - dynamic-config
-  apm:
-    - flowcontrol
-    - service-router
-profile: cse,apm         # Profile is used to configure the list of mounted plugins by scenario. You can configure the in effect
+``` yaml
+  env:
+  - name: "gateway_nettyIp"
+    value: "127.0.0.2"
 ```
 
-The parameters are described as follows:
+## Attachments
 
-| Parameter Key |                         Description                          | Required |
-| :-----------: | :----------------------------------------------------------: | :------: |
-|    plugins    |    Configure the default plugins to be mounted in a list     |   True   |
-|   profiles    | Customize the list of plugins to be mounted in different scenarios |  False   |
-|    profile    |       Customize the names of the scenario to be loaded       |  False   |
+### AgentLoader.java
 
-Any plugins configured in `plugins` will be mounted to the host application at startup. The list of plugins in `profile` can also be configured on demand.
+```java
+import com.sun.tools.attach.AgentInitializationException;
+import com.sun.tools.attach.AgentLoadException;
+import com.sun.tools.attach.AttachNotSupportedException;
+import com.sun.tools.attach.VirtualMachine;
+import com.sun.tools.attach.VirtualMachineDescriptor;
 
-**Loading order of plugins**
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.List;
 
-The Sermant plugin loads in the following order: 
+public class AgentLoader {
+    private AgentLoader() {
+    }
 
-1. First load the default plugins in the order configured in `plugin`.
+    /**
+     * AgentLoader main method
+     */
+    public static void main(String[] args)
+        throws IOException, AttachNotSupportedException, AgentLoadException, AgentInitializationException {
+        List<VirtualMachineDescriptor> vmDescriptors = VirtualMachine.list();
 
-2. Then load the scenario plugin list according to the scenario sequence configured in profile. The scenario plugin loading sequence is the same as that in the configuration file.
+        if (vmDescriptors.isEmpty()) {
+            System.out.println("not find Java process");
+            return;
+        }
 
-3. If the plugin configured in `profiles` has been loaded before, it will not be loaded again.
+        System.out.println("Please select the Java process you wish to use with Sermant Agent: ");
+        for (int i = 0; i < vmDescriptors.size(); i++) {
+            VirtualMachineDescriptor descriptor = vmDescriptors.get(i);
+            System.out.println(i + ": " + descriptor.id() + " " + descriptor.displayName());
+        }
 
-4. Bytecode enhancements at the same interception point for different plugins **take effect in the same order as plugin loading**.
+        // Read the user-inputted number
+        BufferedReader userInputReader = new BufferedReader(new InputStreamReader(System.in));
+        System.out.print("Please enter the Java process number you wish to use with Sermant Agent: ");
+        int selectedProcessIndex = Integer.parseInt(userInputReader.readLine());
 
-### Parameter Configuration Options
+        if (selectedProcessIndex < 0 || selectedProcessIndex >= vmDescriptors.size()) {
+            System.out.println("Invalid process ID");
+            return;
+        }
 
-The sermant project's properties configuration file and yaml configuration file for sermant-agent plugins support the following configuration options. Take `backend.nettyIp=127.0.0.1` in the configuration file for example:
+        // Connect to the selected virtual machine
+        VirtualMachineDescriptor selectedDescriptor = vmDescriptors.get(selectedProcessIndex);
+        System.out.println("The process ID you selected: " + selectedDescriptor.id());
 
-1. Modify the configuration file directly, via configure `backend.nettyIp=127.0.0.1` in the configuration file.
-2. Configure the -D option at startup, like: `-Dbackend.nettyIp=127.0.0.1`.
-3. Configure via environment variables, via add `backend.nettyIp=127.0.0.1` to environment variables.
-4. Configure startup parameters of sermant-agent, like: `-javaagent:sermant-agent.jar=backend.nettyIp=127.0.0.1`
+        VirtualMachine vm = VirtualMachine.attach(selectedDescriptor);
 
-The configuration takes effect in descending order of priority: 4 > 3 > 2 > 1.
+        // Get the Sermant Agent directory
+        System.out.print("Please enter the directory where Sermant Agent is located (by default, it uses sermant-agent.jar in this directory as the entry point): ");
+        String agentPath = userInputReader.readLine();
 
-The last three ways to obtain configuration parameters support various formats. Take `backend.nettyIp=127.0.0.1` in the configuration file for example, the following configuration formats can be identified:
+        // Get the parameters passed to the Sermant Agent
+        System.out.print("Please enter the parameters to pass to Sermant Agent (can be empty, default configuration parameter is agentPath):");
+        String agentArgs = "agentPath=" + agentPath + "," + userInputReader.readLine();
 
-```txt
-backend.nettyIp=127.0.0.1
-backend_nettyIp=127.0.0.1
-backend-nettyIp=127.0.0.1
-BACKEND.NETTYIP=127.0.0.1
-BACKEND_NETTYIP=127.0.0.1
-BACKEND-NETTYIP=127.0.0.1
-backend.nettyip=127.0.0.1
-backend_nettyip=127.0.0.1
-backend-nettyip=127.0.0.1
-backend.netty.ip=127.0.0.1
-backend_netty_ip=127.0.0.1
-backend-netty-ip=127.0.0.1
-BACKEND.NETTY.IP=127.0.0.1
-BACKEND_NETTY_IP=127.0.0.1
-BACKEND-NETTY-IP=127.0.0.1
+        // Close resource
+        userInputReader.close();
+
+        // Start Sermant Agent
+        vm.loadAgent(agentPath + "/sermant-agent.jar", agentArgs);
+        vm.detach();
+    }
+}
 ```
-
-The sermant-agent retrieves, from top to bottom, whether the configuration values are configured by startup parameter, the environment variable, and the -D parameter.
-
-## Versions Supported
-
-Sermant-agent supports Linux, Windows, and Aix operating systems, supports JDK 1.6 and above, and recommends using JDK 1.8.
-
-[HuaweiJDK 1.8](https://gitee.com/openeuler/bishengjdk-8) / [OpenJDK 1.8](https://github.com/openjdk/jdk) / [OracleJDK 1.8](https://www.oracle.com/java/technologies/downloads/)
-
-## Startup and Result Validation
-
-### Startup
-
-Start with a **Sermant-example** project [demo-application] (https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/demo-application) as the host application, execute the following command to mount the sermant-agent and start demo-application:
-
-```shell
-# Run under Windows
-java -javaagent:sermant-agent-x.x.x\agent\sermant-agent.jar=appName=test -jar demo-application.jar
-```
-
-```shell
-# Run under Linux
-java -javaagent:sermant-agent-x.x.x/agent/sermant-agent.jar=appName=test -jar demo-application.jar
-```
-
-### Validation
-
-Check to see if the log file for demo-application starts with the following:
-
-```
-[INFO] Loading core library... 
-[INFO] Building argument map... 
-[INFO] Loading sermant agent... 
-[INFO] Load sermant done. 
-```
-
-If the log output is normal, then the sermant-agent was mounted successfully.
