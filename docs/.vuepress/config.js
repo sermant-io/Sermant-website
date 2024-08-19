@@ -210,6 +210,7 @@ module.exports = {
                 "community/",
                 "community/contributing",
                 "community/vulnerability",
+                "community/sig"
               ],
             },
             {
