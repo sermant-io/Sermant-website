@@ -22,7 +22,7 @@ The Backend is the Sermant data processing back-end module and the front-end inf
 
 The Backend is not a required component of the Sermant, but it is highly recommended deploying the Backend for the observability of the Sermant. 
 
-Please refer to the [Backend User Manual](backend.md) for more instructions on how to use the Backend.
+Please refer to the [Sermant Backend User Manual](sermant-backend.md) for more instructions on how to use the Backend.
 
 ### Dynamic Configuration Center
 

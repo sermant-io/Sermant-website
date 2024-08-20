@@ -30,7 +30,7 @@
 
 <MyImage src="/docs-img/registry-faq-4.png"/>
 
-原因是backend未启动或者配置地址不正确，请启动backend或正确配置地址。backend相关信息请见[backend文档](../user-guide/backend.md)。
+原因是backend未启动或者配置地址不正确，请启动backend或正确配置地址。backend相关信息请见[backend文档](../user-guide/sermant-backend.md)。
 
 注：该错误不会影响注册插件的流程，但会有相关报错。
 

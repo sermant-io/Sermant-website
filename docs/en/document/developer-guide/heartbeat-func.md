@@ -8,7 +8,7 @@ The heartbeat function plays a key role in the field of microservice governance.
 
 The **Sermant** reports the metadata of the service instance to **Backend** through the heartbeat. It also reports information about the loaded service governance plug-ins to inform **Backend** which service governance plug-ins are carried by the **Sermant Agent**. The **Backend** monitoring panel displays service instances that carry **Sermant Agents**.
 
-> Attention: The heartbeat function must be used with the Backend monitoring panel. For details, see the [Backend User Manual](../user-guide/backend.md).
+> Attention: The heartbeat function must be used with the Backend monitoring panel. For details, see the [Sermant Backend User Manual](../user-guide/sermant-backend.md).
 
 ## Development Example
 
@@ -33,7 +33,7 @@ public ExecuteContext before(ExecuteContext context) throws Exception {
 
 1. After the development is complete, you can follow the [Packaged build](README.md#Packaged-build) process when 
 creating the first plug-in, execute the `mvn package` under the project root directory
-2. refer to [Backend User Manual](../user-guide/backend.md) Starts backend.
+2. refer to [Sermant Backend User Manual](../user-guide/sermant-backend.md) Starts backend.
 3. Set the heartbeat switch `agent.service.heartbeat.enable` to `true` in file `agent/config/config.properties`:
 ```properties
 # Heartbeat service switch
@@ -42,12 +42,12 @@ agent.service.heartbeat.enable=true
 
 5. Finally, access `http://localhost:8900` to view Backend.
 
-![pic](../../../binary-doc/backend_sermant_info.png)
+<MyImage src="/docs-img/backend/en/backend-instance.png"></MyImage>
 
 As you can see from the figure, there is currently one instance carrying **Sermant Agent**, and it is running 
-properly, and it carries version `1.2.0` of the `template` plugin.
+properly, and it carries Sermant Agent and plugins of version `1.0.0` 
 
-> **Sermant Agent** sends heartbeats to **Backend** on a regular basis. **Backend** will renew the heartbeats received from each **Sermant Agent**, and if they exceed the valid time (can be modified by [Backend Parameter Configuration](../user-guide/backend.md#Backend-Parameter-Configuration)). If a heartbeat has not been reported from a node, the node is set to be lost.
+> **Sermant Agent** sends heartbeats to **Backend** on a regular basis. **Backend** will renew the heartbeats received from each **Sermant Agent**, and if they exceed the valid time (can be modified by [Instance status parameters](../user-guide/sermant-backend.md)). If a heartbeat has not been reported from a node, the node is set to be lost.
 
 ## API & Configuration
 
