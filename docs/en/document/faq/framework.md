@@ -11,7 +11,7 @@ This document mainly explains common problems encountered when using the Sermant
 - Sermant is extensible. Besides the service governance plugin provided by the framework itself ([Introduction to FlowControl](../plugin/flowcontrol.md), [Introduction to Service Registration](../plugin/service-registry.md)), developers can develop plugins including (data collection, link collection, etc.) according to business requirements.
 
 
-## **How to mount multiple Sermants simultaneously??
+## How to mount multiple Sermants simultaneously?
 
 - If the host application needs to mount multiple Sermants, please follow the following steps to handle other Sermants.
 

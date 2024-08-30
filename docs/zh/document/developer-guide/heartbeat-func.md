@@ -32,7 +32,7 @@ public ExecuteContext before(ExecuteContext context) throws Exception {
 ```
 
 1. 开发完成后，可参照创建首个插件时的[打包构建](README.md#打包构建) 流程，在工程根目录下执行 `mvn package`
-2. 参考[backend使用手册](../user-guide/backend.md)
+2. 参考[backend使用手册](../user-guide/sermant-backend.md)
    启动backend。
 3. 将文件`agent/config/config.properties`中的心跳开关`agent.service.heartbeat.enable`设置为`true`:
 ```properties

@@ -1,27 +1,26 @@
 # Plugin Structure
 
-A **Sermant** plugin can contain the following modules：
+A **Sermant** plugin primarily consists of the following modules:
 
-- `plugin main mpdule (plugin)`, this module is mainly used to declare bytecode enhancement logic and plug-in service interface definition.
-- `plugin service module (service)`, this module is used to provide the plug-in service interface implementation for the plugin package.
+- **Plugin Main Module (`plugin`)**: This module is mainly responsible for declaring the bytecode enhancement logic.
+- **Plugin Service Module (`service`)**: This module assists the Plugin Main Module in completing the enhancement logic, such as adding dynamic configuration listeners (this module is optional).
 
-Before we start, we need to make a clear convention to avoid class conflicts, in the `plugin main module (plugin)`, developers can only use the native Java apis and the apis in the [Sermant-Agentcore Module](#Sermant-Agentcore-Module). they cannot rely on or use any third-party dependencies other than `byte-buddy`. If you need to use other third-party dependencies according to business requirements, you can only define the functional interface in the `plugin main module (plugin)`, and write the interface implementation in the `plugin service module (service)`, and follow the above conventions in development, in order to make better use of the class isolation capabilities provided by **Sermant**.
+The type of module is determined by specifying the value of `package.plugin.type` in the `properties` section of the `pom` file. The value `plugin` indicates that the module is a Plugin Main Module, while `service` indicates that the module is a Plugin Service Module. A plugin can contain multiple Plugin Main Modules and Plugin Service Modules.
 
-#### Sermant-Agentcore Module
-
-> [Sermant - Agent core Module](https://github.com/sermant-io/Sermant/tree/develop/sermant-agentcore/sermant-agentcore-core) is the core module of Sermant Agent, which provides encapsulation of core capabilities such as bytecode enhancement capability, class isolation capability, plug-in capability, and basic services of service governance.
+Thanks to Sermant's well-designed class loader mechanism, third-party dependencies can be introduced into the Plugin Main Module (`plugin`) via the `compile` method without causing conflicts with the classes in the host application. However, if developers need to use classes from the host application within the plugin, it is not recommended to introduce the corresponding dependencies via `compile` in the plugin module. Instead, these dependencies should be introduced in the service module and the service module's implementation can then be invoked from the plugin module. The usage details are described below.
 
 ## Plugin Main Module
 
-The plugin master module is the main implementation of the plugin, and the developer needs to declare the plugin's **enhanced logic** in this module. For **enhancement logic**  development, refer to the [Bytecode Enhancement](bytecode-enhancement.md) section. To avoid class conflicts, do not introduce third-party dependencies into the main module of the plugin.
+The main module of a plugin contains its primary implementation. Developers need to declare the plugin's **enhancement logic** within this module. For developing **enhancement logic**, refer to the [Bytecode Enhancement](bytecode-enhancement.md) section.
 
 ## Plugin Service Module
 
-**Plugin Service Module** Compared to **Plugin Main Module**：
+**Plugin Service Module** Compared to **Plugin Main Module**
 
-- Used to write [plugin service](#Plugin-Service) where it is not possible to declare the **enhanced logic** required by the plugin.
-- You are free to add any third-party dependencies you need, and you need to build dependent jar packages when you package your build.
-- Its corresponding [plugin main module](#Plugin-Main-Module) needs to be introduced in its pom in the form of `provided`.
+- Used to write **enhanced logic** that the [Plugin Main Module](#插件主模块) cannot implement.
+- Allows adding required third-party dependencies freely through the compile method.
+
+> Note: If you need to introduce the Plugin Main Module, you must include it in its `pom` file as `provided`.
 
 ## Plugin Service
 

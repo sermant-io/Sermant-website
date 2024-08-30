@@ -30,7 +30,7 @@ As shown in the following figure:
 
 <MyImage src="/docs-img/registry-faq-4.png"/>
 
-The cause is that the backend is not started or the configured address is incorrect. Start the backend or configure the address correctly. For details about the backend, see the [backend document](..//user-guide/backend.md).
+The cause is that the backend is not started or the configured address is incorrect. Start the backend or configure the address correctly. For details about the backend, see the [backend document](../user-guide/sermant-backend.md).
 
 Note: This error does not affect the plugin registration process, but related errors may be reported.
 
