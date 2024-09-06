@@ -18,7 +18,7 @@ Proxyless architecture eliminates the need for inter-process communication, sign
 
 ::: slot Contact
 ## Contact
-Scan the QR code below to join the Sermant community for communication.
+Join us in [Slack](https://app.slack.com/client/T08PSQ7BQ/C06VDFQUA7N) of Sermant community.
 :::
 
 ::: slot Disclaimer

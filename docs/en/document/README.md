@@ -2,7 +2,7 @@
 ## What is Sermant?
 
 **Sermant** is a proxyless service mesh based on Java bytecode enhancement technology. It utilizes Java bytecode enhancement to provide service governance capabilities to applications, addressing service governance issues in large-scale microservices architectures. Sermant has built a non-intrusive, high-performance and pluggable core framework, and integrated dynamic configuration service, event service, link marking service, heartbeat service and other core service capabilities into the framework. The plugins currently provided in the open source repository cover a wide range of service governance scenarios such as service registration, label routing, traffic control, service monitor, etc., and are widely used in finance, government, enterprises, Internet and other fields.
-<MyImage src="/docs-img/sermant-introduction.png"></MyImage>
+<MyImage src="/docs-img/sermant-introduction-en.png"></MyImage>
 
 ## Architecture
 

@@ -60,7 +60,7 @@
             <Content slot-key="feature2"></Content>
             <Content slot-key="feature3"></Content>
           </div>
-          <div class="video-box">
+          <div v-if="$localePath === '/zh/'" class="video-box">
             <Content slot-key="video"></Content>
           </div>
         </div>
@@ -71,7 +71,7 @@
               <Content slot-key="Disclaimer"></Content>
               <div>
                 <Content slot-key="Contact"></Content>
-                <div class="wechat-QR-box">
+                <div v-if="$localePath === '/zh/'" class="wechat-QR-box">
                   <img
                     :src="$withBase('/img/contact-wechat.jpg')"
                     alt="Contact"
@@ -116,7 +116,7 @@
 
 .content {
   margin: 0 auto;
-  width: 37rem;
+  width: 50rem;
   font-size: 24px;
   display: flex;
   justify-content: center;
