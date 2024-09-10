@@ -92,6 +92,7 @@ module.exports = {
                 "developer-guide/plugin-configuration",
                 "developer-guide/dynamic-config-func",
                 "developer-guide/sermant-xds-service",
+                "developer-guide/sermant-httpserver-service",
                 "developer-guide/heartbeat-func",
                 "developer-guide/trace-tracking-func",
                 "developer-guide/log-func",
