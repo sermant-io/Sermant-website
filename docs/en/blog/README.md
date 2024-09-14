@@ -13,15 +13,6 @@ blogArr:
       - Microservice Governance
       - Proxyless Architecture
 
-    - name: Integrating ServiceStage with Sermant to Achieve Graceful Startup/Shutdown
-      writer: 聂子雄
-      date: 2024/09/03
-      description: 'Integrate Sermant to achieve graceful startup/shutdown capabilities'
-      path: 'https://bbs.huaweicloud.com/blogs/434237'
-      tags:
-      - Graceful Startup/Shutdown
-      - Application Release
-
     - name: Application of Sermant's Tag Routing Capability in Active-Active Scenarios
       writer: 聂子雄
       date: 2024/06/18
