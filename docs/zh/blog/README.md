@@ -13,15 +13,6 @@ blogArr:
       - 微服务治理
       - 无代理架构
 
-    - name: ServiceStage集成Sermant实现应用的优雅上下线
-      writer: 聂子雄
-      date: 2024/09/03
-      description: '集成Sermant实现优雅上下线能力'
-      path: 'https://bbs.huaweicloud.com/blogs/434237'
-      tags:
-      - 优雅上下线
-      - 应用发布
-
     - name: Sermant标签路由能力在同城双活场景的应用
       writer: 聂子雄
       date: 2024/06/18
