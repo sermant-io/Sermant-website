@@ -13,15 +13,14 @@ blogArr:
       - Microservice Governance
       - Proxyless Architecture
 
-    - name: Sermant’s practice in Multi-Site High Availability
-      writer: 戴振宇
-      date: 2024/05/07
-      description: 'Use Sermant to implement message queue traffic switching and protect data consistency in Multi-Site High Availability scenarios'
-      path: 'https://bbs.huaweicloud.com/blogs/427036'
+    - name: Integrating ServiceStage with Sermant to Achieve Graceful Startup/Shutdown
+      writer: 聂子雄
+      date: 2024/09/03
+      description: 'Integrate Sermant to achieve graceful startup/shutdown capabilities'
+      path: 'https://bbs.huaweicloud.com/blogs/434237'
       tags:
-      - Multi-Site High Availability
-      - Traffic Switching
-      - Data Consistency
+      - Graceful Startup/Shutdown
+      - Application Release
 
     - name: Application of Sermant's Tag Routing Capability in Active-Active Scenarios
       writer: 聂子雄
@@ -31,6 +30,16 @@ blogArr:
       tags:
       - Tag Router
       - Active-Active
+
+    - name: Sermant’s practice in Multi-Site High Availability
+      writer: 戴振宇
+      date: 2024/05/07
+      description: 'Use Sermant to implement message queue traffic switching and protect data consistency in Multi-Site High Availability scenarios'
+      path: 'https://bbs.huaweicloud.com/blogs/427036'
+      tags:
+      - Multi-Site High Availability
+      - Traffic Switching
+      - Data Consistency
 
     - name: Practice of Sermant hot-swappable capability in fault injection scenarios
       writer: 张豪鹏
