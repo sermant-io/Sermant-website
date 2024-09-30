@@ -77,12 +77,14 @@ This development example is based on the project created in the [Creating Your F
 XdsServiceDiscovery xdsServiceDiscovery = ServiceManager.getService(XdsCoreService.class).getXdsServiceDiscovery();
 ```
 
-The **xDS Service Discovery** service has two interface methods, used respectively for directly obtaining service instances and obtaining service instances through subscription: 
+The **xDS Service Discovery** service has three interface methods: used respectively for directly obtaining service instances,   obtaining service instances through subscription and obtaining service instances through cluster.
 
 ```java
 Set<ServiceInstance> getServiceInstance(String serviceName);
 
 void subscribeServiceInstance(String serviceName, XdsServiceDiscoveryListener listener);
+
+Optional<XdsClusterLoadAssigment> getClusterServiceInstance(String clusterName);
 ```
 
 #### Directly Obtain Service Instance
@@ -114,14 +116,218 @@ void subscribeServiceInstance(String serviceName, XdsServiceDiscoveryListener li
 
 - [ServiceInstance](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/service/xds/entity/ServiceInstance.java), with the following methods:
 
-  | Return Type         | Method Name      | Description                                             |
-  | :------------------ | :--------------- | :------------------------------------------------------ |
-  | String              | getClusterName() | Get the Istio cluster name the instance belongs to      |
-  | String              | getServiceName() | Get the Kubernetes service name the instance belongs to |
-  | String              | getHost()        | Get the Pod IP of the instance                          |
-  | int                 | getPort()        | Get the port of the instance                            |
-  | Map<String, String> | getMetaData()    | Get the metadata of the instance                        |
-  | boolean             | isHealthy()      | Check if the service is healthy                         |
+  | Method Name      | Return Type         | Description                                             |
+  | :--------------- | :------------------ | :------------------------------------------------------ |
+  | getClusterName() | String              | Get the Istio cluster name the instance belongs to      |
+  | getServiceName() | String              | Get the Kubernetes service name the instance belongs to |
+  | getHost()        | String              | Get the Pod IP of the instance                          |
+  | getPort()        | int                 | Get the port of the instance                            |
+  | getMetaData()    | Map<String, String> | Get the metadata of the instance                        |
+  | isHealthy()      | boolean             | Check if the service is healthy                         |
+
+#### Get Service Instances through Cluster
+
+- Retrieve the service instance information of a Service Cluster. The return type is `Optional<XdsClusterLoadAssignment>`, which contains all service instances of the Cluster:
+
+  ```
+  
+  xdsServiceDiscovery.getClusterServiceInstance("outbound|8080||service-test.default.svc.cluster.local");
+  ```
+
+- Cluster service instance [XdsClusterLoadAssignment](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/service/xds/entity/XdsClusterLoadAssignment.java) has the following fields:
+
+  | Field Name        | Field Type                             | Description                                                  |
+  | ----------------- | -------------------------------------- | ------------------------------------------------------------ |
+  | serviceName       | String                                 | The name of the service to which the Cluster service instance belongs |
+  | clusterName       | String                                 | The name of the Cluster                                      |
+  | localityInstances | Map<XdsLocality, Set<ServiceInstance>> | The service instances of the Cluster, consisting of service instances from different localities |
+
+- Locality information [XdsLocality](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/service/xds/entity/XdsLocality.java) has the following fields:
+
+  | Field Name        | Field Type | Description           |
+  | ----------------- | ---------- | --------------------- |
+  | region            | String     | Region information    |
+  | zone              | String     | Zone information      |
+  | subZone           | String     | Sub-zone information  |
+  | loadBalanceWeight | int        | Load balancing weight |
+  | localityPriority  | int        | Locality priority     |
+
+## Route Configuration Service Based on xDS Protocol
+
+### Feature Introduction
+
+The **Route Configuration Service Based on xDS Protocol** allows Sermant to connect with Istio's control plane to retrieve the routing configuration information of Kubernetes Services.
+
+> Note: To use Sermant's xDS routing configuration service, the service must be deployed in a Kubernetes container environment and running Istio.
+
+### Development Example
+
+This development example is based on the project created in the [Create Your First Plugin](README.md) document, demonstrating how a plugin can retrieve routing configuration information for services using the xDS routing configuration service provided by the Sermant framework:
+
+1. In the `io.sermant.template.TemplateDeclarer` class under `template/template-plugin` in the project, add the variable `xdsRouteService` to obtain the xDS route configuration service provided by the Sermant framework, which is used to get the routing configuration information of the services:
+
+   ```
+   XdsRouteService xdsRouteService = ServiceManager.getService(XdsCoreService.class).getXdsRouteService();
+   ```
+
+2. After obtaining the route configuration service instance, you can call the API provided by `xdsRouteService` to get the routing configuration information of a specified service:
+
+   ```
+   List<XdsRoute> serviceRoute = xdsRouteService.getServiceRoute("spring-test");
+   System.out.println("The size of routing config: " + serviceRoute.size());
+   ```
+
+   > Note: `service-test` must be the name of a Kubernetes Service. The retrieved routing configuration is delivered through Istio's DestinationRule and VirtualService. For the specific routing configuration fields and templates supported by Sermant, please refer to the section [Routing based on xDS Service](../user-guide/sermant-xds.md#routing-based-on-xds-service).
+
+   After development, you can follow the [Packaging and Building](README.md#packaged-build) steps from the first plugin creation to generate the build artifact by executing **mvn package** in the project root directory.
+
+3. Enable the xDS service and configure `agent/config/config.properties` to enable the xDS service. The configuration example is as follows:
+
+   ```
+   # xDS service switch
+   agent.service.xds.service.enable=true
+   ```
+
+4. After completion, package the Sermant image and the host microservice image. Start the host microservice  in Kubernetes and mount Sermant. For guidance on packaging Sermant and host images and mounting Sermant to start host microservices in Kubernetes, please refer to the [Sermant Injector User Guide](../user-guide/injector.md#startup-and-result-validation). Use the DestinationRuleand VirtualService rules according to the [Istio Routing Configuration Template](../user-guide/sermant-xds.md#istio-routing-configuration-template) provided by Sermant. 
+
+5. After the host microservice is successfully started with Sermant mounted, you can execute the following command to fetch the logs of the host microservice and check the number of routing configurations retrieved by the xDS route configuration service:
+
+   ```
+   $ kubectl logs -f ${POD_NAME}
+   The size of routing config: 1
+   ```
+
+   > Note: `${POD_NAME}` must be the name of the pod where the host microservice is running. You can check it using the `kubectl get pod` command.
+
+### xDS Route Configuration Service API
+
+**To obtain the xDS Route Configuration Service:**
+
+```
+XdsRouteService xdsRouteService = ServiceManager.getService(XdsCoreService.class).getXdsRouteService();
+```
+
+The **xDS Route Configuration Service** has two API methods: one for getting the routing information of a Service, and the other for checking whether a Cluster has enabled same AZ routing.
+
+```
+List<XdsRoute> getServiceRoute(String serviceName);
+
+boolean isLocalityRoute(String clusterName);
+```
+
+#### Get Service Routing Configuration
+
+- Retrieve the routing configuration information of a Kubernetes Service. The return type is `List<XdsRoute>`, containing all the routing configuration for that Service:
+
+  ```
+  xdsRouteService.getServiceRoute("service-test");
+  ```
+
+- The routing configuration entity [XdsRoute](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/service/xds/entity/XdsRoute.java) includes the following fields:
+
+  | Field Name  | Field Type     | Description                           |
+  | ----------- | -------------- | ------------------------------------- |
+  | name        | String         | The name of the route configuration   |
+  | routeMatch  | XdsRouteMatch  | The matching rule for the route       |
+  | routeAction | XdsRouteAction | The routing destination for the match |
+
+#### Cluster AZ Routing
+
+- Check whether the Cluster of a Service has enabled same AZ routing. The return type is `boolean`:
+
+  ```
+  xdsRouteService.isLocalityRoute("outbound|8080||service-test.default.svc.cluster.local");
+  ```
+
+## Load Balancing Configuration Service Based on xDS Protocol
+
+### Feature Introduction
+
+The **Load Balancing Configuration Service Based on xDS Protocol** allows Sermant to connect with Istio's control plane to retrieve the load balancing rules of Kubernetes Services.
+
+> Note: To use Sermant's xDS load balancing configuration service, the service must be deployed in a Kubernetes container environment and running Istio.
+
+### Development Example
+
+This development example is based on the project created in the [Create Your First Plugin](README.md) document, demonstrating how a plugin can retrieve the load balancing rules for services using the xDS load balancing configuration service provided by the Sermant framework:
+
+1. In the `io.sermant.template.TemplateDeclarer` class under `template/template-plugin` in the project, add the variable `loadBalanceService` to obtain the xDS load balancing configuration service provided by the Sermant framework, which is used to get the load balancing rules of the services:
+
+   ```
+   XdsLoadBalanceService loadBalanceService = 
+   ServiceManager.getService(XdsCoreService.class).getLoadBalanceService();
+   ```
+
+2. After obtaining the load balancing configuration service, you can call the API provided by `loadBalanceService`to get the load balancing strategy of a service:
+
+   ```
+   XdsLbPolicy serviceLbPolicy = loadBalanceService.getBaseLbPolicyOfService("spring-test");
+   System.out.println("Service lb policy: " + serviceLbPolicy);
+   ```
+
+   > Note: `service-test` must be the name of a Kubernetes Service. The load balancing configuration is delivered through Istio's DestinationRule. For the specific supported fields and load balancing rules in the configuration, and configuration templates, please refer to the section [Load balancing based on xDS Service](../user-guide/sermant-xds.md#load-balancing-based-on-xds-service). 
+
+   After development, you can follow the [Packaging and Building](README.md#packaged-build) steps from the first plugin creation to generate the build artifact by executing **mvn package** in the project root directory.
+
+3. Enable the xDS service and configure `agent/config/config.properties` to enable the xDS service. The configuration example is as follows:
+
+   ```
+   # xDS service switch
+   agent.service.xds.service.enable=true
+   ```
+
+4. After completion, package the Sermant image and the host microservice image. Start the host microservice in Kubernetes and mount Sermant. For guidance on packaging Sermant and host images and mounting Sermant to start host microservices in Kubernetes, please refer to the [Sermant Injector User Guide](../user-guide/injector.md#startup-and-result-validation). Use the DestinationRule provided by Sermant in the [Istio Load Balancing Configuration Template](../user-guide/sermant-xds.md#istio-load-balancing-configuration-template).
+
+5. After the host microservice is successfully started with Sermant mounted, you can execute the following command to fetch the logs of the host microservice and check the load balancing strategy retrieved by the xDS load balancing configuration service:
+
+   ```
+   $ kubectl logs -f ${POD_NAME}
+   Service lb policy: ROUND_ROBIN
+   ```
+
+   > Note: `${POD_NAME}` must be the name of the pod where the host microservice is running. You can check it using the `kubectl get pod` command.
+
+### xDS Load Balancing Configuration Service API
+
+**To obtain the xDS Load Balancing Configuration Service:**
+
+```
+XdsLoadBalanceService loadBalanceService = 
+ServiceManager.getService(XdsCoreService.class).getLoadBalanceService();
+```
+
+The **xDS Load Balancing Configuration Service** provides two API methods: one for getting the load balancing rules of a Service, and another for the load balancing rules of a Cluster:
+
+```
+XdsLbPolicy getLbPolicyOfCluster(String clusterName);
+
+XdsLbPolicy getBaseLbPolicyOfService(String serviceName);
+```
+
+#### Get Load Balancing Rules of a Service
+
+- Retrieve the load balancing rules for a Service. The return type is `XdsLbPolicy`:
+
+  ```
+  loadBalanceService.getBaseLbPolicyOf("spring-test");
+  ```
+
+- The load balancing rule entity class [XdsLbPolicy](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/service/xds/entity/XdsLbPolicy.java) is an enumeration type.
+
+  | Load Balancing Rule       | Description                       |
+  | ------------------------- | --------------------------------- |
+  | XdsLbPolicy.RANDOM        | Random load balancing rule        |
+  | XdsLbPolicy.ROUND_ROBIN   | Round-robin load balancing rule   |
+  | XdsLbPolicy.LEAST_REQUEST | Least-request load balancing rule |
+  | XdsLbPolicy.UNRECOGNIZED  | Unrecognized load balancing rule  |
+
+#### Get Load Balancing Rules of the Cluster
+
+- Retrieve the load balancing rules of a Service Cluster. The return type is `XdsLbPolicy`.
+
+  ```
+  loadBalanceService.getLbPolicyOfCluster("outbound|8080||service-test.default.svc.cluster.local");
+  ```
 
 ## xDS Service Configuration
 

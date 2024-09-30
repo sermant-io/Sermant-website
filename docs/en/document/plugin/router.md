@@ -90,7 +90,33 @@ Framework Supported:
 
 Limitations:
 
-- Asynchronous invocation is not supported
+- Routing based on the Sermant dynamic configuration service currently supports Feign and RestTemplate for HTTP clients. For routing based on the xDS protocol, the HTTP clients currently supported include Feign, RestTemplate, HttpClient, HttpAsyncClient, HttpURLConnection, and OkHttp.
+
+## Routing based on the xDS protocol
+
+The routing plugin obtains service [routing configurations](../user-guide/sermant-xds.md#routing-based-on-xds-service), [service instances](../user-guide/sermant-xds.md#service-discovery-based-on-xds=service), and [load balancing configurations](../user-guide/sermant-xds.md#load-balancing-based-on-xds=service) from the xDS service at the Sermant framework layer to implement routing based on the xDS protocol (hereinafter referred to as xDS routing). Users can configure routing rules via Istio's [DestinationRule](https://istio.io/latest/zh/docs/reference/config/networking/destination-rule/) and [VirtualService](https://istio.io/latest/zh/docs/reference/config/networking/virtual-service/). Currently, traffic can be routed based on request headers and paths, and it supports frameworks like HttpClient, HttpAsyncClient, OkHttp, HttpURLConnection, and Spring Cloud.
+
+### Using xDS Routing
+
+To use xDS routing, you need to deploy [Istio](https://istio.io/latest/docs/setup/getting-started/) in a Kubernetes environment，and activate the xDS routing option in the routing plugin's `config/config.yaml` file:
+
+```
+enabled-xds-route: true
+```
+
+> Microservices using xDS routing capabilities do not need to mount the Envoy sidecar when creating Pods.
+
+The format for upstream service calls through HTTP clients should be `http://${serviceName}.${hostSuffix}/{path}`, where `${serviceName}` is the name of the upstream service being called, and `${hostSuffix}` is the domain suffix for Kubernetes. For a template on configuring Istio-based routing rules, please refer to the section on [xDS-based routing](../user-guide/sermant-xds.md#routing-based-on-xds-service). For [an example of xDS routing](../user-guide/sermant-xds.md#routing-example-based-on-xds-service), please refer to the section Routing Example Based on xDS Service
+
+### Supported Versions and Limitations for xDS Routing
+
+| Framework         | Supported Versions     |
+| ----------------- | ---------------------- |
+| SpringCloud       | Edgware.SR2 - 2021.0.0 |
+| HttpClient        | 4.x                    |
+| HttpAsyncClient   | 4.x                    |
+| OkHttp            | 2.2.x+                 |
+| HttpURLConnection | 1.8                    |
 
 ## Operation and Result Verification
 
