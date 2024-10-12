@@ -1,10 +1,24 @@
 # Sermant Backend User Manual
 
-Sermant Backend includes Sermant data processing back-end module and front-end information display module, aiming to provide runtime observability capabilities for Sermant. Currently, it mainly includes Sermant Agent heartbeat information, reception and display of reported events, webhook push, configuration management and other functions.
+## Feature Introduction
 
-Sermant Backend works with Sermant Agent. Sermant Agent is mounted as a data sender after the host application is started. It can regularly send heartbeat data of the current Sermant Agent (service name, host name, instance ID, version number, IP, timestamp, mounted plugin information), event data ( Sermant Agent start and stop, core service start and stop, bytecode enhancement, log data, etc.) As a data receiver, Backend can receive and process data such as heartbeats and events sent by Sermant Agent, push emergency events to webhook, and display them visually on the front end, providing the ability to observe the running status of Sermant Agent.
+Sermant Backend consists of the Sermant data processing backend module and the frontend information display module, aiming to provide Sermant with runtime management capabilities and observability. It mainly includes functions such as displaying Sermant Agent heartbeat information, receiving and displaying reported events, webhook notifications, configuration management, and hot-swappable services.
 
-Sermant Backend is used in conjunction with the configuration center to manage all configuration items in the configuration center, and can view, add, modify, and delete configuration items.
+### Instance Status Display Service
+
+Sermant Backend works in conjunction with Sermant Agent. Sermant Agent, mounted on the host application after startup, acts as a data sender, periodically sending current Sermant Agent's heartbeat data (service name, hostname, instance ID, version number, IP, timestamp, mounted plugin information). The Backend serves as the data receiver, capable of receiving and processing the heartbeat data sent by Sermant Agent and displaying it. For the actual page layout, refer to [Instance Status Validation](#_4-instance-status-verification).
+
+### Event Information Display Service
+
+Upon startup, Sermant Agent, functioning as a data sender, not only sends the current Sermant Agent's heartbeat data but also sends event data. The Backend, as the data receiver, can process event data, push urgent events to a webhook, visually display them on the frontend, and provide the ability to monitor the running status of Sermant Agent. For the actual page layout, refer to [Event Management Validation](#_5-event-management-verification).
+
+### Configuration Management Service
+
+Sermant Backend collaborates with the configuration center to manage all configuration items. It allows viewing, adding, modifying, and deleting configuration items on the page. For the actual page layout, refer to [Configuration Management Validation](#_6-configuration-management-verification).
+
+### Hot-swappable Service
+
+When used in conjunction with Sermant Agent, Sermant Backend can also function as a server for hot-swappable operations, listening to hot-swappable instructions from Sermant Backend and performing plugin installation, uninstallation, and upgrade operations. For the actual page layout, refer to [Hot-swappable Service Validation](#_7-hot-plug-service-verification).
 
 > Note: Sermant Backend is a **non-essential component** and users can deploy it on demand.
 
@@ -16,8 +30,10 @@ The instance status management and event management capabilities provided by Ser
 
 |**Parameter key** | **Description** | **Default value** | **Required**|
 | ------------------ | ------------------------------------ | ---------- | ------------ |
-|agent.service.heartbeat.enable  | Heartbeat service switch | false | False|
-|agent.service.gateway.enable   | Gateway service switch | false | Required when enabling heartbeat service or event reporting|
+| agent.service.heartbeat.enable              | Heartbeat service switch              | false         | Must be enabled when using Sermant Backend's hot-swappable service |
+| agent.service.gateway.enable                | Gateway service switch                | false         | Must be enabled when using heartbeat service, event reporting, or Sermant Backend's hot-swappable service |
+| agent.service.dynamic.config.enable         | Dynamic configuration switch          | false         | Must be enabled when using Sermant Backend's hot-swappable service |
+| agent.service.hot.plugging.service.enable                | Hot-swappable service switch           | false         | Must be enabled when using Sermant Backend's hot-swappable service |
 | gateway.nettyIp        | Specify the IP address of Netty server                    | 127.0.0.1  | False           |
 | gateway.nettyPort        | Specify the port of Netty server                    | 6888  | False           |
 |event.enable | Event reporting switch | false | False|
@@ -74,6 +90,7 @@ Sermant Backend parameters can be modified through the `sermant-backend/src/main
 | dynamic.config.userName |Username (plain text) used during authorization authentication | null | Required when enabling authorization authentication |
 | dynamic.config.password |Password used for authorization authentication (ciphertext encrypted by AES) | null | Required when enabling authorization authentication |
 | dynamic.config.secretKey |The key used when the password is encrypted using AES| null | Required when enabling authorization authentication |
+| dynamic.config.template.path   |The UI template path for the configuration page, refer to [UI Template for Configuration Management for template development](../developer-guide/config-manage.md). | null     |    否       |
 
 ## Versions Supported
 
@@ -99,6 +116,10 @@ Modify the `${path}/sermant-agent/agent/config/config.properties` file to the fo
 agent.service.heartbeat.enable=true
 # Gateway service switch
 agent.service.gateway.enable=true
+# Dynamic config service switch
+agent.service.dynamic.config.enable=true
+# dynamic mount service switch
+agent.service.hot.plugging.service.enable=true
 #Event switch
 event.enable=true
 # Report warn log switch
@@ -126,18 +147,24 @@ java -Dwebhook.eventpush.level=NORMAL -Ddynamic.config.enable=true -Ddynamic.con
 
 #### 3.2 Configure application
 
-Unzip the Demo binary product compressed package to get service-a.jar.
+Unzip the Demo binary product compressed package to get service-a.jar and service-b.jar.
 
 ```shell
 # windwos
 java -Dserver.port=8989 -javaagent:${path}\sermant-agent\agent\sermant-agent.jar=appName=default -jar service-a.jar
+java -Dserver.port=8990 -jar service-b.jar
 
 #linux mac
 java -Dserver.port=8989 -javaagent:${path}/sermant-agent/agent/sermant-agent.jar=appName=default -jar service-a.jar
 ```server.port=8989 -javaagent:${path}/sermant-agent/agent/sermant-agent.jar=appName=default -jar service-a.jar
+java -Dserver.port=8990 -jar service-b.jar
 ````
 
 > **Note:** ${path} is the actual installation path of sermant
+
+#### 3.3 Dynamic Installation of Sermant
+
+Dynamically Installation the Sermant Agent to the host application service-b using the agentmain method. For specific operation details, please refer to [Agent Installation](sermant-agent.md#agent-installation).
 
 ### 4 Instance status verification
 
@@ -246,7 +273,7 @@ By clicking the Observe button in the event management tab, you can view the eve
 
 #### 6.2 Verify configuration query
 
-- On the configuration management page, you can select different plugin types to query different plugin configurations, or enter different query conditions (such as service name, application name, etc.) to query plugin configurations that meet the conditions. The following is the result of querying the configuration item of the flow control plugin and the service name is default (added in the previous step):
+- On the configuration management page, you can select different plugin types to query different plugin configurations, or enter different query conditions (such as service name, application name, etc.) to query plugin configurations that meet the conditions. The following is the result of querying the configuration item of the flow control plugin (added in the previous step):
 
 <MyImage src="/docs-img/backend/en/backend-config-query.png"></MyImage>
 
@@ -273,3 +300,57 @@ By clicking the Observe button in the event management tab, you can view the eve
 - After selecting **Yes**, the configuration item will be deleted, as shown in the figure below:
 
 <MyImage src="/docs-img/backend/en/backend-config-delete-2.png"></MyImage>
+
+### 7 Hot Plug Service Verification
+
+Access the instance status page at `http://127.0.0.1:8900/`. From the instance status page, you can perform hot plug services on the dynamically mounted Sermant Agent.
+
+<MyImage src="/docs-img/backend/en/plugin-install-1.png"></MyImage>
+
+#### 7.1 Plugin Installation
+
+- Select the instance to execute the hot plug service, and click the `Hot Plugging` button.
+
+<MyImage src="/docs-img/backend/en/plugin-install-2.png"></MyImage>
+
+- Choose the `Install Plugin` service, enter the plugin name, and then click the `Confirm` button to proceed with the plugin installation.
+
+<MyImage src="/docs-img/backend/en/plugin-install-3.png"></MyImage>
+
+> Note: Before dynamically installing a plugin, ensure that the plugin JAR file is located in `${path}/sermant-agent-x.x.x/pluginPackage/${pluginName}`. `${path}` is the actual installation path of Sermant, `x.x.x` represents a specific version number of Sermant, and `${pluginName}` is the name of the plugin.
+
+- Due to the periodic nature of heartbeat reporting, plugin information does not refresh immediately. You must wait for the latest heartbeat information to be reported before viewing the most up-to-date plugin information.
+
+<MyImage src="/docs-img/backend/en/plugin-install-4.png"></MyImage>
+
+#### 7.2 Plugin Upgrade
+
+- In the instance status page, select the instance to execute the hot plug service, and click the `Hot Plugging` button.
+
+<MyImage src="/docs-img/backend/en/plugin-install-2.png"></MyImage>
+
+- Choose the `Update Plugin` service, enter the plugin name, and click the `Confirm` button to update the plugin.
+
+<MyImage src="/docs-img/backend/en/plugin-update-1.png"></MyImage>
+
+> Note: Before dynamically updating a plugin, ensure that the plugin JAR file has been updated.
+
+- Because event reporting occurs at intervals, event information does not refresh immediately. You need to wait for the latest event information to be reported before you can view the event information related to plugin updates.
+
+<MyImage src="/docs-img/backend/en/plugin-update-2.png"></MyImage>
+
+<MyImage src="/docs-img/backend/en/plugin-update-3.png"></MyImage>
+
+#### 7.3 Plugin Uninstallation
+
+- In the instance status page, select the instance to execute the hot plug service, and click the `Hot Pluggging` button.
+
+<MyImage src="/docs-img/backend/en/plugin-install-2.png"></MyImage>
+
+- Choose the `Uninstall Plugin` service, enter the plugin name, and click the `Confirm` button to proceed with the uninstallation.
+
+<MyImage src="/docs-img/backend/en/plugin-unInstall-1.png"></MyImage>
+
+- Due to the periodic nature of heartbeat reporting, plugin information does not refresh immediately. You must wait for the latest heartbeat information to be reported before viewing the most up-to-date plugin information.
+
+<MyImage src="/docs-img/backend/en/plugin-unInstall-2.png"></MyImage>

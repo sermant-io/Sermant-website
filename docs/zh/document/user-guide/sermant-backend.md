@@ -1,10 +1,24 @@
 # Sermant Backend使用手册
 
-Sermant Backend包含Sermant数据处理后端模块和前端信息展示模块，旨在为Sermant提供运行时的可观测能力，当前主要包括Sermant Agent心跳信息, 上报事件的接收和展示，webhook推送，配置管理等功能。
+## 功能介绍
 
-Sermant Backend与Sermant Agent配合使用。Sermant Agent挂载在宿主应用启动后作为数据发送端，可定时发送当前Sermant Agent的心跳数据(服务名、主机名、实例ID、版本号、IP、时间戳、挂载插件信息)，事件数据(Sermant Agent启停、核心服务启停、字节码增强、日志数据等)。Backend作为数据接收端，可接收处理Sermant Agent发送的心跳和事件等数据，将紧急事件推送至webhook，并在前端可视化展示，提供观测Sermant Agent运行状态的能力。
+Sermant Backend包含Sermant数据处理后端模块和前端信息展示模块，旨在为Sermant提供运行时的管理能力和可观测能力，当前主要包括Sermant Agent心跳信息, 上报事件的接收和展示，webhook推送，配置管理、热插拔服务等功能。
 
-Sermant Backend与配置中心配合使用，可以管理配置中心的所有配置项，可以查看、新增、修改、删除配置项。
+### 实例状态展示服务
+
+Sermant Backend与Sermant Agent配合使用。Sermant Agent挂载在宿主应用启动后作为数据发送端，定时发送当前Sermant Agent的心跳数据(服务名、主机名、实例ID、版本号、IP、时间戳、挂载插件信息)，Backend作为数据接收端，可接收处理Sermant Agent发送的心跳数据，并进行展示。页面实际效果图参见[实例状态验证](#_4-实例状态验证)
+
+### 事件信息展示服务
+
+Sermant Agent挂载在宿主应用启动后作为数据发送端不仅可以发送当前Sermant Agent的心跳数据，还可以发送事件等数据，Backend作为数据接收端，可接收处理事件等数据，将紧急事件推送至webhook，并在前端可视化展示，提供观测Sermant Agent运行状态的能力。页面实际效果图参见[事件管理验证](#_5-事件管理验证)
+
+### 配置管理服务
+
+Sermant Backend与配置中心配合使用，可以管理配置中心的所有配置项，并且可以在页面上查看、新增、修改、删除配置项。实际效果图参见[配置管理验证](#_6-配置管理验证)
+
+### 热插拔服务
+
+Sermant Backend与Sermant Agent配合使用，还可以作为热插拔功能的服务端，监听Sermant Backend的热插拔指令，执行插件安装、卸载和升级操作。实际效果图参见[热插拔服务验证](#_7-热插拔服务验证)
 
 > 注：Sermant Backend为**非必要组件**，用户可按需部署。
 
@@ -16,8 +30,10 @@ Sermant Backend提供的实例状态管理和事件管理能力，需要依赖Se
 
 | **参数键**         | **说明**                             | **默认值** | **是否必须** |
 | ------------------ | ------------------------------------ | ---------- | ------------ |
-| agent.service.heartbeat.enable       | 心跳服务开关                |   false     | 否          |
-| agent.service.gateway.enable        | 网关服务开关                    | false  | 开启心跳服务或者事件上报时必须           |
+| agent.service.heartbeat.enable       | 心跳服务开关                |   false     | 使用Sermant Backend的热插拔服务时必须         |
+| agent.service.gateway.enable        | 网关服务开关                    | false  | 开启心跳服务、事件上报时或者使用Sermant Backend的热插拔服务必须           |
+| agent.service.dynamic.config.enable        | 动态配置开关                    | false  | 使用Sermant Backend的热插拔服务时必须           |
+| agent.service.hot.plugging.service.enable       | 热插拔服务开关                    | false  | 使用Sermant Backend的热插拔服务时必须           |
 | gateway.nettyIp        | Netty服务端的IP                    | 127.0.0.1  | 否           |
 | gateway.nettyPort        | Netty服务端的端口                    | 6888  | 否           |
 | event.enable   | 事件上报开关           | false         | 否            |
@@ -70,6 +86,7 @@ Sermant Backend参数可在编译打包前通过`sermant-backend/src/main/resour
 | dynamic.config.userName    |授权认证时使用的用户名（明文） | null     |    开启授权认证时必须       |
 | dynamic.config.password    |授权认证时使用的密码（采用AES加密后的密文）| null     |    开启授权认证时必须       |
 | dynamic.config.secretKey    |密码采用AES方式加密时使用的密钥 | null     |    开启授权认证时必须       |
+| dynamic.config.template.path   |配置页面的UI模板路径,模板的开发参见[配置管理的UI模板](../developer-guide/config-manage.md) | null     |    否       |
 
 ## 支持版本
 
@@ -94,6 +111,10 @@ Sermant Backend使用JDK 1.8版本开发，因此运行环境需JDK 1.8及以上
 agent.service.heartbeat.enable=true
 # Gateway service switch
 agent.service.gateway.enable=true
+# Dynamic config service switch
+agent.service.dynamic.config.enable=true
+# dynamic mount service switch
+agent.service.hot.plugging.service.enable=true
 # Event switch
 event.enable=true
 # Report warn log switch
@@ -120,17 +141,23 @@ java -Dwebhook.eventpush.level=NORMAL -Ddynamic.config.enable=true -Ddynamic.con
 
 #### 3.2 部署宿主应用
 
-解压Demo二进制产物压缩包，即可得到service-a.jar。
+解压Demo二进制产物压缩包，即可得到service-a.jar和service-b.jar。
 
 ```shell
 # windwos
 java -Dserver.port=8989 -javaagent:${path}\sermant-agent\agent\sermant-agent.jar=appName=default -jar service-a.jar
+java -Dserver.port=8990 -jar service-b.jar
 
 #linux mac
 java -Dserver.port=8989 -javaagent:${path}/sermant-agent/agent/sermant-agent.jar=appName=default -jar service-a.jar
+java -Dserver.port=8990 -jar service-b.jar
 ```
 
 > **说明：** ${path}为sermant实际安装路径
+
+#### 3.3 动态挂载Sermant
+
+通过agentmain方式给宿主应用service-b动态挂载Sermant Agent，具体操作方式参见[Agent挂载](sermant-agent.md#agent挂载)
 
 ### 4 实例状态验证
 
@@ -239,7 +266,7 @@ java -Dserver.port=8989 -javaagent:${path}/sermant-agent/agent/sermant-agent.jar
 
 #### 6.2 验证配置查询
 
-- 在配置管理页面，可以选择不同的插件类型来查询不同的插件配置，也可以输入不同的查询条件（如服务名称、应用名称等）查询符合条件的插件配置。下面为查询流控插件且服务名称为default的配置项的结果图（上一步已经新增）：
+- 在配置管理页面，可以选择不同的插件类型来查询不同的插件配置，也可以输入不同的查询条件（如服务名称、应用名称等）查询符合条件的插件配置。下面为查询流控插件配置的结果图（上一步已经新增）：
 
 <MyImage src="/docs-img/backend/zh/backend-config-query.png"></MyImage>
 
@@ -266,3 +293,57 @@ java -Dserver.port=8989 -javaagent:${path}/sermant-agent/agent/sermant-agent.jar
 - 选择**是**之后会删除该配置项，如下图所示：
 
 <MyImage src="/docs-img/backend/zh/backend-config-delete-2.png"></MyImage>
+
+### 7 热插拔服务验证
+
+通过浏览器访问地址http://127.0.0.1:8900/ 可查看实例状态页面，在实例状态页面可以对动态挂载的Sermant Agent执行热插拔服务。
+
+<MyImage src="/docs-img/backend/zh/plugin-install-1.png"></MyImage>
+
+#### 7.1 插件安装
+
+- 选择要执行热插拔服务的实例，点击`热插拔`按钮
+
+<MyImage src="/docs-img/backend/zh/plugin-install-2.png"></MyImage>
+
+- 选择`安装插件`服务，输入插件名称即可点击`确认`按钮进行插件安装
+
+<MyImage src="/docs-img/backend/zh/plugin-install-3.png"></MyImage>
+
+> 注：动态安装插件前请确保插件的JAR包在${path}/sermant-agent-x.x.x/pluginPackage/${pluginName}下。 ${path}为sermant实际安装路径，x.x.x代表sermant某个版本号，${pluginName}为插件名称
+
+- 由于心跳上报有时间周期，插件信息并非立即刷新，需等待最新的心跳信息上报后即可查看最新的插件信息
+
+<MyImage src="/docs-img/backend/zh/plugin-install-4.png"></MyImage>
+
+#### 7.2 插件升级
+
+- 在实例状态页面选择要执行热插拔服务的实例，点击`热插拔`按钮
+
+<MyImage src="/docs-img/backend/zh/plugin-install-2.png"></MyImage>
+
+- 选择`更新插件`服务，输入插件名称即可点击`确认`按钮进行插件更新
+
+<MyImage src="/docs-img/backend/zh/plugin-update-1.png"></MyImage>
+
+> 注：动态更新插件前请确保插件的JAR包已经被更新
+
+- 由于事件上报有时间周期，事件信息并非立即刷新，需等待最新的事件信息上报后即可查看插件更新的事件信息
+
+<MyImage src="/docs-img/backend/zh/plugin-update-2.png"></MyImage>
+
+<MyImage src="/docs-img/backend/zh/plugin-update-3.png"></MyImage>
+
+#### 7.3 插件卸载
+
+- 在实例状态页面选择要执行热插拔服务的实例，点击`热插拔`按钮
+
+<MyImage src="/docs-img/backend/zh/plugin-install-2.png"></MyImage>
+
+- 选择`卸载插件`服务，输入插件名称即可点击`确认`按钮进行插件卸载
+
+<MyImage src="/docs-img/backend/zh/plugin-unInstall-1.png"></MyImage>
+
+- 由于心跳上报有时间周期，插件信息并非立即刷新，需等待最新的心跳信息上报后即可查看最新的插件信息
+
+<MyImage src="/docs-img/backend/zh/plugin-unInstall-2.png"></MyImage>
