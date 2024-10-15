@@ -7,6 +7,8 @@
 
 标签路由插件通过非侵入的方式实现微服务之间路由规则的配置以及管理。在微服务存在多个版本、多个实例的情况下，标签路由插件可以通过配置路由规则管理服务之间的路由，达到无损升级、应用拨测等业务目的。
 
+路由插件目前支持基于xDS服务获取路由配置，实现微服务调用之间的流量路由能力。
+
 ## 参数配置
 
 ### Sermant-agent配置
@@ -174,7 +176,7 @@
         route:
           - tags:
               zone: CONSUMER_TAG           # 该行key表示被调用服务实例的标签名为zone，CONSUMER_TAG为保留字段，表示路由到zone的值相同的服务实例，即被调用服务实例的zone标签需等于'hangzhou'。该配置方式用于同AZ优先路由等场景
-  ```
+```
 
   **上述路由规则解释：** zone标签配置为hangzhou的消费端实例在调用下游服务时，根据下发的策略，匹配调用下游实例。
   1. 若下游无zone标签为hangzhou的实例，则consumer则会在下游的所有实例根据负载均衡策略调用。
@@ -290,9 +292,33 @@
 
 限制：
 
-- 不支持异步调用
+- 基于Sermant动态配置服务进行路由，http客户端目前仅支持Feign、RestTemplate；基于xDS协议的路由，http客户端目前支持Feign、RestTemplate、HttpClient、HttpAsyncClient、HttpURLConnection和OkHttp
 
-- http客户端目前只支持Feign、RestTemplate
+## 基于xDS协议的路由
+
+路由插件基于Sermant框架层的xDS服务获取服务的[路由配置](../user-guide/sermant-xds.md#基于xDS服务的路由能力)、[服务实例](../user-guide/sermant-xds.md#基于xDS服务的服务发现能力)和[负载均衡配置](../user-guide/sermant-xds.md#基于xDS服务的负载均衡能力)实现基于xDS协议的路由（下文简称xDS路由）。用户可以通过Istio的[DestinationRule](https://istio.io/latest/zh/docs/reference/config/networking/destination-rule/)和[VirtualService](https://istio.io/latest/zh/docs/reference/config/networking/virtual-service/)下发路由配置。目前支持通过请求header和路径进行流量路由，支持HttpClient、HttpAsyncClient、OkHttp、HttpURLConnection和Spring Cloud框架。
+
+### xDS路由使用
+
+使用xDS路由需在Kubenetes环境部署[Istio](https://istio.io/latest/docs/setup/getting-started/)，同时在路由插件的`config/config.yaml`配置文件中开启xDS路由开关：
+
+```
+enabled-xds-route: true
+```
+
+> 使用xDS路由能力的微服务在创建Pods时无需挂载Envoy代理容器
+
+http客户端调用上游服务的URL格式需要为`http://${serviceName}.${hostSuffix}/{path}`，其中${serviceName}为调用上游服务的服务名，${hostSuffix}为Kubernetes的域名后缀。Istio下发路由配置模版请参考[基于xDS服务的路由能力](../user-guide/sermant-xds.md#基于xDS服务的路由能力)一节，xDS路由使用示例请参考[基于xds服务的路由示例](../user-guide/sermant-xds.md#基于xds服务的路由示例)一节。
+
+### xDS路由支持框架版本和限制
+
+| 框架              | 支持版本               |
+| ----------------- | ---------------------- |
+| SpringCloud       | Edgware.SR2 - 2021.0.0 |
+| HttpClient        | 4.x                    |
+| HttpAsyncClient   | 4.x                    |
+| OkHttp            | 2.2.x+                 |
+| HttpURLConnection | 1.8                    |
 
 ## 操作和结果验证
 
