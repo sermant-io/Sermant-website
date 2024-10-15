@@ -20,13 +20,13 @@ Sermant Backend collaborates with the configuration center to manage all configu
 
 When used in conjunction with Sermant Agent, Sermant Backend can also function as a server for hot-swappable operations, listening to hot-swappable instructions from Sermant Backend and performing plugin installation, uninstallation, and upgrade operations. For the actual page layout, refer to [Hot-swappable Service Validation](#_7-hot-plug-service-verification).
 
-> Note: Sermant Backend is a **non-essential component** and users can deploy it on demand.
+> Note: The Sermant Backend is a **non-essential component**, and users can deploy it as needed.
 
 ## Parameter Configuration
 
 ### Sermant Agent Parameter Configuration
 
-The instance status management and event management capabilities provided by Sermant Backend rely on the data reported by Sermant Agent. Therefore, when using Sermant Backend, you need to first configure the relevant parameters of Sermant Agent for connecting to Sermant Backend and enabling data reporting in the configuration file `agent/config/config.Modify` the following configuration in properties:
+The instance status management and event management capabilities provided by the Sermant Backend rely on the data reported by the Sermant Agent. Therefore, when using the Sermant Backend, you need to first configure the relevant parameters in the Sermant Agent that connect to the Sermant Backend and enable data reporting. Modify the following configurations in the configuration file `agent/config/config.properties`:
 
 |**Parameter key** | **Description** | **Default value** | **Required**|
 | ------------------ | ------------------------------------ | ---------- | ------------ |

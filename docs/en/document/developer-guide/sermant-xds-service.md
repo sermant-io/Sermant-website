@@ -59,7 +59,7 @@ This development example is based on the project created in the [Creating Your F
    # xDS service switch
    agent.service.xds.service.enable=true
    ```
-4. After completing the execution, package the Sermant image and the host microservice image. Start the `service-test`service in the k8s environment and create the corresponding service instances (implemented by the user). Finally, start the host application in Kubernetes and mount Sermant. Refer to the [Sermant Injector User Guide](../user-guide/injector.md#startup-and-result-validation) for guidance on packaging Sermant and the host image in the Kubernetes environment, as well as mounting Sermant for startup.
+4. After completing the execution, package the Sermant image and the host microservice image. Start the `service-test`service in the k8s environment and create the corresponding service instances (implemented by the user). Finally, start the host application in Kubernetes and mount Sermant. Refer to the [Sermant Injector User Guide](../user-guide/sermant-injector.md#startup-and-result-validation) for guidance on packaging Sermant and the host image in the Kubernetes environment, as well as mounting Sermant for startup.
 
 5. After the host microservice pod with Sermant mounted starts successfully, you can execute the following command to obtain the host microservice logs and view the service instances obtained through the xDS service discovery capability:
 
@@ -188,7 +188,7 @@ This development example is based on the project created in the [Create Your Fir
    agent.service.xds.service.enable=true
    ```
 
-4. After completion, package the Sermant image and the host microservice image. Start the host microservice  in Kubernetes and mount Sermant. For guidance on packaging Sermant and host images and mounting Sermant to start host microservices in Kubernetes, please refer to the [Sermant Injector User Guide](../user-guide/injector.md#startup-and-result-validation). Use the DestinationRuleand VirtualService rules according to the [Istio Routing Configuration Template](../user-guide/sermant-xds.md#istio-routing-configuration-template) provided by Sermant. 
+4. After completion, package the Sermant image and the host microservice image. Start the host microservice  in Kubernetes and mount Sermant. For guidance on packaging Sermant and host images and mounting Sermant to start host microservices in Kubernetes, please refer to the [Sermant Injector User Guide](../user-guide/sermant-injector.md#startup-and-result-validation). Use the DestinationRuleand VirtualService rules according to the [Istio Routing Configuration Template](../user-guide/sermant-xds.md#istio-routing-configuration-template) provided by Sermant. 
 
 5. After the host microservice is successfully started with Sermant mounted, you can execute the following command to fetch the logs of the host microservice and check the number of routing configurations retrieved by the xDS route configuration service:
 
@@ -276,7 +276,7 @@ This development example is based on the project created in the [Create Your Fir
    agent.service.xds.service.enable=true
    ```
 
-4. After completion, package the Sermant image and the host microservice image. Start the host microservice in Kubernetes and mount Sermant. For guidance on packaging Sermant and host images and mounting Sermant to start host microservices in Kubernetes, please refer to the [Sermant Injector User Guide](../user-guide/injector.md#startup-and-result-validation). Use the DestinationRule provided by Sermant in the [Istio Load Balancing Configuration Template](../user-guide/sermant-xds.md#istio-load-balancing-configuration-template).
+4. After completion, package the Sermant image and the host microservice image. Start the host microservice in Kubernetes and mount Sermant. For guidance on packaging Sermant and host images and mounting Sermant to start host microservices in Kubernetes, please refer to the [Sermant Injector User Guide](../user-guide/sermant-injector.md#startup-and-result-validation). Use the DestinationRule provided by Sermant in the [Istio Load Balancing Configuration Template](../user-guide/sermant-xds.md#istio-load-balancing-configuration-template).
 
 5. After the host microservice is successfully started with Sermant mounted, you can execute the following command to fetch the logs of the host microservice and check the load balancing strategy retrieved by the xDS load balancing configuration service:
 

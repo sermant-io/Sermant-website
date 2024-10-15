@@ -2,7 +2,7 @@
 
 Sermant Injector是基于Kubernetes准入控制器（Admission Controllers）特性开发而来。准入控制器位于k8s API Server中，能够拦截对API Server的请求，完成身份验证、授权、变更等操作。本文介绍在k8s环境下，如何通过Sermant Injector组件来实现宿主应用自动挂载Sermant Agent包的快速部署。
 
-Sermant Injector属于变更准入控制器(MutatingAdmissionWebhook), 能够在创建容器资源前对请求进行拦截和修改。Sermant Injector部署在k8s后，只需在宿主应用部署的YAML文件中`spec > template > metadata> labels`层级加入`sermant-injection: enabled`即可实现自动挂载Sermant Agent。另外，Sermant Injector还支持通过`annotations`的方式配置环境变量。部署应用自动挂载Sermant并通过`annotations`配置环境变量的使用方式可参考下文[部署宿主应用](#部署宿主应用)中的描述。
+Sermant Injector属于变更准入控制器(MutatingAdmissionWebhook), 能够在创建容器资源前对请求进行拦截和修改。Sermant Injector部署在k8s后，只需在宿主应用部署的YAML文件中`spec > template > metadata> labels`层级加入`sermant-injection: enabled`即可实现自动挂载Sermant Agent。另外，Sermant Injector还支持通过`annotations`的方式配置环境变量。部署应用自动挂载Sermant并通过`annotations`配置环境变量的使用方式可参考下文[部署宿主应用](#_4-部署宿主应用)中的描述。
 
 ## 参数配置
 
@@ -138,7 +138,7 @@ sh build-sermant-image.sh
 
 在Sermant Injector项目下执行`mvn clean package`命令，在项目目录下生成`sermant-injector.jar`文件
 
-#### 制作镜像
+#### 制作Sermant Injector镜像
 
 修改文件夹 `sermant-injector/images/injector`下`build-injector-image.sh` 脚本中`imageName`和`imageVerison`的值：
 
@@ -166,11 +166,11 @@ helm install sermant-injector sermant-injector/deployment/release/injector
 
 ### 4 部署宿主应用
 
-**自动挂载Sermant**
+#### 自动挂载Sermant
 
 在完成上述Sermant Injector部署后，用户根据实际应用编写yaml部署K8s Deployment资源，只需在`spec > template > metadata> labels`层级加入`sermant-injection: enabled`即可实现自动挂载Sermant Agent。(如后续不希望挂载，删除后重新启动应用即可)
 
-**通过annotations方式配置环境变量**
+#### 通过annotations方式配置环境变量
 
 如果用户希望在Deployment中配置自定义环境变量，只需在`spec > template > metadata> annotations`层级添加相应的键值对即可。配置方式可参考下文示例。
 
