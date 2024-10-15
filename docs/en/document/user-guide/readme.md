@@ -32,13 +32,13 @@ Sermant dynamic configuration center currently supports two types: the [Zookeepe
 
 Please refer to the [Sermant Dynamic Configuration Center User Manual](configuration-center.md) for more instructions on how to use the dynamic configuration center.
 
-### **sermant-injector**
+### **Sermant Injector**
 
-Sermant provides a quick way to automatically mount Sermant from the host application in a container environment via the sermant-injector component. Simply add `sermant-injection:enabled ` to the labels in the yaml of the application deployment to enable this functionality.
+Sermant provides a quick way to automatically mount Sermant from the host application in a container environment via the Sermant Injector component. Simply add `sermant-injection:enabled ` to the labels in the yaml of the application deployment to enable this functionality.
 
-The sermant-injector component is not required for Sermant, but it is highly recommended deploying it in a container environment for quick deployment. Currently sermant-injector supports k8s **1.15** and above.
+The Sermant Injector component is not required for Sermant, but it is highly recommended deploying it in a container environment for quick deployment. Currently Sermant Injector supports k8s **1.15** and above.
 
-Please refer to [Sermant-injector User Manual](injector.md) for more instructions on how to use sermant-injector.
+Please refer to [Sermant-injector User Manual](sermant-injector.md) for more instructions on how to use sermant-injector.
 
 ## Package
 

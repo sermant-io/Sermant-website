@@ -58,7 +58,7 @@ grace.rule:
 
 为了保证每次微服务下线过程中，服务消费者能尽早感知服务提供者实例下线的行为，同时服务提供者需保证处理中请求被处理完后再进行服务下线。
 
-容器场景：K8s提供了Pod优雅退出机制，允许Pod在退出前完成一些清理工作。preStop会先执行完，然后K8s才会给Pod发送TERM信号。在容器场景利用K8s提供的preStop机制，配合延迟下线API使用，这样就能保证流量的无损下线。以容器化服务为例（Sermant容器化部署依赖[injector组件](../user-guide/injector.md)）：给SpringCloud应用配置了preStop。
+容器场景：K8s提供了Pod优雅退出机制，允许Pod在退出前完成一些清理工作。preStop会先执行完，然后K8s才会给Pod发送TERM信号。在容器场景利用K8s提供的preStop机制，配合延迟下线API使用，这样就能保证流量的无损下线。以容器化服务为例（Sermant容器化部署依赖[injector组件](../user-guide/sermant-injector.md)）：给SpringCloud应用配置了preStop。
 
 > **注意：** 延迟下线能力依赖k8s的preStop机制，若您的编排文件已配置preStop，需要您在编排文件位置“spec > containers > lifecycle > preStop > exec > command”添加如下命令：
 
@@ -216,7 +216,7 @@ spec:
 
 > **注意：** 
 > 1. [动态配置中心](../user-guide/configuration-center.md)会在本场景中默认使用，由于非本场景的核心组件，因此在本文中不额外赘述。
-> 2. 容器环境需提前部署好[injector组件](../user-guide/injector.md)。
+> 2. 容器环境需提前部署好[injector组件](../user-guide/sermant-injector.md)。
 
 ### 2 制作Demo应用镜像
 

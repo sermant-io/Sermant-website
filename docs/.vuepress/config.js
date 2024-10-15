@@ -159,9 +159,9 @@ module.exports = {
                 "user-guide/",
                 "user-guide/sermant-agent",
                 "user-guide/sermant-backend",
+                "user-guide/sermant-injector",
                 "user-guide/configuration-center",
-                "user-guide/sermant-xds",
-                "user-guide/injector"
+                "user-guide/sermant-xds"
               ],
             },
             {

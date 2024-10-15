@@ -1,47 +1,40 @@
 # Dynamic Configuration Center User Manual
 
-This paper introduces the scenario model of Dynamic Configuration Center in Sermant and how to use it.
+This document introduces the scenarios, model descriptions, and usage of the Dynamic Configuration Center in Sermant.
 
-## Dynamic Configuration Center in Sermant Scene and Positioning
+## Scenarios and Positioning of the Dynamic Configuration Center in Sermant
 
-The dynamic configuration center is a supporting component for the dynamic configuration function of Sermant, which allows Sermant to dynamically pull configuration from the configuration center to achieve a variety of service governance capabilities. Users can enable dynamic configuration capabilities and deploy dynamic configuration centers on demand.
+The Dynamic Configuration Center is a supporting component for Sermant's dynamic configuration feature. This feature allows Sermant to pull configurations from the Dynamic Configuration Center to achieve diverse service governance capabilities. Users can enable dynamic configuration as needed and deploy the Dynamic Configuration Center.
 
-Configuration center makes Sermant have the key ability of dynamic configuration on the basis of static configuration, and solves the problem of immutable configuration provided by the former, which is the implementation basis of service management diversification in Sermant. For example, 
+The configuration center enables Sermant to have key dynamic configuration capabilities on top of static configurations, addressing the issue of unchangeable configurations provided by the latter. For example:
 
-- In the flowcontrol plugin, the configuration and delivery of traffic marking and flow control rules are realized by Sermant dynamic configuration and configuration center as the medium to achieve dynamic flow control. 
+- In the flow control plugin, dynamic flow control is achieved through the Sermant Dynamic Configuration Center, which manages the configuration and distribution of flow tags and control rules.
+- In the routing plugin, the configuration and distribution of label routing rules are also implemented through this dynamic configuration capability.
 
-- In the routing plugin, the configuration of label routing rules is also effective through this configuration center capability.
+Since there are many mature open-source products in the industry for real-time configuration centers, Sermant does not provide a standalone implementation of a configuration center but integrates with open-source configuration centers to achieve the business goal of real-time dynamic configuration of service governance rules.
 
-There are many mature open source products in the field of real-time configuration center and Sermant does not provide a single implementation of configuration center, but integrates the open source configuration center to achieve the business goal of real-time dynamic configuration of service governance rules.
+In terms of implementation, Sermant Agent defines a set of general interfaces for dynamic configuration internally. Based on this architecture:
 
-In the concrete implementation, sermant-agent defines a set of general interfaces for dynamic configuration. Based on this architecture,
+- Users determine the type of configuration center Sermant interfaces with through Sermant Agent's configuration. In operational scenarios, users can directly operate the Dynamic Configuration Center according to the user manuals of various service governance plugins to achieve dynamic configuration goals.
+- Developers need only interface with Sermant’s general dynamic configuration interface during Plugin development to implement dynamic configuration functionality without needing to focus on various selection and implementation details of the configuration center itself.
 
-- The user determines the type of configuration center that the Sermant actually connects to through the configuration of the sermant-agent. It is also possible to directly operate the dynamic configuration center in the operation and maintenance scenario according to the manual of each service governance plugin to achieve the business goal of dynamic configuration.
-- In the development of plugins, developers only need the common interface of Sermant dynamic configuration to realize the function of dynamic configuration, and do not need to pay attention to the selection and implementation of the dynamic configuration center itself.
+The following architecture diagram illustrates the principle of this architecture.
 
-The following architecture diagram illustrates the principle of the architecture.
-
-<MyImage src="/docs-img/dynamic-configuration-center.png"/>
+<MyImage src="/docs-img/dynamic-configuration-center-en.png"/>
 
 ## Parameter Configuration
 
-For configuration of the dynamic configuration center, see the corresponding open source dynamic configuration center
-([ZooKeeper](https://zookeeper.apache.org/releases.html) , [ServiceComb Kie](https://servicecomb.apache.org/cn/release/kie-downloads/), [Nacos](https://github.com/alibaba/nacos/releases)). We will not go into details in 
-this paper.
+For configuration details of the Dynamic Configuration Center, please refer to the corresponding open-source dynamic configuration centers (e.g., [ZooKeeper](https://zookeeper.apache.org/releases.html), [ServiceComb Kie](https://servicecomb.apache.org/cn/release/kie-downloads/), [Nacos](https://github.com/alibaba/nacos/releases)). This document does not elaborate further.
 
-First, configure `agent.service.dynamic.config.enable=true` in [Parameters Related to Agent Framework of Sermant-agent User Manual](sermant-agent.md#parameters-related-to-agent-framework) to **enable dynamic configuration service**.
-
-Second, you can configure parameters for dynamic configuration center of sermant-agent in `agent/config/config.properties` of sermant-agent product package. For specific parameters, please refer to [Parameters Related to Dynamic Configuration Center of Sermant-agent User Manual](sermant-agent.md#parameters-related-to-dynamic-configuration-center).
+First, enable the dynamic configuration service by setting `agent.service.dynamic.config.enable=true` in the product package `agent/config/config.properties` of Sermant Agent. Other parameters related to the dynamic configuration center in Sermant Agent can also be configured in this file.
 
 ## Sermant Dynamic Configuration Center Model
 
-以sermant-agent中的[KeyGroupService.publishConfig](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/service/dynamicconfig/api/KeyGroupService.java)接口函数说明Sermant中的配置模型。
-
-The configuration model in Sermant is illustrated by the interface function [KeyGroupService.publishConfig](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/service/dynamicconfig/api/KeyGroupService.java) in sermant-agent.
+The configuration model in Sermant can be illustrated by the [KeyGroupService.publishConfig](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/service/dynamicconfig/api/KeyGroupService.java) interface function in Sermant Agent.
 
 ```java
 /**
- * Sets the configuration value for a key under the group
+ * Set the configuration value for a key in a group.
  *
  * @param key     key
  * @param group   group
@@ -51,137 +44,165 @@ The configuration model in Sermant is illustrated by the interface function [Key
 boolean publishConfig(String key, String group, String content);
 ```
 
-As you can see in the example above, the two parameters used to determine the configuration in sermant-agent are:
+In this example, the two parameters for determining configuration items in Sermant Agent are:
 
-- `key`: the key value of the smallest configuration unit。
-- `group`: group, like a prefix for `key`. Sermant mainly uses the group to be related with some configuration center tenant isolation function。
+- key: The key for the smallest configuration unit.
+- group: The group, similar to a prefix for the key. Sermant primarily uses Group to interface with some configuration center tenant isolation features.
 
-For different configuration centers, there are different matching models for group and key. This is explained in detail below.
+Different configuration centers have different matching models for group and key. Details are provided below.
 
-For users, to use the dynamic configuration center, you need to obtain the instance of `DynamicConfigService` in the development process of the plugin, and call various abstract interfaces provided by `DynamicConfigService` according to their own scenarios to perform corresponding service governance. You can refer to [plugin function development related chapters](https://sermant.io/zh/document/developer-guide/dev-complex-plugin.html#%E5%8A%A8%E6%80%81%E9%85%8D%E7%BD%AE%E5%8A%9F%E8%83%BD) for detailed API interface parsing and development guide.
+For users, using the Dynamic Configuration Center requires obtaining an instance of DynamicConfigService during plugin development and calling the various abstract interfaces provided by `DynamicConfigService` according to their specific scenarios for corresponding service governance. Detailed API interface analysis and development guidance can be found in the developer guide's [Dynamic Configuration Function Development Guide](../developer-guide/dynamic-config-func.md).
 
-## Sermant Implementation of Configuration Model Based on Different Dynamic Configuration Centers
+## Sermant’s Implementation of Configuration Models Based on Different Dynamic Configuration Centers
 
-The following sections discuss several typical implementations of configuration centers. By understanding the implementation of the model, users can understand how to find the corresponding configuration items in different configuration centers and how to configure them dynamically to achieve the goal of service governance management.
+The following sections discuss typical implementations of several configuration centers. Understanding these model implementations helps users find the corresponding configuration items in different configuration centers and perform dynamic configuration to achieve service governance management goals.
 
-### Implementation of Configuration Model Based on Zookeeper
+### ZooKeeper-Based Configuration Model Implementation
 
-For `ZooKeeper` servers, the dynamic configuration is the value of the ZooKeeper node. The `Key` and `Group` should be used as elements to build the **node path**. Since `Group` contains user-specific information, it should be the prefix string for the **node path** so that the `Key` value exists as the second half:
+For `ZooKeeper` servers, dynamic configuration refers to the value of `ZooKeeper` nodes, where `Key` and `Group` should be elements in the node path. Since `Group` includes user-specific information, it should be used as a prefix in the node path, with the `Key` value as the latter part:
 
 ```txt
 /${group}/${key} -> ${value}
 ```
 
-### **Implementation of Configuration Model Based on ServiceComb Kie**
+### ServiceComb Kie-Based Configuration Model Implementation
 
-For the `Kie` service, the so-called dynamic configuration is the value of the `Kie'` configuration. `Kie` queries the associated configuration based on the label. `Key` and `Group` are the elements of the associated configuration. `Key` is the name of the configured Key, and `Group` is the label of the associated Key. Each `Key` can be configured with one or more labels. The format is usually as follows:
+For `Kie` services, dynamic configuration refers to `Kie` configuration keys. `Kie` queries associated configurations based on labels, with `Key` and `Group` as elements of the associated configuration. `Key` is the name of the configuration key, and `Group` is the label associated with the `Key`. Each `Key` can be configured with one or more labels, usually in the following format:
 
 ```properties
 {
-  "key": "keyName",                # key
-  "value": "value",                # value
+  "key": "keyName",                # Configuration key
+  "value": "value",                # Configuration value
   "labels": {
-    "service": "serviceName"     #labels, kv form and support multiple labels
+    "service": "serviceName"     # Label, kv format, supporting one or more
   },
   "status": "enabled"
 }
 ```
 
-Compared with `Zookeeper`, `Kie` is more focused on `Group` and its value transfer format is different. The value transfer format of `Kie` is as follows:
+Compared to `ZooKeeper`, `Kie` focuses more on `Group`, and the format of the values is different. The format for `Kie` values is as follows:
 
 ```txt
-groupKey1=groupValue1[&groupKey2=groupVaue2...]
+groupKey1=groupValue1[&groupKey2=groupValue2...]
 ```
 
-> `groupKey` is the key of label, `groupValue` is the value of label. Multiple labels are spliced by `&`. `Group` could be  generated by LabelGroupUtils.
+> Here, `groupKey` is the label key, `groupValue` is the label value, and multiple labels are concatenated with `&`. `Group` can be generated using `LabelGroupUtils#createLabelGroup`.
 >
-> **NOTE：**
+> **Special Note:**
 >
-> ​	If the input `Group` is not in the above format, the label `Group=input Group` will be added by default.
+> If the provided `Group` does not match the above format, the label `GROUP=providedGroup` will be added by default.
 
-### Implementation of configuration model based on Nacos
+### Nacos-Based Configuration Model Implementation
 
-In the case of the `Nacos`, dynamic configuration refers to the configuration values of the `Nacos`. `Nacos`
-contains the `namespaceId`, `group` and `dataId`. The `namespaceId` default values is `service.meta.project` in 
-`agent/config/config.properties`. For specific parameters, please refer to [Parameters Related to Dynamic Configuration Center of Sermant-agent User Manual](sermant-agent.md#parameters-related-to-dynamic-configuration-center); The `group` is aligned with the Dynamic Configuration Center's `group`; `dataId` is set to the `Key` of the Dynamic Configuration Center, which is the key name of the configuration. The format is as follows:
+For `Nacos` services, dynamic configuration refers to `Nacos` configuration values, which include `namespaceId`, `group`, and `dataId`. The `namespaceId` defaults to the `service.meta.project` in `agent/config/config.properties` specifying the service namespace; `group` aligns with the dynamic configuration core's `group`; `dataId` is set to the dynamic configuration core's `Key`, i.e., the configuration key name, in the following format:
 
 ```properties
 {
-    "group": "Group", 			# group
-    "dataId": "Key",  			# key
-    "content": "config", 		# value
-    "namespaceId": "default"	# namespace
+    "group": "Group",         # Configuration group
+    "dataId": "Key",          # Configuration key
+    "content": "config",      # Configuration value
+    "namespaceId": "default"  # Specified service namespace
 }
 ```
 
-The naming format requirements for `group` and `dataId` are as follows, please refer to the [Nacos documentation](https://nacos.io/zh-cn/docs/sdk.html):
-- `dataId` use alphabetical letters and these four special characters (".", ":", "-", "_") only. Up to 256 characters
-  are allowed.
-- `group` use alphabetical letters and these four special characters (".", ":", "-", "_") only. Up to 128 characters
-  are allowed.
+`Nacos` has naming format requirements for `group` and `dataId` as follows; for details, refer to the [Nacos documentation](https://nacos.io/zh-cn/docs/sdk.html):
 
-> **Special note:**
+- `dataId` allows only English characters and four special characters (".", ":", "-", "_"), with a maximum of 256 bytes.
+- `group` allows only English characters and four special characters (".", ":", "-", "_"), with a maximum of 128 bytes.
+
+> **Special Note:**
 >
-> If the passed `group` contains three kinds of illegal characters: `=`、`&` and `/`, the dynamic configuration core will automatically convert it to legal characters: 
->  `=` to `:`,`&` to `_` and `/` to`.`。
+> If the provided `group` contains illegal characters such as `=`, `&`, or `/`, the dynamic configuration core will automatically convert them to legal characters: `=` to `:`, `&` to `_`, `/` to `.`.
 
-## Configuration Center and Version Supported
+## Components and Versions Supported by the Dynamic Configuration Center
 
-The configuration center components currently supported by Sermant are:
+Currently, Sermant supports the following configuration center components:
 
 - [ZooKeeper](https://zookeeper.apache.org/releases.html), version 3.6.3.
 - [ServiceComb Kie](https://servicecomb.apache.org/cn/release/kie-downloads/), version 0.2.0.
 - [Nacos](https://github.com/alibaba/nacos/releases), version 2.1.0.
 
-## Startup and Result Validation
+## Startup and Result Verification
 
-This document uses the demo plugin in [Sermant-examples](https://github.com/sermant-io/Sermant-examples/tree/main/sermant-template/template) to demonstrate dynamic configuration capability, whose implementation adds a listener to listen for dynamic configuration changes.
+This tutorial demonstrates dynamic configuration capabilities using the Demo plugin and microservices from the [Sermant-examples](https://github.com/sermant-io/Sermant-examples/tree/main/first-plugin-demo) repository, which includes a listener to monitor changes in dynamic configurations.
 
-### Zookeeper
+### 1 Preparation
 
-#### Startup
+- [Download](https://github.com/sermant-io/Sermant-examples/releases/download/v2.0.0/sermant-examples-first-plugin-demo-2.0.0.tar.gz) the Demo binary package
+- [Download](https://zookeeper.apache.org/releases.html#download) the ZooKeeper server
+- [Download](https://servicecomb.apache.org/cn/release/kie-downloads) the Kie server
+- [Download](https://github.com/alibaba/nacos/releases/download/2.1.0/nacos-server-2.1.0.tar.gz) the Nacos server
 
-First, start the configuration center Zookeeper. You can learn how to deployment it by official information.
+### 2 Obtain Demo Binary Package
 
-Then refer to the [Sermant-agent User Manual](sermant-agent.md) startup and result verification section to start the host application mounting sermant-agent.
+Extract the Demo binary package to get the `agent\` directory files.
+
+### 3 Verify ZooKeeper
+
+Start the ZooKeeper server.
+
+#### Starting Demo Microservice
+
+Modify the `agent\config\config.properties` file to specify the configuration center type and server address:
+```properties
+# Specify the address of the configuration center server
+dynamic.config.serverAddress=127.0.0.1:2181
+# Specify the type of dynamic configuration center, options are NOP (no implementation), ZOOKEEPER, KIE, NACOS
+dynamic.config.dynamicConfigType=ZOOKEEPER
+```
+
+Execute the following command in the `agent` directory to mount the sermant-agent and start the Demo microservice:
+
+```shell
+java -javaagent:sermant-agent.jar -jar Application.jar
+```
 
 #### Publish Configuration
 
-Use the Zookeeper command-line tool or visualization tool to publish configuration. Using a command-line tool as an example, enter the following command:
+Use the ZooKeeper command line tool or a visualization tool to publish the configuration. Here, we use the command line tool as an example. Execute the following commands:
 
 ```shell
+create /app=default
 create /app=default/demo "test"
 ```
 
-Where `app=default` is the group, `demo` is the key, and `test` is the value.
+In this, `app=default` is the group value, `demo` is the key value, and `test` is the value.
 
-When the node data is successfully created, the dynamic configuration is successfully published in the configuration center.
+After successfully creating the node data, the dynamic configuration has been published to the configuration center.
 
-#### Validation
+#### Verification
 
-Check out the sermant log file sermant-0.log. The default log file path is `./logs/sermant/core`.
+Check if the Demo microservice console contains the following log output:
 
-Observe if the log file contains the following log output:
-
-```
-[DemoDynaConfService]-DynamicConfigEvent{key='demo', group='app=default', content='test', eventType=CREATE} io.sermant.core.service.dynamicconfig.common.DynamicConfigEvent[source=demo,app=default]
+```log
+Configuration item changed, value: test
 ```
 
-If the log output is correct, it means that the dynamic configuration is published successfully and the sermant-agent has listened to the dynamic configuration.
+If the log output is correct, it indicates that the dynamic configuration has been successfully published and the Sermant Agent has detected the dynamic configuration.
 
-### Kie
+### 4 Verify Kie
 
-Kie is used in a similar way to Zoopeepr, with the only difference that publishing configuration is performed in the way of Kie.
+Start the Kie server.
 
-#### Startup
+#### Starting Demo Microservice
 
-First, start the configuration center Kie. You can learn how to deployment it by official information.
+Modify the `agent\config\config.properties` file to specify the configuration center type and server address:
+```properties
+# Specify the address of the configuration center server
+dynamic.config.serverAddress=127.0.0.1:30110
+# Specify the type of dynamic configuration center, options are NOP (no implementation), ZOOKEEPER, KIE, NACOS
+dynamic.config.dynamicConfigType=KIE
+```
 
-Then refer to the [Sermant-agent User Manual](sermant-agent.md) startup and result verification section to start the host application mounting sermant-agent.
+Execute the following command in the `agent` directory to mount the sermant-agent and start the Demo microservice:
+
+```shell
+java -javaagent:sermant-agent.jar -jar Application.jar
+```
 
 #### Publish Configuration
 
-Publish the following dynamic configuration via Kie:
+Publish the following dynamic configuration through Kie:
 
 ```properties
 {
@@ -194,36 +215,44 @@ Publish the following dynamic configuration via Kie:
 }
 ```
 
-Where `app=default` is the group, `demo` is the key, and `test` is the value.
+In this, `app=default` is the group value, `demo` is the key value, and `test` is the value.
 
-When the node data is successfully created, the dynamic configuration is successfully published in the configuration center.
+After successfully creating the node data, the dynamic configuration has been published to the configuration center.
 
-#### Validation
+#### Verification
 
-Check out the sermant log file sermant-0.log. The default log file path is `./logs/sermant/core`.
+Check if the Demo microservice console contains the following log output:
 
-Observe if the log file contains the following log output:
-
-```
-[DemoDynaConfService]-DynamicConfigEvent{key='demo', group='app=default', content='test', eventType=CREATE} io.sermant.core.service.dynamicconfig.common.DynamicConfigEvent[source=demo,app=default]
+```log
+Configuration item changed, value: test
 ```
 
-If the log output is correct, it means that the dynamic configuration is published successfully and the sermant-agent has listened to the dynamic configuration.
+If the log output is correct, it indicates that the dynamic configuration has been successfully published and the Sermant Agent has detected the dynamic configuration.
 
-### Nacos
+### 5 Verify Nacos
 
-Nacos is used in a similar way to Zoopeepr and Kie, with the only difference that publishing configuration is 
-performed in the way of Nacos.
+Start the Nacos server.
 
-#### Startup
+#### Starting Demo Microservice
 
-First, start the configuration center Nacos. You can learn how to deployment it by official information.
+Modify the `agent\config\config.properties` file to specify the configuration center type and server address:
 
-Then refer to the [Sermant-agent User Manual](sermant-agent.md) startup and result verification section to start the host application mounting sermant-agent.
+```properties
+# Specify the address of the configuration center server
+dynamic.config.serverAddress=127.0.0.1:8848
+# Specify the type of dynamic configuration center, options are NOP (no implementation), ZOOKEEPER, KIE, NACOS
+dynamic.config.dynamicConfigType=NACOS
+```
+
+Execute the following command in the `agent` directory to mount the sermant-agent and start the Demo microservice:
+
+```shell
+java -javaagent:sermant-agent.jar -jar Application.jar
+```
 
 #### Publish Configuration
 
-Publish the following dynamic configuration via shell:
+Publish the following dynamic configuration through the console command line:
 
 ```properties
 curl -d 'dataId=demo' \
@@ -233,21 +262,16 @@ curl -d 'dataId=demo' \
   -X POST 'http://ip:port/nacos/v2/cs/config'
 ```
 
-Where `app=default` is the value of the legalized group, `demo` is the key, and `test` is the value, and the `default` is
-`service.meta.project` in
-`agent/config/config.properties`.
+In this, `app:default` is the legalized group value, `demo` is the key value, `test` is the content value, and `default` is the specified service namespace, which corresponds to `agent/config/config.properties`'s `service.meta.project`.
 
-When the node data is successfully created, the dynamic configuration is successfully published in the configuration center.
+After successfully creating the node data, the dynamic configuration has been published to the configuration center.
 
-#### Validation
+#### Verification
 
-Check out the sermant log file sermant-0.log. The default log file path is `./logs/sermant/core`.
+Check if the Demo microservice console contains the following log output:
 
-Observe if the log file contains the following log output:
-
-```
-[DemoDynaConfService]-DynamicConfigEvent{key='demo', group='app:default', content='test', eventType=CREATE} io.sermant.core.service.dynamicconfig.common.DynamicConfigEvent[source=demo,app=default]
+```log
+Configuration item changed, value: test
 ```
 
-If the log output is correct, it means that the dynamic configuration is published successfully and the sermant-agent has listened to the dynamic configuration.
-
+If the log output is correct, it indicates that the dynamic configuration has been successfully published and the Sermant Agent has detected the dynamic configuration.

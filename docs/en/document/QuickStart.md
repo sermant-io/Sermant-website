@@ -4,33 +4,25 @@ Below is a simple demo that guides new users to use Sermant in just 4 steps.
 
 ## Preparation
 
-- [Download](https://github.com/sermant-io/Sermant/releases/download/v1.2.1/sermant-1.2.1.tar.gz) Sermant package 
-  (The current version recommended is 1.2.1)
-- [Download](https://github.com/sermant-io/Sermant-examples/tree/main/flowcontrol-demo/spring-cloud-demo/spring-provider) demo application
+- [Download](https://github.com/sermant-io/Sermant/releases/download/v2.0.0/sermant-2.0.0.tar.gz) Sermant package 
+  (The current version recommended is 2.0.0)
+- [Download](https://github.com/sermant-io/Sermant-examples/releases/download/v2.0.0/sermant-examples-flowcontrol-demo-2.0.0.tar.gz) demo application
 - [Download](https://zookeeper.apache.org/releases#download) and start zookeeper
 
-### Compile demo application
+### Get the Demo binary product.
 
-Execute the following command in the `${path}/Sermant-examples/flowcontrol-demo/spring-cloud-demo/spring-provider/` directory:
-
-```shell
-# windows linux mac
-mvn clean package
-```
-
-After successful packaging，GET `spring-provider.jar` in `${path}/Sermant-examples/flowcontrol-demo/spring-cloud-demo/spring-provider/target`
-
-> Note: path is the path where the demo application is downloaded
+Extract the Demo binary product archive to obtain the spring-provider.jar file.
 
 ## Modify the Sermant configuration
 
-Modify the `agent.service.heartbeat.enable` and `agent.service.gateway.enable` configuration in the `${path}/sermant-agent-x.x.x/agent/config/config.properties` file to be true, which is to open the heartbeat service and the gateway service of Sermant, as shown below:
+Modify the `${sermant-path}/sermant-agent-x.x.x/agent/config/config.properties` file by setting `agent.service.heartbeat.enable` and `agent.service.gateway.enable` to true to enable Sermant's heartbeat service and gateway service, as shown below:
 
 ```properties
 agent.service.heartbeat.enable=true
 agent.service.gateway.enable=true
 ```
-> Note: path is the path where the Sermant package is downloaded
+
+> Note: ${sermant-path} refers to the directory where the Sermant Release package was downloaded.
 
 ## Start Backend
 
@@ -44,20 +36,20 @@ java -jar sermant-backend-x.x.x.jar
 
 ## Start demo application
 
-Execute the following command in the `${path}/Sermant-examples/flowcontrol-demo/spring-cloud-demo/spring-provider/target`directory：
+Refer to the following command to start the Demo microservice.
 
 ```shell
 # linux mac
-java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar -jar spring-provider.jar
+java -javaagent:${sermant-path}/sermant-agent-x.x.x/agent/sermant-agent.jar -jar spring-provider.jar
 
 # windows
-java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar -jar spring-provider.jar
+java -javaagent:${sermant-path}\sermant-agent-x.x.x\agent\sermant-agent.jar -jar spring-provider.jar
 ```
 
-> Note: path is the path where the Sermant package is downloaded
+> Note: ${sermant-path} refers to the directory where the Sermant Release package was downloaded
 
 ## Verification
 
-Check running status of Sermant. In this example, open the browser and navigate to the URL `http://localhost:8900`.
+Open your browser and navigate to the URL `http://localhost:8900`, as shown in the image below:
 
-<MyImage src="/docs-img/backend_sermant_info.jpg"></MyImage>
+<MyImage src="/docs-img/backend_sermant_info_en.png"></MyImage>
