@@ -1,6 +1,6 @@
 # 动态配置中心使用手册
 
-本文介绍动态配置中心在Sermant使用中的场景、模型介绍以及如何使用。
+本文介绍动态配置中心在Sermant使用中的场景、模型介绍以及如何使用。Sermant的动态配置能力通过Sermant框架层的[动态配置服务](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/service/dynamicconfig/DynamicConfigService.java)实现，其从动态配置中心拉取配置以实现丰富多样的服务治理能力。
 
 ## 动态配置中心在Sermant的场景和定位
 
