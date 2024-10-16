@@ -95,6 +95,7 @@ module.exports = {
                 "developer-guide/heartbeat-func",
                 "developer-guide/trace-tracking-func",
                 "developer-guide/log-func",
+                "developer-guide/metric-func",
                 "developer-guide/third-party-copyright",
                 "developer-guide/version-manage",
                 "developer-guide/config-manage"
