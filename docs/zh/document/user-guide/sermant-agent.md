@@ -332,6 +332,47 @@ Sermant动态配置服务允许Sermant从动态配置中心拉取配置从而实
 
 Sermant xDS服务使微服务可以在Kubenetes场景下接入Istio。Sermant基于xDS协议和Istio的控制平面直接进行通信，获取服务发现、路由、负载均衡等配置信息，从而可以替代Envoy作为Istio的数据平面完成服务治理能力。Sermant xDS服务的具体介绍和使用请参考[基于Sermant+Istio的无代理服务网格](./sermant-xds.md)。
 
+### 指标服务
+
+Sermant指标服务允许用户通过Prometheus等监控工具收集和展示Sermant的核心指标和插件的自定义指标。通过这些指标，用户可以实时了解服务的健康状况，并及时发现潜在问题。
+
+#### 使用前提
+在使用Sermant指标服务之前，请确保以下条件已满足：
+- Sermant已正确集成到应用程序中
+- Prometheus监控工具已安装并运行
+
+#### 配置Sermant指标服务
+
+##### 开启Metric服务
+1. 打开Sermant的配置文件，位于 `agent/config/config.properties`。
+2. 设置以下配置项以开启Metric服务：
+   ```properties
+   # 开启HTTP服务
+   agent.service.httpserver.enable=true
+   # 开启Metric服务
+   agent.service.metric.enable=true
+   ```
+##### 配置Prometheus
+1. 打开Prometheus的配置文件 `prometheus.yml`。
+2. 添加以下配置以抓取Sermant暴露的指标端点：
+   ```yaml
+   scrape_configs:
+   - job_name: 'sermant-metrics'
+     metrics_path: '/sermant/metrics'
+     static_configs:
+     - targets: ['<Sermant-Host>:47128']
+   ```
+   > 请将`<Sermant-Host>`替换为实际运行Sermant的主机地址。
+
+#### 使用Sermant指标服务
+##### 创建自定义指标
+如果您需要在插件中创建自定义指标，具体参考：[指标功能](../developer-guide/metric-func.md)
+
+#### 查看指标
+1. 启动Prometheus服务；
+2. 访问Prometheus的Web界面，通常为 `http://<Prometheus-Host>:9090`；
+3. 在Prometheus的查询界面输入指标名称，例如 `custom_counter_total`，以查看相应的指标数据。
+
 ## 配置规范
 
 Sermant项目properties配置文件和各插件的中yaml配置文件都支持下列几种参数配置方式，以配置文件中的`gateway.nettyIp=127.0.0.1`为例：
