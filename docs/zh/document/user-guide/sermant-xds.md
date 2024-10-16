@@ -1,5 +1,7 @@
 # 基于Sermant+Istio的无代理服务网格
 
+本文主要介绍基于Sermant+Istio无代理服务网格的概念、部署形态和具体能力。该能力基于Sermant框架层的[xDS核心服务](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/service/xds/XdsCoreService.java)实现。
+
 ## Istio下的Sermant服务治理
 
 服务网格（Service Mesh）是处理服务间通信的基础设施层。它负责构成现代云原生应用程序的复杂服务拓扑来可靠地交付请求。在实践中，Service Mesh 通常以轻量级网络代理阵列的形式实现，这些代理与应用程序代码部署在一起，对应用程序来说无需感知代理的存在。
