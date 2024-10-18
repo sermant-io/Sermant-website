@@ -323,6 +323,16 @@ Sermant can achieve hot-plugging capabilities by running `AgentLoader` and passi
 | Repeated Plugin Installation  | command=INSTALL-PLUGINS:${PluginName}#${CustomPluginIdentifier} |
 | Enhancement Information Query | command=CHECK_ENHANCEMENT                                    |
 
+## Sermant Core Services
+
+### Dynamic Configuration Service
+
+The Sermant Dynamic Configuration Service allows Sermant to pull configurations from the dynamic configuration center, enabling rich service governance capabilities. For a detailed introduction and usage of the Sermant Dynamic Configuration Service, please refer to the [Dynamic Configuration Center User Manual](./configuration-center.md).
+
+### xDS Service
+
+The Sermant xDS Service enables microservices to connect to Istio in Kubernetes scenarios. Sermant communicates directly with the Istio control plane based on the xDS protocol to retrieve configuration information for service discovery, routing, load balancing, and more, thereby replacing Envoy as the data plane for service governance capabilities in Istio. For a detailed introduction and usage of the Sermant xDS Service, please refer to [Proxyless Service Mesh Based onSermant + Istio](./sermant-xds.md).
+
 ## Configuration Specifications
 
 The properties configuration files of the Sermant project and the YAML configuration files of each plugin support the following parameter configuration methods. For example, in the configuration file, `gateway.nettyIp=127.0.0.1`:

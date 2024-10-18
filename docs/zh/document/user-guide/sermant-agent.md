@@ -322,6 +322,16 @@ Sermant可以通过运行`AgentLoader`并传入下述指令实现Sermant的热�
 | 插件重复安装 | command=INSTALL-PLUGINS:${插件名}#${自定义插件编码} |
 | 增强信息查询 | command=CHECK_ENHANCEMENT                           |
 
+## Sermant核心服务
+
+### 动态配置服务
+
+Sermant动态配置服务允许Sermant从动态配置中心拉取配置从而实现丰富的服务治理能力。Sermant动态配置服务的具体介绍和使用请参考[动态配置中心使用手册](./configuration-center.md)。
+
+### xDS服务
+
+Sermant xDS服务使微服务可以在Kubenetes场景下接入Istio。Sermant基于xDS协议和Istio的控制平面直接进行通信，获取服务发现、路由、负载均衡等配置信息，从而可以替代Envoy作为Istio的数据平面完成服务治理能力。Sermant xDS服务的具体介绍和使用请参考[基于Sermant+Istio的无代理服务网格](./sermant-xds.md)。
+
 ## 配置规范
 
 Sermant项目properties配置文件和各插件的中yaml配置文件都支持下列几种参数配置方式，以配置文件中的`gateway.nettyIp=127.0.0.1`为例：

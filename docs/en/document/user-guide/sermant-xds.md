@@ -1,5 +1,7 @@
 # Proxyless Service Mesh Based on Sermant and Istio
 
+This article primarily introduces the concepts, deployment patterns, and specific capabilities of the Sermant + Istio proxyless service mesh. These capabilities are implemented based on the [xDS Core Service](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/service/xds/XdsCoreService.java) of the Sermant framework layer.
+
 ## Service Governance of Sermant in Istio Environment
 
 A service mesh is an infrastructure layer that handles service-to-service communication. It reliably delivers requests through the complex service topology that constitutes modern cloud-native applications. In practice, service mesh is usually implemented as a lightweight array of network proxies, which are deployed alongside application code, without the application being aware of the presence of these proxies.

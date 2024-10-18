@@ -1,6 +1,6 @@
 # Dynamic Configuration Center User Manual
 
-This paper introduces the scenario model of Dynamic Configuration Center in Sermant and how to use it.
+This paper introduces the scenario model of Dynamic Configuration Center in Sermant and how to use it. The dynamic configuration capability of Sermant is implemented through the [Dynamic Configuration Service](https://github.com/sermant-io/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-core/src/main/java/io/sermant/core/service/dynamicconfig/DynamicConfigService.java) in the Sermant framework layer. It pulls configurations from the dynamic configuration center to enable a rich variety of service governance capabilities.
 
 ## Dynamic Configuration Center in Sermant Scene and Positioning
 
