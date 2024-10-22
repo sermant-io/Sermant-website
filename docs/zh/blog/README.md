@@ -13,6 +13,15 @@ blogArr:
       - 微服务治理
       - 无代理架构
 
+    - name: Sermant Backend配置管理功能在微服务治理场景中的应用
+      writer: 张豪鹏
+      date: 2024/09/30
+      description: 'Sermant Backend新增可视化配置管理功能'
+      path: 'https://bbs.huaweicloud.com/blogs/435965'
+      tags:
+      - 动态配置
+      - Sermant Backend
+
     - name: Sermant标签路由能力在同城双活场景的应用
       writer: 聂子雄
       date: 2024/06/18

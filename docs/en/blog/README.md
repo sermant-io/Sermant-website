@@ -13,6 +13,15 @@ blogArr:
       - Microservice Governance
       - Proxyless Architecture
 
+    - name: Application of Sermant Backend Configuration Management Function in Microservice Governance Scenarios
+      writer: 张豪鹏
+      date: 2024/09/30
+      description: 'Sermant Backend introduces visual configuration management function'
+      path: 'https://bbs.huaweicloud.com/blogs/435965'
+      tags:
+      - dynamic configuration
+      - Sermant Backend
+
     - name: Application of Sermant's Tag Routing Capability in Active-Active Scenarios
       writer: 聂子雄
       date: 2024/06/18
