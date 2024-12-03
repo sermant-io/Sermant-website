@@ -391,9 +391,16 @@ import com.sun.tools.attach.VirtualMachineDescriptor;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class AgentLoader {
+    private static List<String> fullCommand = new ArrayList<>();
+
+    private static Set<String> pluginCommand = new HashSet<>();
+
     private AgentLoader() {
     }
 
@@ -401,7 +408,9 @@ public class AgentLoader {
      * AgentLoader 的main方法
      */
     public static void main(String[] args)
-        throws IOException, AttachNotSupportedException, AgentLoadException, AgentInitializationException {
+            throws IOException, AttachNotSupportedException, AgentLoadException, AgentInitializationException {
+        initCommandCollection();
+
         List<VirtualMachineDescriptor> vmDescriptors = VirtualMachine.list();
 
         if (vmDescriptors.isEmpty()) {
@@ -435,9 +444,38 @@ public class AgentLoader {
         System.out.print("请输入Sermant Agent所在目录（默认采用该目录下sermant-agent.jar为入口）：");
         String agentPath = userInputReader.readLine();
 
+        // 展示目前支持的命令列表
+        System.out.println("请选择需要执行的命令（热插拔插件的命令当检测到Sermant Agent未安装时会自动安装Agent） :");
+        for (int i = 0; i < fullCommand.size(); i++) {
+            System.out.println(i + ": " + fullCommand.get(i));
+        }
+        System.out.print("请输入您要执行命令的序号：");
+        int selectedCommandIndex = Integer.parseInt(userInputReader.readLine());
+
+        if (selectedCommandIndex < 0 || selectedCommandIndex >= fullCommand.size()) {
+            System.out.println("无效的命令序号");
+            return;
+        }
+
+        String currentCommand = fullCommand.get(selectedCommandIndex);
+
+        if (pluginCommand.contains(currentCommand)) {
+            System.out.print("请输入您要执行的插件名称，多个插件使用/分隔：");
+            currentCommand += ":";
+            currentCommand += userInputReader.readLine();
+        }
+
         // 获取传入Sermant Agent的参数
-        System.out.print("请输入向Sermant Agent传入的参数(可为空，默认配置参数agentPath)：");
-        String agentArgs = "agentPath=" + agentPath + "," + userInputReader.readLine();
+        System.out.print("请输入向Sermant Agent传入的参数(可为空, 示例格式：key1=value1,key2=value2)：");
+
+        String agentArgs;
+        if (currentCommand.equals(fullCommand.get(0))) {
+            agentArgs = "agentPath=" + agentPath + "," + userInputReader.readLine();
+        } else {
+            agentArgs = "agentPath=" + agentPath + "," +
+                    "command=" + currentCommand + "," +
+                    userInputReader.readLine();
+        }
 
         // 关闭资源
         userInputReader.close();
@@ -445,6 +483,21 @@ public class AgentLoader {
         // 启动Sermant Agent
         vm.loadAgent(agentPath + "/sermant-agent.jar", agentArgs);
         vm.detach();
+    }
+
+    private static void initCommandCollection() {
+        // 填充目前支持的命令
+        fullCommand.add("INSTALL-AGENT");
+        fullCommand.add("UNINSTALL-AGENT");
+        fullCommand.add("INSTALL-PLUGINS");
+        fullCommand.add("UNINSTALL-PLUGINS");
+        fullCommand.add("UPDATE-PLUGINS");
+        fullCommand.add("CHECK-ENHANCEMENT");
+
+        // 动态热插拔插件的命令
+        pluginCommand.add("INSTALL-PLUGINS");
+        pluginCommand.add("UNINSTALL-PLUGINS");
+        pluginCommand.add("UPDATE-PLUGINS");
     }
 }
 ```
