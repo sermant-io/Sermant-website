@@ -162,7 +162,7 @@ io.sermant.template.TemplateDeclarer
 
 > 注：该模版利用Maven的`maven-dependency-plugin:copy`插件将[Sermant必要核心组件](../user-guide/README.md#sermant-agent)从Maven中心仓拉取到本地构建产物目录中，开发者无需再关心启动Sermant所需的依赖及配置。
 >
-> `maven-dependency-plugin:copy`插件使用方式可参考Maven官方文档[dmaven-dependency-plugin:copy](https://maven.apache.org/plugins/maven-dependency-plugin/examples/copying-artifacts.html)
+> `maven-dependency-plugin:copy`插件使用方式可参考Maven官方文档[maven-dependency-plugin:copy](https://maven.apache.org/plugins/maven-dependency-plugin/examples/copying-artifacts.html)
 
 在项目根目录执行 `cd agent/`，在其中执行如下步骤：
 

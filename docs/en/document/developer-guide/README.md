@@ -161,7 +161,7 @@ Execute **mvn package** under the generated project root directory , the build p
 
 > Note：The template uses Maven's `maven-dependency-plugin:copy` plug-in to pull the [necessary core components of Sermant](../user-guide/README.md#sermant-agent) from the maven central repository into the local build directory, eliminating the need for developers to care about the dependencies and configurations required to start Sermant.
 >
-> The use of `maven-dependency-plugin:copy` plugin please referes to Maven official documentd [maven-dependency-plugin:copy](https://maven.apache.org/plugins/maven-dependency-plugin/examples/copying-artifacts.html)
+> The use of `maven-dependency-plugin:copy` plugin please refer to Maven official document [maven-dependency-plugin:copy](https://maven.apache.org/plugins/maven-dependency-plugin/examples/copying-artifacts.html)
 
 Execute `cd agent/` in the project root directory , perform the following steps in it：
 
