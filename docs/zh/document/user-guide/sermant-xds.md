@@ -553,11 +553,11 @@ Greetings from http://xxx.xxx.xxx.xxx:8080 : hello, the current time is 2050-01-
 
 ### 基于xds服务的路由示例
 
-本教程使用[Sermant-examples](https://github.com/sermant-io/Sermant-examples/tree/main/xds-router-demo)仓库中的xds-router-demo演示Sermant 基于xDS服务的路由能力。本Demo中包括spring-client微服务、spring-server微服务。spring-client微服务挂载Sermant的路由插件启动，并开启基于xDS的路由能力，Sermant路由插件在spring-client调用上游服务时，根据上游服务的路由规则进行路由，并选择符合规则的服务实例进行调用。
+本教程使用[Sermant-examples](https://github.com/sermant-io/Sermant-examples/tree/main/xds-demo)仓库中的xds-demo演示Sermant 基于xDS服务的路由能力。本Demo中包括spring-client微服务、spring-server微服务。spring-client微服务挂载Sermant的路由插件启动，并开启基于xDS的路由能力，Sermant路由插件在spring-client调用上游服务时，根据上游服务的路由规则进行路由，并选择符合规则的服务实例进行调用。
 
 #### 1 准备工作
 
-- [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v2.1.0/sermant-examples-xds-router-demo-2.1.0.tar.gz) Demo二进制产物压缩包
+- [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v2.1.0/sermant-examples-xds-demo-2.2.0.tar.gz) Demo二进制产物压缩包
 - [下载](https://github.com/sermant-io/Sermant/releases/download/v2.1.0/sermant-2.1.0.tar.gz) Sermant二进制产物压缩包
 - [准备](https://kubernetes.io/zh-cn/docs/tutorials/hello-minikube/) Kubenetes环境
 - 安装[Istio](https://istio.io/v1.23/docs/setup/getting-started/)并启动
@@ -641,11 +641,11 @@ spring-server version: v1
 
 ### 基于xds服务的流控示例
 
-本教程使用[Sermant-examples](https://github.com/sermant-io/Sermant-examples/tree/main/xds-router-demo)仓库中的xds-router-demo演示Sermant基于xDS服务的错误注入能力。本Demo中包括spring-client微服务、spring-server微服务。spring-client微服务挂载Sermant的流控插件启动，并开启基于xDS的流控能力，Sermant流控插件在spring-client调用上游服务时，根据上游服务的错误注入规则进行请求中止。
+本教程使用[Sermant-examples](https://github.com/sermant-io/Sermant-examples/tree/main/xds-demo)仓库中的xds-demo演示Sermant基于xDS服务的错误注入能力。本Demo中包括spring-client微服务、spring-server微服务。spring-client微服务挂载Sermant的流控插件启动，并开启基于xDS的流控能力，Sermant流控插件在spring-client调用上游服务时，根据上游服务的错误注入规则进行请求中止。
 
 #### 1 准备工作
 
-- [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v2.2.0/sermant-examples-xds-router-demo-2.2.0.tar.gz) Demo二进制产物压缩包
+- [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v2.2.0/sermant-examples-xds-demo-2.2.0.tar.gz) Demo二进制产物压缩包
 - [下载](https://github.com/sermant-io/Sermant/releases/download/v2.2.0/sermant-2.2.0.tar.gz) Sermant二进制产物压缩包
 - [准备](https://kubernetes.io/zh-cn/docs/tutorials/hello-minikube/) Kubenetes环境
 - 安装[Istio](https://istio.io/v1.23/docs/setup/getting-started/)并启动

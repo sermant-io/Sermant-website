@@ -557,11 +557,11 @@ Greetings from http://xxx.xxx.xxx.xxx:8080 : hello, the current time is 2050-01-
 
 ### Routing Example Based on xDS Service
 
-This tutorial demonstrates Sermant's routing capabilities based on xDS service using the `xds-router-demo` from the [Sermant-examples](https://github.com/sermant-io/Sermant-examples/tree/main/xds-router-demo) repository. The demo includes two microservices: `spring-client` and `spring-server`. The `spring-client` microservice starts with the Sermant routing plugin and enables xDS-based routing capabilities. When the `spring-client` calls upstream services, the Sermant routing plugin routes the requests based on the upstream service’s routing rules, selecting the appropriate service instance that meets the rules.
+This tutorial demonstrates Sermant's routing capabilities based on xDS service using the `xds-demo` from the [Sermant-examples](https://github.com/sermant-io/Sermant-examples/tree/main/xds-demo) repository. The demo includes two microservices: `spring-client` and `spring-server`. The `spring-client` microservice starts with the Sermant routing plugin and enables xDS-based routing capabilities. When the `spring-client` calls upstream services, the Sermant routing plugin routes the requests based on the upstream service’s routing rules, selecting the appropriate service instance that meets the rules.
 
 #### 1. Preparation
 
-- [Download](https://github.com/sermant-io/Sermant-examples/releases/download/v2.1.0/sermant-examples-xds-router-demo-2.1.0.tar.gz) the demo binary artifact package.
+- [Download](https://github.com/sermant-io/Sermant-examples/releases/download/v2.1.0/sermant-examples-xds-demo-2.2.0.tar.gz) the demo binary artifact package.
 - [Download](https://github.com/sermant-io/Sermant/releases/download/v2.1.0/sermant-2.1.0.tar.gz) the Sermant binary artifact package.
 - Prepare a Kubernetes environment.
 - Install and start [Istio](https://istio.io/v1.23/docs/setup/getting-started/).
@@ -644,11 +644,11 @@ spring-server version: v1
 
 ### Example of Flow Control Based on xDS Service
 
-This tutorial demonstrates the flow control capability of Sermant based on xDS services using the [Sermant-examples](https://github.com/sermant-io/Sermant-examples/tree/main/xds-router-demo) repository's xds-router-demo. The demo includes `spring-client` and `spring-server` microservices. The `spring-client` microservice mounts the Sermant flow control plugin and enables flow control based on xDS. The Sermant flow control plugin will control traffic according to the flow control rules of upstream services when `spring-client` calls those upstream services.
+This tutorial demonstrates the flow control capability of Sermant based on xDS services using the [Sermant-examples](https://github.com/sermant-io/Sermant-examples/tree/main/xds-demo) repository's xds-demo. The demo includes `spring-client` and `spring-server` microservices. The `spring-client` microservice mounts the Sermant flow control plugin and enables flow control based on xDS. The Sermant flow control plugin will control traffic according to the flow control rules of upstream services when `spring-client` calls those upstream services.
 
 #### 1 Prerequisites
 
-- [Download](https://github.com/sermant-io/Sermant-examples/releases/download/v2.2.0/sermant-examples-xds-router-demo-2.2.0.tar.gz) the Demo binary package.
+- [Download](https://github.com/sermant-io/Sermant-examples/releases/download/v2.2.0/sermant-examples-xds-demo-2.2.0.tar.gz) the Demo binary package.
 - [Download](https://github.com/sermant-io/Sermant/releases/download/v2.2.0/sermant-2.2.0.tar.gz) the Sermant binary package.
 - [Prepare](https://kubernetes.io/zh-cn/docs/tutorials/hello-minikube/) a Kubernetes environment.
 - Install and start [Istio](https://istio.io/v1.23/docs/setup/getting-started/).
