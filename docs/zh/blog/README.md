@@ -13,6 +13,15 @@ blogArr:
       - 微服务治理
       - 无代理架构
 
+    - name: 正式成为 CNCF 的一员，我们是如何做到的 | Sermant 2024 年度总结
+      writer: 李来 张豪鹏
+      date: 2025/01/24
+      description: 'Sermant在经历了2022年的萌芽期和2023年的快速发展后，2024年迎来了重要突破'
+      path: 'https://bbs.huaweicloud.com/blogs/445759'
+      tags:
+      - 年度总结
+      - Sermant
+        
     - name: 基于Sermant实现xDS服务网格，获取15+倍更高性能和更低成本
       writer: 戴振宇
       date: 2024/11/27

@@ -12,6 +12,15 @@ blogArr:
       - Cloud Native
       - Microservice Governance
       - Proxyless Architecture
+      
+    - name: How Sermant Officially Accepted By CNCF? | Sermant 2024 Annual Summary
+      writer: 李来 张豪鹏
+      date: 2025/01/24
+      description: 'After experiencing its budding stage in 2022 and rapid development in 2023, Sermant achieved a significant breakthrough in 2024.'
+      path: 'https://bbs.huaweicloud.com/blogs/445759'
+      tags:
+        - Annual Summary
+        - Sermant
 
     - name: Implementing xDS Service Mesh Based on Sermant, with Achieving 15x Higher Performance and Lower Costs
       writer: 戴振宇
