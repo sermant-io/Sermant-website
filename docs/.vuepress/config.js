@@ -112,6 +112,7 @@ module.exports = {
                 "community/contributing",
                 "community/vulnerability",
                 "community/sig",
+                "community/community-Incentive-program"
               ],
             },
             {
