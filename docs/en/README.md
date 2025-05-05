@@ -32,6 +32,6 @@ Sermant is a [Cloud Native Computing Foundation](https://www.cncf.io/) sandbox p
 
 ::: slot Copyright
 The Linux Foundation has registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our [Trademark Usage](https://www.linuxfoundation.org/legal/trademark-usage) page.  
-2024 © Sermant Project Authors. All rights reserved.
+2025 © Sermant Project Authors. All rights reserved.
 :::
 
