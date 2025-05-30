@@ -13,6 +13,15 @@ blogArr:
       - Microservice Governance
       - Proxyless Architecture
       
+    - name: Sermant-based application practice in the digital retail industry —— full-link grayscale
+      writer: Sermant社区用户 & 李来
+      date: 2025/05/26
+      description: 'How a technology company focusing on digital retail solutions achieves full-link grayscale release and service governance through Sermant'
+      path: 'https://bbs.huaweicloud.com/blogs/453151'
+      tags:
+        - Solution
+        - Full Link Grayscale
+      
     - name: How Sermant Officially Accepted By CNCF? | Sermant 2024 Annual Summary
       writer: 李来 张豪鹏
       date: 2025/01/24

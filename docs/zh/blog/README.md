@@ -13,6 +13,15 @@ blogArr:
       - 微服务治理
       - 无代理架构
 
+    - name: 数字零售行业基于Sermant的应用实战之全链路灰度
+      writer: Sermant社区用户 & 李来
+      date: 2025/05/26
+      description: '一家专注于数字零售解决方案的科技公司如何通过Sermant实现全链路灰度发布与服务治理'
+      path: 'https://bbs.huaweicloud.com/blogs/453151'
+      tags:
+        - 解决方案
+        - 全链路灰度
+        
     - name: 正式成为 CNCF 的一员，我们是如何做到的 | Sermant 2024 年度总结
       writer: 李来 张豪鹏
       date: 2025/01/24
