@@ -164,8 +164,8 @@ Take the Spring Cloud scenario as an example to demonstrate the use of tag routi
 
 ### Preparations
 
-- [Download](https://github.com/sermant-io/Sermant/releases/download/v2.2.0/sermant-2.2.0.tar.gz) Sermant Release package (current recommended version is 2.2.0)
-- [Download](https://github.com/sermant-io/Sermant-examples/releases/download/v2.2.0/sermant-examples-router-demo-2.2.0.tar.gz) Demo binary artifact package
+- [Download](https://github.com/sermant-io/Sermant/releases/download/v2.3.0/sermant-2.3.0.tar.gz) Sermant Release package (current recommended version is 2.3.0)
+- [Download](https://github.com/sermant-io/Sermant-examples/releases/download/v2.3.0/sermant-examples-router-demo-2.3.0.tar.gz) Demo binary artifact package
 - [Download](https://github.com/apache/servicecomb-service-center) ServiceComb (registry center), and start it
 - [Download](https://zookeeper.apache.org/releases.html#download) ZooKeeper (dynamic configuration center), and start it
 

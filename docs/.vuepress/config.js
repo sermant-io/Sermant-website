@@ -78,6 +78,7 @@ module.exports = {
                 "plugin/visibility",
                 "plugin/mq-consume-prohibition",
                 "plugin/database-write-prohibition",
+                "plugin/xds",
               ],
             },
             {

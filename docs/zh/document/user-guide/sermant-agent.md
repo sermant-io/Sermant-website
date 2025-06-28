@@ -46,7 +46,7 @@ java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar -jar spring-
 java -jar spring-provider.jar
 ```
 
-- 通过`agentmain`方式启动，需要借助`Attach API`来完成。下载[Sermant Release包](https://github.com/sermant-io/Sermant/releases/download/v2.2.0/sermant-2.2.0.tar.gz)并解压，在`./tools`目录下获取`AgentLoader`脚本
+- 通过`agentmain`方式启动，需要借助`Attach API`来完成。下载[Sermant Release包](https://github.com/sermant-io/Sermant/releases/download/v2.3.0/sermant-2.3.0.tar.gz)并解压，在`./tools`目录下获取`AgentLoader`脚本
 
 ### Agent挂载
 
@@ -67,7 +67,7 @@ $ java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
 请选择需要使用Sermant Agent的Java进程：
 0: xxxxx AgentLoader # xxxxx为进程号，此处模糊
 1: xxxxx spring-provider.jar # xxxxx为进程号，此处模糊
-2: xxxxx sermant-backend-2.2.0.jar # xxxxx为进程号，此处模糊
+2: xxxxx sermant-backend-2.3.0.jar # xxxxx为进程号，此处模糊
 请输入需要使用Sermant Agent的Java进程序号：1 # 选择spring-provider的进程序号
 您选择的进程 ID 是：xxxxx # xxxxx为进程号，此处模糊
 请输入Sermant Agent所在目录（默认采用该目录下sermant-agent.jar为入口）：${path}/sermant-agent-x.x.x/agent # 填充Sermant Agent所在目录

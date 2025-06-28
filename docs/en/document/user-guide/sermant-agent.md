@@ -46,7 +46,7 @@ If the log outputs as shown above, it indicates that Sermant Agent has started s
 java -jar spring-provider.jar
 ```
 
-- To start using the `agentmain` method, the `Attach API` is required. Download the [Sermant Release Package](https://github.com/sermant-io/Sermant/releases/download/v2.2.0/sermant-2.2.0.tar.gz) and extract it. Retrieve the `AgentLoader` script from the `./tools` directory.
+- To start using the `agentmain` method, the `Attach API` is required. Download the [Sermant Release Package](https://github.com/sermant-io/Sermant/releases/download/v2.3.0/sermant-2.3.0.tar.gz) and extract it. Retrieve the `AgentLoader` script from the `./tools` directory.
 
 ### Agent Installation
 
