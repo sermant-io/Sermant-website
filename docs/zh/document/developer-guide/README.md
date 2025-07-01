@@ -12,7 +12,7 @@
 本地执行如下Maven指令：
 
 ```shell
-$ mvn archetype:generate -DarchetypeGroupId=io.sermant -DarchetypeArtifactId=sermant-template-archetype -DarchetypeVersion=2.2.0 -DgroupId=io.sermant -Dversion=2.2.0 -Dpackage=io.sermant -DartifactId=first-plugin
+$ mvn archetype:generate -DarchetypeGroupId=io.sermant -DarchetypeArtifactId=sermant-template-archetype -DarchetypeVersion=2.3.0 -DgroupId=io.sermant -Dversion=2.3.0 -Dpackage=io.sermant -DartifactId=first-plugin
 ```
 
 执行上述指令后，出现下述日志后回车进行确认：
@@ -20,12 +20,12 @@ $ mvn archetype:generate -DarchetypeGroupId=io.sermant -DarchetypeArtifactId=ser
 ```shell
 [INFO] Using property: groupId = io.sermant
 [INFO] Using property: artifactId = first-plugin
-[INFO] Using property: version = 2.2.0
+[INFO] Using property: version = 2.3.0
 [INFO] Using property: package = io.sermant
 Confirm properties configuration:
 groupId: io.sermant
 artifactId: first-plugin
-version: 2.2.0
+version: 2.3.0
 package: io.sermant
  Y: :
 ```

@@ -12,7 +12,7 @@ This article is for guidance on how to develop your first plugin locally.
 Execute the following Maven commands locally：
 
 ```shell
-$ mvn archetype:generate -DarchetypeGroupId=io.sermant -DarchetypeArtifactId=sermant-template-archetype -DarchetypeVersion=2.2.0 -DgroupId=io.sermant -Dversion=2.2.0 -Dpackage=io.sermant -DartifactId=first-plugin
+$ mvn archetype:generate -DarchetypeGroupId=io.sermant -DarchetypeArtifactId=sermant-template-archetype -DarchetypeVersion=2.3.0 -DgroupId=io.sermant -Dversion=2.3.0 -Dpackage=io.sermant -DartifactId=first-plugin
 ```
 
 After executing the above command, press Enter for confirmation when the following log is displayed：
@@ -20,12 +20,12 @@ After executing the above command, press Enter for confirmation when the followi
 ```shell
 [INFO] Using property: groupId = io.sermant
 [INFO] Using property: artifactId = first-plugin
-[INFO] Using property: version = 2.2.0
+[INFO] Using property: version = 2.3.0
 [INFO] Using property: package = io.sermant
 Confirm properties configuration:
 groupId: io.sermant
 artifactId: first-plugin
-version: 2.2.0
+version: 2.3.0
 package: io.sermant
  Y: :
 ```

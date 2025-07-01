@@ -656,8 +656,8 @@ http客户端调用上游服务的URL格式需要为`http://${serviceName}.${hos
 
 ### 1 准备工作
 
-- [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v2.2.0/sermant-examples-dynamic-demo-2.2.0.tar.gz) 流控Demo二进制产物压缩包
-- [下载](https://github.com/sermant-io/Sermant/releases/download/v2.2.0/sermant-2.2.0.tar.gz) Sermant Release包（当前版本推荐2.2.0版本）
+- [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v2.3.0/sermant-examples-dynamic-demo-2.3.0.tar.gz) 流控Demo二进制产物压缩包
+- [下载](https://github.com/sermant-io/Sermant/releases/download/v2.3.0/sermant-2.3.0.tar.gz) Sermant Release包（当前版本推荐2.3.0版本）
 - [下载](https://zookeeper.apache.org/releases#download)并启动ZooKeeper
 
 ### 2 限流示例

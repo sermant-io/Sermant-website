@@ -80,10 +80,10 @@
 
 ### 1 准备工作
 
-- [下载 ](https://github.com/sermant-io/Sermant/releases/download/v2.2.0/sermant-2.2.0.tar.gz) Sermant Release包（当前版本推荐2.2.0版本）
+- [下载 ](https://github.com/sermant-io/Sermant/releases/download/v2.3.0/sermant-2.3.0.tar.gz) Sermant Release包（当前版本推荐2.3.0版本）
 - [下载](https://zookeeper.apache.org/releases.html#download) ZooKeeper Release包（作为动态配置中心）
 - [下载](https://kafka.apache.org/downloads) Kafka Release包
-- [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v2.2.0/sermant-examples-mq-consume-prohibition-demo-2.2.0.tar.gz) Demo二进制产物压缩包
+- [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v2.3.0/sermant-examples-mq-consume-prohibition-demo-2.3.0.tar.gz) Demo二进制产物压缩包
 
 ### 2 获取Demo二进制产物
 

@@ -40,6 +40,10 @@
 
 [数据库禁写插件](./database-write-prohibition.md): 用于在服务运行时实现对指定数据库的禁止写入能力，在多云多活场景下保证数据库数据的一致性。
 
+## 服务网格类
+
+[xDS插件](./xds.md): xDS插件插件整合了xDS协议的流量管理、安全特性等，使得用户可以在不使用Envoy的方式和Istio控制平面进行通信，并实现基于xDS协议的服务治理。
+
 ## 兼容性列表
 
 |                    插件名称                     | 微服务框架组件支持列表                                                                                                                                  | 动态配置中心支持列表                      | 注册中心支持列表                   |
@@ -48,12 +52,14 @@
 | [SpringBoot注册插件](./springboot-registry.md) | SpringBoot 1.5.10.Release+                                                                                                                   | ServiceComb Kie<br/>ZooKeeper<br/>Nacos | Zookeeper 3.4.x+           |
 |        [注册迁移插件](./register-migration.md)        | SpringBoot 1.5.x - 2.6.2 <br> SpringCloud Edgware.SR2 - 2021.0.0<br>Dubbo 2.6.x-2.7.x                                                        | N/A                           | ServiceComb-Service-Center<br/>Nacos |
 |          [流控插件](./flowcontrol.md)           | SpringBoot 1.2.x - 2.6.x <br> SpringWebMvc 4.1.3.RELEASE - 5.3.x<br>Dubbo 2.6.x-2.7.x                                                        | ServiceComb Kie<br/>ZooKeeper<br/>Nacos  | N/A     |
-|          [优雅上下线插件](./graceful.md)           | SpringBoot 1.5.x - 2.6.2 <br/> SpringCloud Edgware.SR2 - 2021.0.0                                                                            | ServiceComb Kie<br/>ZooKeeper<br/>Nacos | N/A    |该功能基于SpringCloud默认负载均衡实现，若实现自定义负载均衡，该能力将失效|
+|          [优雅上下线插件](./graceful.md)           | SpringBoot 1.5.x - 2.6.2 <br/> SpringCloud Edgware.SR2 - 2021.0.0                                                                            | ServiceComb Kie<br/>ZooKeeper<br/>Nacos | N/A    |
 |         [离群实例摘除](./visibility.md)          | SpringBoot 1.5.10.Release+<br>Dubbo 2.6.x-2.7.x                                                                                            | ServiceComb Kie<br/>ZooKeeper<br/>Nacos  | N/A                        |
 |         [负载均衡插件](./loadbalancer.md)         | SpringBoot 1.5.x - 2.6.2 <br/> SpringCloud Edgware.SR2 - 2021.0.0                                                                            | ServiceComb Kie<br/>ZooKeeper<br/>Nacos | N/A      |
-|            [标签路由插件](./router.md)            | SpringBoot 1.5.x - 2.6.2 <br/>SpringCloud Edgware.SR2 - 2021.0.0<br/>Dubbo 2.6.x-2.7.x                                                       | ServiceComb Kie<br/>ZooKeeper<br/>Nacos            | ServiceComb-Service-Center |不支持异步调用<br>不支持混合框架（Dubbo调SpringCloud或者SpringCloud调Dubbo）做路由|
+|            [标签路由插件](./router.md)            | SpringBoot 1.5.x - 2.6.2 <br/>SpringCloud Edgware.SR2 - 2021.0.0<br/>Dubbo 2.6.x-2.7.x                                                       | ServiceComb Kie<br/>ZooKeeper<br/>Nacos            | ServiceComb-Service-Center |
 |         [流量标签透传插件](./tag-transmission.md)  | Servlet 3.0+<br>Jetty 8.x+<br>Tomcat 7.x+<br>Spring Framework 4.x+<br>Apache HttpClient 3.x, 4.x<br>OKHttp2 2.x<br/>HttpURLConnection 1.7.x+<br/>Dubbo 2.6.x, 2.7.x, 3.x<br/>Grpc 1.13+<br/>SofaRpc 5.x<br/>ServiceComb Java Chassis 2.x<br/>RocketMQ 4.8.x+, 5.x<br/>Kafka 1.x, 2.x, 3.x| ServiceComb Kie<br/>ZooKeeper<br/>Nacos  | N/A                        |
 |            [监控插件](./monitor.md)             | ALL                                                                                                                                          | N/A                           | N/A       |
 |         [服务可见性插件](./visibility.md)          | SpringBoot 1.5.10.Release+<br>Dubbo 2.6.x-2.7.x                                                                                            | ServiceComb Kie<br/>ZooKeeper<br/>Nacos  | N/A                        |
 |         [消息队列禁止消费插件](./mq-consume-prohibition.md)          | Kafka 1.x, 2.x<br>RocketMQ 4.8.x-5.1.x                                                                                | ServiceComb Kie<br/>ZooKeeper<br/>Nacos  | N/A                        |
 |         [数据库禁写插件](./database-write-prohibition.md)          | mongodb-driver-sync 2.6.2-2.7.x, 3.0.x-3.3.x<br>mariadb-java-client 3.7.x-3.11.x, 4.0.x-4.11.x<br/>opengauss-jdbc 3.0.x, 3.1.x<br/>postgresql 9.4.x, 42.0.x-42.7.x  | ServiceComb Kie<br/>ZooKeeper<br/>Nacos  | N/A                        |
+| [消息队列灰度](./rocketmq-message-grayscale.md) | RocketMQ-client: 4.8.x+<br/>RocketMQ-server: 4.8.x+ | ServiceComb Kie<br/>ZooKeeper<br/>Nacos | N/A |
+| [xDS插件](./xds.md) | Istio(已验证支持): 1.6 - 1.23<br/>xDS协议：v3 | Istiod | Istiod |

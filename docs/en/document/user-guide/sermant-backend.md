@@ -102,8 +102,8 @@ Sermant Backend is developed using JDK 1.8, so the running environment requires 
 
 ### 1 Preparation
 
-- [Download](https://github.com/sermant-io/Sermant/releases/download/v2.2.0/sermant-2.2.0.tar.gz) Sermant
-  Release package (current version recommends version 2.2.0)
+- [Download](https://github.com/sermant-io/Sermant/releases/download/v2.3.0/sermant-2.3.0.tar.gz) Sermant
+  Release package (current version recommends version 2.3.0)
 - [Download](https://github.com/sermant-io/Sermant-examples/releases/download/v1.4.0/sermant-examples-springboot-registry-demo-1.4.0.tar.gz) Demo binary product Archive
 - [Download](https://zookeeper.apache.org/releases.html#download)ZooKeeper (dynamic configuration center & registration center), and start
 

@@ -93,7 +93,9 @@ spec:
 
 ### 支持xDS服务发现能力的Sermant插件
 
-- [路由插件](../plugin/router.md#基于xDS协议的路由)、[流控插件](../plugin/flowcontrol.md#基于xds协议的流控)
+- [路由插件](../plugin/router.md#基于xDS协议的路由)
+- [流控插件](../plugin/flowcontrol.md#基于xds协议的流控)
+- [xDS插件](../plugin/xds.md)
 
 ## 基于xDS服务的路由能力
 
@@ -201,7 +203,9 @@ spec:
 
 ### 支持xDS路由配置能力的Sermant插件
 
-- [路由插件](../plugin/router.md#基于xDS协议的路由)、[流控插件](../plugin/flowcontrol.md#基于xds协议的流控)
+- [路由插件](../plugin/router.md#基于xDS协议的路由)
+- [流控插件](../plugin/flowcontrol.md#基于xds协议的流控)
+- [xDS插件](../plugin/xds.md)
 
 ## 基于xDS服务的负载均衡能力
 
@@ -248,7 +252,9 @@ spec:
 
 ### 支持xDS负载均衡配置能力的Sermant插件
 
-- [路由插件](../plugin/router.md#基于xDS协议的路由)、[流控插件](../plugin/flowcontrol.md#基于xds协议的流控)
+- [路由插件](../plugin/router.md#基于xDS协议的路由)
+- [流控插件](../plugin/flowcontrol.md#基于xds协议的流控)
+- [xDS插件](../plugin/xds.md)
 
 ## 基于xDS服务的流控能力
 
@@ -488,6 +494,137 @@ spec:
 ### 支持xDS流控能力的Sermant插件
 
 - [流控插件](../plugin/flowcontrol.md#基于xds协议的流控)
+- [xDS插件](../plugin/xds.md)
+
+## 基于xDS服务的安全能力
+
+Sermant框架层基于xDS协议实现了安全配置的获取能力，插件可以调用xDS安全服务接口获取Kubenetes Service的安全配置。
+
+### Istio安全配置字段支持
+
+Istio的安全配置包括身份和证书管理、对等认证、安全认证、授权。Istio可以通过[PeerAuthentication](https://istio.io/latest/docs/reference/config/security/peer_authentication/)、[RequestAuthentication](https://istio.io/latest/docs/reference/config/security/request_authentication/)、[AuthorizationPolicy](https://istio.io/latest/zh/docs/reference/config/security/authorization-policy/)来下发以上规则。Sermant基于xDS协议和Istio的控制平面协议进行通信获取安全配置，具体支持的安全配置字段如下所示：
+
+**PeerAuthentication**：
+
+| 支持字段       | 描述                                                 |
+| -------------- | ---------------------------------------------------- |
+| spec.mtls.mode | 对等认证模式，支持PERMISSIVE、STRICT、DISABLE、UNSET |
+
+**RequestAuthentication**：
+
+| 支持字段                  | 描述                                                         |
+| ------------------------- | ------------------------------------------------------------ |
+| spec.jwtRules.issuer      | 标识签发 JWT 的颁发者                                        |
+| spec.jwtRules.audiences   | 允许访问的JWT受众列表                                        |
+| spec.jwtRules.fromHeaders | 预期 JWT 所在的请求头位置列表。例如，如果预期 JWT 位于`x-jwt-assertion`头中且具有`Bearer`前缀，则如下配置：<br/>  fromHeaders:<br/>  - name: x-jwt-assertion<br/>    prefix: "Bearer " |
+| spec.jwtRules.fromParams  | 需要 JWT 的查询参数列表。例如，如果通过查询参数提供 JWT `my_token`（例如`/path?my_token=<JWT>`），则配置为：<br/>  fromParams:<br/>  - "my_token" |
+| spec.jwtRules.jwks        | JSON Web Key 一组用于验证 JWT 签名的公钥                     |
+
+**AuthorizationPolicy**：
+
+| 支持字段                                     | 描述                                                         |
+| -------------------------------------------- | ------------------------------------------------------------ |
+| spec.action                                  | 表示采取的操作，目前支持ALLOW和DENY                          |
+| spec.rules.to.operation                      | 标识请求的操作                                               |
+| spec.rules.to.operation.hosts                | HTTP 请求中指定的主机列表。匹配不区分大小写。如果未设置，则允许任何主机 |
+| spec.rules.to.operation.notHosts             | HTTP 请求中指定的主机的否定匹配列表。匹配不区分大小写        |
+| spec.rules.to.operation.paths                | HTTP 请求中指定的路径列表                                    |
+| spec.rules.to.operation.notPaths             | HTTP 请求中路径的否定匹配列表                                |
+| spec.rules.to.operation.ports                | HTTP 请求中指定的端口列表。如果未设置，则允许任何端口        |
+| spec.rules.to.operation.notPorts             | HTTP 请求中指定的否定匹配端口列表                            |
+| spec.rules.to.operation.methods              | HTTP 请求中指定的方法列表，例如GET、POST                     |
+| spec.rules.to.operation.notMethods           | 请求中指定的方法的否定匹配列表                               |
+| spec.rules.when.key.request.headers[xxx]     | 匹配HTTP 请求头。请求头名称用引号括起来，`[]`不带引号        |
+| spec.rules.when.key.source.ip                | 源工作负载实例的 IP 地址，支持单个 IP 或 CIDR                |
+| spec.rules.when.key.remote.ip                | 由 X-Forwarded-For 头或代理协议确定的原始客户端 IP 地址，支持单个 IP 或 CIDR |
+| spec.rules.when.key.destination.ip           | 目标工作负载实例 IP 地址，支持单个 IP 或 CIDR                |
+| spec.rules.when.key.destination.port         | 目标工作负载实例端口，必须在 [0, 65535] 范围内。注意，不是服务端口。 |
+| spec.rules.when.key.connection.sni           | 服务器名称指示，需要启用 TLS                                 |
+| spec.rules.when.key.request.auth.principal   | 经过身份验证的 JWT 令牌的主体，由格式为 的 JWT 声明构成`<iss>/<sub>` |
+| spec.rules.when.key.request.auth.audiences   | 经过身份验证的 JWT 令牌的目标受众（由 JWT 声明构建`<aud>`）需要应用请求身份验证策略 |
+| spec.rules.when.key.request.auth.claims[xxx] | 已验证 JWT 令牌的原始声明。声明名称`[]`不带引号，也可以使用嵌套声明，需要应用请求身份验证策略。注意：仅支持字符串或字符串列表类型的声明 |
+| spec.rules.when.key.request.auth.presenter   | 经过身份验证的 JWT 令牌（由 JWT 声明构建`<azp>`）的授权出示者需要应用请求身份验证策略 |
+
+### Istio安全配置模版
+
+**PeerAuthentication**：
+
+```yaml
+apiVersion: security.istio.io/v1
+kind: PeerAuthentication
+metadata:
+  name: default
+  namespace: foo
+spec:
+  mtls:
+    mode: STRICT
+```
+
+> 描述：对于命名空间为foo下的服务，请求调用必须使用mTLS。
+>
+
+**RequestAuthentication**：
+
+```yaml
+apiVersion: security.istio.io/v1
+kind: RequestAuthentication
+metadata:
+  name: spring-provider 
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: spring-provider
+  jwtRules:
+  - issuer: "issuer-foo"
+    fromHeaders:
+    - name: x-jwt-assertion
+      prefix: "Bearer "
+    audiences:
+    - your-audience
+```
+
+> 描述：对于命名空间为default下的spring-provider服务，存在如下安全规则：
+>
+> 1. 接收到的请求的请求头中需要包含形如“x-jwt-assertion: Bearer xxxxxx"的Json Web Token(JWT)
+> 2. JWT中包含的信息中issuer必须是issuer-foo，audiences必须是your-audience
+>
+> 如不满足则调用失败，返回403
+
+**AuthorizationPolicy**：
+
+```yaml
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: httpbin
+  namespace: foo
+spec:
+  action: ALLOW
+  rules:
+    to:
+    - operation:
+        methods: ["POST"]
+        paths: ["/data"]
+    when:
+    - key: request.auth.claims[iss]
+      values: ["https://accounts.google.com"]
+
+```
+
+> 描述：改授权策略表示
+>
+> 1. 仅适用于 foo 命名空间中名为 httpbin 的服务
+> 2. 只允许满足以下所有条件的请求：
+>    - 使用 HTTP POST 方法
+>    - 访问路径是 `/data`
+>    - 请求带有有效的 JWT 令牌，且该令牌是由 Google (issuer 为 `https://accounts.google.com`) 签发的
+>
+> 如不满足则返回403
+
+### 支持xDS安全能力的Sermant插件
+
+- [xDS插件](../plugin/xds.md)
 
 ## 启动和结果验证
 
@@ -497,8 +634,8 @@ spec:
 
 #### 1 准备工作
 
-- [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v2.2.0/sermant-examples-xds-demo-2.2.0.tar.gz) Demo二进制产物压缩包
-- [下载](https://github.com/sermant-io/Sermant/releases/download/v2.2.0/sermant-2.2.0.tar.gz) Sermant二进制产物压缩包
+- [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v2.3.0/sermant-examples-xds-demo-2.3.0.tar.gz) Demo二进制产物压缩包
+- [下载](https://github.com/sermant-io/Sermant/releases/download/v2.3.0/sermant-2.3.0.tar.gz) Sermant二进制产物压缩包
 - [准备](https://kubernetes.io/zh-cn/docs/tutorials/hello-minikube/) Kubenetes环境
 - 安装[Istio](https://istio.io/v1.23/docs/setup/getting-started/)并启动
 
@@ -585,8 +722,8 @@ spring-server version: v1
 
 #### 1 准备工作
 
-- [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v2.2.0/sermant-examples-xds-demo-2.2.0.tar.gz) Demo二进制产物压缩包
-- [下载](https://github.com/sermant-io/Sermant/releases/download/v2.2.0/sermant-2.2.0.tar.gz) Sermant二进制产物压缩包
+- [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v2.3.0/sermant-examples-xds-demo-2.3.0.tar.gz) Demo二进制产物压缩包
+- [下载](https://github.com/sermant-io/Sermant/releases/download/v2.3.0/sermant-2.3.0.tar.gz) Sermant二进制产物压缩包
 - [准备](https://kubernetes.io/zh-cn/docs/tutorials/hello-minikube/) Kubenetes环境
 - 安装[Istio](https://istio.io/v1.23/docs/setup/getting-started/)并启动
 

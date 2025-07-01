@@ -499,8 +499,8 @@ This tutorial demonstrates Sermant's routing capabilities based on xDS service u
 
 #### 1. Preparation
 
-- [Download](https://github.com/sermant-io/Sermant-examples/releases/download/v2.2.0/sermant-examples-xds-demo-2.2.0.tar.gz) the demo binary artifact package.
-- [Download](https://github.com/sermant-io/Sermant/releases/download/v2.2.0/sermant-2.2.0.tar.gz) the Sermant binary artifact package.
+- [Download](https://github.com/sermant-io/Sermant-examples/releases/download/v2.3.0/sermant-examples-xds-demo-2.3.0.tar.gz) the demo binary artifact package.
+- [Download](https://github.com/sermant-io/Sermant/releases/download/v2.3.0/sermant-2.3.0.tar.gz) the Sermant binary artifact package.
 - Prepare a Kubernetes environment.
 - Install and start [Istio](https://istio.io/v1.23/docs/setup/getting-started/).
 
@@ -586,8 +586,8 @@ This tutorial demonstrates the flow control capability of Sermant based on xDS s
 
 #### 1 Prerequisites
 
-- [Download](https://github.com/sermant-io/Sermant-examples/releases/download/v2.2.0/sermant-examples-xds-demo-2.2.0.tar.gz) the Demo binary package.
-- [Download](https://github.com/sermant-io/Sermant/releases/download/v2.2.0/sermant-2.2.0.tar.gz) the Sermant binary package.
+- [Download](https://github.com/sermant-io/Sermant-examples/releases/download/v2.3.0/sermant-examples-xds-demo-2.3.0.tar.gz) the Demo binary package.
+- [Download](https://github.com/sermant-io/Sermant/releases/download/v2.3.0/sermant-2.3.0.tar.gz) the Sermant binary package.
 - [Prepare](https://kubernetes.io/zh-cn/docs/tutorials/hello-minikube/) a Kubernetes environment.
 - Install and start [Istio](https://istio.io/v1.23/docs/setup/getting-started/).
 

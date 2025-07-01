@@ -210,8 +210,8 @@ spec:
 ### 1 准备工作
 
 - 已经部署好kubernetes环境
-- [下载](https://github.com/sermant-io/Sermant/releases/download/v2.2.0/sermant-2.2.0.tar.gz) Sermant Release包（当前版本推荐2.2.0版本）
-- [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v2.2.0/sermant-examples-grace-demo-2.2.0.tar.gz) Demo二进制产物压缩包
+- [下载](https://github.com/sermant-io/Sermant/releases/download/v2.3.0/sermant-2.3.0.tar.gz) Sermant Release包（当前版本推荐2.3.0版本）
+- [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v2.3.0/sermant-examples-grace-demo-2.3.0.tar.gz) Demo二进制产物压缩包
 - [下载](https://github.com/alibaba/nacos/releases) Nacos（注册中心），并部署
 
 > **注意：** 
@@ -228,7 +228,7 @@ spec:
 mvn clean package
 ```
 
-打包成功后可在`${path}/Sermant-examples/grace-demo/spring-grace-nacos-demo/nacos-rest-data/target`得到` nacos-rest-data-2.2.0.RELEASE.jar`包，在`${path}/Sermant-examples/grace-demo/spring-grace-nacos-demo/nacos-rest-consumer/target`得到`nacos-rest-consumer-2.2.0.RELEASE.jar`，在`${path}/Sermant-examples/grace-demo/spring-grace-nacos-demo/nacos-rest-provider/target`得到`nacos-rest-provider-2.2.0.RELEASE.jar`。
+打包成功后可在`${path}/Sermant-examples/grace-demo/spring-grace-nacos-demo/nacos-rest-data/target`得到` nacos-rest-data-2.3.0.RELEASE.jar`包，在`${path}/Sermant-examples/grace-demo/spring-grace-nacos-demo/nacos-rest-consumer/target`得到`nacos-rest-consumer-2.3.0.RELEASE.jar`，在`${path}/Sermant-examples/grace-demo/spring-grace-nacos-demo/nacos-rest-provider/target`得到`nacos-rest-provider-2.3.0.RELEASE.jar`。
 
 > **说明：** ${path}为Demo应用下载所在路径。
 
