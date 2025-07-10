@@ -13,6 +13,15 @@ blogArr:
       - 微服务治理
       - 无代理架构
 
+    - name: Sermant指标采集功能：构建指标可观测性实践
+      writer: zwmagic
+      date: 2025/07/01
+      description: '如何利用Sermant的指标采集能力实现服务治理指标可观测'
+      path: 'https://bbs.huaweicloud.com/blogs/455707'
+      tags:
+        - 指标采集
+        - 可观测
+
     - name: 数字零售行业基于Sermant的应用实战之全链路灰度
       writer: Sermant社区用户 & 李来
       date: 2025/05/26

@@ -13,6 +13,15 @@ blogArr:
       - Microservice Governance
       - Proxyless Architecture
       
+    - name: Sermant metric collection function —— Build a metric observability practice
+      writer: zwmagic
+      date: 2025/07/01
+      description: 'How to use Sermant metric collection capability to observability of service governance metrics'
+      path: 'https://bbs.huaweicloud.com/blogs/455707'
+      tags:
+        - Metric collection
+        - Observability
+        
     - name: Sermant-based application practice in the digital retail industry —— full-link grayscale
       writer: Sermant社区用户 & 李来
       date: 2025/05/26
