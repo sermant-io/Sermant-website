@@ -118,6 +118,28 @@ groupKey1=groupValue1[&groupKey2=groupVaue2...]
 > 若传入的`group`包含`=`、`&`、`/`三种非法字符时，动态配置核心将自动将其转换为合法字符：
 > `=`转换为`:`、`&`转换为`_`、`/`转换为`.`。
 
+### 基于 Apollo 的配置模型实现
+
+ `Apollo` 服务基于 `AppId` 、 `Environment` 和 `cluster` 进行配置命名空间的划分，每个命名空间中有多个 `namespace` ， `namespace` 下配置多个 `key` ，并且在portal服务中实现配置用户对不同命名空间的操作权限的授权。
+`Apollo` 对于 `key` 的命名不作要求，而对 `namespace` 的命名要求为:
+
+1. 只允许英文字符、数字和3种特殊字符（"\_"、"-"、"."）。
+2. 禁止单个字符"."作为 `namespace` 名称，禁止 `namespace` 名称以常见的配置文件扩展名结尾，如 `.json` 、 `.yml` 、 `.yaml` 、 `.xml` 和 `.properties` 等。
+
+由于 `Apollo` 对于配置划分和 `Open API` 等的差异需要有额外的启动参数配置:
+
+| Apollo配置名 | Sermant配置项 | 含义 |
+| --------- | ------------------------------------- | --------------------------------------------------------------------------------------------- |
+| cluster   | service.meta.parameters.cluster | 配置的集群名，默认值"default" |
+| adminUrl  | service.meta.parameters.adminUrl | 指定Apollo的Portal服务的URL，执行Open API操作 |
+| token     | service.meta.parameters.token | Open API的第三方应用授权token |
+|           | service.meta.parameters.isDoubleCheck | 基于Apollo不同账号权限分配，当需要进行doubleCheck，则需要在Sermant中配置参数后，在执行增删改操作后，由其他Apollo账号进行publish操作，默认为false |
+
+> **特别说明：**
+>
+> 若传入的`group`包含`=`、`&`、`/`三种非法字符时，动态配置核心将自动将其转换为合法字符：
+> `=`转换为`_`、`&`转换为`-`、`/`转换为`.`。
+
 ## 动态配置中心支持的组件及版本
 
 目前Sermant支持的配置中心组件为:
@@ -126,6 +148,7 @@ groupKey1=groupValue1[&groupKey2=groupVaue2...]
 - [ZooKeeper](https://zookeeper.apache.org/releases.html)，使用版本为3.6.3。
 - [ServiceComb Kie](https://servicecomb.apache.org/cn/release/kie-downloads/)，使用的版本为0.2.0。
 - [Nacos](https://github.com/alibaba/nacos/releases)，使用版本为2.1.0。
+- [Apollo](https://github.com/apolloconfig/apollo/releases) ，使用版本为2.4.0。
 
 ## 启动和结果验证
 
@@ -136,6 +159,7 @@ groupKey1=groupValue1[&groupKey2=groupVaue2...]
 - [下载](https://zookeeper.apache.org/releases.html#download) ZooKeeper服务端
 - [下载](https://servicecomb.apache.org/cn/release/kie-downloads) Kie服务端
 - [下载](https://github.com/alibaba/nacos/releases/download/2.1.0/nacos-server-2.1.0.tar.gz) Nacos服务端
+- [下载](https://www.apolloconfig.com/#/zh/deployment/distributed-deployment-guide) Apollo服务端
 
 ### 2 获取Demo二进制产物
 
@@ -264,6 +288,66 @@ curl -d 'dataId=demo' \
 ```
 
 其中`app:default`即为经过合法化处理后的group值，`demo`即为key值，`test`为content值，`default`为指定服务命名空间即`agent/config/config.properties`中的`service.meta.project`。
+
+创建节点数据成功后，即成功在配置中心发布了动态配置。
+
+#### 验证
+
+观察Demo微服务控制台是否包含以下日志输出：
+
+```
+插件配置项发生变化，配置项值为: test
+```
+
+如果日志输出无误，则说明动态配置发布成功，Sermant Agent已监听到动态配置。
+
+### 6 验证Apollo
+启动Apollo服务端
+
+#### Demo微服务启动
+
+修改`agent\config\config.properties`文件中的配置项，指定配置中心的类型和服务端地址：
+```properties
+# 指定配置中心的服务端地址
+dynamic.config.serverAddress=127.0.0.1:8080
+# 指定动态配置中心类型, 取值范围为NOP(无实现)、ZOOKEEPER、KIE、NACOS、APOLLO
+dynamic.config.dynamicConfigType=APOLLO
+```
+
+在`agent`目录执行以下命令挂载sermant-agent启动Demo微服务:
+
+```shell
+java -javaagent:sermant-agent.jar -jar Application.jar
+```
+
+#### 发布配置
+
+在Apollo服务端可以通过可视化界面进行发布配置；也可以基于open api完成操作，可视化界面中登录admin账号并通过`管理员工具`-`开放平台授权管理`-`创建第三方应用`获取token，并携带授权token信息执行以下命令
+```shell
+# 新增配置项
+curl -X POST 'http://{portal_address}/openapi/v1/envs/{env}/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items' \
+-H 'Authorization: [your-token]' \
+-H 'Content-Type: application/json' \
+-d '{
+    "key": "my.key.one",
+    "value": "my value",
+    "comment": "新增配置项",
+    "dataChangeCreatedBy": "[operator]"
+}'
+
+# 发布配置项
+curl -X POST 'http://{portal_address}/openapi/v1/envs/{env}/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/releases' \
+-H 'Authorization: [your-token]' \
+-H 'Content-Type: application/json' \
+-d '{
+    "appId": "[appId]",
+    "clusterName": "[clusterName]",
+    "namespaceName": "[namespaceName]",
+    "releaseTitle": "配置发布 - $(date +%Y%m%d%H%M%S)", 
+    "releaseComment": "命令行发布配置：更新 my.key.one", 
+    "releasedBy": "[operator]"
+}'
+```
 
 创建节点数据成功后，即成功在配置中心发布了动态配置。
 
