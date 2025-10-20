@@ -80,9 +80,9 @@ Sermant Backend参数可在编译打包前通过`sermant-backend/src/main/resour
 | dynamic.config.namespace    | 默认的命名空间（连接Nacos配置中心时使用） | default     | 连接配置中心Nacos时必须          |
 | dynamic.config.timeout    | 请求配置中心的超时时间 | 30000     | 置管理的开关开启时必须          |
 | dynamic.config.serverAddress    | 配置中心的连接地址 | 127.0.0.1:30110     |    配置管理的开关开启时必须       |
-| dynamic.config.dynamicConfigType    | 配置中心的类型，支持ZOOKEEPER、NACOS、KIE | KIE     |    配置管理的开关开启时必须       |
+| dynamic.config.dynamicConfigType    | 配置中心的类型，支持ZOOKEEPER、NACOS、KIE、APOLLO | KIE     |    配置管理的开关开启时必须       |
 | dynamic.config.connectTimeout    |连接配置中心的超时时间 | 3000     |    配置管理的开关开启时必须       |
-| dynamic.config.enableAuth    |是否开启授权认证，支持Nacos和Zookeeper | false     |    配置管理的开关开启时必须       |
+| dynamic.config.enableAuth    |是否开启授权认证，支持Nacos、Zookeeper和Apollo | false     |    配置管理的开关开启时必须       |
 | dynamic.config.userName    |授权认证时使用的用户名（明文） | null     |    开启授权认证时必须       |
 | dynamic.config.password    |授权认证时使用的密码（采用AES加密后的密文，密文生成方式请参考[AES加密常见问题](../faq/encryption.md)）| null     |    开启授权认证时必须       |
 | dynamic.config.secretKey    |密码采用AES方式加密时使用的密钥, 密钥生成方式请参考[AES加密常见问题](../faq/encryption.md) | null     |    开启授权认证时必须       |

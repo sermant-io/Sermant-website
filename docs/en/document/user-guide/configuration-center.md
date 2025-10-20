@@ -122,6 +122,7 @@ Currently, the supported configuration center components for Sermant are:
 - [ZooKeeper](https://zookeeper.apache.org/releases.html), using version 3.6.3.
 - [ServiceComb Kie](https://servicecomb.apache.org/cn/release/kie-downloads/), using version 0.2.0.
 - [Nacos](https://github.com/alibaba/nacos/releases), using version 2.1.0.
+- [Apollo](https://github.com/apolloconfig/apollo/releases), using version 2.4.0.
 
 ## Startup and Result Verification
 
@@ -132,6 +133,7 @@ This tutorial demonstrates the dynamic configuration capabilities using the Demo
 - [Download](https://zookeeper.apache.org/releases.html#download) the ZooKeeper server.
 - [Download](https://servicecomb.apache.org/cn/release/kie-downloads) the Kie server.
 - [Download](https://github.com/alibaba/nacos/releases/download/2.1.0/nacos-server-2.1.0.tar.gz) the Nacos server.
+- [Download](https://www.apolloconfig.com/#/zh/deployment/distributed-deployment-guide) the Apollo server.
 
 ### 2. Obtain Demo Binary Product
 
@@ -261,6 +263,68 @@ curl -d 'dataId=demo' \
 ```
 
 In this case, `app:default` is the validated group value, `demo` is the key value, `test` is the content value, and `default` is the specified service namespace as in `agent/config/config.properties` under `service.meta.project`.
+
+Once the node data is created successfully, the dynamic configuration has been successfully published to the configuration center.
+
+#### Verification
+
+Check the Demo microservice console for the following log output:
+
+```
+Configuration item has changed, value: test
+```
+
+If the log output is correct, it indicates that the dynamic configuration was successfully published, and the Sermant Agent has detected the dynamic configuration.
+
+
+### 6. Verify Apollo
+
+Start the Apollo server.
+
+#### Start Demo Microservice
+
+Modify the configuration in the `agent\config\config.properties` file to specify the configuration center type and server address:
+```properties
+# Specify the server address of the configuration center
+dynamic.config.serverAddress=127.0.0.1:8080
+# Specify the type of dynamic configuration center, options are NOP (no implementation), ZOOKEEPER, KIE, NACOS,APOLLO
+dynamic.config.dynamicConfigType=APOLLO
+```
+
+In the `agent` directory, execute the following command to mount the Sermant Agent and start the Demo microservice:
+
+```shell
+java -javaagent:sermant-agent.jar -jar Application.jar
+```
+
+#### Publish Configuration
+
+Configuration release can be performed via the visual interface on the Apollo server.Operations can also be performed based on the Open API:Log in with an admin account in the visual interface, then obtain the token by navigating to `Admin Tools` -> `Open Platform Authorization Management` -> `Create Third-Party App`, and execute the following commands with the authorized token included.
+```shell
+# create configuration
+curl -X POST 'http://{portal_address}/openapi/v1/envs/{env}/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items' \
+-H 'Authorization: [your-token]' \
+-H 'Content-Type: application/json' \
+-d '{
+    "key": "my.key.one",
+    "value": "my value",
+    "comment": "create configuration",
+    "dataChangeCreatedBy": "[operator]"
+}'
+
+# publish configuration
+curl -X POST 'http://{portal_address}/openapi/v1/envs/{env}/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/releases' \
+-H 'Authorization: [your-token]' \
+-H 'Content-Type: application/json' \
+-d '{
+    "appId": "[appId]",
+    "clusterName": "[clusterName]",
+    "namespaceName": "[namespaceName]",
+    "releaseTitle": "config publishment", 
+    "releaseComment": "update my.key.one", 
+    "releasedBy": "[operator]"
+}'
+```
 
 Once the node data is created successfully, the dynamic configuration has been successfully published to the configuration center.
 

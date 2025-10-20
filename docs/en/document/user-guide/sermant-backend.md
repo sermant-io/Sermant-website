@@ -84,9 +84,9 @@ Sermant Backend parameters can be modified through the `sermant-backend/src/main
 | dynamic.config.namespace | Default namespace (used when connecting to Nacos configuration center) | default | Must be used when connecting to Nacos configuration center |
 | dynamic.config.timeout | Timeout for requesting the configuration center | 30000 | Must be turned on when the configuration management switch is turned on |
 | dynamic.config.serverAddress | The connection address of the configuration center | 127.0.0.1:30110 | Must be turned on when the configuration management switch is turned on |
-| dynamic.config.dynamicConfigType | Type of configuration center, supports ZOOKEEPER, NACOS, KIE | KIE | Must be turned on when the switch of configuration management is turned on |
+| dynamic.config.dynamicConfigType | Type of configuration center, supports ZOOKEEPER, NACOS, KIE,APOLLO | KIE | Must be turned on when the switch of configuration management is turned on |
 | dynamic.config.connectTimeout |Timeout for connecting to the configuration center | 3000 | Must be turned on when the configuration management switch is turned on |
-| dynamic.config.enableAuth | Whether to enable authorization authentication, support Nacos and Zookeeper | false | Must be turned on when the configuration management switch is turned on |
+| dynamic.config.enableAuth | Whether to enable authorization authentication, support Nacos,Zookeeper and Apollo | false | Must be turned on when the configuration management switch is turned on |
 | dynamic.config.userName |Username (plain text) used during authorization authentication | null | Required when enabling authorization authentication |
 | dynamic.config.password |The password used for authorization (encrypted in AES, for details on generating the ciphertext, please refer to the [AES Encryption FAQ](../faq/encryption.md)) | null | Required when enabling authorization authentication |
 | dynamic.config.secretKey |The key used for AES encryption of the password. For details on key generation, please refer to the [AES Encryption FAQ](../faq/encryption.md)| null | Required when enabling authorization authentication |
